@@ -1,0 +1,3 @@
+connections:
+    test: sqlite+pysqlite://
+    test2: sqlite+pysqlite://
