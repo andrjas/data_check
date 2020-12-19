@@ -44,3 +44,19 @@ class DataCheck:
         else:
             print(f"{sql_file}: PASSED")
             return True
+
+    def run(self, any_path: Path) -> bool:
+        """
+        Run a data_check test on a file or folder.
+        In case of a file, it will just call run_test.
+        For a folder, it will scan the folder recursively and run a test for each input file.
+
+        Returns True if all tests passed, otherwise False.
+        """
+        if any_path.is_file():
+            return self.run_test(any_path)
+        elif any_path.is_dir():
+            all_files = any_path.glob("**/*.sql")
+            return all([self.run_test(sql_file) for sql_file in all_files])
+        else:
+            raise Exception(f"unexpected path: {any_path}")

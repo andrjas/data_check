@@ -40,3 +40,18 @@ def test_run_query(dc):
 def test_run_test(dc):
     result = dc.run_test(Path("checks/basic/simple_string.sql"))
     assert result
+
+
+def test_run_test_non_existent(dc):
+    with pytest.raises(FileNotFoundError):
+        result = dc.run_test(Path("checks/non_existent/file.sql"))
+
+
+def test_run_test_file(dc):
+    result = dc.run(Path("checks/basic/simple_string.sql"))
+    assert result
+
+
+def test_run_test_folder(dc):
+    result = dc.run(Path("checks/basic"))
+    assert result

@@ -34,7 +34,7 @@ def main():
 
     dc = DataCheck(selected_connection)
     for f in args.files:
-        dc.run_test(Path(f))
+        dc.run(Path(f))
 
 
 if __name__ == "__main__":
