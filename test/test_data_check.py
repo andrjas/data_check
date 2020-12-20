@@ -48,23 +48,38 @@ def test_run_test_faling(dc):
 
 
 def test_run_test_non_existent(dc):
-    with pytest.raises(FileNotFoundError):
-        result = dc.run_test(Path("checks/non_existent/file.sql"))
+    result = dc.run_test(Path("checks/non_existent/file.sql"))
+    assert not result
+    assert "generated an exception" in result.result
 
 
 def test_run_test_file(dc):
-    result = dc.run(Path("checks/basic/simple_string.sql"))
+    result = dc.run([Path("checks/basic/simple_string.sql")])
     assert result
 
 
 def test_run_test_folder(dc):
-    result = dc.run(Path("checks/basic"))
+    result = dc.run([Path("checks/basic")])
     assert result
 
 
 def test_raise_exception_if_running_without_connection():
     dc = DataCheck(connection=None)
-    with pytest.raises(Exception) as excinfo:
-        dc.run(Path("checks/basic/simple_string.sql"))
+    result = dc.run_test(Path("checks/basic/simple_string.sql"))
+    assert not result
+    assert "generated an exception" in result.result
 
-    assert excinfo.type == DataCheckException
+
+def test_expand_files(dc):
+    files = dc.expand_files([Path("checks/basic"), Path("checks/failing")])
+    assert len(files) >= 3
+
+
+def test_run_files_failing(dc):
+    result = dc.run([Path("checks/failing")])
+    assert not result
+
+
+def test_run_invalid(dc):
+    result = dc.run([Path("checks/failing/invalid.sql")])
+    assert not result

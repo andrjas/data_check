@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+import sys
 
 from data_check.data_check import DataCheck
 
@@ -8,7 +9,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="data_check")
 
     parser.add_argument("-c", "--connection", type=str, help="connection to use")
-
+    parser.add_argument(
+        "-n", "--workers", type=int, default=4, help="parallel workers to run queries"
+    )
     parser.add_argument(
         "files",
         metavar="files",
@@ -37,9 +40,10 @@ def main():
 
     selected_connection = select_connection(args.connection, config)
 
-    dc = DataCheck(selected_connection)
-    for f in args.files:
-        dc.run(Path(f))
+    dc = DataCheck(connection=selected_connection, workers=args.workers)
+    result = dc.run([Path(f) for f in args.files])
+    if not result:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,8 @@
 from pathlib import Path
 import yaml
 import pandas as pd
-from typing import Union
+from typing import Union, List
+import concurrent.futures
 
 
 class DataCheckException(Exception):
@@ -35,8 +36,13 @@ class DataCheck:
         config = yaml.safe_load(config_path.open())
         return config
 
-    def __init__(self, connection: str):
+    def __init__(self, connection: str, workers=4):
         self.connection = connection
+        self.workers = workers
+
+    @property
+    def executor(self):
+        return concurrent.futures.ThreadPoolExecutor(max_workers=self.workers)
 
     def run_query(self, query: str) -> pd.DataFrame:
         """
@@ -61,8 +67,22 @@ class DataCheck:
         not only the failed ones.
         """
         expect_file = self.get_expect_file(sql_file)
-        sql_result = self.run_query(sql_file.read_text())
-        expect_result = pd.read_csv(expect_file)
+
+        try:
+            sql_result = self.run_query(sql_file.read_text())
+        except Exception as exc:
+            print(f"{sql_file}: FAILED (with exception in {sql_file})")
+            return DataCheckResult(
+                passed=False, result=f"{sql_file} generated an exception: {exc}"
+            )
+
+        try:
+            expect_result = pd.read_csv(expect_file)
+        except Exception as exc_csv:
+            print(f"{sql_file}: FAILED (with exception in {expect_file})")
+            return DataCheckResult(
+                passed=False, result=f"{expect_file} generated an exception: {exc_csv}"
+            )
 
         # replace missing values and None with pd.NA
         sql_result.fillna(value=pd.NA, inplace=True)
@@ -83,18 +103,29 @@ class DataCheck:
         else:
             return DataCheckResult(passed=passed, result=df_diff)
 
-    def run(self, any_path: Path) -> bool:
+    def expand_files(self, files: List[Path]) -> List[Path]:
         """
-        Run a data_check test on a file or folder.
-        In case of a file, it will just call run_test.
-        For a folder, it will scan the folder recursively and run a test for each input file.
+        Expands the list of files or folders,
+        with all SQL files in a folder as seperate files.
+        """
+        result = []
+        for f in files:
+            if f.is_file():
+                result.append(f)
+            elif f.is_dir():
+                result.extend(f.glob("**/*.sql"))
+            else:
+                raise Exception(f"unexpected path: {f}")
+        return result
 
-        Returns True if all tests passed, otherwise False.
+    def run(self, files: List[Path]) -> bool:
         """
-        if any_path.is_file():
-            return self.run_test(any_path)
-        elif any_path.is_dir():
-            all_files = any_path.glob("**/*.sql")
-            return all([self.run_test(sql_file) for sql_file in all_files])
-        else:
-            raise Exception(f"unexpected path: {any_path}")
+        Runs a data_check test for all element in the list in parallel.
+        Returns True, if all calls returned True, otherweise False.
+        """
+        all_files = self.expand_files(files)
+        result_futures = [self.executor.submit(self.run_test, f) for f in all_files]
+        results = []
+        for future in concurrent.futures.as_completed(result_futures):
+            results.append(future.result())
+        return all(results)
