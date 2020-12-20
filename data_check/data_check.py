@@ -1,6 +1,7 @@
 from pathlib import Path
 import yaml
 import pandas as pd
+from typing import Union
 
 
 class DataCheckException(Exception):
@@ -9,6 +10,19 @@ class DataCheckException(Exception):
     """
 
     pass
+
+
+class DataCheckResult:
+    """
+    Wrapper class holding the result of a test run.
+    """
+
+    def __init__(self, passed: bool, result: Union[pd.DataFrame, str]):
+        self.passed = passed
+        self.result = result
+
+    def __bool__(self):
+        return self.passed
 
 
 class DataCheck:
@@ -38,22 +52,36 @@ class DataCheck:
         """
         return sql_file.parent / (sql_file.stem + ".csv")
 
-    def run_test(self, sql_file: Path) -> bool:
+    def run_test(self, sql_file: Path, return_all=False) -> DataCheckResult:
         """
         Run a data_check test on a single input file.
-        Returns True if the test passed, otherwise False.
+        Returns a DataCheckResult with the result.
+
+        If return_all is set, the DataCheckResult will contail all results,
+        not only the failed ones.
         """
         expect_file = self.get_expect_file(sql_file)
         sql_result = self.run_query(sql_file.read_text())
         expect_result = pd.read_csv(expect_file)
-        df_diff = sql_result.merge(expect_result, indicator=True, how="outer")
 
-        if len(df_diff[df_diff._merge != "both"]) != 0:
+        # replace missing values and None with pd.NA
+        sql_result.fillna(value=pd.NA, inplace=True)
+        expect_result.fillna(value=pd.NA, inplace=True)
+
+        df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
+        df_diff = df_merged[df_merged._merge != "both"]
+
+        if len(df_diff) != 0:
             print(f"{sql_file}: FAILED")
-            return False
+            passed = False
         else:
             print(f"{sql_file}: PASSED")
-            return True
+            passed = True
+
+        if return_all:
+            return DataCheckResult(passed=passed, result=df_merged)
+        else:
+            return DataCheckResult(passed=passed, result=df_diff)
 
     def run(self, any_path: Path) -> bool:
         """

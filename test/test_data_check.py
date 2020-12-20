@@ -42,6 +42,11 @@ def test_run_test(dc):
     assert result
 
 
+def test_run_test_faling(dc):
+    result = dc.run_test(Path("checks/failing/expected_to_fail.sql"))
+    assert not result
+
+
 def test_run_test_non_existent(dc):
     with pytest.raises(FileNotFoundError):
         result = dc.run_test(Path("checks/non_existent/file.sql"))
