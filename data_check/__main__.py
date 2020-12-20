@@ -13,6 +13,9 @@ def parse_args() -> argparse.Namespace:
         "-n", "--workers", type=int, default=4, help="parallel workers to run queries"
     )
     parser.add_argument(
+        "--print", action="store_true", dest="print_failed", help="print failed results"
+    )
+    parser.add_argument(
         "files",
         metavar="files",
         type=str,
@@ -42,7 +45,7 @@ def main():
     selected_connection = select_connection(args.connection, config)
 
     dc = DataCheck(connection=selected_connection, workers=args.workers)
-    result = dc.run([Path(f) for f in args.files])
+    result = dc.run([Path(f) for f in args.files], print_failed=args.print_failed)
     if not result:
         sys.exit(1)
 

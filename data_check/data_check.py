@@ -58,7 +58,16 @@ class DataCheck:
         """
         return sql_file.parent / (sql_file.stem + ".csv")
 
-    def run_test(self, sql_file: Path, return_all=False) -> DataCheckResult:
+    def print_failed(self, df: pd.DataFrame):
+        with pd.option_context("display.max_rows", None, "display.max_columns", None):
+            df["_diff"] = ""
+            df.loc[df._merge == "left_only", ["_diff"]] = "db"
+            df.loc[df._merge == "right_only", ["_diff"]] = "expected"
+            print(df.drop(["_merge"], axis=1))
+
+    def run_test(
+        self, sql_file: Path, return_all=False, print_failed=False
+    ) -> DataCheckResult:
         """
         Run a data_check test on a single input file.
         Returns a DataCheckResult with the result.
@@ -93,6 +102,8 @@ class DataCheck:
 
         if len(df_diff) != 0:
             print(f"{sql_file}: FAILED")
+            if print_failed:
+                self.print_failed(df_diff)
             passed = False
         else:
             print(f"{sql_file}: PASSED")
@@ -118,13 +129,16 @@ class DataCheck:
                 raise Exception(f"unexpected path: {f}")
         return result
 
-    def run(self, files: List[Path]) -> bool:
+    def run(self, files: List[Path], print_failed=False) -> bool:
         """
         Runs a data_check test for all element in the list in parallel.
         Returns True, if all calls returned True, otherweise False.
         """
         all_files = self.expand_files(files)
-        result_futures = [self.executor.submit(self.run_test, f) for f in all_files]
+        result_futures = [
+            self.executor.submit(self.run_test, f, print_failed=print_failed)
+            for f in all_files
+        ]
         results = []
         for future in concurrent.futures.as_completed(result_futures):
             results.append(future.result())
