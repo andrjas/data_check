@@ -8,7 +8,7 @@ from pathlib import Path
 my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
 
-from data_check import DataCheck  # noqa E402
+from data_check import DataCheck, DataCheckException  # noqa E402
 
 
 @pytest.fixture
@@ -55,3 +55,11 @@ def test_run_test_file(dc):
 def test_run_test_folder(dc):
     result = dc.run(Path("checks/basic"))
     assert result
+
+
+def test_raise_exception_if_running_without_connection():
+    dc = DataCheck(connection=None)
+    with pytest.raises(Exception) as excinfo:
+        dc.run(Path("checks/basic/simple_string.sql"))
+
+    assert excinfo.type == DataCheckException

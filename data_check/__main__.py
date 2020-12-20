@@ -23,6 +23,11 @@ def select_connection(connection, config) -> str:
     """
     Returns the connection string to use.
     """
+    if not connection:
+        default_connection = config.get("default_connection")
+        if default_connection:
+            connection = default_connection
+
     return config.get("connections", {}).get(connection)
 
 

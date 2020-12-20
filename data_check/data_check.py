@@ -3,6 +3,14 @@ import yaml
 import pandas as pd
 
 
+class DataCheckException(Exception):
+    """
+    Generic class for various exceptions that might occur in data_check.
+    """
+
+    pass
+
+
 class DataCheck:
     """
     Main class for data_check.
@@ -20,6 +28,8 @@ class DataCheck:
         """
         Run a query on the database and return a Pandas DataFrame with the result.
         """
+        if not self.connection:
+            raise DataCheckException(f"undefined connection: {self.connection}")
         return pd.read_sql(query, self.connection)
 
     def get_expect_file(self, sql_file: Path) -> Path:
