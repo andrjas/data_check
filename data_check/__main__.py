@@ -17,6 +17,7 @@ def parse_args() -> argparse.Namespace:
         metavar="files",
         type=str,
         nargs="*",
+        default=["checks"],
         help="list of checks files or folders",
     )
     return parser.parse_args()
