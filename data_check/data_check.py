@@ -76,6 +76,11 @@ class DataCheck:
         not only the failed ones.
         """
         expect_file = self.get_expect_file(sql_file)
+        if not expect_file.exists():
+            print(f"{sql_file}: NO EXPECTED RESULTS FILE")
+            return DataCheckResult(
+                passed=False, result=f"{sql_file}: NO EXPECTED RESULTS FILE"
+            )  # no need to run queries, if no expected results found
 
         try:
             sql_result = self.run_query(sql_file.read_text())

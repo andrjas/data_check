@@ -50,7 +50,7 @@ def test_run_test_faling(dc):
 def test_run_test_non_existent(dc):
     result = dc.run_test(Path("checks/non_existent/file.sql"))
     assert not result
-    assert "generated an exception" in result.result
+    assert "NO EXPECTED RESULTS FILE" in result.result
 
 
 def test_run_test_file(dc):
