@@ -10,7 +10,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("-c", "--connection", type=str, help="connection to use")
     parser.add_argument(
-        "-n", "--workers", type=int, default=4, help="parallel workers to run queries"
+        "-n", "--workers", type=int, default=4, help="parallel workers to run queries (default: 4)"
     )
     parser.add_argument(
         "--print", action="store_true", dest="print_failed", help="print failed results"
@@ -21,6 +21,9 @@ def parse_args() -> argparse.Namespace:
         dest="generate_expectations",
         action="store_true",
         help="generate expectation files if they don't exist",
+    )
+    parser.add_argument(
+        "--config", type=str, default="data_check.yml", help="config file to use (default: data_check.yml)"
     )
     parser.add_argument(
         "files",
@@ -47,7 +50,7 @@ def select_connection(connection, config) -> str:
 
 def main():
     args = parse_args()
-    config = DataCheck.read_config()
+    config = DataCheck.read_config(Path(args.config))
 
     selected_connection = select_connection(args.connection, config)
 
