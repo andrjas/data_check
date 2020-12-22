@@ -111,7 +111,15 @@ class DataCheck:
             )
 
         try:
-            expect_result = pd.read_csv(expect_file)
+            expect_result = pd.read_csv(
+                expect_file,
+                na_values=[""],  # use empty string as nan
+                keep_default_na=False,
+                comment="#",
+                quotechar='"',
+                quoting=0,
+                engine="c",
+            )
         except Exception as exc_csv:
             print(f"{sql_file}: FAILED (with exception in {expect_file})")
             return DataCheckResult(
