@@ -33,7 +33,10 @@ def test_get_expect_file(dc):
 
 
 def test_run_query(dc):
-    result = dc.run_query("select 'ok' as test_col")
+    if "oracle" in dc.connection:
+        result = dc.run_query("select 'ok' as test_col from dual")
+    else:
+        result = dc.run_query("select 'ok' as test_col")
     assert result.iloc[0].test_col == "ok"
 
 

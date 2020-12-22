@@ -1,0 +1,5 @@
+default_connection: test
+
+connections:
+    test: oracle+cx_oracle://system:data_check@db:1521/?service_name=XEPDB1
+    test2: oracle+cx_oracle://system:data_check@db:1521/?service_name=some_other_pdb

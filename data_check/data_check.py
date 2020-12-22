@@ -1,7 +1,7 @@
 from pathlib import Path
 import yaml
 import pandas as pd
-from typing import Union, List
+from typing import Union, List, Dict
 import concurrent.futures
 from sqlalchemy import create_engine
 
@@ -45,13 +45,29 @@ class DataCheck:
     def executor(self):
         return concurrent.futures.ThreadPoolExecutor(max_workers=self.workers)
 
+    def get_db_params(self) -> Dict:
+        """
+        Return parameter specific to a database.
+        """
+        if "cx_oracle://" in self.connection:
+            # Fix to remove SAWarning. Should be removed with SQLAlchemy 1.4
+            return {"max_identifier_length": 128}
+        else:
+            return {}
+
+    def get_engine(self):
+        """
+        Return the database engine for the connection.
+        """
+        return create_engine(self.connection, **self.get_db_params())
+
     def run_query(self, query: str) -> pd.DataFrame:
         """
         Run a query on the database and return a Pandas DataFrame with the result.
         """
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
-        return pd.read_sql(query, self.connection)
+        return pd.read_sql(query, self.get_engine())
 
     def get_expect_file(self, sql_file: Path) -> Path:
         """
@@ -84,7 +100,7 @@ class DataCheck:
             )  # no need to run queries, if no expected results found
 
         try:
-            sql_result = self.run_query(sql_file.read_text())
+            sql_result = self.run_query(sql_file.read_text(encoding="UTF-8"))
         except Exception as exc:
             print(f"{sql_file}: FAILED (with exception in {sql_file})")
             return DataCheckResult(
@@ -157,7 +173,7 @@ class DataCheck:
         """
         expect_result = self.get_expect_file(sql_file)
         if not expect_result.exists():
-            result = self.run_query(sql_file.read_text())
+            result = self.run_query(sql_file.read_text(encoding="UTF-8"))
             result.to_csv(expect_result, index=False)
             print(f"expectation written to {expect_result}")
         else:
@@ -171,7 +187,9 @@ class DataCheck:
             self.gen_expectation(sql_file)
 
     def test_connection(self) -> bool:
-        engine = create_engine(self.connection, pool_pre_ping=True)
+        engine = create_engine(
+            self.connection, **{**self.get_db_params(), **{"pool_pre_ping": True}}
+        )
         try:
             engine.connect()
             return True
