@@ -76,6 +76,9 @@ class DataCheck:
         return sql_file.parent / (sql_file.stem + ".csv")
 
     def print_failed(self, df: pd.DataFrame):
+        """
+        Prints a DataFrame with diff information.
+        """
         with pd.option_context("display.max_rows", None, "display.max_columns", None):
             df["_diff"] = ""
             df.loc[df._merge == "left_only", ["_diff"]] = "db"
@@ -187,6 +190,10 @@ class DataCheck:
             self.gen_expectation(sql_file)
 
     def test_connection(self) -> bool:
+        """
+        Returns True if we can connect to the database.
+        Mainly for integration tests.
+        """
         engine = create_engine(
             self.connection, **{**self.get_db_params(), **{"pool_pre_ping": True}}
         )
