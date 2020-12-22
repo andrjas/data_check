@@ -10,7 +10,11 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("-c", "--connection", type=str, help="connection to use")
     parser.add_argument(
-        "-n", "--workers", type=int, default=4, help="parallel workers to run queries (default: 4)"
+        "-n",
+        "--workers",
+        type=int,
+        default=4,
+        help="parallel workers to run queries (default: 4)",
     )
     parser.add_argument(
         "--print", action="store_true", dest="print_failed", help="print failed results"
@@ -23,7 +27,10 @@ def parse_args() -> argparse.Namespace:
         help="generate expectation files if they don't exist",
     )
     parser.add_argument(
-        "--config", type=str, default="data_check.yml", help="config file to use (default: data_check.yml)"
+        "--config",
+        type=str,
+        default="data_check.yml",
+        help="config file to use (default: data_check.yml)",
     )
     parser.add_argument(
         "--ping",
