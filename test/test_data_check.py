@@ -83,3 +83,8 @@ def test_run_files_failing(dc):
 def test_run_invalid(dc):
     result = dc.run([Path("checks/failing/invalid.sql")])
     assert not result
+
+
+def test_test_connection(dc):
+    test = dc.test_connection()
+    assert test

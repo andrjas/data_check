@@ -26,6 +26,11 @@ def parse_args() -> argparse.Namespace:
         "--config", type=str, default="data_check.yml", help="config file to use (default: data_check.yml)"
     )
     parser.add_argument(
+        "--ping",
+        action="store_true",
+        help="tries to connect to the database",
+    )
+    parser.add_argument(
         "files",
         metavar="files",
         type=str,
@@ -59,6 +64,14 @@ def main():
 
     if args.generate_expectations:
         dc.generate_expectations(path_list)
+    elif args.ping:
+        test = dc.test_connection()
+        if test:
+            print(f"connecting succeeded")
+            sys.exit(0)
+        else:
+            print(f"connecting failed")
+            sys.exit(1)
     else:
         result = dc.run(path_list, print_failed=args.print_failed)
         if not result:

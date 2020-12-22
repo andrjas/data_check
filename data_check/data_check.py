@@ -3,6 +3,7 @@ import yaml
 import pandas as pd
 from typing import Union, List
 import concurrent.futures
+from sqlalchemy import create_engine
 
 
 class DataCheckException(Exception):
@@ -168,3 +169,11 @@ class DataCheck:
         """
         for sql_file in self.expand_files(files):
             self.gen_expectation(sql_file)
+
+    def test_connection(self) -> bool:
+        engine = create_engine(self.connection, pool_pre_ping=True)
+        try:
+            engine.connect()
+            return True
+        except:
+            return False
