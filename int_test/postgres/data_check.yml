@@ -1,0 +1,5 @@
+default_connection: test
+
+connections:
+    test: postgresql://postgres:data_check@db:5432
+    test2: postgresql://postgres:data_check@db:5432

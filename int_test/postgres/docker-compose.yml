@@ -1,0 +1,11 @@
+version: "3.3"
+services:
+    data_check:
+      build:
+        context: ../../
+        dockerfile: int_test/postgres/Dockerfile
+    db:
+        image: postgres:13
+        environment:
+          - POSTGRES_PASSWORD=data_check
+

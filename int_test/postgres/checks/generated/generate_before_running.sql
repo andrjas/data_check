@@ -1,0 +1,1 @@
+select 'gen' as generated
