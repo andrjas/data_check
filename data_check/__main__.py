@@ -16,6 +16,13 @@ def parse_args() -> argparse.Namespace:
         "--print", action="store_true", dest="print_failed", help="print failed results"
     )
     parser.add_argument(
+        "--gen",
+        "--generate",
+        dest="generate_expectations",
+        action="store_true",
+        help="generate expectation files if they don't exist",
+    )
+    parser.add_argument(
         "files",
         metavar="files",
         type=str,
@@ -45,9 +52,14 @@ def main():
     selected_connection = select_connection(args.connection, config)
 
     dc = DataCheck(connection=selected_connection, workers=args.workers)
-    result = dc.run([Path(f) for f in args.files], print_failed=args.print_failed)
-    if not result:
-        sys.exit(1)
+    path_list = [Path(f) for f in args.files]
+
+    if args.generate_expectations:
+        dc.generate_expectations(path_list)
+    else:
+        result = dc.run(path_list, print_failed=args.print_failed)
+        if not result:
+            sys.exit(1)
 
 
 if __name__ == "__main__":

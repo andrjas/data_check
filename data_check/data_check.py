@@ -148,3 +148,23 @@ class DataCheck:
         for future in concurrent.futures.as_completed(result_futures):
             results.append(future.result())
         return all(results)
+
+    def gen_expectation(self, sql_file: Path):
+        """
+        Executes the query for a data_check test
+        and stores the result in the csv file.
+        """
+        expect_result = self.get_expect_file(sql_file)
+        if not expect_result.exists():
+            result = self.run_query(sql_file.read_text())
+            result.to_csv(expect_result, index=False)
+            print(f"expectation written to {expect_result}")
+        else:
+            print(f"expectation skipped for {expect_result}")
+
+    def generate_expectations(self, files: List[Path]):
+        """
+        Generated a expected results file for each file if it doesn't exists yet.
+        """
+        for sql_file in self.expand_files(files):
+            self.gen_expectation(sql_file)
