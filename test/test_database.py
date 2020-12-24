@@ -9,6 +9,9 @@ sys.path.insert(0, my_path + "/../")
 
 from data_check import DataCheck  # noqa E402
 
+# These tests should work on any database.
+# The tests are generic, but in integration tests each database uses specific SQL files.
+
 
 @pytest.fixture
 def dc():
