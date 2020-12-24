@@ -1,2 +1,4 @@
 *.pyc
 data_check.egg-info
+build/
+dist/
