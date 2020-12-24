@@ -3,6 +3,7 @@ from pathlib import Path
 import sys
 
 from data_check.data_check import DataCheck
+from data_check import __version__ as data_check_version
 
 
 def parse_args() -> argparse.Namespace:
@@ -38,6 +39,11 @@ def parse_args() -> argparse.Namespace:
         help="tries to connect to the database",
     )
     parser.add_argument(
+        "--version",
+        action="store_true",
+        help="print version and exit",
+    )
+    parser.add_argument(
         "files",
         metavar="files",
         type=str,
@@ -69,7 +75,9 @@ def main():
     dc = DataCheck(connection=selected_connection, workers=args.workers)
     path_list = [Path(f) for f in args.files]
 
-    if args.generate_expectations:
+    if args.version:
+        print(data_check_version)
+    elif args.generate_expectations:
         dc.generate_expectations(path_list)
     elif args.ping:
         test = dc.test_connection()
