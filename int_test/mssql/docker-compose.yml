@@ -1,0 +1,12 @@
+version: "3.3"
+services:
+    data_check:
+      build:
+        context: ../../
+        dockerfile: int_test/mssql/Dockerfile
+    db:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        environment:
+          - ACCEPT_EULA=Y
+          - MSSQL_PID=Express
+          - SA_PASSWORD=data_CHECK
