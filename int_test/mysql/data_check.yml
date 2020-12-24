@@ -1,0 +1,5 @@
+default_connection: test
+
+connections:
+    test: mysql+pymysql://root:data_check@db:3306/mysql
+    test2: mysql+pymysql://root:data_check@db:3306/mysql

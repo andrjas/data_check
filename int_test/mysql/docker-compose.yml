@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+    data_check:
+      build:
+        context: ../../
+        dockerfile: int_test/mysql/Dockerfile
+    db:
+        image: mysql:8
+        environment:
+          - MYSQL_ROOT_PASSWORD=data_check
