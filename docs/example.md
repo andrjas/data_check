@@ -66,7 +66,7 @@ This way you can run quick test, e.g. schema validation, many times during devel
 
 ## Database URLs
 
-These are the connection strings used in the [integration test](tests.md#integration-tests). Other connection strings can be found in the [SQLAlchemy documentation](https://docs.sqlalchemy.org/en/13/core/engines.html).
+These are the connection strings used in the [integration test](development.md#integration-tests). Other connection strings can be found in the [SQLAlchemy documentation](https://docs.sqlalchemy.org/en/13/core/engines.html).
 
 ### PostgreSQL
 
