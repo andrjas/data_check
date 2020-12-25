@@ -14,6 +14,8 @@ ENV CLIENT_HOME=/usr/lib/oracle/19.5/client64
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${CLIENT_HOME}/lib"
 ENV PATH="${PATH}:${CLIENT_HOME}/bin"
 ENV NLS_LANG=".utf8"
+ENV LC_ALL=en_US.utf-8
+ENV LANG=en_US.utf-8
 
 RUN useradd data_check && mkdir /app && chown data_check /app
 USER data_check
