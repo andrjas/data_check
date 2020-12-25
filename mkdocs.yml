@@ -1,0 +1,8 @@
+site_name: data_check
+nav:
+    - Home: index.md
+    - Installation: install.md
+    - Usage: usage.md
+    - HowTos: howtos.md
+    - Examples: example.md
+    - Development: development.md
