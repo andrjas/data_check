@@ -49,7 +49,7 @@ class DataCheck:
         """
         Return parameter specific to a database.
         """
-        if "cx_oracle://" in self.connection:
+        if "cx_oracle://" in self.connection or "oracle://" in self.connection:
             # Fix to remove SAWarning. Should be removed with SQLAlchemy 1.4
             return {"max_identifier_length": 128}
         else:
