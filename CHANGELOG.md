@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.1.1] - 2021-02-07
+
 ### Fixed
 
 - using ProcessPoolExecutor for parallel queries
