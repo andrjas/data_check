@@ -44,7 +44,7 @@ class DataCheck:
 
     @property
     def executor(self):
-        return concurrent.futures.ThreadPoolExecutor(max_workers=self.workers)
+        return concurrent.futures.ProcessPoolExecutor(max_workers=self.workers)
 
     def get_db_params(self) -> Dict:
         """
