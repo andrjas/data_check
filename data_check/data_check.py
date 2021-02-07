@@ -1,4 +1,5 @@
 from pathlib import Path
+from pandas.core.frame import DataFrame
 import yaml
 import pandas as pd
 from typing import Union, List, Dict
@@ -85,6 +86,25 @@ class DataCheck:
             df.loc[df._merge == "right_only", ["_diff"]] = "expected"
             print(df.drop(["_merge"], axis=1))
 
+    def merge_results(
+        self, sql_result: DataFrame, expect_result: DataFrame
+    ) -> DataFrame:
+        """
+        Merges the results of a SQL query and the expected results.
+        Returns the merged DataFrame.
+        """
+        try:
+            df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
+        except ValueError:
+            # treat both columns as str if their data types differ
+            for sc in sql_result.columns:
+                if sc in expect_result.columns:
+                    if sql_result[sc].dtype != expect_result[sc].dtype:
+                        expect_result[sc] = expect_result[sc].astype("str")
+                        sql_result[sc] = sql_result[sc].astype("str")
+            df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
+        return df_merged
+
     def run_test(
         self, sql_file: Path, return_all=False, print_failed=False
     ) -> DataCheckResult:
@@ -130,7 +150,7 @@ class DataCheck:
         sql_result.fillna(value=pd.NA, inplace=True)
         expect_result.fillna(value=pd.NA, inplace=True)
 
-        df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
+        df_merged = self.merge_results(sql_result, expect_result)
         df_diff = df_merged[df_merged._merge != "both"]
 
         if len(df_diff) != 0:

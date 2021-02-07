@@ -54,3 +54,11 @@ def test_float_decimal_conversion(dc):
 def test_unicode(dc):
     res = dc.run_test(Path("checks/basic/unicode_string.sql"))
     assert res
+
+
+def test_decimal_varchar(dc):
+    """
+    Test a varchar column, that has only decimals in the csv file
+    """
+    res = dc.run_test(Path("checks/basic/decimal_varchar.sql"))
+    assert res

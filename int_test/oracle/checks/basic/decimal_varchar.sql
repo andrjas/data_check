@@ -1,0 +1,1 @@
+select '1' as decimal_varchar from dual
