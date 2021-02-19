@@ -38,9 +38,10 @@ class DataCheck:
         config = yaml.safe_load(config_path.open())
         return config
 
-    def __init__(self, connection: str, workers=4):
+    def __init__(self, connection: str, workers=4, verbose=False):
         self.connection = connection
         self.workers = workers
+        self.verbose = verbose
 
     @property
     def executor(self):
@@ -126,6 +127,8 @@ class DataCheck:
             sql_result = self.run_query(sql_file.read_text(encoding="UTF-8"))
         except Exception as exc:
             print(f"{sql_file}: FAILED (with exception in {sql_file})")
+            if self.verbose:
+                print(exc)
             return DataCheckResult(
                 passed=False, result=f"{sql_file} generated an exception: {exc}"
             )

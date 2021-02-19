@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- --verbose argument
+
 ## [0.1.1] - 2021-02-07
 
 ### Fixed
