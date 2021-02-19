@@ -184,7 +184,7 @@ class DataCheck:
             failed = self.str_fail("FAILED")
             print(f"{sql_file}: {failed}")
             if print_failed:
-                self.print_failed(df_diff)
+                self.print_failed(df_diff.copy())
             passed = False
         else:
             passed_msg = self.str_pass("PASSED")

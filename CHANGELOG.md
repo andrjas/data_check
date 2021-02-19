@@ -10,6 +10,10 @@
 - colored output
 - overall result output
 
+### Fixed
+
+- SettingWithCopyWarning from pandas when using --print with a failing test
+
 ## [0.1.1] - 2021-02-07
 
 ### Fixed
