@@ -31,6 +31,7 @@ def select_connection(connection, config) -> str:
 @click.option(
     "--gen",
     "--generate",
+    "-g",
     "generate_expectations",
     is_flag=True,
     help="generate expectation files if they don't exist",

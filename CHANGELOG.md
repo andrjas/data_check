@@ -6,6 +6,7 @@
 
 - --verbose argument
 - --traceback argument
+- -g argument as an alias for --generate
 
 ## [0.1.1] - 2021-02-07
 
