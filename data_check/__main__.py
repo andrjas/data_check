@@ -43,6 +43,7 @@ def select_connection(connection, config) -> str:
 )
 @click.option("--ping", is_flag=True, help="tries to connect to the database")
 @click.option("--verbose", is_flag=True, help="print verbose output")
+@click.option("--traceback", is_flag=True, help="print traceback output")
 @click.version_option(version=data_check_version)
 @click.argument("files", nargs=-1, type=click.Path())
 def main(
@@ -53,6 +54,7 @@ def main(
     config="data_check.yml",
     ping=False,
     verbose=False,
+    traceback=False,
     files=[],
 ):
     """ FILES: list of checks files or folders"""
@@ -60,7 +62,12 @@ def main(
     config = DataCheck.read_config(Path(config))
     selected_connection = select_connection(connection, config)
 
-    dc = DataCheck(connection=selected_connection, workers=workers, verbose=verbose)
+    dc = DataCheck(
+        connection=selected_connection,
+        workers=workers,
+        verbose=verbose,
+        traceback=traceback,
+    )
 
     if not files:
         files = ["checks"]  # use "checks" if nothing is given

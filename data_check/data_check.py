@@ -5,6 +5,7 @@ import pandas as pd
 from typing import Union, List, Dict
 import concurrent.futures
 from sqlalchemy import create_engine
+import traceback
 
 
 class DataCheckException(Exception):
@@ -38,10 +39,11 @@ class DataCheck:
         config = yaml.safe_load(config_path.open())
         return config
 
-    def __init__(self, connection: str, workers=4, verbose=False):
+    def __init__(self, connection: str, workers=4, verbose=False, traceback=False):
         self.connection = connection
         self.workers = workers
         self.verbose = verbose
+        self.traceback = traceback
 
     @property
     def executor(self):
@@ -129,6 +131,8 @@ class DataCheck:
             print(f"{sql_file}: FAILED (with exception in {sql_file})")
             if self.verbose:
                 print(exc)
+            if self.traceback:
+                traceback.print_exc()
             return DataCheckResult(
                 passed=False, result=f"{sql_file} generated an exception: {exc}"
             )
