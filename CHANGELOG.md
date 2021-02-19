@@ -8,6 +8,7 @@
 - --traceback argument
 - -g argument as an alias for --generate
 - colored output
+- overall result output
 
 ## [0.1.1] - 2021-02-07
 

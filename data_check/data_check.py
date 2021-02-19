@@ -224,7 +224,14 @@ class DataCheck:
         results = []
         for future in concurrent.futures.as_completed(result_futures):
             results.append(future.result())
-        return all(results)
+
+        overall_result = all(results)
+        overall_result_msg = (
+            self.str_pass("PASSED") if overall_result else self.str_fail("FAILED")
+        )
+        print("")
+        print(f"overall result: {overall_result_msg}")
+        return overall_result
 
     def gen_expectation(self, sql_file: Path):
         """
