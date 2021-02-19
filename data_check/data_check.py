@@ -149,6 +149,10 @@ class DataCheck:
             )
         except Exception as exc_csv:
             print(f"{sql_file}: FAILED (with exception in {expect_file})")
+            if self.verbose:
+                print(exc_csv)
+            if self.traceback:
+                traceback.print_exc()
             return DataCheckResult(
                 passed=False, result=f"{expect_file} generated an exception: {exc_csv}"
             )
