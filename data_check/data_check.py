@@ -6,6 +6,7 @@ from typing import Union, List, Dict
 import concurrent.futures
 from sqlalchemy import create_engine
 import traceback
+from colorama import Fore, Style
 
 
 class DataCheckException(Exception):
@@ -108,6 +109,18 @@ class DataCheck:
             df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
         return df_merged
 
+    @staticmethod
+    def str_pass(string):
+        return Fore.GREEN + string + Style.RESET_ALL
+
+    @staticmethod
+    def str_warn(string):
+        return Fore.YELLOW + string + Style.RESET_ALL
+
+    @staticmethod
+    def str_fail(string):
+        return Fore.RED + string + Style.RESET_ALL
+
     def run_test(
         self, sql_file: Path, return_all=False, print_failed=False
     ) -> DataCheckResult:
@@ -120,7 +133,8 @@ class DataCheck:
         """
         expect_file = self.get_expect_file(sql_file)
         if not expect_file.exists():
-            print(f"{sql_file}: NO EXPECTED RESULTS FILE")
+            warn = self.str_warn("NO EXPECTED RESULTS FILE")
+            print(f"{sql_file}: {warn}")
             return DataCheckResult(
                 passed=False, result=f"{sql_file}: NO EXPECTED RESULTS FILE"
             )  # no need to run queries, if no expected results found
@@ -128,7 +142,8 @@ class DataCheck:
         try:
             sql_result = self.run_query(sql_file.read_text(encoding="UTF-8"))
         except Exception as exc:
-            print(f"{sql_file}: FAILED (with exception in {sql_file})")
+            fail = self.str_fail(f"FAILED (with exception in {sql_file})")
+            print(f"{sql_file}: {fail}")
             if self.verbose:
                 print(exc)
             if self.traceback:
@@ -148,7 +163,8 @@ class DataCheck:
                 engine="c",
             )
         except Exception as exc_csv:
-            print(f"{sql_file}: FAILED (with exception in {expect_file})")
+            fail = self.str_fail(f"FAILED (with exception in {expect_file})")
+            print(f"{sql_file}: {fail}")
             if self.verbose:
                 print(exc_csv)
             if self.traceback:
@@ -165,12 +181,14 @@ class DataCheck:
         df_diff = df_merged[df_merged._merge != "both"]
 
         if len(df_diff) != 0:
-            print(f"{sql_file}: FAILED")
+            failed = self.str_fail("FAILED")
+            print(f"{sql_file}: {failed}")
             if print_failed:
                 self.print_failed(df_diff)
             passed = False
         else:
-            print(f"{sql_file}: PASSED")
+            passed_msg = self.str_pass("PASSED")
+            print(f"{sql_file}: {passed_msg}")
             passed = True
 
         if return_all:

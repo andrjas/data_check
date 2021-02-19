@@ -1,6 +1,7 @@
 import click
 from pathlib import Path
 import sys
+from colorama import init
 
 from data_check.data_check import DataCheck
 from data_check import __version__ as data_check_version
@@ -59,6 +60,8 @@ def main(
     files=[],
 ):
     """ FILES: list of checks files or folders"""
+
+    init()  # init colorama
 
     config = DataCheck.read_config(Path(config))
     selected_connection = select_connection(connection, config)

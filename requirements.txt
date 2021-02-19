@@ -3,3 +3,4 @@ pandas>=1.1.5,<1.2
 pyyaml>=5.3.1,<5.4
 numpy==1.19.3  # newer versions have this bug on windows: https://tinyurl.com/y3dm3h86
 click>=7.1.2,<7.2
+colorama=0.4.4
