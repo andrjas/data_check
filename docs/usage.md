@@ -9,10 +9,12 @@
 * `data_check -c/--connection CONNECTION` - use another connection than the default.
 * `data_check -n/--workers WORKERS` - use WORKERS threads to run the queries (default: 4).
 * `data_check --print` - print failed results data.
-* `data_check --gen/--generate` - generate expectation files if they don't exist.
+* `data_check -g/--gen/--generate` - generate expectation files if they don't exist.
 * `data_check --config CONFIG` - config file to use (default: data_check.yml).
 * `data_check --ping` - tries to connect to the database.
 * `data_check --version` - print version and exit.
+* `data_check --verbose` - print verbose output.
+* `data_check --traceback` - print traceback output for debugging.
 
 ## Exit codes
 

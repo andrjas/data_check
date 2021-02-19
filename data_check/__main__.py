@@ -45,7 +45,7 @@ def select_connection(connection, config) -> str:
 )
 @click.option("--ping", is_flag=True, help="tries to connect to the database")
 @click.option("--verbose", is_flag=True, help="print verbose output")
-@click.option("--traceback", is_flag=True, help="print traceback output")
+@click.option("--traceback", is_flag=True, help="print traceback output for debugging")
 @click.version_option(version=data_check_version)
 @click.argument("files", nargs=-1, type=click.Path())
 def main(
