@@ -117,7 +117,7 @@ python-versions = ">=3.6, <3.7"
 name = "importlib-metadata"
 version = "3.4.0"
 description = "Read metadata from Python packages"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -362,7 +362,7 @@ python-versions = "*"
 name = "typing-extensions"
 version = "3.7.4.3"
 description = "Backported and Experimental Type Hints for Python 3.5+"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -370,7 +370,7 @@ python-versions = "*"
 name = "zipp"
 version = "3.4.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -387,7 +387,7 @@ postgres = ["psycopg2-binary"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.1"
-content-hash = "caf1fbf06191ee762bd2f3dcae91610e5f995628d05ca8c21dd8feff90cffad3"
+content-hash = "4f2c7b782dca25920710e0f49516e99adec8813bdd9ed41b23eaf03b3edc23f3"
 
 [metadata.files]
 appdirs = [

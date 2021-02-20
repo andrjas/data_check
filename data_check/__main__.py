@@ -2,9 +2,9 @@ import click
 from pathlib import Path
 import sys
 from colorama import init
+from importlib_metadata import version
 
 from data_check.data_check import DataCheck
-from data_check import __version__ as data_check_version
 
 
 def select_connection(connection, config) -> str:
@@ -46,7 +46,7 @@ def select_connection(connection, config) -> str:
 @click.option("--ping", is_flag=True, help="tries to connect to the database")
 @click.option("--verbose", is_flag=True, help="print verbose output")
 @click.option("--traceback", is_flag=True, help="print traceback output for debugging")
-@click.version_option(version=data_check_version)
+@click.version_option(version=version("data-check"))
 @click.argument("files", nargs=-1, type=click.Path())
 def main(
     connection=None,
