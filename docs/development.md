@@ -1,21 +1,14 @@
 # Development
 
-To set up a development environment initially:
+[poetry](https://python-poetry.org/) must be installed first for development.
+
+To set up a development environment initially with poetry:
 
 ```bash
-# create a virtual environment for development in another folder
-python3 -m venv data_check_dev
-
-# activate the virtual environment
-source data_check_dev/bin/activate
-
-# install the requirements and data_check in editable mode
-python3 -m pip install -r requirements.txt
-python3 -m pip install -r dependencies/requirements-dev.txt
-python3 -m pip install -e .
+poetry install
 ```
 
-Later, just activate the virtual environment: `source data_check_dev/bin/activate`
+Later, just activate the virtual environment: `poetry shell`
 
 Please use [Black](https://github.com/psf/black) to format the code before committing any change: `black data_check`
 
@@ -29,7 +22,7 @@ data_check has two layers of tests:
 
 For unit tests an in-memory SQLite database that is integrated into Python is used.
 
-Run `pytest` to execute the unit tests.
+Run `pytest` inside the virtual environment to execute the unit tests.
 
 ### Integration tests
 
