@@ -10,6 +10,10 @@
 - colored output
 - overall result output
 
+### Changed
+
+- using poetry for packaging
+
 ### Fixed
 
 - SettingWithCopyWarning from pandas when using --print with a failing test

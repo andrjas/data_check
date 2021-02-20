@@ -8,18 +8,11 @@ USER data_check
 WORKDIR /app
 ENV PATH="/home/data_check/.local/bin/:${PATH}"
 
-COPY --chown=data_check requirements.txt .
-COPY --chown=data_check dependencies/requirements-dev.txt .
-COPY --chown=data_check dependencies/requirements-mysql.txt .
-
-
-RUN python3 -m pip install --user --no-cache-dir -r requirements.txt && \
-    python3 -m pip install --user --no-cache-dir -r requirements-dev.txt && \
-    python3 -m pip install --user --no-cache-dir -r requirements-mysql.txt
+RUN python3 -m pip install --user poetry pytest
 
 COPY --chown=data_check . .
 COPY --chown=data_check int_test/scripts .
 
-RUN python3 -m pip install --user -e .
+RUN poetry build && python3 -m pip install --user ".[mysql]"
 
 CMD ["sh", "-c", "/app/run_tests.sh mysql"]
