@@ -11,11 +11,15 @@ You should then be able to run `data_check`.
 
 To run data_check next time in a new terminal you must just activate the virtual environment.
 
+Note: While the tool is called 'data_check' the package that you install is called 'data-check'.
+
 ## With pipx
 
 The easiest way to install data_check is to use [pipx](https://github.com/pipxproject/pipx):
 
-`pipx install data_check`
+`pipx install data-check`
+
+To upgrade data_check via pipx: `pipx upgrade data-check`
 
 ## With Anaconda/Miniconda
 
@@ -33,7 +37,9 @@ and install pip:
 
 Install data_check via pip:
 
-`python3 -m pip install data_check`
+`python3 -m pip install data-check`
+
+To upgrade data_check in the conda environment: `python3 -m pip install data-check --upgrade`
 
 ### With venv
 
@@ -50,7 +56,9 @@ The [Python documentation](https://docs.python.org/3/library/venv.html) has more
 
 Install data_check via pip:
 
-`python3 -m pip install data_check`
+`python3 -m pip install data-check`
+
+To upgrade data_check in the virtual environment: `python3 -m pip install data-check --upgrade`
 
 ## Databases
 
@@ -65,14 +73,14 @@ Some drivers need additional dependencies. Here are the drivers used for [testin
 
 `psycopg2-binary` should work on most systems without any additional dependencies.
 
-You can use `data_check[postgres]` to install data_check directly with `psycopg2-binary`: 
-e.g. with pipx: `pipx install data_check[postgres]`
+You can use `data-check[postgres]` to install data_check directly with `psycopg2-binary`: 
+e.g. with pipx: `pipx install data-check[postgres]`
 
 ### MySQL/MariaDB
 
 `PyMySQL` as described in [https://pypi.org/project/PyMySQL/](https://pypi.org/project/PyMySQL/) with additional cryptography dependencies.
 
-Use `pipx install data_check[mysql]` to install data_check with `PyMySQL[rsa]`.
+Use `pipx install data-check[mysql]` to install data_check with `PyMySQL[rsa]`.
 
 ### Microsoft SQL Server
 
@@ -81,10 +89,10 @@ Use `pipx install data_check[mysql]` to install data_check with `PyMySQL[rsa]`.
 Additionally you must install the
 [Microsoft ODBC driver for SQL Server](https://docs.microsoft.com/en-us/sql/connect/odbc/microsoft-odbc-driver-for-sql-server) on your system.
 
-Use `pipx install data_check[mssql]` to install data_check with `pyodbc`.
+Use `pipx install data-check[mssql]` to install data_check with `pyodbc`.
 
 ### Oracle
 
 `cx_Oracle` needs Oracle client libraries to work. [https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html](https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html) shows how to install them.
 
-Use `pipx install data_check[oracle]` to install data_check with `cx_Oracle`.
+Use `pipx install data-check[oracle]` to install data_check with `cx_Oracle`.
