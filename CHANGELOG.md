@@ -9,6 +9,7 @@
 - -g argument as an alias for --generate
 - colored output
 - overall result output
+- teardown script for integration tests
 
 ### Changed
 
