@@ -39,6 +39,7 @@ pyodbc = {version = "~4.0.30", optional = true}
 [tool.poetry.dev-dependencies]
 pytest = "~6.2.1"
 black = "~20.8b1"
+flake8 = "^3.8.4"
 
 [tool.poetry.scripts]
 data_check = "data_check.__main__:main"
