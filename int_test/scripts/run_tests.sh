@@ -27,7 +27,7 @@ if ! data_check --gen; then
 fi
 
 echo "testing posivite run"
-if ! data_check checks/basic checks/generated; then
+if ! data_check checks/basic checks/generated --traceback; then
     result=1
 fi
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # 
 
 if [ "$(basename "${PWD}")" == 'mysql' ]; then

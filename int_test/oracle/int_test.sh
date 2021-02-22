@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # You need Oracle 18c XE to run this integration test. This requires some manual steps:
 # - download oracle-database-xe-18c-1.0-1.x86_64.rpm from https://www.oracle.com/database/technologies/xe-downloads.html
 # - git clone https://github.com/oracle/docker-images.git

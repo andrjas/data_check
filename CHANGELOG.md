@@ -14,6 +14,7 @@
 ### Changed
 
 - using poetry for packaging
+- failing integration test when any command fails
 
 ### Fixed
 
