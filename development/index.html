@@ -101,26 +101,18 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="development">Development</h1>
-<p>To set up a development environment initially:</p>
-<pre><code class="language-bash"># create a virtual environment for development in another folder
-python3 -m venv data_check_dev
-
-# activate the virtual environment
-source data_check_dev/bin/activate
-
-# install the requirements and data_check in editable mode
-python3 -m pip install -r requirements.txt
-python3 -m pip install -r dependencies/requirements-dev.txt
-python3 -m pip install -e .
+<p><a href="https://python-poetry.org/">poetry</a> must be installed first for development.</p>
+<p>To set up a development environment initially with poetry:</p>
+<pre><code class="language-bash">poetry install
 </code></pre>
-<p>Later, just activate the virtual environment: <code>source data_check_dev/bin/activate</code></p>
+<p>Later, just activate the virtual environment: <code>poetry shell</code></p>
 <p>Please use <a href="https://github.com/psf/black">Black</a> to format the code before committing any change: <code>black data_check</code></p>
 <h2 id="testing">Testing</h2>
 <p>data_check has two layers of tests:</p>
 <h3 id="unit-tests">Unit tests</h3>
 <p><a href="https://pytest.org/">pytest</a> is used for unit testing. There are two types of test for data_check in the <em>test</em> folder: Basic tests for the code and tests against a database.</p>
 <p>For unit tests an in-memory SQLite database that is integrated into Python is used.</p>
-<p>Run <code>pytest</code> to execute the unit tests.</p>
+<p>Run <code>pytest</code> inside the virtual environment to execute the unit tests.</p>
 <h3 id="integration-tests">Integration tests</h3>
 <p>Integration tests are using specific databases and run unit tests and data_check test against this database.</p>
 <p>There are currently four databases used for integration tests:</p>

@@ -118,9 +118,11 @@
 </ul>
 <p>You should then be able to run <code>data_check</code>.</p>
 <p>To run data_check next time in a new terminal you must just activate the virtual environment.</p>
+<p>Note: While the tool is called 'data_check' the package that you install is called 'data-check'.</p>
 <h2 id="with-pipx">With pipx</h2>
 <p>The easiest way to install data_check is to use <a href="https://github.com/pipxproject/pipx">pipx</a>:</p>
-<p><code>pipx install data_check</code></p>
+<p><code>pipx install data-check</code></p>
+<p>To upgrade data_check via pipx: <code>pipx upgrade data-check</code></p>
 <h2 id="with-anacondaminiconda">With Anaconda/Miniconda</h2>
 <p>Create a new conda environment:</p>
 <p><code>conda create --name data_check python=3.8</code></p>
@@ -129,7 +131,8 @@
 <p>and install pip:</p>
 <p><code>conda install pip</code></p>
 <p>Install data_check via pip:</p>
-<p><code>python3 -m pip install data_check</code></p>
+<p><code>python3 -m pip install data-check</code></p>
+<p>To upgrade data_check in the conda environment: <code>python3 -m pip install data-check --upgrade</code></p>
 <h3 id="with-venv">With venv</h3>
 <p>Create a virtual environment (<code>&lt;venv&gt;</code> point to a relative or absolute path, e.g. c:\venvs\data_check)</p>
 <p><code>python3 -m venv &lt;venv&gt;</code></p>
@@ -138,7 +141,8 @@
 PowerShell: <code>&lt;venv&gt;\Scripts\Activate.ps1</code></p>
 <p>The <a href="https://docs.python.org/3/library/venv.html">Python documentation</a> has more options how to enable a virtual environment.</p>
 <p>Install data_check via pip:</p>
-<p><code>python3 -m pip install data_check</code></p>
+<p><code>python3 -m pip install data-check</code></p>
+<p>To upgrade data_check in the virtual environment: <code>python3 -m pip install data-check --upgrade</code></p>
 <h2 id="databases">Databases</h2>
 <p>Installing data_check alone will only support SQLite, which is bundled with Python. You need additional drivers for other databases. See <a href="https://docs.sqlalchemy.org/en/13/dialects/index.html">https://docs.sqlalchemy.org/en/13/dialects/index.html</a> for all possible drivers and how to install them.</p>
 <p>With pipx you can install the drivers with <code>pipx inject data-check &lt;drivername&gt;</code> (watch the minus sign in <em>data-check</em> instead of the underscore).
@@ -146,19 +150,19 @@ In a virtual environment you just activate the environment and run <code>pip ins
 <p>Some drivers need additional dependencies. Here are the drivers used for <a href="../development/#testing">testing</a> data_check:</p>
 <h3 id="postgresql">PostgreSQL</h3>
 <p><code>psycopg2-binary</code> should work on most systems without any additional dependencies.</p>
-<p>You can use <code>data_check[postgres]</code> to install data_check directly with <code>psycopg2-binary</code>: 
-e.g. with pipx: <code>pipx install data_check[postgres]</code></p>
+<p>You can use <code>data-check[postgres]</code> to install data_check directly with <code>psycopg2-binary</code>: 
+e.g. with pipx: <code>pipx install data-check[postgres]</code></p>
 <h3 id="mysqlmariadb">MySQL/MariaDB</h3>
 <p><code>PyMySQL</code> as described in <a href="https://pypi.org/project/PyMySQL/">https://pypi.org/project/PyMySQL/</a> with additional cryptography dependencies.</p>
-<p>Use <code>pipx install data_check[mysql]</code> to install data_check with <code>PyMySQL[rsa]</code>.</p>
+<p>Use <code>pipx install data-check[mysql]</code> to install data_check with <code>PyMySQL[rsa]</code>.</p>
 <h3 id="microsoft-sql-server">Microsoft SQL Server</h3>
 <p><code>pyodbc</code> needs unixodbc and the development package (unixodbc-dev) on Linux.</p>
 <p>Additionally you must install the
 <a href="https://docs.microsoft.com/en-us/sql/connect/odbc/microsoft-odbc-driver-for-sql-server">Microsoft ODBC driver for SQL Server</a> on your system.</p>
-<p>Use <code>pipx install data_check[mssql]</code> to install data_check with <code>pyodbc</code>.</p>
+<p>Use <code>pipx install data-check[mssql]</code> to install data_check with <code>pyodbc</code>.</p>
 <h3 id="oracle">Oracle</h3>
 <p><code>cx_Oracle</code> needs Oracle client libraries to work. <a href="https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html">https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html</a> shows how to install them.</p>
-<p>Use <code>pipx install data_check[oracle]</code> to install data_check with <code>cx_Oracle</code>.</p></div>
+<p>Use <code>pipx install data-check[oracle]</code> to install data_check with <code>cx_Oracle</code>.</p></div>
             </div>
         </div>
 
