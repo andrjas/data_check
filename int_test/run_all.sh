@@ -8,7 +8,7 @@ cd "$(dirname "$0")" || exit 1
 
 failed_tests=""
 
-for test in mssql mysql oracle postgres;
+for test in postgres mysql mssql oracle ;
 do
     cd "$test" || exit 1
     if ! ./int_test.sh; then
