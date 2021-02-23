@@ -13,7 +13,7 @@
 
 ### Changed
 
-- using poetry for packaging
+- using poetry for packaging and integration tests
 - failing integration test when any command fails
 
 ### Fixed
