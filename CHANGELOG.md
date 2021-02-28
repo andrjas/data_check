@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [0.2.1] - 2021-02-28
+
 ### Fixed
 
 - colored output on PowerShell
