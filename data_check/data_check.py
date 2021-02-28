@@ -84,7 +84,7 @@ class DataCheck:
         """
         return sql_file.parent / (sql_file.stem + ".csv")
 
-    def print_failed(self, df: pd.DataFrame):
+    def print_failed(self, df: pd.DataFrame) -> str:
         """
         Prints a DataFrame with diff information and returns it as a string.
         """
@@ -92,7 +92,7 @@ class DataCheck:
             df["_diff"] = ""
             df.loc[df._merge == "left_only", ["_diff"]] = "db"
             df.loc[df._merge == "right_only", ["_diff"]] = "expected"
-            return df.drop(["_merge"], axis=1)
+            return str(df.drop(["_merge"], axis=1))
 
     def merge_results(
         self, sql_result: DataFrame, expect_result: DataFrame
