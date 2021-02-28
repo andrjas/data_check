@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- colored output on PowerShell
+
 ## [0.2.0] - 2021-02-23
 
 ### Added

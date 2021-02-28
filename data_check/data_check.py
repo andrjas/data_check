@@ -7,6 +7,7 @@ import concurrent.futures
 from sqlalchemy import create_engine
 import traceback
 from colorama import Fore, Style
+from os import linesep
 
 
 class DataCheckException(Exception):
@@ -22,9 +23,12 @@ class DataCheckResult:
     Wrapper class holding the result of a test run.
     """
 
-    def __init__(self, passed: bool, result: Union[pd.DataFrame, str]):
+    def __init__(
+        self, passed: bool, result: Union[pd.DataFrame, str], message: str = ""
+    ):
         self.passed = passed
         self.result = result
+        self.message = message
 
     def __bool__(self):
         return self.passed
@@ -82,13 +86,13 @@ class DataCheck:
 
     def print_failed(self, df: pd.DataFrame):
         """
-        Prints a DataFrame with diff information.
+        Prints a DataFrame with diff information and returns it as a string.
         """
         with pd.option_context("display.max_rows", None, "display.max_columns", None):
             df["_diff"] = ""
             df.loc[df._merge == "left_only", ["_diff"]] = "db"
             df.loc[df._merge == "right_only", ["_diff"]] = "expected"
-            print(df.drop(["_merge"], axis=1))
+            return df.drop(["_merge"], axis=1)
 
     def merge_results(
         self, sql_result: DataFrame, expect_result: DataFrame
@@ -134,22 +138,26 @@ class DataCheck:
         expect_file = self.get_expect_file(sql_file)
         if not expect_file.exists():
             warn = self.str_warn("NO EXPECTED RESULTS FILE")
-            print(f"{sql_file}: {warn}")
+            message = f"{sql_file}: {warn}"
             return DataCheckResult(
-                passed=False, result=f"{sql_file}: NO EXPECTED RESULTS FILE"
+                passed=False,
+                result=f"{sql_file}: NO EXPECTED RESULTS FILE",
+                message=message,
             )  # no need to run queries, if no expected results found
 
         try:
             sql_result = self.run_query(sql_file.read_text(encoding="UTF-8"))
         except Exception as exc:
             fail = self.str_fail(f"FAILED (with exception in {sql_file})")
-            print(f"{sql_file}: {fail}")
+            message = f"{sql_file}: {fail}"
             if self.verbose:
-                print(exc)
+                message += linesep + str(exc)
             if self.traceback:
-                traceback.print_exc()
+                message += linesep + traceback.format_exc()
             return DataCheckResult(
-                passed=False, result=f"{sql_file} generated an exception: {exc}"
+                passed=False,
+                result=f"{sql_file} generated an exception: {exc}",
+                message=message,
             )
 
         try:
@@ -164,13 +172,15 @@ class DataCheck:
             )
         except Exception as exc_csv:
             fail = self.str_fail(f"FAILED (with exception in {expect_file})")
-            print(f"{sql_file}: {fail}")
+            message = f"{sql_file}: {fail}"
             if self.verbose:
-                print(exc_csv)
+                message += linesep + str(exc_csv)
             if self.traceback:
-                traceback.print_exc()
+                message += linesep + traceback.format_exc()
             return DataCheckResult(
-                passed=False, result=f"{expect_file} generated an exception: {exc_csv}"
+                passed=False,
+                result=f"{expect_file} generated an exception: {exc_csv}",
+                message=message,
             )
 
         # replace missing values and None with pd.NA
@@ -182,19 +192,19 @@ class DataCheck:
 
         if len(df_diff) != 0:
             failed = self.str_fail("FAILED")
-            print(f"{sql_file}: {failed}")
+            message = f"{sql_file}: {failed}"
             if print_failed:
-                self.print_failed(df_diff.copy())
+                message += linesep + self.print_failed(df_diff.copy())
             passed = False
         else:
             passed_msg = self.str_pass("PASSED")
-            print(f"{sql_file}: {passed_msg}")
+            message = f"{sql_file}: {passed_msg}"
             passed = True
 
         if return_all:
-            return DataCheckResult(passed=passed, result=df_merged)
+            return DataCheckResult(passed=passed, result=df_merged, message=message)
         else:
-            return DataCheckResult(passed=passed, result=df_diff)
+            return DataCheckResult(passed=passed, result=df_diff, message=message)
 
     def expand_files(self, files: List[Path]) -> List[Path]:
         """
@@ -223,7 +233,9 @@ class DataCheck:
         ]
         results = []
         for future in concurrent.futures.as_completed(result_futures):
-            results.append(future.result())
+            dc_result = future.result()
+            results.append(dc_result)
+            print(dc_result.message)
 
         overall_result = all(results)
         overall_result_msg = (
