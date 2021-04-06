@@ -17,7 +17,7 @@ fi
 
 # then the integration tests
 cd "int_test/${DB}" || exit 1
-if ! poetry run pytest ../../test; then
+if ! poetry run pytest ../../test/test_database.py ../../test/test_data_check.py; then
     result=1
 fi
 
