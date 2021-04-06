@@ -30,6 +30,13 @@ def select_connection(connection, config) -> str:
 )
 @click.option("--print", "print_failed", is_flag=True, help="print failed results")
 @click.option(
+    "--print-format",
+    "print_format",
+    type=str,
+    default="pandas",
+    help="format for printing failed results (pandas, csv)",
+)
+@click.option(
     "--gen",
     "--generate",
     "-g",
@@ -52,6 +59,7 @@ def main(
     connection=None,
     workers=4,
     print_failed=False,
+    print_format="pandas",
     generate_expectations=False,
     config="data_check.yml",
     ping=False,
@@ -88,7 +96,7 @@ def main(
             click.echo("connecting failed")
             sys.exit(1)
     else:
-        result = dc.run(path_list, print_failed=print_failed)
+        result = dc.run(path_list, print_failed=print_failed, print_format=print_format)
         if not result:
             sys.exit(1)
 

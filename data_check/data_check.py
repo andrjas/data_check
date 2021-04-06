@@ -84,7 +84,7 @@ class DataCheck:
         """
         return sql_file.parent / (sql_file.stem + ".csv")
 
-    def print_failed(self, df: pd.DataFrame) -> str:
+    def print_failed(self, df: pd.DataFrame, print_format="pandas") -> str:
         """
         Prints a DataFrame with diff information and returns it as a string.
         """
@@ -92,7 +92,12 @@ class DataCheck:
             df["_diff"] = ""
             df.loc[df._merge == "left_only", ["_diff"]] = "db"
             df.loc[df._merge == "right_only", ["_diff"]] = "expected"
-            return str(df.drop(["_merge"], axis=1))
+            if print_format == "pandas":
+                return str(df.drop(["_merge"], axis=1))
+            elif print_format.lower() == "csv":
+                return df.drop(["_merge"], axis=1).to_csv(index=False)
+            else:
+                raise DataCheckException(f"unknown print format: {print_format}")
 
     def merge_results(
         self, sql_result: DataFrame, expect_result: DataFrame
@@ -126,7 +131,11 @@ class DataCheck:
         return Fore.RED + string + Style.RESET_ALL
 
     def run_test(
-        self, sql_file: Path, return_all=False, print_failed=False
+        self,
+        sql_file: Path,
+        return_all=False,
+        print_failed=False,
+        print_format="pandas",
     ) -> DataCheckResult:
         """
         Run a data_check test on a single input file.
@@ -194,7 +203,7 @@ class DataCheck:
             failed = self.str_fail("FAILED")
             message = f"{sql_file}: {failed}"
             if print_failed:
-                message += linesep + self.print_failed(df_diff.copy())
+                message += linesep + self.print_failed(df_diff.copy(), print_format)
             passed = False
         else:
             passed_msg = self.str_pass("PASSED")
@@ -221,14 +230,16 @@ class DataCheck:
                 raise Exception(f"unexpected path: {f}")
         return result
 
-    def run(self, files: List[Path], print_failed=False) -> bool:
+    def run(self, files: List[Path], print_failed=False, print_format="pandas") -> bool:
         """
         Runs a data_check test for all element in the list in parallel.
         Returns True, if all calls returned True, otherweise False.
         """
         all_files = self.expand_files(files)
         result_futures = [
-            self.executor.submit(self.run_test, f, print_failed=print_failed)
+            self.executor.submit(
+                self.run_test, f, print_failed=print_failed, print_format=print_format
+            )
             for f in all_files
         ]
         results = []
