@@ -232,10 +232,28 @@ class DataCheck:
 
     def run(self, files: List[Path], print_failed=False, print_format="pandas") -> bool:
         """
-        Runs a data_check test for all element in the list in parallel.
+        Runs a data_check test for all element in the list.
         Returns True, if all calls returned True, otherweise False.
         """
         all_files = self.expand_files(files)
+        if self.workers == 1 or len(all_files) == 1:
+            results = self.run_serial(all_files, print_failed, print_format)
+        else:
+            results = self.run_parallel(all_files, print_failed, print_format)
+
+        overall_result = all(results)
+        overall_result_msg = (
+            self.str_pass("PASSED") if overall_result else self.str_fail("FAILED")
+        )
+        print("")
+        print(f"overall result: {overall_result_msg}")
+        return overall_result
+
+    def run_parallel(self, all_files, print_failed, print_format):
+        """
+        Runs all tests in parallel.
+        Returns a list of the results
+        """
         result_futures = [
             self.executor.submit(
                 self.run_test, f, print_failed=print_failed, print_format=print_format
@@ -247,14 +265,21 @@ class DataCheck:
             dc_result = future.result()
             results.append(dc_result)
             print(dc_result.message)
+        return results
 
-        overall_result = all(results)
-        overall_result_msg = (
-            self.str_pass("PASSED") if overall_result else self.str_fail("FAILED")
-        )
-        print("")
-        print(f"overall result: {overall_result_msg}")
-        return overall_result
+    def run_serial(self, all_files, print_failed, print_format):
+        """
+        Runs all tests in serial.
+        Returns a list of the results
+        """
+        results = []
+        for f in all_files:
+            dc_result = self.run_test(
+                f, print_failed=print_failed, print_format=print_format
+            )
+            results.append(dc_result)
+            print(dc_result.message)
+        return results
 
     def gen_expectation(self, sql_file: Path):
         """
