@@ -18,4 +18,6 @@ COPY --chown=data_check . .
 COPY --chown=data_check int_test/scripts .
 RUN poetry install
 
+ENV POSTGRES_PWD="data_check"
+
 CMD ["sh", "-c", "/app/run_tests.sh postgres"]

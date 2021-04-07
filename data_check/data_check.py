@@ -7,7 +7,7 @@ import concurrent.futures
 from sqlalchemy import create_engine
 import traceback
 from colorama import Fore, Style
-from os import linesep
+from os import linesep, path
 
 
 class DataCheckException(Exception):
@@ -64,11 +64,13 @@ class DataCheck:
         else:
             return {}
 
-    def get_engine(self):
+    def get_engine(self, extra_params={}):
         """
         Return the database engine for the connection.
         """
-        return create_engine(self.connection, **self.get_db_params())
+        return create_engine(
+            path.expandvars(self.connection), **{**self.get_db_params(), **extra_params}
+        )
 
     def run_query(self, query: str) -> pd.DataFrame:
         """
@@ -306,9 +308,7 @@ class DataCheck:
         Returns True if we can connect to the database.
         Mainly for integration tests.
         """
-        engine = create_engine(
-            self.connection, **{**self.get_db_params(), **{"pool_pre_ping": True}}
-        )
+        engine = self.get_engine(extra_params={"pool_pre_ping": True})
         try:
             engine.connect()
             return True

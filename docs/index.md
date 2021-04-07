@@ -36,7 +36,7 @@ connections:
     con: connection-string
 ```
 
-Under _connections_ you can put multiple [connection strings](https://docs.sqlalchemy.org/en/13/core/engines.html) with names. _default_connection_ is the connection name that data_check uses when no additional arguments are given.
+Under _connections_ you can put multiple [connection strings](https://docs.sqlalchemy.org/en/13/core/engines.html) with names. _default_connection_ is the connection name that data_check uses when no additional arguments are given. You can also use environment variables in the connection string to store the credentials outside data_check.yml (e.g. `postgresql://postgres:${POSTGRES_PWD}@db:5432`).
 
 ## Test files
 
