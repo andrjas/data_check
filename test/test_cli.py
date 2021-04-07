@@ -114,6 +114,19 @@ def test_print_format_csv():
     assert "check1,_diff" in e.value.output
 
 
+def test_print_csv():
+    with pytest.raises(CalledProcessError) as e:
+        run(
+            [
+                "data_check",
+                "--print-csv",
+                "checks/failing/expected_to_fail.sql",
+            ]
+        )
+    assert_failed(e.value.output)
+    assert "check1,_diff" in e.value.output
+
+
 def test_print_format_pandas():
     with pytest.raises(CalledProcessError) as e:
         run(

@@ -8,6 +8,7 @@
 - dont start executor pool, when a single file or --workers=1
 - CLI tests
 - --force to overwrite files when generating
+- --print-csv as shortcut for "--print --print-format csv"
 
 ### Fixed
 

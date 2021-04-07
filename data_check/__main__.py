@@ -37,6 +37,12 @@ def select_connection(connection, config) -> str:
     help="format for printing failed results (pandas, csv)",
 )
 @click.option(
+    "--print-csv",
+    "print_csv",
+    is_flag=True,
+    help="shortcut for --print --print-format csv",
+)
+@click.option(
     "--gen",
     "--generate",
     "-g",
@@ -65,6 +71,7 @@ def main(
     workers=4,
     print_failed=False,
     print_format="pandas",
+    print_csv=False,
     generate_expectations=False,
     force=False,
     config="data_check.yml",
@@ -74,6 +81,10 @@ def main(
     files=[],
 ):
     """ FILES: list of checks files or folders"""
+
+    if print_csv:
+        print_failed = True
+        print_format = "csv"
 
     init()  # init colorama
 
