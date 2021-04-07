@@ -8,7 +8,7 @@ data_check should work with any database that works with [SQLAlchemy](https://do
 
 You need Python 3.6 or above to run data_check. The easiest way to install data_check is via [pipx](https://github.com/pipxproject/pipx):
 
-`pipx install data_check`
+`pipx install data-check`
 
 The data_check Git repository is also a sample data_check project. Clone the repository, switch to the folder and run data_check:
 
