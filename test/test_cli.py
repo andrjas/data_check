@@ -70,9 +70,11 @@ def test_connection():
     assert_passed(out)
 
 
-@pytest.mark.skip
 def test_unknown_connection():
-    pass
+    with pytest.raises(CalledProcessError) as e:
+        run_check(["data_check", "--connection", "unknown"])
+
+    assert "unknown connection: unknown" in e.value.output
 
 
 def test_n():

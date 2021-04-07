@@ -8,10 +8,11 @@
 -  dont start executor pool, when a single file or --workers=1
 - CLI tests
 
+### Fixed
+
+- stop immediately when using unknown connection
 
 ## [0.2.1] - 2021-02-28
-
-### Fixed
 
 - colored output on PowerShell
 

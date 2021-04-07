@@ -74,6 +74,10 @@ def main(
     config = DataCheck.read_config(Path(config))
     selected_connection = select_connection(connection, config)
 
+    if not selected_connection:
+        click.echo(f"unknown connection: {connection}")
+        sys.exit(1)
+
     dc = DataCheck(
         connection=selected_connection,
         workers=workers,
