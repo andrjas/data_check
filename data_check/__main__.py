@@ -45,6 +45,11 @@ def select_connection(connection, config) -> str:
     help="generate expectation files if they don't exist",
 )
 @click.option(
+    "--force",
+    is_flag=True,
+    help="when set, --generate will overwrite files",
+)
+@click.option(
     "--config",
     type=str,
     default="data_check.yml",
@@ -61,6 +66,7 @@ def main(
     print_failed=False,
     print_format="pandas",
     generate_expectations=False,
+    force=False,
     config="data_check.yml",
     ping=False,
     verbose=False,
@@ -90,7 +96,7 @@ def main(
     path_list = [Path(f) for f in files]
 
     if generate_expectations:
-        dc.generate_expectations(path_list)
+        dc.generate_expectations(path_list, force)
     elif ping:
         test = dc.test_connection()
         if test:

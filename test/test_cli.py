@@ -233,3 +233,40 @@ def test_generate():
     assert out.startswith(
         f"expectation written to checks{sep}generated{sep}generate_before_running.csv"
     )
+
+
+def test_generate_no_overwrite_without_force():
+    gen_csv = Path("checks/generated/generate_before_running.csv")
+    if gen_csv.exists():
+        os.unlink(gen_csv)
+    gen_csv.write_text("")
+    out = run(
+        ["data_check", "--generate", "checks/generated/generate_before_running.sql"]
+    )
+    assert gen_csv.exists()
+    assert gen_csv.read_text() == ""
+    os.unlink(gen_csv)
+    assert out.startswith(
+        f"expectation skipped for checks{sep}generated{sep}generate_before_running.csv"
+    )
+
+
+def test_generate_force():
+    gen_csv = Path("checks/generated/generate_before_running.csv")
+    if gen_csv.exists():
+        os.unlink(gen_csv)
+    gen_csv.write_text("")
+    out = run(
+        [
+            "data_check",
+            "--generate",
+            "--force",
+            "checks/generated/generate_before_running.sql",
+        ]
+    )
+    assert gen_csv.exists()
+    assert gen_csv.read_text() != ""
+    os.unlink(gen_csv)
+    assert out.startswith(
+        f"expectation written to checks{sep}generated{sep}generate_before_running.csv"
+    )

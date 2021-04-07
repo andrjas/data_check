@@ -7,6 +7,7 @@
 - --print-format to output failed data in csv instead of pandas format
 - dont start executor pool, when a single file or --workers=1
 - CLI tests
+- --force to overwrite files when generating
 
 ### Fixed
 
