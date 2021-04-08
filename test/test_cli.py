@@ -7,7 +7,7 @@ from os import sep
 
 
 def run(command):
-    return check_output(command, text=True)
+    return check_output(command, universal_newlines=True)
 
 
 def run_check(command):

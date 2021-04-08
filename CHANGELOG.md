@@ -15,6 +15,7 @@
 ### Fixed
 
 - stop immediately when using unknown connection
+- CLI tests for python 3.6
 
 ## [0.2.1] - 2021-02-28
 
