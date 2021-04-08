@@ -490,7 +490,7 @@ postgres = ["psycopg2-binary"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.1"
-content-hash = "5db7e83df647d057fe2681764e7a8d28623598c5a9cae75528baca4949745ab1"
+content-hash = "2d559c9e654e535574c88e90e36589d9e62adda81e92f2ce28bf249572a1feae"
 
 [metadata.files]
 appdirs = [
