@@ -20,7 +20,7 @@ data_check
 
 This will run the tests in the _checks_ folder using the default connection as set in data_check.yml.
 
-See the [documentation](https://andrjas.github.com/data_check) how to install data_check in different environments with additional database drivers and other usages of data_check.
+See the [documentation](https://andrjas.github.io/data_check) how to install data_check in different environments with additional database drivers and other usages of data_check.
 
 ## Project layout
 
@@ -34,4 +34,4 @@ data_check has a simple layout for projects: a single configuration file and a f
 
 ## Documentation
 
-See the [documentation](https://andrjas.github.com/data_check) how to setup data_check, how to create a new project and more options.
+See the [documentation](https://andrjas.github.io/data_check) how to setup data_check, how to create a new project and more options.
