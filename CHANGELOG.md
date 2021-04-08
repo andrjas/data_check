@@ -12,6 +12,11 @@
 - environment variables support for connection strings
 - simple jinja templating for SQL queries
 
+### Changed
+
+- upgraded dependencies
+- upgraded SQLAlchemy to 1.4
+
 ### Fixed
 
 - stop immediately when using unknown connection

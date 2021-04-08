@@ -65,11 +65,7 @@ class DataCheck:
         """
         Return parameter specific to a database.
         """
-        if "cx_oracle://" in self.connection or "oracle://" in self.connection:
-            # Fix to remove SAWarning. Should be removed with SQLAlchemy 1.4
-            return {"max_identifier_length": 128}
-        else:
-            return {}
+        return {}  # no special parameters needed for now
 
     def get_engine(self, extra_params={}):
         """
@@ -85,7 +81,8 @@ class DataCheck:
         """
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
-        return pd.read_sql(query, self.get_engine())
+        with self.get_engine().connect() as connection:
+            return pd.read_sql_query(query, connection)
 
     def get_expect_file(self, sql_file: Path) -> Path:
         """
