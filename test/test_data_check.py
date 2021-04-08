@@ -17,7 +17,9 @@ from data_check import DataCheck, DataCheckException  # noqa E402
 def dc() -> DataCheck:
     config = DataCheck.read_config()
     connection = config.get("connections", {}).get("test")
-    return DataCheck(connection)
+    _dc = DataCheck(connection)
+    _dc.load_template()
+    return _dc
 
 
 def test_read_config():
@@ -93,3 +95,13 @@ def test_run_invalid(dc):
 def test_test_connection(dc):
     test = dc.test_connection()
     assert test
+
+
+def test_read_sql_file_with_template(dc):
+    text = dc.read_sql_file(Path("checks/templates/template1.sql"))
+    assert "{{" not in text
+
+
+def test_template(dc):
+    result = dc.run([Path("checks/templates/template1.sql")])
+    assert result

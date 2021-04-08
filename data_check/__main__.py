@@ -101,6 +101,7 @@ def main(
         verbose=verbose,
         traceback=traceback,
     )
+    dc.load_template()
 
     if not files:
         files = ["checks"]  # use "checks" if nothing is given

@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 import traceback
 from colorama import Fore, Style
 from os import linesep, path
+from jinja2 import Template
 
 
 class DataCheckException(Exception):
@@ -49,6 +50,12 @@ class DataCheck:
         self.workers = workers
         self.verbose = verbose
         self.traceback = traceback
+        self.template_data = {}
+
+    def load_template(self):
+        template_yaml = Path("checks") / "template.yml"
+        if template_yaml.exists():
+            self.template_data = yaml.safe_load(template_yaml.open())
 
     @property
     def executor(self):
@@ -132,6 +139,15 @@ class DataCheck:
     def str_fail(string):
         return Fore.RED + string + Style.RESET_ALL
 
+    def read_sql_file(self, sql_file) -> str:
+        """
+        Reads the SQL file and returns it as a string.
+        Evaluates the templates when needed.
+        """
+        return Template(sql_file.read_text(encoding="UTF-8")).render(
+            **self.template_data
+        )
+
     def run_test(
         self,
         sql_file: Path,
@@ -157,7 +173,7 @@ class DataCheck:
             )  # no need to run queries, if no expected results found
 
         try:
-            sql_result = self.run_query(sql_file.read_text(encoding="UTF-8"))
+            sql_result = self.run_query(self.read_sql_file(sql_file))
         except Exception as exc:
             fail = self.str_fail(f"FAILED (with exception in {sql_file})")
             message = f"{sql_file}: {fail}"

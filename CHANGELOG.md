@@ -10,6 +10,7 @@
 - --force to overwrite files when generating
 - --print-csv as shortcut for "--print --print-format csv"
 - environment variables support for connection strings
+- simple jinja templating for SQL queries
 
 ### Fixed
 
