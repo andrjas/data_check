@@ -2,7 +2,7 @@
 
 data_check is a simple data validation tool. Write SQL queries and CSV files with the expected result sets and data_check will test the result sets against the queries.
 
-data_check should work with any database that works with [SQLAlchemy](https://docs.sqlalchemy.org/en/13/dialects/). Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.
+data_check should work with any database that works with [SQLAlchemy](https://docs.sqlalchemy.org/en/14/dialects/). Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.
 
 ## Why?
 
@@ -36,7 +36,7 @@ connections:
     con: connection-string
 ```
 
-Under _connections_ you can put multiple [connection strings](https://docs.sqlalchemy.org/en/13/core/engines.html) with names. _default_connection_ is the connection name that data_check uses when no additional arguments are given. You can also use environment variables in the connection string to store the credentials outside data_check.yml (e.g. `postgresql://postgres:${POSTGRES_PWD}@db:5432`).
+Under _connections_ you can put multiple [connection strings](https://docs.sqlalchemy.org/en/14/core/engines.html) with names. _default_connection_ is the connection name that data_check uses when no additional arguments are given. You can also use environment variables in the connection string to store the credentials outside data_check.yml (e.g. `postgresql://postgres:${POSTGRES_PWD}@db:5432`).
 
 ## Test files
 
@@ -46,4 +46,4 @@ Instead of writing the CSV files manually, you can also [generate](usage.md#gene
 
 ## How it works
 
-data_check uses [pandas](pandas.pydata.org/) and [SQLAlchemy](https://www.sqlalchemy.org/) internally. The SQL files are executed and converted to DataFrames. The CSV files are also parsed to DataFrames. Both DataFrames are then merged with a full outer join. If some rows differ, the test is considered as failed.
+data_check uses [pandas](https://pandas.pydata.org/) and [SQLAlchemy](https://www.sqlalchemy.org/) internally. The SQL files are executed and converted to DataFrames. The CSV files are also parsed to DataFrames. Both DataFrames are then merged with a full outer join. If some rows differ, the test is considered as failed.

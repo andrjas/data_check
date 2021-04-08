@@ -5,16 +5,19 @@
 * `data_check` - Run data_check agains the default connection in the _checks_ folder.
 * `data_check some_folder` - Run data_check agains the default connection in the _some_folder_ folder.
 * `data_check some_folder/some_file.sql` - Run data_check against the default connection for a single test.
-* `data_check -h/--help` - show this help message and exit.
 * `data_check -c/--connection CONNECTION` - use another connection than the default.
 * `data_check -n/--workers WORKERS` - use WORKERS threads to run the queries (default: 4).
 * `data_check --print` - print failed results data.
+* `data_check --print-format FORMAT` - format for printing failed results (pandas, csv).
+* `data_check --print-csv` - shortcut for "--print --print-format csv".
 * `data_check -g/--gen/--generate` - generate expectation files if they don't exist.
+* `data_check --force` - when set, --generate will overwrite files.
 * `data_check --config CONFIG` - config file to use (default: data_check.yml).
 * `data_check --ping` - tries to connect to the database.
-* `data_check --version` - print version and exit.
 * `data_check --verbose` - print verbose output.
 * `data_check --traceback` - print traceback output for debugging.
+* `data_check --version` - Show the version and exit.
+* `data_check --help` - show this help message and exit.
 
 ## Exit codes
 
@@ -26,6 +29,28 @@ __Exit code 1:__ At least one test failed.
 ## SQL file
 
 Each SQL file must contain a single SQL query. The query be run against the database, hence you must use the SQL dialect that the database in use understands.
+
+### Templates
+
+SQL files can contain Jinja2 templates. The templates are replaced with the values defined in _checks/template.yml_. Example:
+
+SQL file:
+```sql
+select '{{template_value}}' as test
+```
+
+_checks/template.yml_:
+```yaml
+template_value: ABC
+```
+
+CSV file:
+
+```csv
+test
+ABC
+```
+
 
 ## CSV format
 
