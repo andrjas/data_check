@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2021-04-09
+
 ### Added
 
 - --print-format to output failed data in csv instead of pandas format
