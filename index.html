@@ -122,7 +122,7 @@
 
 <h1 id="welcome-to-data_check">Welcome to data_check</h1>
 <p>data_check is a simple data validation tool. Write SQL queries and CSV files with the expected result sets and data_check will test the result sets against the queries.</p>
-<p>data_check should work with any database that works with <a href="https://docs.sqlalchemy.org/en/13/dialects/">SQLAlchemy</a>. Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.</p>
+<p>data_check should work with any database that works with <a href="https://docs.sqlalchemy.org/en/14/dialects/">SQLAlchemy</a>. Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.</p>
 <h2 id="why">Why?</h2>
 <p>data_check tries to solve a simple problem in data domains: during development you create multiple SQL queries to validate your data and compare the result manually. With data_check you can organize your data tests and run them automatically, for example in a CI pipeline.</p>
 <h2 id="how-to-get-started">How to get started</h2>
@@ -144,12 +144,12 @@ This is a simple YAML file:</p>
 connections:
     con: connection-string
 </code></pre>
-<p>Under <em>connections</em> you can put multiple <a href="https://docs.sqlalchemy.org/en/13/core/engines.html">connection strings</a> with names. <em>default_connection</em> is the connection name that data_check uses when no additional arguments are given.</p>
+<p>Under <em>connections</em> you can put multiple <a href="https://docs.sqlalchemy.org/en/14/core/engines.html">connection strings</a> with names. <em>default_connection</em> is the connection name that data_check uses when no additional arguments are given. You can also use environment variables in the connection string to store the credentials outside data_check.yml (e.g. <code>postgresql://postgres:${POSTGRES_PWD}@db:5432</code>).</p>
 <h2 id="test-files">Test files</h2>
 <p>The test files are organized in the <em>checks</em> folder and its subfolders. data_check will run the queries for each SQL file in these folders and compare the results with the corresponding CSV files. The CSV file must be named exactly like the SQL file, only with different file endings.</p>
 <p>Instead of writing the CSV files manually, you can also <a href="usage/#generating-expectation-files">generate</a> them from the SQL files.</p>
 <h2 id="how-it-works">How it works</h2>
-<p>data_check uses <a href="pandas.pydata.org/">pandas</a> and <a href="https://www.sqlalchemy.org/">SQLAlchemy</a> internally. The SQL files are executed and converted to DataFrames. The CSV files are also parsed to DataFrames. Both DataFrames are then merged with a full outer join. If some rows differ, the test is considered as failed.</p></div>
+<p>data_check uses <a href="https://pandas.pydata.org/">pandas</a> and <a href="https://www.sqlalchemy.org/">SQLAlchemy</a> internally. The SQL files are executed and converted to DataFrames. The CSV files are also parsed to DataFrames. Both DataFrames are then merged with a full outer join. If some rows differ, the test is considered as failed.</p></div>
             </div>
         </div>
 
@@ -233,5 +233,5 @@ connections:
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-02-23 20:28:47.067961+00:00
+Build Date UTC : 2021-04-09 02:02:52.981993+00:00
 -->

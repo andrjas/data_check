@@ -122,16 +122,19 @@
 <li><code>data_check</code> - Run data_check agains the default connection in the <em>checks</em> folder.</li>
 <li><code>data_check some_folder</code> - Run data_check agains the default connection in the <em>some_folder</em> folder.</li>
 <li><code>data_check some_folder/some_file.sql</code> - Run data_check against the default connection for a single test.</li>
-<li><code>data_check -h/--help</code> - show this help message and exit.</li>
 <li><code>data_check -c/--connection CONNECTION</code> - use another connection than the default.</li>
 <li><code>data_check -n/--workers WORKERS</code> - use WORKERS threads to run the queries (default: 4).</li>
 <li><code>data_check --print</code> - print failed results data.</li>
+<li><code>data_check --print-format FORMAT</code> - format for printing failed results (pandas, csv).</li>
+<li><code>data_check --print-csv</code> - shortcut for "--print --print-format csv".</li>
 <li><code>data_check -g/--gen/--generate</code> - generate expectation files if they don't exist.</li>
+<li><code>data_check --force</code> - when set, --generate will overwrite files.</li>
 <li><code>data_check --config CONFIG</code> - config file to use (default: data_check.yml).</li>
 <li><code>data_check --ping</code> - tries to connect to the database.</li>
-<li><code>data_check --version</code> - print version and exit.</li>
 <li><code>data_check --verbose</code> - print verbose output.</li>
 <li><code>data_check --traceback</code> - print traceback output for debugging.</li>
+<li><code>data_check --version</code> - Show the version and exit.</li>
+<li><code>data_check --help</code> - show this help message and exit.</li>
 </ul>
 <h2 id="exit-codes">Exit codes</h2>
 <p>Possible exit codes:</p>
@@ -139,6 +142,18 @@
 <strong>Exit code 1:</strong> At least one test failed.</p>
 <h2 id="sql-file">SQL file</h2>
 <p>Each SQL file must contain a single SQL query. The query be run against the database, hence you must use the SQL dialect that the database in use understands.</p>
+<h3 id="templates">Templates</h3>
+<p>SQL files can contain Jinja2 templates. The templates are replaced with the values defined in <em>checks/template.yml</em>. Example:</p>
+<p>SQL file:</p>
+<pre><code class="language-sql">select '{{template_value}}' as test
+</code></pre>
+<p><em>checks/template.yml</em>:</p>
+<pre><code class="language-yaml">template_value: ABC
+</code></pre>
+<p>CSV file:</p>
+<pre><code class="language-csv">test
+ABC
+</code></pre>
 <h2 id="csv-format">CSV format</h2>
 <p>data_check uses a pretty basic CSV format. Each column is separated by a comma without any space around them.
 The first line must contain a header. The columns must match the columns in the SQL file. </p>
