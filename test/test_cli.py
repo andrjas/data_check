@@ -88,7 +88,7 @@ def test_workers():
 
 
 def test_workers_invalid_number():
-    with pytest.raises(CalledProcessError) as e:
+    with pytest.raises(CalledProcessError):
         run_check(["data_check", "--workers", "a"])
 
 
@@ -143,7 +143,7 @@ def test_print_format_pandas():
 
 
 def test_print_format_unknown():
-    with pytest.raises(CalledProcessError) as e:
+    with pytest.raises(CalledProcessError):
         run(
             [
                 "data_check",
@@ -161,7 +161,7 @@ def test_config():
 
 
 def test_config_invalid_path():
-    with pytest.raises(CalledProcessError) as e:
+    with pytest.raises(CalledProcessError):
         run_check(["data_check", "--config", "dos_not_exists.yml"])
 
 
@@ -229,9 +229,9 @@ def test_gen():
     assert gen_csv.exists()
     os.unlink(gen_csv)
     os.unlink(gen_sql)
-    assert out.startswith(
-        f"expectation written to checks{sep}generated{sep}generate_before_running_gen.csv"
-    )
+    start_line = f"expectation written to checks{sep}" \
+        f"generated{sep}generate_before_running_gen.csv"
+    assert out.startswith(start_line)
 
 
 def test_generate():

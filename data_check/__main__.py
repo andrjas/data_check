@@ -8,6 +8,16 @@ from data_check.data_check import DataCheck
 from data_check.config import DataCheckConfig
 
 
+HELP_WORKERS_LINE = (
+    "parallel workers to run queries " f"(default: {DataCheckConfig.parallel_workers})"
+)
+
+HELP_FORMAT_LINE = (
+    "format for printing failed results (pandas, csv); "
+    f"default: {DataCheckConfig.default_print_format}"
+)
+
+
 @click.command()
 @click.option("--connection", "-c", type=str, help="connection to use")
 @click.option(
@@ -15,7 +25,7 @@ from data_check.config import DataCheckConfig
     "-n",
     type=int,
     default=DataCheckConfig.parallel_workers,
-    help=f"parallel workers to run queries (default: {DataCheckConfig.parallel_workers})",
+    help=HELP_WORKERS_LINE,
 )
 @click.option("--print", "print_failed", is_flag=True, help="print failed results")
 @click.option(
@@ -23,7 +33,7 @@ from data_check.config import DataCheckConfig
     "print_format",
     type=str,
     default=DataCheckConfig.default_print_format,
-    help=f"format for printing failed results (pandas, csv); default: {DataCheckConfig.default_print_format}",
+    help=HELP_FORMAT_LINE,
 )
 @click.option(
     "--print-csv",

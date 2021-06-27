@@ -67,7 +67,7 @@ class DataCheckOutput:
         self,
         result_type: ResultType,
         source: Path,
-        result: DataCheckResult = None,
+        result: pd.DataFrame = None,
         exception: Exception = None,
     ) -> DataCheckResult:
         passed = DataCheckResult.result_type_passed(result_type)

@@ -9,7 +9,7 @@ my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
 
 from data_check import DataCheck, DataCheckException  # noqa E402
-from data_check.config import DataCheckConfig
+from data_check.config import DataCheckConfig  # noqa E402
 
 # Basic data_check unit tests
 
@@ -50,7 +50,7 @@ def test_run_test_folder(dc):
 
 def test_raise_exception_if_running_without_connection():
     config = DataCheckConfig()
-    config.connection = None
+    config.connection = str(None)
     dc = DataCheck(config)
     result = dc.run_test(Path("checks/basic/simple_string.sql"))
     assert not result

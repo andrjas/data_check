@@ -13,7 +13,7 @@ class DataCheckConfig:
 
     def __init__(self, config_path: Path = None) -> None:
         self.config = {}
-        self.connection: str = None
+        self.connection: str
 
         if config_path is not None:
             self.config_path = config_path
@@ -35,4 +35,4 @@ class DataCheckConfig:
             if default_connection:
                 connection = default_connection
 
-        return self.config.get("connections", {}).get(connection)
+        return self.config.get("connections", {}).get(connection, "")

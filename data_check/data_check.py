@@ -59,6 +59,7 @@ class DataCheck:
 
         df_merged = DataCheck.merge_results(sql_result, expect_result)
         df_diff = df_merged[df_merged._merge != "both"]
+        assert isinstance(df_diff, pd.DataFrame)  # assert a DataFrame, not a Series
         df_result = df_merged if return_all else df_diff
 
         # empty diff means there are no differences and the test has passed
