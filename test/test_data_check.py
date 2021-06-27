@@ -36,14 +36,6 @@ def test_get_expect_file(dc):
     assert ef == Path("test_file.csv")
 
 
-def test_run_query(dc):
-    if "oracle" in dc.connection:
-        result = dc.run_query("select 'ok' as test_col from dual")
-    else:
-        result = dc.run_query("select 'ok' as test_col")
-    assert result.iloc[0].test_col == "ok"
-
-
 def test_run_test(dc):
     result = dc.run_test(Path("checks/basic/simple_string.sql"))
     assert result
@@ -85,11 +77,6 @@ def test_run_files_failing(dc):
 def test_run_invalid(dc):
     result = dc.run([Path("checks/failing/invalid.sql")])
     assert not result
-
-
-def test_test_connection(dc):
-    test = dc.test_connection()
-    assert test
 
 
 def test_template(dc):

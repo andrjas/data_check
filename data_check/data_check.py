@@ -2,16 +2,15 @@ from pathlib import Path
 from pandas.core.frame import DataFrame
 import yaml
 import pandas as pd
-from typing import List, Dict
+from typing import List
 import concurrent.futures
-from sqlalchemy import create_engine
 import traceback
-from os import linesep, path
+from os import linesep
 
 from .data_check_result import DataCheckResult
-from .data_check_exception import DataCheckException
 from .data_check_output import pprint_failed, str_fail, str_pass, str_warn
 from .data_check_io import expand_files, read_sql_file
+from .data_check_sql import DataCheckSql
 
 
 class DataCheck:
@@ -19,17 +18,17 @@ class DataCheck:
     Main class for data_check.
     """
 
-    @staticmethod
-    def read_config(config_path: Path = Path("data_check.yml")):
-        config = yaml.safe_load(config_path.open())
-        return config
-
     def __init__(self, connection: str, workers=4, verbose=False, traceback=False):
-        self.connection = connection
+        self.sql = DataCheckSql(connection)
         self.workers = workers
         self.verbose = verbose
         self.traceback = traceback
         self.template_data = {}
+
+    @staticmethod
+    def read_config(config_path: Path = Path("data_check.yml")):
+        config = yaml.safe_load(config_path.open())
+        return config
 
     def load_template(self):
         template_yaml = Path("checks") / "template.yml"
@@ -39,29 +38,6 @@ class DataCheck:
     @property
     def executor(self):
         return concurrent.futures.ProcessPoolExecutor(max_workers=self.workers)
-
-    def get_db_params(self) -> Dict:
-        """
-        Return parameter specific to a database.
-        """
-        return {}  # no special parameters needed for now
-
-    def get_engine(self, extra_params={}):
-        """
-        Return the database engine for the connection.
-        """
-        return create_engine(
-            path.expandvars(self.connection), **{**self.get_db_params(), **extra_params}
-        )
-
-    def run_query(self, query: str) -> pd.DataFrame:
-        """
-        Run a query on the database and return a Pandas DataFrame with the result.
-        """
-        if not self.connection:
-            raise DataCheckException(f"undefined connection: {self.connection}")
-        with self.get_engine().connect() as connection:
-            return pd.read_sql_query(query, connection)
 
     def get_expect_file(self, sql_file: Path) -> Path:
         """
@@ -113,7 +89,7 @@ class DataCheck:
             )  # no need to run queries, if no expected results found
 
         try:
-            sql_result = self.run_query(read_sql_file(sql_file=sql_file, template_data=self.template_data))
+            sql_result = self.sql.run_query(read_sql_file(sql_file=sql_file, template_data=self.template_data))
         except Exception as exc:
             fail = str_fail(f"FAILED (with exception in {sql_file})")
             message = f"{sql_file}: {fail}"
@@ -231,7 +207,7 @@ class DataCheck:
         """
         expect_result = self.get_expect_file(sql_file)
         if not expect_result.exists() or force:
-            result = self.run_query(sql_file.read_text(encoding="UTF-8"))
+            result = self.sql.run_query(sql_file.read_text(encoding="UTF-8"))
             result.to_csv(expect_result, index=False)
             print(f"expectation written to {expect_result}")
         else:
@@ -243,15 +219,3 @@ class DataCheck:
         """
         for sql_file in expand_files(files):
             self.gen_expectation(sql_file, force)
-
-    def test_connection(self) -> bool:
-        """
-        Returns True if we can connect to the database.
-        Mainly for integration tests.
-        """
-        engine = self.get_engine(extra_params={"pool_pre_ping": True})
-        try:
-            engine.connect()
-            return True
-        except:
-            return False

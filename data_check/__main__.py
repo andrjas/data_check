@@ -110,7 +110,7 @@ def main(
     if generate_expectations:
         dc.generate_expectations(path_list, force)
     elif ping:
-        test = dc.test_connection()
+        test = dc.sql.test_connection()
         if test:
             click.echo("connecting succeeded")
             sys.exit(0)
