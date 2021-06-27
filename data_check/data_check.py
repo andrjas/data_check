@@ -2,37 +2,16 @@ from pathlib import Path
 from pandas.core.frame import DataFrame
 import yaml
 import pandas as pd
-from typing import Union, List, Dict
+from typing import List, Dict
 import concurrent.futures
 from sqlalchemy import create_engine
 import traceback
-from colorama import Fore, Style
 from os import linesep, path
-from jinja2 import Template
 
-
-class DataCheckException(Exception):
-    """
-    Generic class for various exceptions that might occur in data_check.
-    """
-
-    pass
-
-
-class DataCheckResult:
-    """
-    Wrapper class holding the result of a test run.
-    """
-
-    def __init__(
-        self, passed: bool, result: Union[pd.DataFrame, str], message: str = ""
-    ):
-        self.passed = passed
-        self.result = result
-        self.message = message
-
-    def __bool__(self):
-        return self.passed
+from .data_check_result import DataCheckResult
+from .data_check_exception import DataCheckException
+from .data_check_output import pprint_failed, str_fail, str_pass, str_warn
+from .data_check_io import expand_files, read_sql_file
 
 
 class DataCheck:
@@ -90,21 +69,6 @@ class DataCheck:
         """
         return sql_file.parent / (sql_file.stem + ".csv")
 
-    def print_failed(self, df: pd.DataFrame, print_format="pandas") -> str:
-        """
-        Prints a DataFrame with diff information and returns it as a string.
-        """
-        with pd.option_context("display.max_rows", None, "display.max_columns", None):
-            df["_diff"] = ""
-            df.loc[df._merge == "left_only", ["_diff"]] = "db"
-            df.loc[df._merge == "right_only", ["_diff"]] = "expected"
-            if print_format == "pandas":
-                return str(df.drop(["_merge"], axis=1))
-            elif print_format.lower() == "csv":
-                return df.drop(["_merge"], axis=1).to_csv(index=False)
-            else:
-                raise DataCheckException(f"unknown print format: {print_format}")
-
     def merge_results(
         self, sql_result: DataFrame, expect_result: DataFrame
     ) -> DataFrame:
@@ -124,27 +88,6 @@ class DataCheck:
             df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
         return df_merged
 
-    @staticmethod
-    def str_pass(string):
-        return Fore.GREEN + string + Style.RESET_ALL
-
-    @staticmethod
-    def str_warn(string):
-        return Fore.YELLOW + string + Style.RESET_ALL
-
-    @staticmethod
-    def str_fail(string):
-        return Fore.RED + string + Style.RESET_ALL
-
-    def read_sql_file(self, sql_file) -> str:
-        """
-        Reads the SQL file and returns it as a string.
-        Evaluates the templates when needed.
-        """
-        return Template(sql_file.read_text(encoding="UTF-8")).render(
-            **self.template_data
-        )
-
     def run_test(
         self,
         sql_file: Path,
@@ -161,7 +104,7 @@ class DataCheck:
         """
         expect_file = self.get_expect_file(sql_file)
         if not expect_file.exists():
-            warn = self.str_warn("NO EXPECTED RESULTS FILE")
+            warn = str_warn("NO EXPECTED RESULTS FILE")
             message = f"{sql_file}: {warn}"
             return DataCheckResult(
                 passed=False,
@@ -170,9 +113,9 @@ class DataCheck:
             )  # no need to run queries, if no expected results found
 
         try:
-            sql_result = self.run_query(self.read_sql_file(sql_file))
+            sql_result = self.run_query(read_sql_file(sql_file=sql_file, template_data=self.template_data))
         except Exception as exc:
-            fail = self.str_fail(f"FAILED (with exception in {sql_file})")
+            fail = str_fail(f"FAILED (with exception in {sql_file})")
             message = f"{sql_file}: {fail}"
             if self.verbose:
                 message += linesep + str(exc)
@@ -195,7 +138,7 @@ class DataCheck:
                 engine="c",
             )
         except Exception as exc_csv:
-            fail = self.str_fail(f"FAILED (with exception in {expect_file})")
+            fail = str_fail(f"FAILED (with exception in {expect_file})")
             message = f"{sql_file}: {fail}"
             if self.verbose:
                 message += linesep + str(exc_csv)
@@ -215,13 +158,13 @@ class DataCheck:
         df_diff = df_merged[df_merged._merge != "both"]
 
         if len(df_diff) != 0:
-            failed = self.str_fail("FAILED")
+            failed = str_fail("FAILED")
             message = f"{sql_file}: {failed}"
             if print_failed:
-                message += linesep + self.print_failed(df_diff.copy(), print_format)
+                message += linesep + pprint_failed(df_diff.copy(), print_format)
             passed = False
         else:
-            passed_msg = self.str_pass("PASSED")
+            passed_msg = str_pass("PASSED")
             message = f"{sql_file}: {passed_msg}"
             passed = True
 
@@ -230,27 +173,12 @@ class DataCheck:
         else:
             return DataCheckResult(passed=passed, result=df_diff, message=message)
 
-    def expand_files(self, files: List[Path]) -> List[Path]:
-        """
-        Expands the list of files or folders,
-        with all SQL files in a folder as seperate files.
-        """
-        result = []
-        for f in files:
-            if f.is_file():
-                result.append(f)
-            elif f.is_dir():
-                result.extend(f.glob("**/*.sql"))
-            else:
-                raise Exception(f"unexpected path: {f}")
-        return result
-
     def run(self, files: List[Path], print_failed=False, print_format="pandas") -> bool:
         """
         Runs a data_check test for all element in the list.
         Returns True, if all calls returned True, otherweise False.
         """
-        all_files = self.expand_files(files)
+        all_files = expand_files(files)
         if self.workers == 1 or len(all_files) == 1:
             results = self.run_serial(all_files, print_failed, print_format)
         else:
@@ -258,7 +186,7 @@ class DataCheck:
 
         overall_result = all(results)
         overall_result_msg = (
-            self.str_pass("PASSED") if overall_result else self.str_fail("FAILED")
+            str_pass("PASSED") if overall_result else str_fail("FAILED")
         )
         print("")
         print(f"overall result: {overall_result_msg}")
@@ -313,7 +241,7 @@ class DataCheck:
         """
         Generated a expected results file for each file if it doesn't exists yet.
         """
-        for sql_file in self.expand_files(files):
+        for sql_file in expand_files(files):
             self.gen_expectation(sql_file, force)
 
     def test_connection(self) -> bool:

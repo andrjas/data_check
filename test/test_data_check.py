@@ -77,11 +77,6 @@ def test_raise_exception_if_running_without_connection():
     assert "generated an exception" in result.result
 
 
-def test_expand_files(dc):
-    files = dc.expand_files([Path("checks/basic"), Path("checks/failing")])
-    assert len(files) >= 3
-
-
 def test_run_files_failing(dc):
     result = dc.run([Path("checks/failing")])
     assert not result
@@ -95,11 +90,6 @@ def test_run_invalid(dc):
 def test_test_connection(dc):
     test = dc.test_connection()
     assert test
-
-
-def test_read_sql_file_with_template(dc):
-    text = dc.read_sql_file(Path("checks/templates/template1.sql"))
-    assert "{{" not in text
 
 
 def test_template(dc):
