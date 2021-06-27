@@ -1,6 +1,6 @@
 import pandas as pd
 from colorama import Fore, Style
-from .data_check_exception import DataCheckException
+from .exceptions import DataCheckException
 
 
 def pprint_failed(df: pd.DataFrame, print_format="pandas") -> str:

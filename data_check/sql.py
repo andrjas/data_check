@@ -1,11 +1,10 @@
-
-from typing import List, Dict
-from os import linesep, path
+from typing import Dict
+from os import path
 from sqlalchemy import create_engine
 import pandas as pd
 
 
-from .data_check_exception import DataCheckException
+from .exceptions import DataCheckException
 
 
 class DataCheckSql:

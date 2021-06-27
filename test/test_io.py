@@ -7,7 +7,7 @@ my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
 
 
-from data_check.data_check_io import expand_files, read_sql_file  # noqa E402
+from data_check.io import expand_files, read_sql_file  # noqa E402
 
 
 def test_expand_files():

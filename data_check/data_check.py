@@ -7,10 +7,10 @@ import concurrent.futures
 import traceback
 from os import linesep
 
-from .data_check_result import DataCheckResult
-from .data_check_output import pprint_failed, str_fail, str_pass, str_warn
-from .data_check_io import expand_files, read_sql_file
-from .data_check_sql import DataCheckSql
+from .result import DataCheckResult
+from .output import pprint_failed, str_fail, str_pass, str_warn
+from .io import expand_files, read_sql_file
+from .sql import DataCheckSql
 
 
 class DataCheck:

@@ -1,14 +1,13 @@
 import sys
 import os
 import pytest
-from pathlib import Path
 
 
 # add the parent path to PYTHONPATH
 my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
 
-from data_check.data_check_sql import DataCheckSql  # noqa E402
+from data_check.sql import DataCheckSql  # noqa E402
 from data_check import DataCheck  # noqa E402
 
 
