@@ -8,14 +8,13 @@ my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
 
 from data_check.sql import DataCheckSql  # noqa E402
-from data_check import DataCheck  # noqa E402
+from data_check.config import DataCheckConfig  # noqa E402
 
 
 @pytest.fixture
 def sql() -> DataCheckSql:
-    config = DataCheck.read_config()
-    connection = config.get("connections", {}).get("test")
-    _sql = DataCheckSql(connection)
+    dc_config = DataCheckConfig().load_config().set_connection("test")
+    _sql = DataCheckSql(dc_config.connection)
     return _sql
 
 

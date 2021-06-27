@@ -8,6 +8,7 @@ my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
 
 from data_check import DataCheck  # noqa E402
+from data_check.config import DataCheckConfig  # noqa E402
 
 # These tests should work on any database.
 # The tests are generic, but in integration tests each database uses specific SQL files.
@@ -15,8 +16,10 @@ from data_check import DataCheck  # noqa E402
 
 @pytest.fixture
 def dc():
-    config = DataCheck.read_config()
-    return DataCheck(config.get("connections", {}).get("test"))
+    config = DataCheckConfig().load_config().set_connection("test")
+    _dc = DataCheck(config)
+    _dc.load_template()
+    return _dc
 
 
 @pytest.fixture

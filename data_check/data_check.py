@@ -1,11 +1,11 @@
 from pathlib import Path
-import yaml
 import pandas as pd
 from typing import List, Tuple
 
+from .config import DataCheckConfig
 from .result import DataCheckResult, ResultType
 from .output import DataCheckOutput
-from .io import expand_files, read_sql_file, get_expect_file, read_csv
+from .io import expand_files, read_sql_file, get_expect_file, read_csv, read_yaml
 from .sql import DataCheckSql
 from .generator import DataCheckGenerator
 from .runner import DataCheckRunner
@@ -16,22 +16,18 @@ class DataCheck:
     Main class for data_check.
     """
 
-    def __init__(self, connection: str, workers=4):
-        self.sql = DataCheckSql(connection)
+    def __init__(self, config: DataCheckConfig = DataCheckConfig()):
+        self.config = config
+        self.sql = DataCheckSql(config.connection)
         self.generator = DataCheckGenerator(self.sql)
-        self.runner = DataCheckRunner(workers)
+        self.runner = DataCheckRunner(config.parallel_workers)
         self.output = DataCheckOutput()
         self.template_data = {}
 
-    @staticmethod
-    def read_config(config_path: Path = Path("data_check.yml")):
-        config = yaml.safe_load(config_path.open())
-        return config
-
     def load_template(self):
-        template_yaml = Path("checks") / "template.yml"
+        template_yaml = self.config.checks_path / self.config.tempate_path
         if template_yaml.exists():
-            self.template_data = yaml.safe_load(template_yaml.open())
+            self.template_data = read_yaml(template_yaml)
 
     @staticmethod
     def merge_results(

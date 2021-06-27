@@ -2,6 +2,7 @@ from typing import List
 from pathlib import Path
 from jinja2 import Template
 import pandas as pd
+import yaml
 
 
 def expand_files(files: List[Path]) -> List[Path]:
@@ -45,3 +46,7 @@ def read_csv(csv_file: Path) -> pd.DataFrame:
         quoting=0,
         engine="c",
     )
+
+
+def read_yaml(yaml_file: Path):
+    return yaml.safe_load(yaml_file.open())

@@ -9,26 +9,17 @@ my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
 
 from data_check import DataCheck, DataCheckException  # noqa E402
+from data_check.config import DataCheckConfig
 
 # Basic data_check unit tests
 
 
 @pytest.fixture
 def dc() -> DataCheck:
-    config = DataCheck.read_config()
-    connection = config.get("connections", {}).get("test")
-    _dc = DataCheck(connection)
+    config = DataCheckConfig().load_config().set_connection("test")
+    _dc = DataCheck(config)
     _dc.load_template()
     return _dc
-
-
-def test_read_config():
-    config = DataCheck.read_config()
-    assert config
-    assert "connections" in config
-    connections = config.get("connections", {})
-    assert "test" in connections
-    assert "test2" in connections
 
 
 def test_run_test(dc):
@@ -58,7 +49,9 @@ def test_run_test_folder(dc):
 
 
 def test_raise_exception_if_running_without_connection():
-    dc = DataCheck(connection=None)
+    config = DataCheckConfig()
+    config.connection = None
+    dc = DataCheck(config)
     result = dc.run_test(Path("checks/basic/simple_string.sql"))
     assert not result
     assert "generated an exception" in result.result

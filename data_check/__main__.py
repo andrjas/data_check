@@ -5,18 +5,7 @@ from colorama import init
 from importlib_metadata import version
 
 from data_check.data_check import DataCheck
-
-
-def select_connection(connection, config) -> str:
-    """
-    Returns the connection string to use.
-    """
-    if not connection:
-        default_connection = config.get("default_connection")
-        if default_connection:
-            connection = default_connection
-
-    return config.get("connections", {}).get(connection)
+from data_check.config import DataCheckConfig
 
 
 @click.command()
@@ -25,16 +14,16 @@ def select_connection(connection, config) -> str:
     "--workers",
     "-n",
     type=int,
-    default=4,
-    help="parallel workers to run queries (default: 4)",
+    default=DataCheckConfig.parallel_workers,
+    help=f"parallel workers to run queries (default: {DataCheckConfig.parallel_workers})",
 )
 @click.option("--print", "print_failed", is_flag=True, help="print failed results")
 @click.option(
     "--print-format",
     "print_format",
     type=str,
-    default="pandas",
-    help="format for printing failed results (pandas, csv)",
+    default=DataCheckConfig.default_print_format,
+    help=f"format for printing failed results (pandas, csv); default: {DataCheckConfig.default_print_format}",
 )
 @click.option(
     "--print-csv",
@@ -58,8 +47,8 @@ def select_connection(connection, config) -> str:
 @click.option(
     "--config",
     type=str,
-    default="data_check.yml",
-    help="config file to use (default: data_check.yml)",
+    default=DataCheckConfig.config_path,
+    help=f"config file to use (default: {DataCheckConfig.config_path})",
 )
 @click.option("--ping", is_flag=True, help="tries to connect to the database")
 @click.option("--verbose", is_flag=True, help="print verbose output")
@@ -68,13 +57,13 @@ def select_connection(connection, config) -> str:
 @click.argument("files", nargs=-1, type=click.Path())
 def main(
     connection=None,
-    workers=4,
+    workers=DataCheckConfig.parallel_workers,
     print_failed=False,
-    print_format="pandas",
+    print_format=DataCheckConfig.default_print_format,
     print_csv=False,
     generate_expectations=False,
     force=False,
-    config="data_check.yml",
+    config=DataCheckConfig.config_path,
     ping=False,
     verbose=False,
     traceback=False,
@@ -87,18 +76,18 @@ def main(
         print_format = "csv"
 
     init()  # init colorama
+    config = Path(config)
+    dc_config = (
+        DataCheckConfig(config_path=config).load_config().set_connection(connection)
+    )
 
-    config = DataCheck.read_config(Path(config))
-    selected_connection = select_connection(connection, config)
-
-    if not selected_connection:
+    if not dc_config.connection:
         click.echo(f"unknown connection: {connection}")
         sys.exit(1)
 
-    dc = DataCheck(
-        connection=selected_connection,
-        workers=workers,
-    )
+    dc_config.parallel_workers = workers
+
+    dc = DataCheck(config=dc_config)
     dc.output.configure_output(
         verbose=verbose,
         traceback=traceback,
@@ -108,7 +97,7 @@ def main(
     dc.load_template()
 
     if not files:
-        files = ["checks"]  # use "checks" if nothing is given
+        files = [dc_config.checks_path]  # use default checks path if nothing is given
     path_list = [Path(f) for f in files]
 
     if generate_expectations:
