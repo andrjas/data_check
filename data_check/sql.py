@@ -1,6 +1,7 @@
-from typing import Dict
+from typing import Dict, Any
 from os import path
 from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
 import pandas as pd
 
 
@@ -11,13 +12,13 @@ class DataCheckSql:
     def __init__(self, connection: str) -> None:
         self.connection = connection
 
-    def get_db_params(self) -> Dict:
+    def get_db_params(self) -> Dict[str, Any]:
         """
         Return parameter specific to a database.
         """
         return {}  # no special parameters needed for now
 
-    def get_engine(self, extra_params={}):
+    def get_engine(self, extra_params: Dict[str, Any] = {}) -> Engine:
         """
         Return the database engine for the connection.
         """
@@ -43,5 +44,5 @@ class DataCheckSql:
         try:
             engine.connect()
             return True
-        except:
+        except:  # noqa E722
             return False

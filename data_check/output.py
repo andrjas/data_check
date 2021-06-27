@@ -3,6 +3,7 @@ import pandas as pd
 from colorama import Fore, Style
 import traceback
 from os import linesep
+from typing import Optional
 
 from .exceptions import DataCheckException
 from .result import DataCheckResult, ResultType
@@ -15,7 +16,9 @@ class DataCheckOutput:
         self.print_failed = False
         self.print_format = "pandas"
 
-    def configure_output(self, verbose, traceback, print_failed, print_format):
+    def configure_output(
+        self, verbose: bool, traceback: bool, print_failed: bool, print_format: str
+    ):
         self.verbose = verbose
         self.traceback = traceback
         self.print_failed = print_failed
@@ -44,53 +47,60 @@ class DataCheckOutput:
                 raise DataCheckException(f"unknown print format: {self.print_format}")
 
     @staticmethod
-    def str_pass(string):
+    def str_pass(string: str) -> str:
         return Fore.GREEN + string + Style.RESET_ALL
 
     @staticmethod
-    def str_warn(string):
+    def str_warn(string: str) -> str:
         return Fore.YELLOW + string + Style.RESET_ALL
 
     @staticmethod
-    def str_fail(string):
+    def str_fail(string: str) -> str:
         return Fore.RED + string + Style.RESET_ALL
 
     @property
-    def passed_message(self):
+    def passed_message(self) -> str:
         return self.str_pass("PASSED")
 
     @property
-    def failed_message(self):
+    def failed_message(self) -> str:
         return self.str_fail("FAILED")
 
     def prepare_result(
         self,
         result_type: ResultType,
         source: Path,
-        result: pd.DataFrame = None,
-        exception: Exception = None,
+        result: Optional[pd.DataFrame] = None,
+        exception: Optional[Exception] = None,
     ) -> DataCheckResult:
         passed = DataCheckResult.result_type_passed(result_type)
         if result_type == ResultType.PASSED:
+            assert isinstance(result, pd.DataFrame)
             return self._passed_result(passed, source, result)
         elif result_type == ResultType.FAILED:
+            assert isinstance(result, pd.DataFrame)
             return self._failed_result(passed, source, result)
         elif result_type == ResultType.NO_EXPECTED_RESULTS_FILE:
             return self._no_expected_file_result(passed, source)
         elif result_type == ResultType.FAILED_WITH_EXCEPTION:
+            assert isinstance(exception, Exception)
             return self._failed_with_exception_result(passed, source, exception)
 
-    def _passed_result(self, passed, source, result) -> DataCheckResult:
+    def _passed_result(
+        self, passed: bool, source: Path, result: pd.DataFrame
+    ) -> DataCheckResult:
         message = f"{source}: {self.passed_message}"
         return DataCheckResult(passed=passed, result=result, message=message)
 
-    def _failed_result(self, passed, source, result) -> DataCheckResult:
+    def _failed_result(
+        self, passed: bool, source: Path, result: pd.DataFrame
+    ) -> DataCheckResult:
         message = f"{source}: {self.failed_message}"
         if self.print_failed:
             message += linesep + self.pprint_failed(result.copy())
         return DataCheckResult(passed=passed, result=result, message=message)
 
-    def _no_expected_file_result(self, passed, source) -> DataCheckResult:
+    def _no_expected_file_result(self, passed: bool, source: Path) -> DataCheckResult:
         warn = self.str_warn("NO EXPECTED RESULTS FILE")
         message = f"{source}: {warn}"
         return DataCheckResult(
@@ -99,7 +109,9 @@ class DataCheckOutput:
             message=message,
         )
 
-    def _failed_with_exception_result(self, passed, source, exception):
+    def _failed_with_exception_result(
+        self, passed: bool, source: Path, exception: Exception
+    ):
         fail = self.str_fail(f"FAILED (with exception in {source})")
         message = f"{source}: {fail}"
         if self.verbose:

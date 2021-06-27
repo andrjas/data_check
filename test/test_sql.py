@@ -18,7 +18,7 @@ def sql() -> DataCheckSql:
     return _sql
 
 
-def test_run_query(sql):
+def test_run_query(sql: DataCheckSql):
     if "oracle" in sql.connection:
         result = sql.run_query("select 'ok' as test_col from dual")
     else:
@@ -26,6 +26,6 @@ def test_run_query(sql):
     assert result.iloc[0].test_col == "ok"
 
 
-def test_test_connection(sql):
+def test_test_connection(sql: DataCheckSql):
     test = sql.test_connection()
     assert test

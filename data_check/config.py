@@ -1,5 +1,6 @@
 from pathlib import Path
 from .io import read_yaml
+from typing import Optional, Dict, Any
 
 
 class DataCheckConfig:
@@ -11,8 +12,8 @@ class DataCheckConfig:
 
     default_print_format = "pandas"
 
-    def __init__(self, config_path: Path = None) -> None:
-        self.config = {}
+    def __init__(self, config_path: Optional[Path] = None) -> None:
+        self.config: Dict[str, Any] = {}
         self.connection: str
 
         if config_path is not None:
@@ -31,7 +32,7 @@ class DataCheckConfig:
         Returns the connection string to use.
         """
         if not connection:
-            default_connection = self.config.get("default_connection")
+            default_connection = str(self.config.get("default_connection", ""))
             if default_connection:
                 connection = default_connection
 

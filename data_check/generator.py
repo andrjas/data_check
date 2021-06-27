@@ -9,7 +9,7 @@ class DataCheckGenerator:
     def __init__(self, sql: DataCheckSql) -> None:
         self.sql = sql
 
-    def gen_expectation(self, sql_file: Path, force=False):
+    def gen_expectation(self, sql_file: Path, force: bool = False):
         """
         Executes the query for a data_check test
         and stores the result in the csv file.
@@ -22,7 +22,7 @@ class DataCheckGenerator:
         else:
             print(f"expectation skipped for {expect_result}")
 
-    def generate_expectations(self, files: List[Path], force=False):
+    def generate_expectations(self, files: List[Path], force: bool = False):
         """
         Generated a expected results file for each file if it doesn't exists yet.
         """

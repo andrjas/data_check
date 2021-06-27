@@ -3,3 +3,4 @@ data_check.egg-info
 build/
 dist/
 .vscode/
+.hypothesis

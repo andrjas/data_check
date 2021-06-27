@@ -3,19 +3,10 @@ from pathlib import Path
 import sys
 from colorama import init
 from importlib_metadata import version
+from typing import Union, List
 
 from data_check.data_check import DataCheck
 from data_check.config import DataCheckConfig
-
-
-HELP_WORKERS_LINE = (
-    "parallel workers to run queries " f"(default: {DataCheckConfig.parallel_workers})"
-)
-
-HELP_FORMAT_LINE = (
-    "format for printing failed results (pandas, csv); "
-    f"default: {DataCheckConfig.default_print_format}"
-)
 
 
 @click.command()
@@ -25,7 +16,10 @@ HELP_FORMAT_LINE = (
     "-n",
     type=int,
     default=DataCheckConfig.parallel_workers,
-    help=HELP_WORKERS_LINE,
+    help=(
+        "parallel workers to run queries "
+        f"(default: {DataCheckConfig.parallel_workers})"
+    ),
 )
 @click.option("--print", "print_failed", is_flag=True, help="print failed results")
 @click.option(
@@ -33,7 +27,10 @@ HELP_FORMAT_LINE = (
     "print_format",
     type=str,
     default=DataCheckConfig.default_print_format,
-    help=HELP_FORMAT_LINE,
+    help=(
+        "format for printing failed results (pandas, csv); "
+        f"default: {DataCheckConfig.default_print_format}"
+    ),
 )
 @click.option(
     "--print-csv",
@@ -66,18 +63,18 @@ HELP_FORMAT_LINE = (
 @click.version_option(version=version("data-check"))
 @click.argument("files", nargs=-1, type=click.Path())
 def main(
-    connection=None,
-    workers=DataCheckConfig.parallel_workers,
-    print_failed=False,
-    print_format=DataCheckConfig.default_print_format,
-    print_csv=False,
-    generate_expectations=False,
-    force=False,
-    config=DataCheckConfig.config_path,
-    ping=False,
-    verbose=False,
-    traceback=False,
-    files=[],
+    connection: str = "",
+    workers: int = DataCheckConfig.parallel_workers,
+    print_failed: bool = False,
+    print_format: str = DataCheckConfig.default_print_format,
+    print_csv: bool = False,
+    generate_expectations: bool = False,
+    force: bool = False,
+    config: Union[str, Path] = DataCheckConfig.config_path,
+    ping: bool = False,
+    verbose: bool = False,
+    traceback: bool = False,
+    files: List[Union[str, Path]] = [],
 ):
     """ FILES: list of checks files or folders"""
 

@@ -4,17 +4,18 @@ import os
 from pathlib import Path
 import shutil
 from os import sep
+from typing import List
 
 
-def run(command):
+def run(command: List[str]):
     return check_output(command, universal_newlines=True)
 
 
-def run_check(command):
+def run_check(command: List[str]):
     return run(command + ["checks/basic/simple_string.sql"])
 
 
-def assert_passed(out):
+def assert_passed(out: str):
     assert (
         out.replace("\x1b[0m", "").replace("\x1b[32m", "")
         == f"""checks{sep}basic{sep}simple_string.sql: PASSED
@@ -24,7 +25,7 @@ overall result: PASSED
     )
 
 
-def assert_failed(out):
+def assert_failed(out: str):
     assert "overall result: FAILED" in out
 
 
@@ -229,8 +230,10 @@ def test_gen():
     assert gen_csv.exists()
     os.unlink(gen_csv)
     os.unlink(gen_sql)
-    start_line = f"expectation written to checks{sep}" \
+    start_line = (
+        f"expectation written to checks{sep}"
         f"generated{sep}generate_before_running_gen.csv"
+    )
     assert out.startswith(start_line)
 
 

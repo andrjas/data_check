@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Any
 from pathlib import Path
 from jinja2 import Template
 import pandas as pd
@@ -10,7 +10,7 @@ def expand_files(files: List[Path]) -> List[Path]:
     Expands the list of files or folders,
     with all SQL files in a folder as seperate files.
     """
-    result = []
+    result: List[Path] = []
     for f in files:
         if f.is_file():
             result.append(f)
@@ -21,7 +21,9 @@ def expand_files(files: List[Path]) -> List[Path]:
     return result
 
 
-def read_sql_file(sql_file, template_data, encoding="UTF-8") -> str:
+def read_sql_file(
+    sql_file: Path, template_data: Dict[str, Any], encoding: str = "UTF-8"
+) -> str:
     """
     Reads the SQL file and returns it as a string.
     Evaluates the templates when needed.
@@ -33,6 +35,13 @@ def get_expect_file(sql_file: Path) -> Path:
     """
     Returns the csv file with the expected results for a sql file.
     """
+    if (
+        str(sql_file) == ""
+        or sql_file.stem == ""
+        or sql_file.suffix == ""
+        or sql_file.suffix.lower() not in (".sql")
+    ):
+        return Path()
     return sql_file.parent / (sql_file.stem + ".csv")
 
 

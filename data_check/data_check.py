@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Any
 
 from .config import DataCheckConfig
 from .result import DataCheckResult, ResultType
@@ -22,7 +22,7 @@ class DataCheck:
         self.generator = DataCheckGenerator(self.sql)
         self.runner = DataCheckRunner(config.parallel_workers)
         self.output = DataCheckOutput()
-        self.template_data = {}
+        self.template_data: Dict[str, Any] = {}
 
     def load_template(self):
         template_yaml = self.config.checks_path / self.config.tempate_path
@@ -51,7 +51,7 @@ class DataCheck:
 
     @staticmethod
     def get_result(
-        sql_result, expect_result, return_all
+        sql_result: pd.DataFrame, expect_result: pd.DataFrame, return_all: bool
     ) -> Tuple[ResultType, pd.DataFrame]:
         # replace missing values and None with pd.NA
         sql_result.fillna(value=pd.NA, inplace=True)
@@ -69,7 +69,7 @@ class DataCheck:
     def run_test(
         self,
         sql_file: Path,
-        return_all=False,
+        return_all: bool = False,
     ) -> DataCheckResult:
         """
         Run a data_check test on a single input file.

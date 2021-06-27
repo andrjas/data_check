@@ -8,7 +8,7 @@ from pathlib import Path
 my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
 
-from data_check import DataCheck, DataCheckException  # noqa E402
+from data_check import DataCheck  # noqa E402
 from data_check.config import DataCheckConfig  # noqa E402
 
 # Basic data_check unit tests
@@ -22,28 +22,28 @@ def dc() -> DataCheck:
     return _dc
 
 
-def test_run_test(dc):
+def test_run_test(dc: DataCheck):
     result = dc.run_test(Path("checks/basic/simple_string.sql"))
     assert result
 
 
-def test_run_test_faling(dc):
+def test_run_test_faling(dc: DataCheck):
     result = dc.run_test(Path("checks/failing/expected_to_fail.sql"))
     assert not result
 
 
-def test_run_test_non_existent(dc):
+def test_run_test_non_existent(dc: DataCheck):
     result = dc.run_test(Path("checks/non_existent/file.sql"))
     assert not result
     assert "NO EXPECTED RESULTS FILE" in result.result
 
 
-def test_run_test_file(dc):
+def test_run_test_file(dc: DataCheck):
     result = dc.run([Path("checks/basic/simple_string.sql")])
     assert result
 
 
-def test_run_test_folder(dc):
+def test_run_test_folder(dc: DataCheck):
     result = dc.run([Path("checks/basic")])
     assert result
 
@@ -57,16 +57,16 @@ def test_raise_exception_if_running_without_connection():
     assert "generated an exception" in result.result
 
 
-def test_run_files_failing(dc):
+def test_run_files_failing(dc: DataCheck):
     result = dc.run([Path("checks/failing")])
     assert not result
 
 
-def test_run_invalid(dc):
+def test_run_invalid(dc: DataCheck):
     result = dc.run([Path("checks/failing/invalid.sql")])
     assert not result
 
 
-def test_template(dc):
+def test_template(dc: DataCheck):
     result = dc.run([Path("checks/templates/template1.sql")])
     assert result

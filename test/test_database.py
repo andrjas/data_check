@@ -15,7 +15,7 @@ from data_check.config import DataCheckConfig  # noqa E402
 
 
 @pytest.fixture
-def dc():
+def dc() -> DataCheck:
     config = DataCheckConfig().load_config().set_connection("test")
     _dc = DataCheck(config)
     _dc.load_template()
@@ -23,7 +23,7 @@ def dc():
 
 
 @pytest.fixture
-def data_types_check(dc):
+def data_types_check(dc: DataCheck):
     res = dc.run_test(Path("checks/basic/data_types.sql"), return_all=True)
     assert not res.result.empty
     return res.result.iloc[0]
@@ -49,17 +49,17 @@ def test_data_types_null(data_types_check):
     assert pd.isna(data_types_check.null_test)
 
 
-def test_float_decimal_conversion(dc):
+def test_float_decimal_conversion(dc: DataCheck):
     res = dc.run_test(Path("checks/basic/float.sql"))
     assert res
 
 
-def test_unicode(dc):
+def test_unicode(dc: DataCheck):
     res = dc.run_test(Path("checks/basic/unicode_string.sql"))
     assert res
 
 
-def test_decimal_varchar(dc):
+def test_decimal_varchar(dc: DataCheck):
     """
     Test a varchar column, that has only decimals in the csv file
     """
