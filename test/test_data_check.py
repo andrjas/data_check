@@ -31,11 +31,6 @@ def test_read_config():
     assert "test2" in connections
 
 
-def test_get_expect_file(dc):
-    ef = dc.get_expect_file(Path("test_file.sql"))
-    assert ef == Path("test_file.csv")
-
-
 def test_run_test(dc):
     result = dc.run_test(Path("checks/basic/simple_string.sql"))
     assert result

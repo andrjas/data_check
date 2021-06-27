@@ -98,8 +98,12 @@ def main(
     dc = DataCheck(
         connection=selected_connection,
         workers=workers,
+    )
+    dc.output.configure_output(
         verbose=verbose,
         traceback=traceback,
+        print_failed=print_failed,
+        print_format=print_format,
     )
     dc.load_template()
 
@@ -108,7 +112,7 @@ def main(
     path_list = [Path(f) for f in files]
 
     if generate_expectations:
-        dc.generate_expectations(path_list, force)
+        dc.generator.generate_expectations(path_list, force)
     elif ping:
         test = dc.sql.test_connection()
         if test:
@@ -118,7 +122,7 @@ def main(
             click.echo("connecting failed")
             sys.exit(1)
     else:
-        result = dc.run(path_list, print_failed=print_failed, print_format=print_format)
+        result = dc.run(path_list)
         if not result:
             sys.exit(1)
 

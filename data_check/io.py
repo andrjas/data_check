@@ -1,6 +1,7 @@
 from typing import List
 from pathlib import Path
 from jinja2 import Template
+import pandas as pd
 
 
 def expand_files(files: List[Path]) -> List[Path]:
@@ -24,6 +25,23 @@ def read_sql_file(sql_file, template_data, encoding="UTF-8") -> str:
     Reads the SQL file and returns it as a string.
     Evaluates the templates when needed.
     """
-    return Template(sql_file.read_text(encoding=encoding)).render(
-        **template_data
+    return Template(sql_file.read_text(encoding=encoding)).render(**template_data)
+
+
+def get_expect_file(sql_file: Path) -> Path:
+    """
+    Returns the csv file with the expected results for a sql file.
+    """
+    return sql_file.parent / (sql_file.stem + ".csv")
+
+
+def read_csv(csv_file: Path) -> pd.DataFrame:
+    return pd.read_csv(
+        csv_file,
+        na_values=[""],  # use empty string as nan
+        keep_default_na=False,
+        comment="#",
+        quotechar='"',
+        quoting=0,
+        engine="c",
     )

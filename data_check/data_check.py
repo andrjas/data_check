@@ -1,16 +1,14 @@
 from pathlib import Path
-from pandas.core.frame import DataFrame
 import yaml
 import pandas as pd
-from typing import List
-import concurrent.futures
-import traceback
-from os import linesep
+from typing import List, Tuple
 
-from .result import DataCheckResult
-from .output import pprint_failed, str_fail, str_pass, str_warn
-from .io import expand_files, read_sql_file
+from .result import DataCheckResult, ResultType
+from .output import DataCheckOutput
+from .io import expand_files, read_sql_file, get_expect_file, read_csv
 from .sql import DataCheckSql
+from .generator import DataCheckGenerator
+from .runner import DataCheckRunner
 
 
 class DataCheck:
@@ -18,11 +16,11 @@ class DataCheck:
     Main class for data_check.
     """
 
-    def __init__(self, connection: str, workers=4, verbose=False, traceback=False):
+    def __init__(self, connection: str, workers=4):
         self.sql = DataCheckSql(connection)
-        self.workers = workers
-        self.verbose = verbose
-        self.traceback = traceback
+        self.generator = DataCheckGenerator(self.sql)
+        self.runner = DataCheckRunner(workers)
+        self.output = DataCheckOutput()
         self.template_data = {}
 
     @staticmethod
@@ -35,19 +33,10 @@ class DataCheck:
         if template_yaml.exists():
             self.template_data = yaml.safe_load(template_yaml.open())
 
-    @property
-    def executor(self):
-        return concurrent.futures.ProcessPoolExecutor(max_workers=self.workers)
-
-    def get_expect_file(self, sql_file: Path) -> Path:
-        """
-        Returns the csv file with the expected results for a sql file.
-        """
-        return sql_file.parent / (sql_file.stem + ".csv")
-
+    @staticmethod
     def merge_results(
-        self, sql_result: DataFrame, expect_result: DataFrame
-    ) -> DataFrame:
+        sql_result: pd.DataFrame, expect_result: pd.DataFrame
+    ) -> pd.DataFrame:
         """
         Merges the results of a SQL query and the expected results.
         Returns the merged DataFrame.
@@ -64,12 +53,26 @@ class DataCheck:
             df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
         return df_merged
 
+    @staticmethod
+    def get_result(
+        sql_result, expect_result, return_all
+    ) -> Tuple[ResultType, pd.DataFrame]:
+        # replace missing values and None with pd.NA
+        sql_result.fillna(value=pd.NA, inplace=True)
+        expect_result.fillna(value=pd.NA, inplace=True)
+
+        df_merged = DataCheck.merge_results(sql_result, expect_result)
+        df_diff = df_merged[df_merged._merge != "both"]
+        df_result = df_merged if return_all else df_diff
+
+        # empty diff means there are no differences and the test has passed
+        passed = len(df_diff) == 0
+        return (DataCheckResult.passed_to_result_type(passed), df_result)
+
     def run_test(
         self,
         sql_file: Path,
         return_all=False,
-        print_failed=False,
-        print_format="pandas",
     ) -> DataCheckResult:
         """
         Run a data_check test on a single input file.
@@ -78,144 +81,42 @@ class DataCheck:
         If return_all is set, the DataCheckResult will contail all results,
         not only the failed ones.
         """
-        expect_file = self.get_expect_file(sql_file)
+        expect_file = get_expect_file(sql_file)
         if not expect_file.exists():
-            warn = str_warn("NO EXPECTED RESULTS FILE")
-            message = f"{sql_file}: {warn}"
-            return DataCheckResult(
-                passed=False,
-                result=f"{sql_file}: NO EXPECTED RESULTS FILE",
-                message=message,
-            )  # no need to run queries, if no expected results found
+            # no need to run queries, if no expected results found
+            return self.output.prepare_result(
+                ResultType.NO_EXPECTED_RESULTS_FILE, source=sql_file
+            )
 
         try:
-            sql_result = self.sql.run_query(read_sql_file(sql_file=sql_file, template_data=self.template_data))
+            sql_result = self.sql.run_query(
+                read_sql_file(sql_file=sql_file, template_data=self.template_data)
+            )
         except Exception as exc:
-            fail = str_fail(f"FAILED (with exception in {sql_file})")
-            message = f"{sql_file}: {fail}"
-            if self.verbose:
-                message += linesep + str(exc)
-            if self.traceback:
-                message += linesep + traceback.format_exc()
-            return DataCheckResult(
-                passed=False,
-                result=f"{sql_file} generated an exception: {exc}",
-                message=message,
+            return self.output.prepare_result(
+                ResultType.FAILED_WITH_EXCEPTION, source=sql_file, exception=exc
             )
 
         try:
-            expect_result = pd.read_csv(
-                expect_file,
-                na_values=[""],  # use empty string as nan
-                keep_default_na=False,
-                comment="#",
-                quotechar='"',
-                quoting=0,
-                engine="c",
-            )
+            expect_result = read_csv(expect_file)
         except Exception as exc_csv:
-            fail = str_fail(f"FAILED (with exception in {expect_file})")
-            message = f"{sql_file}: {fail}"
-            if self.verbose:
-                message += linesep + str(exc_csv)
-            if self.traceback:
-                message += linesep + traceback.format_exc()
-            return DataCheckResult(
-                passed=False,
-                result=f"{expect_file} generated an exception: {exc_csv}",
-                message=message,
+            return self.output.prepare_result(
+                ResultType.FAILED_WITH_EXCEPTION, source=expect_file, exception=exc_csv
             )
 
-        # replace missing values and None with pd.NA
-        sql_result.fillna(value=pd.NA, inplace=True)
-        expect_result.fillna(value=pd.NA, inplace=True)
+        result_type, df_result = self.get_result(sql_result, expect_result, return_all)
+        return self.output.prepare_result(
+            result_type, source=sql_file, result=df_result
+        )
 
-        df_merged = self.merge_results(sql_result, expect_result)
-        df_diff = df_merged[df_merged._merge != "both"]
-
-        if len(df_diff) != 0:
-            failed = str_fail("FAILED")
-            message = f"{sql_file}: {failed}"
-            if print_failed:
-                message += linesep + pprint_failed(df_diff.copy(), print_format)
-            passed = False
-        else:
-            passed_msg = str_pass("PASSED")
-            message = f"{sql_file}: {passed_msg}"
-            passed = True
-
-        if return_all:
-            return DataCheckResult(passed=passed, result=df_merged, message=message)
-        else:
-            return DataCheckResult(passed=passed, result=df_diff, message=message)
-
-    def run(self, files: List[Path], print_failed=False, print_format="pandas") -> bool:
+    def run(self, files: List[Path]) -> bool:
         """
         Runs a data_check test for all element in the list.
         Returns True, if all calls returned True, otherweise False.
         """
         all_files = expand_files(files)
-        if self.workers == 1 or len(all_files) == 1:
-            results = self.run_serial(all_files, print_failed, print_format)
-        else:
-            results = self.run_parallel(all_files, print_failed, print_format)
+        results = self.runner.run(self.run_test, all_files)
 
         overall_result = all(results)
-        overall_result_msg = (
-            str_pass("PASSED") if overall_result else str_fail("FAILED")
-        )
-        print("")
-        print(f"overall result: {overall_result_msg}")
+        self.output.pprint_overall_result(overall_result)
         return overall_result
-
-    def run_parallel(self, all_files, print_failed, print_format):
-        """
-        Runs all tests in parallel.
-        Returns a list of the results
-        """
-        result_futures = [
-            self.executor.submit(
-                self.run_test, f, print_failed=print_failed, print_format=print_format
-            )
-            for f in all_files
-        ]
-        results = []
-        for future in concurrent.futures.as_completed(result_futures):
-            dc_result = future.result()
-            results.append(dc_result)
-            print(dc_result.message)
-        return results
-
-    def run_serial(self, all_files, print_failed, print_format):
-        """
-        Runs all tests in serial.
-        Returns a list of the results
-        """
-        results = []
-        for f in all_files:
-            dc_result = self.run_test(
-                f, print_failed=print_failed, print_format=print_format
-            )
-            results.append(dc_result)
-            print(dc_result.message)
-        return results
-
-    def gen_expectation(self, sql_file: Path, force=False):
-        """
-        Executes the query for a data_check test
-        and stores the result in the csv file.
-        """
-        expect_result = self.get_expect_file(sql_file)
-        if not expect_result.exists() or force:
-            result = self.sql.run_query(sql_file.read_text(encoding="UTF-8"))
-            result.to_csv(expect_result, index=False)
-            print(f"expectation written to {expect_result}")
-        else:
-            print(f"expectation skipped for {expect_result}")
-
-    def generate_expectations(self, files: List[Path], force=False):
-        """
-        Generated a expected results file for each file if it doesn't exists yet.
-        """
-        for sql_file in expand_files(files):
-            self.gen_expectation(sql_file, force)

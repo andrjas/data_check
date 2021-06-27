@@ -1,5 +1,13 @@
 import pandas as pd
 from typing import Union
+from enum import Enum
+
+
+class ResultType(Enum):
+    PASSED = 1
+    FAILED = 2
+    FAILED_WITH_EXCEPTION = 3
+    NO_EXPECTED_RESULTS_FILE = 4
 
 
 class DataCheckResult:
@@ -16,3 +24,14 @@ class DataCheckResult:
 
     def __bool__(self):
         return self.passed
+
+    @staticmethod
+    def result_type_passed(result_type: ResultType) -> bool:
+        return result_type == ResultType.PASSED
+
+    @staticmethod
+    def passed_to_result_type(passed: bool) -> ResultType:
+        if passed:
+            return ResultType.PASSED
+        else:
+            return ResultType.FAILED
