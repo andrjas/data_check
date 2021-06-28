@@ -70,3 +70,8 @@ def test_run_invalid(dc: DataCheck):
 def test_template(dc: DataCheck):
     result = dc.run([Path("checks/templates/template1.sql")])
     assert result
+
+
+def test_run_test_invalid_csv(dc: DataCheck):
+    result = dc.run_test(Path("checks/failing/invalid_csv.sql"))
+    assert not result

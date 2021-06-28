@@ -1,6 +1,7 @@
 import sys
 import os
 from pathlib import Path
+import pytest
 
 my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
@@ -12,6 +13,12 @@ from data_check.io import expand_files, read_sql_file, get_expect_file  # noqa E
 def test_expand_files():
     files = expand_files([Path("checks/basic"), Path("checks/failing")])
     assert len(files) >= 3
+
+
+def test_expand_files_not_existing():
+    with pytest.raises(Exception) as e:
+        expand_files([Path("checks/non_existing")])
+    assert str(e.value) == "unexpected path: checks/non_existing"
 
 
 def test_read_sql_file_with_template():
