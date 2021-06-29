@@ -49,6 +49,18 @@ def test_data_types_null(data_types_check):
     assert pd.isna(data_types_check.null_test)
 
 
+def test_data_types_empty_string(data_types_check):
+    """Empty strings from the database must be converted to NA to match CSV encoding.
+    """
+    assert pd.isna(data_types_check.empty_string_test)
+
+
+def test_data_types_whitespace(data_types_check):
+    """Whitespace must stay the same, not converted to NA.
+    """
+    assert data_types_check.whitespace_test == "   "
+
+
 def test_float_decimal_conversion(dc: DataCheck):
     res = dc.run_test(Path("checks/basic/float.sql"))
     assert res
@@ -64,4 +76,9 @@ def test_decimal_varchar(dc: DataCheck):
     Test a varchar column, that has only decimals in the csv file
     """
     res = dc.run_test(Path("checks/basic/decimal_varchar.sql"))
+    assert res
+
+
+def test_sorted_set(dc: DataCheck):
+    res = dc.run_test(Path("checks/basic/sorted_set.sql"))
     assert res

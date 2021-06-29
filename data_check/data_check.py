@@ -55,6 +55,9 @@ class DataCheck:
     ) -> Tuple[ResultType, pd.DataFrame]:
         # replace missing values and None with pd.NA
         sql_result.fillna(value=pd.NA, inplace=True)
+        # using "" instead of r'^$' doesn't work somehow, so we need to use regex
+        sql_result.replace(r'^$', pd.NA, regex=True, inplace=True)
+
         expect_result.fillna(value=pd.NA, inplace=True)
 
         df_merged = DataCheck.merge_results(sql_result, expect_result)
