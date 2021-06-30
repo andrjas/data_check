@@ -15,6 +15,16 @@ def test_expand_files():
     assert len(files) >= 3
 
 
+def test_expand_files_csv():
+    files = expand_files([Path("load_data")], extension=".csv")
+    assert len(files) >= 3
+
+
+def test_expand_files_empty():
+    files = expand_files([Path("load_data")], extension=".sql")
+    assert len(files) == 0
+
+
 def test_expand_files_not_existing():
     with pytest.raises(Exception) as e:
         expand_files([Path("checks/non_existing")])

@@ -9,6 +9,7 @@ sys.path.insert(0, my_path + "/../")
 
 from data_check import DataCheck  # noqa E402
 from data_check.config import DataCheckConfig  # noqa E402
+from data_check.sql import LoadMethod
 
 # These tests should work on any database.
 # The tests are generic, but in integration tests each database uses specific SQL files.
@@ -27,6 +28,11 @@ def data_types_check(dc: DataCheck):
     res = dc.run_test(Path("checks/basic/data_types.sql"), return_all=True)
     assert not res.result.empty
     return res.result.iloc[0]
+
+
+def assert_equal_df(df1: pd.DataFrame, df2: pd.DataFrame) -> bool:
+    df_diff = df1.merge(df2, how="outer", indicator=True)
+    assert df_diff[df_diff["_merge"] != "both"].empty
 
 
 def test_data_types_string(data_types_check):
@@ -50,14 +56,12 @@ def test_data_types_null(data_types_check):
 
 
 def test_data_types_empty_string(data_types_check):
-    """Empty strings from the database must be converted to NA to match CSV encoding.
-    """
+    """Empty strings from the database must be converted to NA to match CSV encoding."""
     assert pd.isna(data_types_check.empty_string_test)
 
 
 def test_data_types_whitespace(data_types_check):
-    """Whitespace must stay the same, not converted to NA.
-    """
+    """Whitespace must stay the same, not converted to NA."""
     assert data_types_check.whitespace_test == "   "
 
 
@@ -82,3 +86,36 @@ def test_decimal_varchar(dc: DataCheck):
 def test_sorted_set(dc: DataCheck):
     res = dc.run_test(Path("checks/basic/sorted_set.sql"))
     assert res
+
+
+def test_load_csv_replace(dc: DataCheck):
+    data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
+    dc.sql.load_table_from_csv_file(
+        "test_replace", Path("load_data/test.csv"), LoadMethod.REPLACE
+    )
+    df = dc.sql.run_query("select id, data from test_replace")
+    assert_equal_df(data, df)
+
+
+def test_load_csv_truncate(dc: DataCheck):
+    data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
+    dc.sql.load_table_from_csv_file(
+        "test_truncate", Path("load_data/test.csv"), LoadMethod.TRUNCATE
+    )
+    df = dc.sql.run_query("select id, data from test_truncate")
+    assert_equal_df(data, df)
+
+
+def test_load_csv_append(dc: DataCheck):
+    data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
+    dc.sql.load_table_from_csv_file(
+        "test_append", Path("load_data/test.csv"), LoadMethod.TRUNCATE
+    )
+    dc.sql.load_table_from_csv_file(
+        "test_append", Path("load_data/test.csv"), LoadMethod.APPEND
+    )
+    df = dc.sql.run_query("select id, data from test_append")
+    assert_equal_df(
+        data, df
+    )  # since the same data is loaded twice, the merge will also work on one copy of the data
+    assert len(df) == 6

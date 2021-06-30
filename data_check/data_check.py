@@ -18,9 +18,9 @@ class DataCheck:
 
     def __init__(self, config: DataCheckConfig = DataCheckConfig()):
         self.config = config
-        self.sql = DataCheckSql(config.connection)
-        self.generator = DataCheckGenerator(self.sql)
         self.runner = DataCheckRunner(config.parallel_workers)
+        self.sql = DataCheckSql(connection=config.connection, runner=self.runner)
+        self.generator = DataCheckGenerator(self.sql)
         self.output = DataCheckOutput()
         self.template_data: Dict[str, Any] = {}
 
@@ -56,7 +56,7 @@ class DataCheck:
         # replace missing values and None with pd.NA
         sql_result.fillna(value=pd.NA, inplace=True)
         # using "" instead of r'^$' doesn't work somehow, so we need to use regex
-        sql_result.replace(r'^$', pd.NA, regex=True, inplace=True)
+        sql_result.replace(r"^$", pd.NA, regex=True, inplace=True)
 
         expect_result.fillna(value=pd.NA, inplace=True)
 

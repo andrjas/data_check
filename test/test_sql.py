@@ -29,3 +29,32 @@ def test_run_query(sql: DataCheckSql):
 def test_test_connection(sql: DataCheckSql):
     test = sql.test_connection()
     assert test
+
+
+def test_parse_table_name_with_schema(sql: DataCheckSql):
+    tn = "a.b"
+    schema, name = sql._parse_table_name(tn)
+    assert schema == "a"
+    assert name == "b"
+
+
+def test_parse_table_name(sql: DataCheckSql):
+    tn = "b"
+    schema, name = sql._parse_table_name(tn)
+    assert schema is None
+    assert name == "b"
+
+
+def test_parse_table_name_dot(sql: DataCheckSql):
+    tn = "."
+    schema, name = sql._parse_table_name(tn)
+    assert schema == ""
+    assert name == ""
+
+
+def test_parse_table_name_with_schema_with_db(sql: DataCheckSql):
+    tn = "db.a.b"
+    schema, name = sql._parse_table_name(tn)
+    # this looks wrong, but multiple databases are currently not supported
+    assert schema == "db"
+    assert name == "a.b"

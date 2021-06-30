@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 from colorama import init
 from importlib_metadata import version
-from typing import Union, List
+from typing import Union, List, Optional
 
 from data_check.data_check import DataCheck
 from data_check.config import DataCheckConfig
@@ -57,6 +57,25 @@ from data_check.config import DataCheckConfig
     default=DataCheckConfig.config_path,
     help=f"config file to use (default: {DataCheckConfig.config_path})",
 )
+@click.option(
+    "--load",
+    type=click.Path(),
+    help=f"load table data from a csv",
+)
+@click.option(
+    "--table",
+    type=str,
+    help=f"table name to load data into",
+)
+@click.option(
+    "--load-method",
+    type=str,
+    default="truncate",
+    help=f"how to load the table: truncate (default), append or replace",
+)
+@click.option(
+    "--load-tables", is_flag=True, help="load tables from a list of csv files"
+)
 @click.option("--ping", is_flag=True, help="tries to connect to the database")
 @click.option("--verbose", is_flag=True, help="print verbose output")
 @click.option("--traceback", is_flag=True, help="print traceback output for debugging")
@@ -71,6 +90,10 @@ def main(
     generate_expectations: bool = False,
     force: bool = False,
     config: Union[str, Path] = DataCheckConfig.config_path,
+    load: Optional[Path] = None,
+    table: Optional[str] = None,
+    load_method: str = "truncate",
+    load_tables: bool = False,
     ping: bool = False,
     verbose: bool = False,
     traceback: bool = False,
@@ -101,6 +124,25 @@ def main(
         print_failed=print_failed,
         print_format=print_format,
     )
+
+    if load:
+        if not table:
+            click.echo("--table must be specified")
+            sys.exit(1)
+        else:
+            dc.sql.load_table_from_csv_file(
+                table_name=table,
+                csv_file=load,
+                load_method=dc.sql.load_method_from_string(load_method),
+            )
+            sys.exit(0)
+    elif load_tables:
+        path_list = [Path(f) for f in files]
+        dc.sql.load_tables_from_files(
+            path_list, load_method=dc.sql.load_method_from_string(load_method)
+        )
+        sys.exit(0)
+
     dc.load_template()
 
     if not files:
