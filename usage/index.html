@@ -109,6 +109,14 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#loading-data-into-tables" class="nav-link">Loading data into tables</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#executing-arbitrary-sql-code" class="nav-link">Executing arbitrary SQL code</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -130,6 +138,10 @@
 <li><code>data_check -g/--gen/--generate</code> - generate expectation files if they don't exist.</li>
 <li><code>data_check --force</code> - when set, --generate will overwrite files.</li>
 <li><code>data_check --config CONFIG</code> - config file to use (default: data_check.yml).</li>
+<li><code>data_check --load PATH --table</code>-  load table data from a csv into the table</li>
+<li><code>data_check --load-method METHOD</code> -  how to load the table: truncate (default), append or replace. Use with --load or --load-tables.</li>
+<li><code>data_check --load-tables some_folder/or/some_file.csv</code>-  load tables from a list of csv files</li>
+<li><code>data_check --run-sql some_folder/or/some_file.sql</code> - run any SQL script in a list of SQL files</li>
 <li><code>data_check --ping</code> - tries to connect to the database.</li>
 <li><code>data_check --verbose</code> - print verbose output.</li>
 <li><code>data_check --traceback</code> - print traceback output for debugging.</li>
@@ -168,7 +180,36 @@ string,42,42.1,2020-12-20,
 Empty strings are treated as null values.</p>
 <p>Any other data type (e.g. date) must be converted to strings/varchar in the SQL query.</p>
 <h2 id="generating-expectation-files">Generating expectation files</h2>
-<p>If you run <code>data_check --generate</code> in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file.</p></div>
+<p>If you run <code>data_check --generate</code> in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file.</p>
+<h2 id="loading-data-into-tables">Loading data into tables</h2>
+<p>Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV file to load data into the tables. The <a href="./#csv-format">CSV format</a> is the same as used for testing. The header in the CSV file must match the columns in the table. If the table doesn't exists, it will be created.</p>
+<p>The schema and table names are always case-insensitive, as long as the database supports it. Otherwise they are lowercased.</p>
+<h3 id="loading-data-into-a-single-table">Loading data into a single table</h3>
+<p>To load data from some CSV file into a table, you can use <code>data_check --load path/to/csv_file.csv --table schema.table_name</code>. This will truncate the table and load the content of the CSV file into the table. You can specify different <a href="./#load-methods">load methods</a> if you do not want to truncate the table.</p>
+<h3 id="loading-data-into-multiple-tables">Loading data into multiple tables</h3>
+<p>You can use multiple CSV files or a whole folder to load the data into tables. The table name will be derived from the file name.</p>
+<ul>
+<li><code>data_check --load-tables path/schema.table_1.csv</code> - this will load the data from the CSV file into the table schema.table_1</li>
+<li><code>data_check --load-tables path/to/some_folder</code> - this will load the data from all CSV files in this folder into tables matching the file names.</li>
+</ul>
+<p>The path will be searched recursively for CSV files. The folder structure doesn't matter when matching the table names, only the file name matters.</p>
+<h3 id="load-methods">Load methods</h3>
+<p>There are multiple methods that control the data loading:</p>
+<ul>
+<li>truncate - truncate the table before loading the data.</li>
+<li>replace - drop the table and recreate it based on the columns in the CSV file.</li>
+<li>append - do not touch the table before loading the data.</li>
+</ul>
+<p>By default, the tables will be truncated before loading the data. You can use the other methods with <code>--load-method</code>:</p>
+<p><code>data_check --load file.csv --table table_name --load-method replace</code>
+<code>data_check --load-tables path/to/tables_folder --load-method append</code></p>
+<h2 id="executing-arbitrary-sql-code">Executing arbitrary SQL code</h2>
+<p>You can run any SQL file against the database by using the <code>--run-sql</code> command:</p>
+<p><code>data_check --run-sql sql_file.sql other_file.sql</code></p>
+<p>or a whole folder recursively:</p>
+<p><code>data_check --run-sql some/folder/with/sql_files</code></p>
+<p>All files are run in parallel. If you have dependencies between the files, data_check must be called sequentially for each file.</p>
+<p>Multiple statements in a SQL file usually must be inside an anonymous block. MySQL doesn't support this however.</p></div>
             </div>
         </div>
 
