@@ -28,7 +28,7 @@ def test_expand_files_empty():
 def test_expand_files_not_existing():
     with pytest.raises(Exception) as e:
         expand_files([Path("checks/non_existing")])
-    assert str(e.value) == "unexpected path: checks/non_existing"
+    assert str(e.value) == f"unexpected path: checks{os.sep}non_existing"
 
 
 def test_read_sql_file_with_template():

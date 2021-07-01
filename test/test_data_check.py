@@ -75,3 +75,13 @@ def test_template(dc: DataCheck):
 def test_run_test_invalid_csv(dc: DataCheck):
     result = dc.run_test(Path("checks/failing/invalid_csv.sql"))
     assert not result
+
+
+def test_run_sql_file(dc: DataCheck):
+    result = dc.run_sql_file(Path("run_sql/run_test.sql"))
+    assert result
+
+
+def test_run_sql_files(dc: DataCheck):
+    results = dc.run_sql_files([Path("run_sql")])
+    assert len(results) == 1

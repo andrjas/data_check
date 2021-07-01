@@ -10,13 +10,11 @@ done
 
 result=0
 
-# run basic unit tests first
-if ! poetry run pytest test; then
+cd "int_test/${DB}" || exit 1
+if ! poetry run data_check --run-sql prepare; then
     result=1
 fi
 
-# then the integration tests
-cd "int_test/${DB}" || exit 1
 if ! poetry run pytest ../../test/test_database.py ../../test/test_data_check.py; then
     result=1
 fi

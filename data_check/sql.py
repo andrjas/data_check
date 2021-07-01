@@ -12,7 +12,6 @@ from pathlib import Path
 from .exceptions import DataCheckException
 from .io import expand_files, read_csv
 from .runner import DataCheckRunner
-from .config import DataCheckConfig
 
 
 class LoadMethod(Enum):
@@ -63,6 +62,10 @@ class DataCheckSql:
             self.__connection = self.get_engine().connect()
         return self.__connection
 
+    @property
+    def dialect(self) -> str:
+        return self.get_connection().dialect.name
+
     def run_query(self, query: str) -> pd.DataFrame:
         """
         Run a query on the database and return a Pandas DataFrame with the result.
@@ -91,25 +94,31 @@ class DataCheckSql:
                 self.get_connection().execute(
                     text(f"DELETE FROM {table_name}").execution_options(autocommit=True)
                 )
+        elif load_method == LoadMethod.REPLACE:
+            # Pandas and SQLAlchemy seem to have problems using if_exists="replace"
+            # at least in SQLite. That's why we drop the tables here.
+            schema, name = self._parse_table_name(table_name)
+            inspector = inspect(self.get_connection())
+            if inspector.has_table(table_name=name, schema=schema):
+                self.get_connection().execute(
+                    text(f"DROP TABLE {table_name}").execution_options(autocommit=True)
+                )
 
     def _parse_table_name(self, table_name: str) -> Tuple[Optional[str], str]:
         """Parses the table_name and returns the schema and table_name.
         Returns None for schema if table_name is a simple table without schema.
+        The schema and table name will always be upper cased.
         """
         if "." in table_name:
-            schema, name = table_name.split(".", maxsplit=1)
+            schema, name = table_name.lower().split(".", maxsplit=1)
             return (schema, name)
         else:
-            return (None, table_name)
+            return (None, table_name.lower())
 
     @staticmethod
     def _load_method_to_pandas_if_exists(load_method: LoadMethod) -> str:
-        if load_method == LoadMethod.TRUNCATE:
-            return "append"  # for truncate we use apend but with some preparations
-        elif load_method == LoadMethod.APPEND:
-            return "append"
-        elif load_method == LoadMethod.REPLACE:
-            return "replace"
+        # always use "append" since we prepare the tables before loading
+        return "append"
 
     def load_table(self, table_name: str, data: pd.DataFrame, load_method: LoadMethod):
         self._prepare_table_for_load(table_name, load_method)
@@ -149,3 +158,10 @@ class DataCheckSql:
     @staticmethod
     def load_method_from_string(lm_str: str) -> LoadMethod:
         return LoadMethod.from_string(lm_str)
+
+    def run_sql(self, sql_text: str):
+        sq_text = text(sql_text)
+        result = self.get_connection().execute(
+            sq_text.execution_options(autocommit=True)
+        )
+        return result

@@ -1,6 +1,7 @@
 import sys
 import os
 import pytest
+from sqlalchemy.exc import OperationalError
 
 
 # add the parent path to PYTHONPATH
@@ -58,3 +59,31 @@ def test_parse_table_name_with_schema_with_db(sql: DataCheckSql):
     # this looks wrong, but multiple databases are currently not supported
     assert schema == "db"
     assert name == "a.b"
+
+
+def test_run_sql_query(sql: DataCheckSql):
+    res = sql.run_sql("select 1 as test").fetchall()
+    assert res
+
+
+def test_run_sql_query_fail(sql: DataCheckSql):
+    with pytest.raises(OperationalError):
+        sql.run_sql("select a from test")
+
+
+def test_run_sql_ddl(sql: DataCheckSql):
+    res = sql.run_sql("create table test (a varchar2)")
+    assert res
+
+
+def test_run_sql_ddl_and_query(sql: DataCheckSql):
+    sql.run_sql("create table test (a varchar2)")
+    res = sql.run_sql("select a from test").fetchall()
+    assert res == []
+
+
+def test_run_sql_ddl_and_insert(sql: DataCheckSql):
+    sql.run_sql("create table test (a varchar2)")
+    sql.run_sql("insert into test values ('a')")
+    res = sql.run_sql("select a from test").fetchall()
+    assert res == [("a",)]

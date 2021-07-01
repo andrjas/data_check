@@ -12,7 +12,9 @@ fi
 dc="int_test/mysql/docker-compose.yml"
 
 # tear down old tests
-docker-compose -f "$dc" rm -s -f -v data_check
+# As MySQL doesn't support anonymous code blocks,
+# we need to tear down the db to start each test from scratch.
+docker-compose -f "$dc" rm -s -f -v data_check db
 
 docker-compose -f "$dc" build --no-rm
 docker-compose -f "$dc" up -d db

@@ -120,3 +120,13 @@ class DataCheck:
         overall_result = all(results)
         self.output.pprint_overall_result(overall_result)
         return overall_result
+
+    def run_sql_file(self, sql_file: Path):
+        sql_text = read_sql_file(sql_file=sql_file, template_data=self.template_data)
+        print("executing:")
+        print(sql_text)
+        return self.sql.run_sql(sql_text=sql_text)
+
+    def run_sql_files(self, sql_files: List[Path]):
+        parameters = [{"sql_file": f} for f in expand_files(sql_files)]
+        return self.runner.run_any(run_method=self.run_sql_file, parameters=parameters)

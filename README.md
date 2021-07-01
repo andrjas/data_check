@@ -1,12 +1,12 @@
 # data_check
 
-data_check is a simple data validation tool. Write SQL queries and CSV files with the expected result sets and data_check will test the result sets against the queries.
+data_check is a simple data validation tool. Write SQL queries and CSV files with the expected result sets and data_check will test the result sets against the queries. You can also use CSV files to populate tables with data for pipeline tests with data_check.
 
 data_check should work with any database that works with [SQLAlchemy](https://docs.sqlalchemy.org/en/14/dialects/). Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.
 
 ## Quickstart
 
-You need Python 3.6 or above to run data_check. The easiest way to install data_check is via [pipx](https://github.com/pipxproject/pipx):
+You need Python 3.6.2 or above to run data_check. The easiest way to install data_check is via [pipx](https://github.com/pipxproject/pipx):
 
 `pipx install data-check`
 

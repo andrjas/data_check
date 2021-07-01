@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import pytest
 import pandas as pd
+from sqlalchemy import Table, Column, String, Integer, MetaData
 
 my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
@@ -21,6 +22,23 @@ def dc() -> DataCheck:
     _dc = DataCheck(config)
     _dc.load_template()
     return _dc
+
+
+def create_test_table(table_name: str, schema: str, dc: DataCheck):
+    if dc.sql.dialect == "oracle":
+        dc.sql.run_sql(
+            f"create table {schema}.{table_name} (id number(10), data varchar2(10))"
+        )
+    else:
+        metadata = MetaData(dc.sql.get_engine())
+        Table(
+            table_name,
+            metadata,
+            Column("id", Integer),
+            Column("data", String(10)),
+            schema=schema,
+        )
+        metadata.create_all()
 
 
 @pytest.fixture
@@ -91,31 +109,66 @@ def test_sorted_set(dc: DataCheck):
 def test_load_csv_replace(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     dc.sql.load_table_from_csv_file(
-        "test_replace", Path("load_data/test.csv"), LoadMethod.REPLACE
+        "temp.test_replace", Path("load_data/test.csv"), LoadMethod.REPLACE
     )
-    df = dc.sql.run_query("select id, data from test_replace")
+    df = dc.sql.run_query("select id, data from temp.test_replace")
+    assert_equal_df(data, df)
+
+
+def test_load_csv_replace_with_table(dc: DataCheck):
+    data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
+    create_test_table("test_replace2", "temp", dc)
+    dc.sql.load_table_from_csv_file(
+        "temp.test_replace2", Path("load_data/test.csv"), LoadMethod.REPLACE
+    )
+    df = dc.sql.run_query("select id, data from temp.test_replace2")
     assert_equal_df(data, df)
 
 
 def test_load_csv_truncate(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     dc.sql.load_table_from_csv_file(
-        "test_truncate", Path("load_data/test.csv"), LoadMethod.TRUNCATE
+        "temp.test_truncate", Path("load_data/test.csv"), LoadMethod.TRUNCATE
     )
-    df = dc.sql.run_query("select id, data from test_truncate")
+    df = dc.sql.run_query("select id, data from temp.test_truncate")
+    assert_equal_df(data, df)
+
+
+def test_load_csv_truncate_with_table(dc: DataCheck):
+    data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
+    create_test_table("test_truncate2", "temp", dc)
+    dc.sql.load_table_from_csv_file(
+        "temp.test_truncate2", Path("load_data/test.csv"), LoadMethod.TRUNCATE
+    )
+    df = dc.sql.run_query("select id, data from temp.test_truncate2")
     assert_equal_df(data, df)
 
 
 def test_load_csv_append(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     dc.sql.load_table_from_csv_file(
-        "test_append", Path("load_data/test.csv"), LoadMethod.TRUNCATE
+        "temp.test_append", Path("load_data/test.csv"), LoadMethod.TRUNCATE
     )
     dc.sql.load_table_from_csv_file(
-        "test_append", Path("load_data/test.csv"), LoadMethod.APPEND
+        "temp.test_append", Path("load_data/test.csv"), LoadMethod.APPEND
     )
-    df = dc.sql.run_query("select id, data from test_append")
+    df = dc.sql.run_query("select id, data from temp.test_append")
     assert_equal_df(
         data, df
     )  # since the same data is loaded twice, the merge will also work on one copy of the data
     assert len(df) == 6
+
+
+def test_load_csv_append_with_table(dc: DataCheck):
+    data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
+    create_test_table("test_append2", "temp", dc)
+    dc.sql.load_table_from_csv_file(
+        "temp.test_append2", Path("load_data/test.csv"), LoadMethod.APPEND
+    )
+    df = dc.sql.run_query("select id, data from temp.test_append2")
+    assert_equal_df(data, df)
+    assert len(df) == 3
+
+
+def test_dialect(dc: DataCheck):
+    assert dc.sql.dialect in ["sqlite", "postgresql", "mysql", "mssql", "oracle"]

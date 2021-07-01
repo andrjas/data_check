@@ -13,6 +13,10 @@
 * `data_check -g/--gen/--generate` - generate expectation files if they don't exist.
 * `data_check --force` - when set, --generate will overwrite files.
 * `data_check --config CONFIG` - config file to use (default: data_check.yml).
+* `data_check --load PATH --table`-  load table data from a csv into the table
+* `data_check --load-method METHOD` -  how to load the table: truncate (default), append or replace. Use with --load or --load-tables.
+* `data_check --load-tables some_folder/or/some_file.csv`-  load tables from a list of csv files
+* `data_check --run-sql some_folder/or/some_file.sql` - run any SQL script in a list of SQL files
 * `data_check --ping` - tries to connect to the database.
 * `data_check --verbose` - print verbose output.
 * `data_check --traceback` - print traceback output for debugging.
@@ -76,3 +80,49 @@ Any other data type (e.g. date) must be converted to strings/varchar in the SQL 
 ## Generating expectation files
 
 If you run `data_check --generate` in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file.
+
+## Loading data into tables
+
+Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV file to load data into the tables. The [CSV format](usage.md#CSV-format) is the same as used for testing. The header in the CSV file must match the columns in the table. If the table doesn't exists, it will be created.
+
+The schema and table names are always case-insensitive, as long as the database supports it. Otherwise they are lowercased.
+
+### Loading data into a single table
+
+To load data from some CSV file into a table, you can use `data_check --load path/to/csv_file.csv --table schema.table_name`. This will truncate the table and load the content of the CSV file into the table. You can specify different [load methods](usage.md#Load-methods) if you do not want to truncate the table.
+
+### Loading data into multiple tables
+
+You can use multiple CSV files or a whole folder to load the data into tables. The table name will be derived from the file name.
+
+* `data_check --load-tables path/schema.table_1.csv` - this will load the data from the CSV file into the table schema.table_1
+* `data_check --load-tables path/to/some_folder` - this will load the data from all CSV files in this folder into tables matching the file names.
+
+The path will be searched recursively for CSV files. The folder structure doesn't matter when matching the table names, only the file name matters.
+
+### Load methods
+
+There are multiple methods that control the data loading:
+
+* truncate - truncate the table before loading the data.
+* replace - drop the table and recreate it based on the columns in the CSV file.
+* append - do not touch the table before loading the data.
+
+By default, the tables will be truncated before loading the data. You can use the other methods with `--load-method`:
+
+`data_check --load file.csv --table table_name --load-method replace`
+`data_check --load-tables path/to/tables_folder --load-method append`
+
+## Executing arbitrary SQL code
+
+You can run any SQL file against the database by using the `--run-sql` command:
+
+`data_check --run-sql sql_file.sql other_file.sql`
+
+or a whole folder recursively:
+
+`data_check --run-sql some/folder/with/sql_files`
+
+All files are run in parallel. If you have dependencies between the files, data_check must be called sequentially for each file.
+
+Multiple statements in a SQL file usually must be inside an anonymous block. MySQL doesn't support this however.
