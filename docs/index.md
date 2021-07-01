@@ -1,6 +1,6 @@
 # Welcome to data_check
 
-data_check is a simple data validation tool. Write SQL queries and CSV files with the expected result sets and data_check will test the result sets against the queries. You can also use CSV files to [populate tables](usage.md#Loading-data-into-tables) with data for pipeline tests with data_check.
+data_check is a simple data validation tool. Write SQL queries and CSV files with the expected result sets and data_check will test the result sets against the queries. You can also use CSV files to [populate tables](usage.md#loading-data-into-tables) with data for pipeline tests with data_check.
 
 data_check should work with any database that works with [SQLAlchemy](https://docs.sqlalchemy.org/en/14/dialects/). Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.
 

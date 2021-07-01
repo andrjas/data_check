@@ -83,13 +83,13 @@ If you run `data_check --generate` in a project folder, data_check will execute 
 
 ## Loading data into tables
 
-Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV file to load data into the tables. The [CSV format](usage.md#CSV-format) is the same as used for testing. The header in the CSV file must match the columns in the table. If the table doesn't exists, it will be created.
+Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV file to load data into the tables. The [CSV format](usage.md#csv-format) is the same as used for testing. The header in the CSV file must match the columns in the table. If the table doesn't exists, it will be created.
 
 The schema and table names are always case-insensitive, as long as the database supports it. Otherwise they are lowercased.
 
 ### Loading data into a single table
 
-To load data from some CSV file into a table, you can use `data_check --load path/to/csv_file.csv --table schema.table_name`. This will truncate the table and load the content of the CSV file into the table. You can specify different [load methods](usage.md#Load-methods) if you do not want to truncate the table.
+To load data from some CSV file into a table, you can use `data_check --load path/to/csv_file.csv --table schema.table_name`. This will truncate the table and load the content of the CSV file into the table. You can specify different [load methods](usage.md#load-methods) if you do not want to truncate the table.
 
 ### Loading data into multiple tables
 

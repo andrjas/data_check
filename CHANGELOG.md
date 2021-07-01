@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2021-07-01
+
+### Added
+
+- loading tables from CSV files
+- running any SQL file
+- more tests
+- integration tests for all supported python versions
+
+### Changed
+
+- upgraded dependencies
+- minimum python version is now 3.6.2
+- internal refactoring
+
+### Removed
+
+- unit tests inside integration tests
+
 ## [0.3.0] - 2021-04-09
 
 ### Added
