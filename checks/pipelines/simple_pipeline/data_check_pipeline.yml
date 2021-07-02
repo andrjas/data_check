@@ -1,0 +1,8 @@
+steps:
+  - load_tables: load_data
+  - cmd: ls
+  - check: checks
+  - run_sql: sql_files
+  - load: 
+      - csv_file: load_data/test_simple_pipeline.csv
+      - table_name: other_table

@@ -1,3 +1,4 @@
+import csv
 from typing import Dict, Any, Optional, Tuple, List
 from os import path
 from sqlalchemy import create_engine, inspect
@@ -141,6 +142,11 @@ class DataCheckSql:
         self.load_table(table_name=table_name, data=data, load_method=load_method)
         print(f"table {table_name} loaded from {csv_file}")
 
+    def load_table_from_csv_file_str(
+        self, table_name: str, csv_file: Path, load_method_str: str = "truncate"
+    ):
+        return self.load_table_from_csv_file(table_name=table_name, csv_file=csv_file, load_method=self.load_method_from_string(load_method_str))
+
     def load_tables_from_files(
         self,
         files: List[Path],
@@ -154,6 +160,13 @@ class DataCheckSql:
         self.runner.run_any(
             run_method=self.load_table_from_csv_file, parameters=parameters
         )
+
+    def load_tables_from_files_str(
+        self,
+        files: List[Path],
+        load_method_str: str = "truncate",
+    ):
+        return self.load_tables_from_files(files=files, load_method=self.load_method_from_string(load_method_str))
 
     @staticmethod
     def load_method_from_string(lm_str: str) -> LoadMethod:
