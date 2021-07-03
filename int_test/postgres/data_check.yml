@@ -1,5 +1,5 @@
 default_connection: test
 
 connections:
-    test: postgresql://postgres:${POSTGRES_PWD}@db:5432
+    test: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432
     test2: postgresql://postgres:data_check@db:5432

@@ -1,5 +1,5 @@
 default_connection: test
 
 connections:
-    test: mssql+pyodbc://sa:data_CHECK@db:1433/master?driver=ODBC+Driver+17+for+SQL+Server
-    test2: mssql+pyodbc://sa:data_CHECK@db:1433/master?driver=ODBC+Driver+17+for+SQL+Server
+    test: mssql+pyodbc://sa:${SA_PASSWORD}@db:1433/master?driver=ODBC+Driver+17+for+SQL+Server
+    test2: mssql+pyodbc://sa:${SA_PASSWORD}@db:1433/master?driver=ODBC+Driver+17+for+SQL+Server
