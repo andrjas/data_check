@@ -72,7 +72,7 @@ steps:
   - poetry install
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
   - poetry run pytest test/test_database.py test/test_data_check.py
-  - poetry run data_check --generate
+  - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback --workers 1
@@ -94,7 +94,7 @@ steps:
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
   - poetry run data_check --run-sql prepare
   - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
-  - poetry run data_check --generate
+  - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
@@ -125,7 +125,7 @@ steps:
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
   - poetry run data_check --run-sql prepare
   - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
-  - poetry run data_check --generate
+  - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
@@ -161,7 +161,7 @@ steps:
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
   - poetry run data_check --run-sql prepare
   - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
-  - poetry run data_check --generate
+  - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
@@ -201,7 +201,7 @@ steps:
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 10; done'
   - poetry run data_check --run-sql prepare
   - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
-  - poetry run data_check --generate
+  - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
