@@ -221,7 +221,6 @@ steps:
   - mv /etc/yum.repos.d/oracle-ol7.repo.incomplete /etc/yum.repos.d/oracle-ol7.repo
   - yum install -y oracle-instantclient19.5-basic oracle-instantclient19.5-sqlplus python3
   - python3 -m pip install -U pip
-  - centos 7 needs an older cryptography version
   - python3 -m pip install poetry cryptography==3.3.2
   - poetry install -E oracle
   - cd int_test/oracle
@@ -236,10 +235,10 @@ steps:
     CLIENT_HOME: /usr/lib/oracle/19.5/client64
     LANG: en_US.utf-8
     LC_ALL: en_US.utf-8
-    LD_LIBRARY_PATH: $${LD_LIBRARY_PATH}:$${CLIENT_HOME}/lib
+    LD_LIBRARY_PATH: ${LD_LIBRARY_PATH}:${CLIENT_HOME}/lib
     NLS_LANG: .utf8
     ORACLE_PWD: data_check
-    PATH: $${PATH}:$${CLIENT_HOME}/bin:/usr/local/bin
+    PATH: ${PATH}:${CLIENT_HOME}/bin:/usr/local/bin
 
 services:
 - name: db
@@ -250,10 +249,10 @@ services:
     CLIENT_HOME: /usr/lib/oracle/19.5/client64
     LANG: en_US.utf-8
     LC_ALL: en_US.utf-8
-    LD_LIBRARY_PATH: $${LD_LIBRARY_PATH}:$${CLIENT_HOME}/lib
+    LD_LIBRARY_PATH: ${LD_LIBRARY_PATH}:${CLIENT_HOME}/lib
     NLS_LANG: .utf8
     ORACLE_PWD: data_check
-    PATH: $${PATH}:$${CLIENT_HOME}/bin:/usr/local/bin
+    PATH: ${PATH}:${CLIENT_HOME}/bin:/usr/local/bin
   volumes:
   - name: oradata
     path: /opt/oracle/oradata

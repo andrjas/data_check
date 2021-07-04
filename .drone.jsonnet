@@ -38,15 +38,9 @@ local sqllite_int_test = [
     "poetry run data_check checks/pipelines/simple_pipeline --traceback --workers 1"
 ];
 
-local int_test(db) =
-    if db == "sqlite" then
-        sqllite_int_test
-    else
-        generic_int_test
-;
 
 
-local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, pipeline_extra={}) = 
+local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, pipeline_extra={}, int_test=generic_int_test) = 
 {
     kind: "pipeline",
     type: "docker",
@@ -55,7 +49,7 @@ local int_pipeline(db, image, prepare_commands, environment={}, db_image="", ser
         {
             name: "data_check",
             image: image,
-            commands: prepare_commands + int_test(db),
+            commands: prepare_commands + int_test,
             environment: environment
         }
     ],
@@ -74,7 +68,7 @@ local sqlite_test() = int_pipeline("sqlite", "python:3.8",
     "python -m pip install -U pip",
     "python -m pip install poetry",
     "poetry install"
-]);
+], int_test=sqllite_int_test);
 
 
 local postgres_test() = int_pipeline("postgres", "python:3.8",
@@ -129,7 +123,7 @@ local oracle_test() = int_pipeline("oracle", "centos:7",
     "mv /etc/yum.repos.d/oracle-ol7.repo.incomplete /etc/yum.repos.d/oracle-ol7.repo",
     "yum install -y oracle-instantclient19.5-basic oracle-instantclient19.5-sqlplus python3",
     "python3 -m pip install -U pip",
-    "centos 7 needs an older cryptography version",
+    # centos 7 needs an older cryptography version
     "python3 -m pip install poetry cryptography==3.3.2",
     "poetry install -E oracle",
     "cd int_test/oracle"
@@ -137,8 +131,8 @@ local oracle_test() = int_pipeline("oracle", "centos:7",
 {
     ORACLE_PWD: "data_check",
     CLIENT_HOME: "/usr/lib/oracle/19.5/client64",
-    LD_LIBRARY_PATH: "$${LD_LIBRARY_PATH}:$${CLIENT_HOME}/lib",
-    PATH: "$${PATH}:$${CLIENT_HOME}/bin:/usr/local/bin",
+    LD_LIBRARY_PATH: "${LD_LIBRARY_PATH}:${CLIENT_HOME}/lib",
+    PATH: "${PATH}:${CLIENT_HOME}/bin:/usr/local/bin",
     NLS_LANG: ".utf8",
     LC_ALL: "en_US.utf-8",
     LANG: "en_US.utf-8"
