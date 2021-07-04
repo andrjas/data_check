@@ -84,10 +84,9 @@ def test_run_sql_file(dc: DataCheck):
 
 def test_run_sql_files(dc: DataCheck):
     results = dc.run_sql_files([Path("run_sql")])
-    assert len(results) == 1
+    assert results
 
 
 def test_collect_checks(dc: DataCheck):
     checks = dc.collect_checks([Path("checks")])
-    print(checks)
-    assert False
+    assert len(checks) == 12

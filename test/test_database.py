@@ -19,6 +19,7 @@ from data_check.sql import LoadMethod
 @pytest.fixture
 def dc() -> DataCheck:
     config = DataCheckConfig().load_config().set_connection("test")
+    config.parallel_workers = 1
     _dc = DataCheck(config)
     _dc.load_template()
     return _dc
