@@ -1,0 +1,2 @@
+steps:
+  - cmd: echo "nested pipeline"

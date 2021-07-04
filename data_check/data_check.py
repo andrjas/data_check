@@ -40,13 +40,31 @@ class DataCheck(SimpleCheck, PipelineCheck):
         else:
             return self.run_test(path)
 
-    def run(self, files: List[Path]) -> bool:
+    def collect_checks(self, files: List[Path], base_path: Path = Path(".")) -> List[Any]:
+        checks = []
+        for f in files:
+            rel_file = base_path / f
+            if self.is_pipeline_check(rel_file):
+                checks.append(rel_file)
+            elif self.is_simple_check(rel_file):
+                checks.append(rel_file)
+            elif rel_file.is_dir():
+                # dir_files = list(rel_file.iterdir())
+                rel_files = [d.relative_to(base_path) for d in rel_file.iterdir()]
+                # print("dir_files: ",rel_file)
+                checks.extend(self.collect_checks(rel_files, base_path=base_path))
+            # else:
+            #     print(f"unknown file: {f}")
+        return checks
+
+    def run(self, files: List[Path], base_path: Path = Path(".")) -> bool:
         """
         Runs a data_check test for all element in the list.
         Returns True, if all calls returned True, otherweise False.
         """
-        all_files = expand_files(files)
-        results = self.runner.run(self.delegate_test, all_files)
+        # all_files = expand_files(files, base_path=base_path)
+        all_checks = self.collect_checks(files, base_path=base_path)
+        results = self.runner.run(self.delegate_test, all_checks)
 
         overall_result = all(results)
         self.output.pprint_overall_result(overall_result)
@@ -58,6 +76,6 @@ class DataCheck(SimpleCheck, PipelineCheck):
         print(sql_text)
         return self.sql.run_sql(sql_text=sql_text)
 
-    def run_sql_files(self, sql_files: List[Path]):
-        parameters = [{"sql_file": f} for f in expand_files(sql_files)]
-        return self.runner.run_any(run_method=self.run_sql_file, parameters=parameters)
+    def run_sql_files(self, sql_files: List[Path], base_path: Path = Path(".")):
+        parameters = [{"sql_file": f} for f in expand_files(sql_files, base_path=base_path)]
+        return all(self.runner.run_any(run_method=self.run_sql_file, parameters=parameters))

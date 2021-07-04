@@ -2,43 +2,73 @@ from pathlib import Path
 from typing import Callable, List, Tuple, Dict, Any, Union, Optional
 from copy import deepcopy
 import inspect
+import subprocess
 
 from ..result import DataCheckResult
 from ..io import read_yaml
+from ..output import DataCheckOutput
 
 DATA_CHECK_PIPELINE_FILE = "data_check_pipeline.yml"
 
 
 class SerialPipelineSteps:
-    def __init__(self, data_check, steps: List[Any], path: Path) -> None:
+    def __init__(self, data_check, steps: List[Any], path: Path, pipeline_name: str) -> None:
         self.data_check = data_check
         self.path = path
         self.steps = steps
+        self.pipeline_name = pipeline_name
 
-    def run(self):
+    def run(self) -> DataCheckResult:
         for step in self.steps:
-            self.run_pipeline_step(self.path, step)
+            # try:
+                result = self.run_pipeline_step(self.path, step)
+                if not result:
+                    # return result
+                    return DataCheckResult(passed=False, result=f"pipeline {self.pipeline_name}: {DataCheckOutput.failed_message}")
+            # except Exception as e:
+            #     print(f"pipeline step {step} caused an exception: {e}")
+            #     return False
+
+        return DataCheckResult(passed=True, result=f"pipeline {self.pipeline_name}: {DataCheckOutput.passed_message}")
 
     def run_pipeline_step(self, path: Path, step: Dict[str, Any]):
         step_type = next(iter(step.keys()))
         params = next(iter(step.values()))
-        print(step_type, params)
+        # print(step_type, params)
         call_method = self.data_check.get_pipeline_method(step_type)
         if call_method:
-            prepared_params = self.data_check.get_prepared_parameters(path, step_type, params)
+            prepared_params = self.data_check.get_prepared_parameters(step_type, params)
             # return self._call_method(call_method, prepared_params)
-            print(f"call {call_method} with {prepared_params}")
+            prepared_params.update({"base_path": path})
+            # print(f"call {call_method} with {prepared_params}")
             return call_method(**prepared_params)
         else:
             raise Exception(f"unknown pipeline step: {step_type}")
 
 
 class CmdStep:
-    def __init__(self, cmd) -> None:
+    def __init__(self, cmd: Union[str, List[str]]) -> None:
         self.cmd = cmd
 
-    def run(self):
-        pass
+    def _run_cmd(self, cmd: str, base_path: Path = Path(".")):
+        print(f"# {cmd}")
+        try:
+            subprocess.run(args=cmd, cwd=base_path, shell=True, check=True)
+            return True
+        except subprocess.CalledProcessError:
+            return False
+
+    def run(self, base_path: Path = Path(".")):
+        # print(f"run {self.cmd}")
+        if isinstance(self.cmd, List):
+            for c in self.cmd:
+                if not self._run_cmd(c, base_path=base_path):
+                    return False
+        elif isinstance(self.cmd, str):
+            self._run_cmd(self.cmd, base_path=base_path)
+        else:
+            raise Exception(f"unknown cmd type: {self.cmd}")
+        return True
 
 
 class PipelineCheck:
@@ -76,41 +106,51 @@ class PipelineCheck:
 
     def run_pipeline(self, path: Path) -> DataCheckResult:
         steps = self._get_steps(path)
-        serial_steps = SerialPipelineSteps(self, steps, path)
-        serial_steps.run()
+        serial_steps = SerialPipelineSteps(self, steps, path, pipeline_name=str(path))
+        return serial_steps.run()
 
-    def run_cmd(self, cmd: List[str]):
+    def run_cmd(self, cmd: List[str], base_path: Path = Path(".")):
         c = CmdStep(cmd)
-        return c.run()
+        return c.run(base_path=base_path)
 
-    def get_prepared_parameters(self, path: Path, method: str, params: Union[str, List[str], Dict[str, Any]]):
+    def get_prepared_parameters(self, method: str, params: Union[str, List[str], Dict[str, Any]]):
         prepared_params = dict()
         if isinstance(params, str):
             # If only a string is given, convert it to a list of the first convert_to_path_list argument
             # or, if no path list given, to the first convert_to_path argument.
             try:
                 first_param = self.pipeline_steps.get(method, {}).get("convert_to_path_list")[0]
-                prepared_params[first_param] = [path / Path(params)]
+                prepared_params[first_param] = [Path(params)]
             except IndexError:
                 try:
                     first_param = self.pipeline_steps.get(method, {}).get("convert_to_path")[0]
-                    prepared_params[first_param] = path / Path(params)
+                    prepared_params[first_param] = Path(params)
                 except IndexError:
                     # if this didn't work, try to get the first argument from inspection
-                    method = self.pipeline_steps.get(method, {}).get("method")
-                    argspec = inspect.getfullargspec(method)
+                    _method = self.pipeline_steps.get(method, {}).get("method")
+                    argspec = inspect.getfullargspec(_method)
                     first_param = argspec.args[1] if argspec.args[0] == 'self' else argspec.args[0]
                     prepared_params[first_param] = params
 
         elif isinstance(params, List):
             # if list (of strings) is given, convert it to a list of the first convert_to_path_list argument
-            first_param = self.pipeline_steps.get(method, {}).get("convert_to_path_list")[0]
-            prepared_params[first_param] = [(path / Path(p)) for p in params]
+            try:
+                first_param = self.pipeline_steps.get(method, {}).get("convert_to_path_list")[0]
+                prepared_params[first_param] = [Path(p) for p in params]
+            except IndexError:
+                # if this didn't work, pass the list to the first argument from inspection
+                _method = self.pipeline_steps.get(method, {}).get("method")
+                argspec = inspect.getfullargspec(_method)
+                first_param = argspec.args[1] if argspec.args[0] == 'self' else argspec.args[0]
+                prepared_params[first_param] = params
         elif isinstance(params, dict):
             param_list = self.pipeline_steps.get(method, {}).get("convert_to_path_list")
             prepared_params = deepcopy(params)
             for _param in param_list:
-                prepared_params[_param] = [(path / Path(p)) for p in params[_param]]
+                prepared_params[_param] = [Path(p) for p in params[_param]]
+            param_list_path = self.pipeline_steps.get(method, {}).get("convert_to_path")
+            for _param in param_list_path:
+                prepared_params[_param] = Path(params[_param])
         return prepared_params
 
     # def _call_method(self, method, params):

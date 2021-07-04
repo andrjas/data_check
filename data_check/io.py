@@ -5,19 +5,20 @@ import pandas as pd
 import yaml
 
 
-def expand_files(files: List[Path], extension: str = ".sql") -> List[Path]:
+def expand_files(files: List[Path], extension: str = ".sql", base_path: Path = Path(".")) -> List[Path]:
     """
     Expands the list of files or folders,
     with all SQL files in a folder as seperate files.
     """
     result: List[Path] = []
     for f in files:
-        if f.is_file():
-            result.append(f)
-        elif f.is_dir():
-            result.extend(f.glob(f"**/*{extension}"))
+        rel_file = base_path / f
+        if rel_file.is_file():
+            result.append(rel_file)
+        elif rel_file.is_dir():
+            result.extend(rel_file.glob(f"**/*{extension}"))
         else:
-            raise Exception(f"unexpected path: {f}")
+            raise Exception(f"unexpected path: {rel_file}")
     return result
 
 

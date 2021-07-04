@@ -30,6 +30,10 @@ class SimpleCheck:
         return df_merged
 
     @staticmethod
+    def is_simple_check(path: Path):
+        return path.suffix.lower() == ".sql"
+
+    @staticmethod
     def get_result(
         sql_result: pd.DataFrame, expect_result: pd.DataFrame, return_all: bool
     ) -> Tuple[ResultType, pd.DataFrame]:

@@ -47,20 +47,33 @@ class DataCheckSql:
         """
         return {}  # no special parameters needed for now
 
+    def _keep_connection(self):
+        # Do not keep the connection if runner has more than 1 workers.
+        # Cannot pickle otherwise.
+        return self.runner.workers == 1
+
     def get_engine(self, extra_params: Dict[str, Any] = {}) -> Engine:
         """
         Return the database engine for the connection.
         """
         if self.__engine is None:
-            self.__engine = create_engine(
+            _engine = create_engine(
                 path.expandvars(self.connection),
                 **{**self.get_db_params(), **extra_params},
             )
+            if self._keep_connection():
+                self.__engine = _engine
+            else:
+                return _engine
         return self.__engine
 
-    def get_connection(self):
+    def get_connection(self) -> Connection:
         if self.__connection is None:
-            self.__connection = self.get_engine().connect()
+            _connection = self.get_engine().connect()
+            if self._keep_connection():
+                self.__connection = _connection
+            else:
+                return _connection
         return self.__connection
 
     @property
@@ -134,39 +147,48 @@ class DataCheckSql:
                 if_exists=if_exists,
                 index=False,
             )
+            return True
 
     def load_table_from_csv_file(
-        self, table_name: str, csv_file: Path, load_method: LoadMethod
+        self, table_name: str, csv_file: Path, load_method: LoadMethod, base_path: Path = Path(".")
     ):
-        data = read_csv(csv_file=csv_file)
-        self.load_table(table_name=table_name, data=data, load_method=load_method)
-        print(f"table {table_name} loaded from {csv_file}")
+        rel_file = base_path / csv_file
+        data = read_csv(csv_file=rel_file)
+        result = self.load_table(table_name=table_name, data=data, load_method=load_method)
+        if result:
+            print(f"table {table_name} loaded from {rel_file}")
+        else:
+            print(f"loading table {table_name} from {rel_file} failed")
+        return result
 
     def load_table_from_csv_file_str(
-        self, table_name: str, csv_file: Path, load_method_str: str = "truncate"
+        self, table_name: str, csv_file: Path, load_method_str: str = "truncate", base_path: Path = Path(".")
     ):
-        return self.load_table_from_csv_file(table_name=table_name, csv_file=csv_file, load_method=self.load_method_from_string(load_method_str))
+        return self.load_table_from_csv_file(table_name=table_name, csv_file=csv_file, load_method=self.load_method_from_string(load_method_str), base_path=base_path)
 
     def load_tables_from_files(
         self,
         files: List[Path],
         load_method: LoadMethod,
+        base_path: Path = Path("."),
     ):
-        csv_files = expand_files(files, extension=".csv")
+        csv_files = expand_files(files, extension=".csv", base_path=base_path)
         parameters = [
             {"table_name": f.stem, "csv_file": f, "load_method": load_method}
             for f in csv_files
         ]
-        self.runner.run_any(
+        results = self.runner.run_any(
             run_method=self.load_table_from_csv_file, parameters=parameters
         )
+        return all(results)
 
     def load_tables_from_files_str(
         self,
         files: List[Path],
         load_method_str: str = "truncate",
+        base_path: Path = Path("."),
     ):
-        return self.load_tables_from_files(files=files, load_method=self.load_method_from_string(load_method_str))
+        return self.load_tables_from_files(files=files, load_method=self.load_method_from_string(load_method_str), base_path=base_path)
 
     @staticmethod
     def load_method_from_string(lm_str: str) -> LoadMethod:
