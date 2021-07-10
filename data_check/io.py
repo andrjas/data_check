@@ -5,7 +5,9 @@ import pandas as pd
 import yaml
 
 
-def expand_files(files: List[Path], extension: str = ".sql", base_path: Path = Path(".")) -> List[Path]:
+def expand_files(
+    files: List[Path], extension: str = ".sql", base_path: Path = Path(".")
+) -> List[Path]:
     """
     Expands the list of files or folders,
     with all SQL files in a folder as seperate files.

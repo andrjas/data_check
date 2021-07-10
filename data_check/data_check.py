@@ -1,11 +1,10 @@
 from pathlib import Path
-import pandas as pd
-from typing import List, Tuple, Dict, Any
+from typing import List, Dict, Any
 
 from .config import DataCheckConfig
-from .result import DataCheckResult, ResultType
+from .result import DataCheckResult
 from .output import DataCheckOutput
-from .io import expand_files, read_sql_file, get_expect_file, read_csv, read_yaml
+from .io import expand_files, read_sql_file, read_yaml
 from .sql import DataCheckSql
 from .generator import DataCheckGenerator
 from .runner import DataCheckRunner
@@ -40,7 +39,9 @@ class DataCheck(SimpleCheck, PipelineCheck):
         else:
             return self.run_test(path)
 
-    def collect_checks(self, files: List[Path], base_path: Path = Path(".")) -> List[Any]:
+    def collect_checks(
+        self, files: List[Path], base_path: Path = Path(".")
+    ) -> List[Any]:
         checks = []
         for f in files:
             rel_file = base_path / f
@@ -77,5 +78,9 @@ class DataCheck(SimpleCheck, PipelineCheck):
         return self.sql.run_sql(sql_text=sql_text)
 
     def run_sql_files(self, sql_files: List[Path], base_path: Path = Path(".")):
-        parameters = [{"sql_file": f} for f in expand_files(sql_files, base_path=base_path)]
-        return all(self.runner.run_any(run_method=self.run_sql_file, parameters=parameters))
+        parameters = [
+            {"sql_file": f} for f in expand_files(sql_files, base_path=base_path)
+        ]
+        return all(
+            self.runner.run_any(run_method=self.run_sql_file, parameters=parameters)
+        )

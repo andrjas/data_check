@@ -1,5 +1,4 @@
-import csv
-from typing import Dict, Any, Optional, Tuple, List
+from typing import Dict, Any, Optional, Tuple, List, Union
 from os import path
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine import Engine, Connection
@@ -150,28 +149,33 @@ class DataCheckSql:
             return True
 
     def load_table_from_csv_file(
-        self, table_name: str, csv_file: Path, load_method: LoadMethod, base_path: Path = Path(".")
+        self,
+        table_name: str,
+        csv_file: Path,
+        load_method: Union[str, LoadMethod] = LoadMethod.TRUNCATE,
+        base_path: Path = Path("."),
     ):
+        if isinstance(load_method, str):
+            load_method = self.load_method_from_string(load_method)
         rel_file = base_path / csv_file
         data = read_csv(csv_file=rel_file)
-        result = self.load_table(table_name=table_name, data=data, load_method=load_method)
+        result = self.load_table(
+            table_name=table_name, data=data, load_method=load_method
+        )
         if result:
             print(f"table {table_name} loaded from {rel_file}")
         else:
             print(f"loading table {table_name} from {rel_file} failed")
         return result
 
-    def load_table_from_csv_file_str(
-        self, table_name: str, csv_file: Path, load_method_str: str = "truncate", base_path: Path = Path(".")
-    ):
-        return self.load_table_from_csv_file(table_name=table_name, csv_file=csv_file, load_method=self.load_method_from_string(load_method_str), base_path=base_path)
-
     def load_tables_from_files(
         self,
         files: List[Path],
-        load_method: LoadMethod,
+        load_method: Union[str, LoadMethod] = LoadMethod.TRUNCATE,
         base_path: Path = Path("."),
     ):
+        if isinstance(load_method, str):
+            load_method = self.load_method_from_string(load_method)
         csv_files = expand_files(files, extension=".csv", base_path=base_path)
         parameters = [
             {"table_name": f.stem, "csv_file": f, "load_method": load_method}
@@ -181,14 +185,6 @@ class DataCheckSql:
             run_method=self.load_table_from_csv_file, parameters=parameters
         )
         return all(results)
-
-    def load_tables_from_files_str(
-        self,
-        files: List[Path],
-        load_method_str: str = "truncate",
-        base_path: Path = Path("."),
-    ):
-        return self.load_tables_from_files(files=files, load_method=self.load_method_from_string(load_method_str), base_path=base_path)
 
     @staticmethod
     def load_method_from_string(lm_str: str) -> LoadMethod:

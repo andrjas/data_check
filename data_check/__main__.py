@@ -134,17 +134,15 @@ def main(
             click.echo("--table must be specified")
             sys.exit(1)
         else:
-            dc.sql.load_table_from_csv_file_str(
+            dc.sql.load_table_from_csv_file(
                 table_name=table,
                 csv_file=load,
-                load_method_str=load_method,
+                load_method=load_method,
             )
             sys.exit(0)
     elif load_tables:
         path_list = [Path(f) for f in files]
-        dc.sql.load_tables_from_files_str(
-            path_list, load_method_str=load_method
-        )
+        dc.sql.load_tables_from_files_str(path_list, load_method_str=load_method)
         sys.exit(0)
 
     dc.load_template()

@@ -1,3 +1,6 @@
+# run "drone jsonnet  --format --stream" whenever you change this file
+# to generate .drone.yml
+
 local python_test(version) = 
 {
     "kind": "pipeline",

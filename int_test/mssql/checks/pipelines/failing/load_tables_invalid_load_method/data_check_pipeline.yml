@@ -1,0 +1,5 @@
+steps:
+  - load_tables:
+      csv_file: some_table.csv
+      table_name: some_table
+      load_method: invalid
