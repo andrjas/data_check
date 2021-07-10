@@ -17,7 +17,7 @@ from data_check.result import DataCheckResult  # noqa E402
 def dc() -> DataCheck:
     config = DataCheckConfig().load_config().set_connection("test")
     config.parallel_workers = (
-        1  # since we do not persist anything in SQLite, we must a single connection
+        1  # since we do not persist anything in SQLite, we must use a single connection
     )
     _dc = DataCheck(config)
     _dc.load_template()

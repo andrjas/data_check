@@ -90,7 +90,6 @@ class PipelineCheck:
         self.pipeline_steps = {}
 
     def register_pipelines(self):
-        # TODO: move register_pipeline_step to each component
         self.register_pipeline_step(
             "load_tables",
             self.sql.load_tables_from_files,
