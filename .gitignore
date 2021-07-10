@@ -4,3 +4,4 @@ build/
 dist/
 .vscode/
 .hypothesis
+checks/generated/generate_before_running.csv

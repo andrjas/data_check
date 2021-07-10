@@ -157,7 +157,7 @@ def main(
     path_list = [Path(f) for f in files]
 
     if generate_expectations:
-        dc.generator.generate_expectations(path_list, force)
+        dc.generate_expectations(path_list, force)
     elif ping:
         test = dc.sql.test_connection()
         if test:

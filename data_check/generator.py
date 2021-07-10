@@ -1,5 +1,5 @@
 from pathlib import Path
-from .io import expand_files, get_expect_file
+from .io import get_expect_file
 from typing import List
 
 from .sql import DataCheckSql
@@ -26,5 +26,6 @@ class DataCheckGenerator:
         """
         Generated a expected results file for each file if it doesn't exists yet.
         """
-        for sql_file in expand_files(files):
-            self.gen_expectation(sql_file, force)
+        for file in files:
+            if file.is_file() and file.suffix.lower() == ".sql":
+                self.gen_expectation(file, force)

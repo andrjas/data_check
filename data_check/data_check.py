@@ -41,7 +41,7 @@ class DataCheck(SimpleCheck, PipelineCheck):
 
     def collect_checks(
         self, files: List[Path], base_path: Path = Path(".")
-    ) -> List[Any]:
+    ) -> List[Path]:
         checks = []
         for f in files:
             rel_file = base_path / f
@@ -84,3 +84,6 @@ class DataCheck(SimpleCheck, PipelineCheck):
         return all(
             self.runner.run_any(run_method=self.run_sql_file, parameters=parameters)
         )
+
+    def generate_expectations(self, files: List[Path], force: bool = False):
+        self.generator.generate_expectations(self.collect_checks(files), force)
