@@ -1,16 +1,18 @@
 import sys
 import os
 from pathlib import Path
+from numpy.lib.arraysetops import isin
+from pandas.core.frame import DataFrame
 import pytest
 import pandas as pd
-from sqlalchemy import Table, Column, String, Integer, MetaData
+from sqlalchemy import Table, Column, String, Integer, MetaData, Date, Numeric
 
 my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
 
 from data_check import DataCheck  # noqa E402
 from data_check.config import DataCheckConfig  # noqa E402
-from data_check.sql import LoadMethod
+from data_check.sql import LoadMethod  # noqa E402
 
 # These tests should work on any database.
 # The tests are generic, but in integration tests each database uses specific SQL files.
@@ -42,14 +44,57 @@ def create_test_table(table_name: str, schema: str, dc: DataCheck):
         metadata.create_all()
 
 
+def create_test_table_with_date(table_name: str, schema: str, dc: DataCheck):
+    if dc.sql.dialect == "oracle":
+        dc.sql.run_sql(
+            (
+                f"create table {schema}.{table_name} "
+                "(id number(10), data varchar2(10), dat date)"
+            )
+        )
+    else:
+        metadata = MetaData(dc.sql.get_engine())
+        Table(
+            table_name,
+            metadata,
+            Column("id", Integer),
+            Column("data", String(10)),
+            Column("dat", Date),
+            schema=schema,
+        )
+        metadata.create_all()
+
+
+def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
+    if dc.sql.dialect == "oracle":
+        dc.sql.run_sql(
+            (
+                f"create table {schema}.{table_name} "
+                "(id number(10), data varchar2(10), dec decimal(10, 4))"
+            )
+        )
+    else:
+        metadata = MetaData(dc.sql.get_engine())
+        Table(
+            table_name,
+            metadata,
+            Column("id", Integer),
+            Column("data", String(10)),
+            Column("dec", Numeric(10, 4)),
+            schema=schema,
+        )
+        metadata.create_all()
+
+
 @pytest.fixture
 def data_types_check(dc: DataCheck):
     res = dc.run_test(Path("checks/basic/data_types.sql"), return_all=True)
+    assert isinstance(res.result, DataFrame)
     assert not res.result.empty
     return res.result.iloc[0]
 
 
-def assert_equal_df(df1: pd.DataFrame, df2: pd.DataFrame) -> bool:
+def assert_equal_df(df1: pd.DataFrame, df2: pd.DataFrame):
     df_diff = df1.merge(df2, how="outer", indicator=True)
     assert df_diff[df_diff["_merge"] != "both"].empty
 
@@ -154,9 +199,9 @@ def test_load_csv_append(dc: DataCheck):
         "temp.test_append", Path("load_data/test.csv"), LoadMethod.APPEND
     )
     df = dc.sql.run_query("select id, data from temp.test_append")
-    assert_equal_df(
-        data, df
-    )  # since the same data is loaded twice, the merge will also work on one copy of the data
+    # since the same data is loaded twice,
+    # the merge will also work on one copy of the data
+    assert_equal_df(data, df)
     assert len(df) == 6
 
 
@@ -169,6 +214,26 @@ def test_load_csv_append_with_table(dc: DataCheck):
     df = dc.sql.run_query("select id, data from temp.test_append2")
     assert_equal_df(data, df)
     assert len(df) == 3
+
+
+def test_load_csv_date_type(dc: DataCheck):
+    create_test_table_with_date("test_date", "temp", dc)
+    dc.sql.load_table_from_csv_file(
+        "temp.test_date", Path("load_data/test_date.csv"), LoadMethod.TRUNCATE
+    )
+    df = dc.sql.run_query("select id, data, dat from temp.test_date")
+    dat = df.dat
+    assert not dat.empty
+
+
+def test_load_csv_decimal_type(dc: DataCheck):
+    data = pd.DataFrame.from_dict({"id": [0, 1], "data": ["a", "b"], "dec": [0.1, 0.2]})
+    create_test_table_with_decimal("test_decimals", "temp", dc)
+    dc.sql.load_table_from_csv_file(
+        "temp.test_decimals", Path("load_data/test_decimals.csv"), LoadMethod.TRUNCATE
+    )
+    df = dc.sql.run_query("select id, data, dec from temp.test_decimals")
+    assert_equal_df(data, df)
 
 
 def test_dialect(dc: DataCheck):
