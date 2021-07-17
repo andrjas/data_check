@@ -1,8 +1,9 @@
 from typing import Dict, Any, Optional, Tuple, List, Union
 from os import path
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, MetaData, Table
 from sqlalchemy.engine import Engine, Connection
-from sqlalchemy.sql import text
+from sqlalchemy.sql import text, sqltypes
+from sqlalchemy.exc import NoSuchTableError
 import pandas as pd
 from enum import Enum
 import warnings
@@ -148,6 +149,26 @@ class DataCheckSql:
             )
             return True
 
+    def inspect_table(self, table_name: str, schema: str):
+        table = Table(
+            table_name, MetaData(), schema=schema, autoload_with=self.get_engine()
+        )
+        return table
+
+    def get_date_columns(self, table_name: str):
+        schema, name = self._parse_table_name(table_name)
+        date_column_types = (
+            sqltypes.DATE,
+            sqltypes.DATETIME,
+            sqltypes.TIME,
+            sqltypes.TIMESTAMP,
+        )
+        try:
+            table = self.inspect_table(name, schema)
+            return [c.name for c in table.columns if c.type in date_column_types]
+        except NoSuchTableError:
+            return []
+
     def load_table_from_csv_file(
         self,
         table_name: str,
@@ -158,7 +179,8 @@ class DataCheckSql:
         if isinstance(load_method, str):
             load_method = self.load_method_from_string(load_method)
         rel_file = base_path / csv_file
-        data = read_csv(csv_file=rel_file)
+        date_columns = self.get_date_columns(table_name)
+        data = read_csv(csv_file=rel_file, parse_dates=date_columns)
         result = self.load_table(
             table_name=table_name, data=data, load_method=load_method
         )

@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 from pathlib import Path
 from jinja2 import Template
 import pandas as pd
@@ -48,7 +48,11 @@ def get_expect_file(sql_file: Path) -> Path:
     return sql_file.parent / (sql_file.stem + ".csv")
 
 
-def read_csv(csv_file: Path) -> pd.DataFrame:
+def read_csv(
+    csv_file: Path, parse_dates: Union[bool, List[str]] = False
+) -> pd.DataFrame:
+    if not parse_dates:
+        parse_dates = False
     return pd.read_csv(
         csv_file,
         na_values=[""],  # use empty string as nan
@@ -57,6 +61,8 @@ def read_csv(csv_file: Path) -> pd.DataFrame:
         quotechar='"',
         quoting=0,
         engine="c",
+        parse_dates=parse_dates,
+        infer_datetime_format=True,
     )
 
 
