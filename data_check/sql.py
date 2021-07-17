@@ -8,6 +8,7 @@ import pandas as pd
 from enum import Enum
 import warnings
 from pathlib import Path
+import datetime
 
 
 from .exceptions import DataCheckException
@@ -152,24 +153,18 @@ class DataCheckSql:
             )
             return True
 
-    def inspect_table(self, table_name: str, schema: str):
-        table = Table(
-            table_name, MetaData(), schema=schema, autoload_with=self.get_engine()
-        )
-        return table
-
     def get_date_columns(self, table_name: str):
         schema, name = self._parse_table_name(table_name)
         date_column_types = (
-            sqltypes.DATE,
-            sqltypes.DATETIME,
-            sqltypes.TIME,
-            sqltypes.TIMESTAMP,
+            datetime.datetime,
+            datetime.date,
+            datetime.time,
         )
         try:
-            table = self.inspect_table(name, schema)
+            inspector = inspect(self.get_connection())
+            columns = inspector.get_columns(name, schema=schema)
             return {
-                c.name: c.type for c in table.columns if c.type in date_column_types
+                c['name']: c['type'] for c in columns if c['type'].python_type in date_column_types
             }
         except (NoSuchTableError, OperationalError):
             # Python 3.6 might trow an OperationalError
@@ -186,7 +181,7 @@ class DataCheckSql:
             load_method = self.load_method_from_string(load_method)
         rel_file = base_path / csv_file
         date_columns = self.get_date_columns(table_name)
-        date_column_names = date_columns.keys()
+        date_column_names = list(date_columns.keys())
         data = read_csv(csv_file=rel_file, parse_dates=date_column_names)
         result = self.load_table(
             table_name=table_name,
