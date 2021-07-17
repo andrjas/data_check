@@ -134,7 +134,9 @@ class DataCheckSql:
         # always use "append" since we prepare the tables before loading
         return "append"
 
-    def load_table(self, table_name: str, data: pd.DataFrame, load_method: LoadMethod):
+    def load_table(
+        self, table_name: str, data: pd.DataFrame, load_method: LoadMethod, dtype=None
+    ):
         self._prepare_table_for_load(table_name, load_method)
         if_exists = self._load_method_to_pandas_if_exists(load_method=load_method)
         schema, name = self._parse_table_name(table_name)
@@ -146,6 +148,7 @@ class DataCheckSql:
                 con=self.get_connection(),
                 if_exists=if_exists,
                 index=False,
+                dtype=dtype,
             )
             return True
 
@@ -165,10 +168,12 @@ class DataCheckSql:
         )
         try:
             table = self.inspect_table(name, schema)
-            return [c.name for c in table.columns if c.type in date_column_types]
+            return {
+                c.name: c.type for c in table.columns if c.type in date_column_types
+            }
         except (NoSuchTableError, OperationalError):
             # Python 3.6 might trow an OperationalError
-            return []
+            return {}
 
     def load_table_from_csv_file(
         self,
@@ -181,9 +186,13 @@ class DataCheckSql:
             load_method = self.load_method_from_string(load_method)
         rel_file = base_path / csv_file
         date_columns = self.get_date_columns(table_name)
-        data = read_csv(csv_file=rel_file, parse_dates=date_columns)
+        date_column_names = date_columns.keys()
+        data = read_csv(csv_file=rel_file, parse_dates=date_column_names)
         result = self.load_table(
-            table_name=table_name, data=data, load_method=load_method
+            table_name=table_name,
+            data=data,
+            load_method=load_method,
+            dtype=date_columns,
         )
         if result:
             print(f"table {table_name} loaded from {rel_file}")
