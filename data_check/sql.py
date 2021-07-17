@@ -3,7 +3,7 @@ from os import path
 from sqlalchemy import create_engine, inspect, MetaData, Table
 from sqlalchemy.engine import Engine, Connection
 from sqlalchemy.sql import text, sqltypes
-from sqlalchemy.exc import NoSuchTableError
+from sqlalchemy.exc import NoSuchTableError, OperationalError
 import pandas as pd
 from enum import Enum
 import warnings
@@ -166,7 +166,8 @@ class DataCheckSql:
         try:
             table = self.inspect_table(name, schema)
             return [c.name for c in table.columns if c.type in date_column_types]
-        except NoSuchTableError:
+        except (NoSuchTableError, OperationalError):
+            # Python 3.6 might trow an OperationalError
             return []
 
     def load_table_from_csv_file(

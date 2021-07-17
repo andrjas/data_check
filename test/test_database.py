@@ -70,7 +70,7 @@ def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
         dc.sql.run_sql(
             (
                 f"create table {schema}.{table_name} "
-                "(id number(10), data varchar2(10), dec decimal(10, 4))"
+                "(id number(10), data varchar2(10), decim decimal(10, 4))"
             )
         )
     else:
@@ -80,7 +80,7 @@ def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
             metadata,
             Column("id", Integer),
             Column("data", String(10)),
-            Column("dec", Numeric(10, 4)),
+            Column("decim", Numeric(10, 4)),
             schema=schema,
         )
         metadata.create_all()
@@ -232,7 +232,7 @@ def test_load_csv_decimal_type(dc: DataCheck):
     dc.sql.load_table_from_csv_file(
         "temp.test_decimals", Path("load_data/test_decimals.csv"), LoadMethod.TRUNCATE
     )
-    df = dc.sql.run_query("select id, data, dec from temp.test_decimals")
+    df = dc.sql.run_query("select id, data, decim from temp.test_decimals")
     assert_equal_df(data, df)
 
 
