@@ -1,8 +1,8 @@
 from typing import Dict, Any, Optional, Tuple, List, Union
 from os import path
-from sqlalchemy import create_engine, inspect, MetaData, Table
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine import Engine, Connection
-from sqlalchemy.sql import text, sqltypes
+from sqlalchemy.sql import text
 from sqlalchemy.exc import NoSuchTableError, OperationalError
 import pandas as pd
 from enum import Enum

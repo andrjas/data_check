@@ -1,11 +1,10 @@
 import sys
 import os
 from pathlib import Path
-from numpy.lib.arraysetops import isin
 from pandas.core.frame import DataFrame
 import pytest
 import pandas as pd
-from sqlalchemy import Table, Column, String, Integer, MetaData, Date, Numeric
+from sqlalchemy import Table, Column, String, Integer, MetaData, Date, Numeric, DateTime
 
 my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
@@ -60,6 +59,27 @@ def create_test_table_with_date(table_name: str, schema: str, dc: DataCheck):
             Column("id", Integer),
             Column("data", String(10)),
             Column("dat", Date),
+            schema=schema,
+        )
+        metadata.create_all()
+
+
+def create_test_table_with_datetime(table_name: str, schema: str, dc: DataCheck):
+    if dc.sql.dialect == "oracle":
+        dc.sql.run_sql(
+            (
+                f"create table {schema}.{table_name} "
+                "(id number(10), data varchar2(10), dat date)"
+            )
+        )
+    else:
+        metadata = MetaData(dc.sql.get_engine())
+        Table(
+            table_name,
+            metadata,
+            Column("id", Integer),
+            Column("data", String(10)),
+            Column("dat", DateTime),
             schema=schema,
         )
         metadata.create_all()
@@ -222,6 +242,16 @@ def test_load_csv_date_type(dc: DataCheck):
         "temp.test_date", Path("load_data/test_date.csv"), LoadMethod.TRUNCATE
     )
     df = dc.sql.run_query("select id, data, dat from temp.test_date")
+    dat = df.dat
+    assert not dat.empty
+
+
+def test_load_csv_datetime_type(dc: DataCheck):
+    create_test_table_with_datetime("test_datetime", "temp", dc)
+    dc.sql.load_table_from_csv_file(
+        "temp.test_datetime", Path("load_data/test_datetime.csv"), LoadMethod.TRUNCATE
+    )
+    df = dc.sql.run_query("select id, data, dat from temp.test_datetime")
     dat = df.dat
     assert not dat.empty
 
