@@ -92,6 +92,7 @@ steps:
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback --workers 1
+  - poetry run data_check checks/pipelines/date_test --traceback --workers 1
 
 ---
 kind: pipeline
@@ -117,6 +118,7 @@ steps:
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
+  - poetry run data_check checks/pipelines/date_test --traceback
   environment:
     POSTGRES_PASSWORD: data_check
 
@@ -150,6 +152,7 @@ steps:
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
+  - poetry run data_check checks/pipelines/date_test --traceback
   environment:
     MYSQL_ROOT_PASSWORD: data_check
 
@@ -188,6 +191,7 @@ steps:
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
+  - poetry run data_check checks/pipelines/date_test --traceback
   environment:
     ACCEPT_EULA: Y
     MSSQL_PID: Express
@@ -231,6 +235,7 @@ steps:
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
+  - poetry run data_check checks/pipelines/date_test --traceback
   environment:
     CLIENT_HOME: /usr/lib/oracle/19.5/client64
     LANG: en_US.utf-8
