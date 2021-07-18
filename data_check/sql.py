@@ -164,7 +164,9 @@ class DataCheckSql:
             inspector = inspect(self.get_connection())
             columns = inspector.get_columns(name, schema=schema)
             return {
-                c['name']: c['type'] for c in columns if c['type'].python_type in date_column_types
+                c["name"]: c["type"]
+                for c in columns
+                if c["type"].python_type in date_column_types
             }
         except (NoSuchTableError, OperationalError):
             # Python 3.6 might trow an OperationalError

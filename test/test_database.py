@@ -5,6 +5,7 @@ from pandas.core.frame import DataFrame
 import pytest
 import pandas as pd
 from sqlalchemy import Table, Column, String, Integer, MetaData, Date, Numeric, DateTime
+from sqlalchemy.exc import OperationalError
 
 my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
@@ -257,13 +258,37 @@ def test_load_csv_datetime_type(dc: DataCheck):
 
 
 def test_load_csv_decimal_type(dc: DataCheck):
-    data = pd.DataFrame.from_dict({"id": [0, 1], "data": ["a", "b"], "dec": [0.1, 0.2]})
+    data = pd.DataFrame.from_dict(
+        {"id": [0, 1], "data": ["a", "b"], "decim": [0.1, 0.2]}
+    )
     create_test_table_with_decimal("test_decimals", "temp", dc)
     dc.sql.load_table_from_csv_file(
         "temp.test_decimals", Path("load_data/test_decimals.csv"), LoadMethod.TRUNCATE
     )
     df = dc.sql.run_query("select id, data, decim from temp.test_decimals")
     assert_equal_df(data, df)
+
+
+def test_load_csv_less_columns_in_csv(dc: DataCheck):
+    data = pd.DataFrame.from_dict(
+        {"id": [0, 1, 2], "data": ["a", "b", "c"], "decim": [pd.NA, pd.NA, pd.NA]}
+    )
+    create_test_table_with_decimal("test_less_columns_in_csv", "temp", dc)
+    dc.sql.load_table_from_csv_file(
+        "temp.test_less_columns_in_csv", Path("load_data/test.csv"), LoadMethod.TRUNCATE
+    )
+    df = dc.sql.run_query("select id, data, decim from temp.test_less_columns_in_csv")
+    assert_equal_df(data, df)
+
+
+def test_load_csv_more_columns_in_csv(dc: DataCheck):
+    create_test_table("test_more_columns_in_csv", "temp", dc)
+    with pytest.raises(OperationalError):
+        dc.sql.load_table_from_csv_file(
+            "temp.test_more_columns_in_csv",
+            Path("load_data/test_decimals.csv"),
+            LoadMethod.TRUNCATE,
+        )
 
 
 def test_dialect(dc: DataCheck):
