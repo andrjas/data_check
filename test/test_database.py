@@ -5,7 +5,6 @@ from pandas.core.frame import DataFrame
 import pytest
 import pandas as pd
 from sqlalchemy import Table, Column, String, Integer, MetaData, Date, Numeric, DateTime
-from sqlalchemy.exc import OperationalError
 
 my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
@@ -283,7 +282,7 @@ def test_load_csv_less_columns_in_csv(dc: DataCheck):
 
 def test_load_csv_more_columns_in_csv(dc: DataCheck):
     create_test_table("test_more_columns_in_csv", "temp", dc)
-    with pytest.raises(OperationalError):
+    with pytest.raises(Exception):
         dc.sql.load_table_from_csv_file(
             "temp.test_more_columns_in_csv",
             Path("load_data/test_decimals.csv"),
