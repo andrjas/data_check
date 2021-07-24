@@ -24,12 +24,14 @@ def expand_files(
     return result
 
 
-def read_sql_file(sql_file: Path, file: Dict[str, Any], encoding: str = "UTF-8") -> str:
+def read_sql_file(
+    sql_file: Path, template_data: Dict[str, Any], encoding: str = "UTF-8"
+) -> str:
     """
     Reads the SQL file and returns it as a string.
     Evaluates the templates when needed.
     """
-    return Template(sql_file.read_text(encoding=encoding)).render(**file)
+    return Template(sql_file.read_text(encoding=encoding)).render(**template_data)
 
 
 def get_expect_file(sql_file: Path) -> Path:

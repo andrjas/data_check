@@ -72,7 +72,7 @@ class DataCheck(SimpleCheck, PipelineCheck):
         return overall_result
 
     def run_sql_file(self, file: Path):
-        sql_text = read_sql_file(sql_file=file, file=self.template_data)
+        sql_text = read_sql_file(sql_file=file, template_data=self.template_data)
         print("executing:")
         print(sql_text)
         return self.sql.run_sql(sql_text=sql_text)
