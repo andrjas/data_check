@@ -1,1 +1,1 @@
-select id, data, STR_TO_DATE(dat, '%Y-%m-%d %h:%i:%s') as dat from temp.date_test
+select id, data, DATE_FORMAT(dat, '%Y-%m-%d %H:%i:%s') as dat from temp.date_test

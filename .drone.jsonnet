@@ -29,7 +29,7 @@ local generic_int_test = [
     "poetry run data_check checks/basic checks/generated --traceback",
     "bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'",
     "poetry run data_check checks/pipelines/simple_pipeline --traceback",
-    "poetry run data_check checks/pipelines/date_test --traceback",
+    "poetry run data_check checks/pipelines/date_test --traceback --print",
 ];
 
 
@@ -40,7 +40,7 @@ local sqllite_int_test = [
     "poetry run data_check checks/basic checks/generated --traceback",
     "bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'",
     "poetry run data_check checks/pipelines/simple_pipeline --traceback --workers 1",
-    "poetry run data_check checks/pipelines/date_test --traceback --workers 1",
+    "poetry run data_check checks/pipelines/date_test --traceback --print --workers 1",
 ];
 
 
