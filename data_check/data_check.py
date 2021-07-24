@@ -71,16 +71,14 @@ class DataCheck(SimpleCheck, PipelineCheck):
         self.output.pprint_overall_result(overall_result)
         return overall_result
 
-    def run_sql_file(self, sql_file: Path):
-        sql_text = read_sql_file(sql_file=sql_file, template_data=self.template_data)
+    def run_sql_file(self, file: Path):
+        sql_text = read_sql_file(sql_file=file, file=self.template_data)
         print("executing:")
         print(sql_text)
         return self.sql.run_sql(sql_text=sql_text)
 
-    def run_sql_files(self, sql_files: List[Path], base_path: Path = Path(".")):
-        parameters = [
-            {"sql_file": f} for f in expand_files(sql_files, base_path=base_path)
-        ]
+    def run_sql_files(self, files: List[Path], base_path: Path = Path(".")):
+        parameters = [{"file": f} for f in expand_files(files, base_path=base_path)]
         return all(
             self.runner.run_any(run_method=self.run_sql_file, parameters=parameters)
         )

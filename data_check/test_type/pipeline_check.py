@@ -55,6 +55,7 @@ class SerialPipelineSteps:
         if call_method:
             prepared_params = self.data_check.get_prepared_parameters(step_type, params)
             prepared_params.update({"base_path": path})
+            print(f"call {call_method} with {prepared_params} from {params}")
             return call_method(**prepared_params)
         else:
             raise Exception(f"unknown pipeline step: {step_type}")
@@ -101,7 +102,7 @@ class PipelineCheck:
         self.register_pipeline_step("cmd", self.run_cmd)
         self.register_pipeline_step("check", self.run, convert_to_path_list=["files"])
         self.register_pipeline_step(
-            "run_sql", self.run_sql_files, convert_to_path_list=["sql_files"]
+            "run_sql", self.run_sql_files, convert_to_path_list=["files"]
         )
 
     @staticmethod
@@ -200,7 +201,13 @@ class PipelineCheck:
             )
             prepared_params = deepcopy(params)
             for _param in param_list:
-                prepared_params[_param] = [Path(p) for p in params[_param]]
+                pars = params[_param]
+                if isinstance(pars, list):
+                    prepared_params[_param] = [Path(p) for p in pars]
+                elif isinstance(pars, str):
+                    prepared_params[_param] = [Path(pars)]
+                else:
+                    raise Exception(f"unexpected parameter type: {pars}")
             param_list_path = self.pipeline_steps.get(method, {}).get(
                 "convert_to_path", []
             )

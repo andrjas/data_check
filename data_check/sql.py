@@ -207,8 +207,7 @@ class DataCheckSql:
             load_method = self.load_method_from_string(load_method)
         csv_files = expand_files(files, extension=".csv", base_path=base_path)
         parameters = [
-            {"table": f.stem, "file": f, "load_method": load_method}
-            for f in csv_files
+            {"table": f.stem, "file": f, "load_method": load_method} for f in csv_files
         ]
         results = self.runner.run_any(
             run_method=self.load_table_from_csv_file, parameters=parameters

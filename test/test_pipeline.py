@@ -79,6 +79,15 @@ def test_prepared_parameters_dict_to_path_list(dc: DataCheck):
     assert parameters == {"arg1": [Path("test_arg1")]}
 
 
+def test_prepared_parameters_dict_str_to_path_list(dc: DataCheck):
+    def step_test(arg1):
+        pass
+
+    dc.register_pipeline_step("step_test", step_test, ["arg1"])
+    parameters = dc.get_prepared_parameters("step_test", {"arg1": "test_arg1"})
+    assert parameters == {"arg1": [Path("test_arg1")]}
+
+
 def test_prepared_parameters_str_to_path(dc: DataCheck):
     def step_test(arg1):
         pass
