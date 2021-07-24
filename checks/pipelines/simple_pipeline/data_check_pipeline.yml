@@ -5,7 +5,7 @@ steps:
   - run_sql: sql_files
   - load:
       file: load_pipeline_data/test_simple_pipeline.csv
-      table_name: other_table
+      table: other_table
   - cmd:
     - ls "sql_files"
     - pwd

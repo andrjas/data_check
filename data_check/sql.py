@@ -174,7 +174,7 @@ class DataCheckSql:
 
     def load_table_from_csv_file(
         self,
-        table_name: str,
+        table: str,
         file: Path,
         load_method: Union[str, LoadMethod] = LoadMethod.TRUNCATE,
         base_path: Path = Path("."),
@@ -182,19 +182,19 @@ class DataCheckSql:
         if isinstance(load_method, str):
             load_method = self.load_method_from_string(load_method)
         rel_file = base_path / file
-        date_columns = self.get_date_columns(table_name)
+        date_columns = self.get_date_columns(table)
         date_column_names = list(date_columns.keys())
         data = read_csv(csv_file=rel_file, parse_dates=date_column_names)
         result = self.load_table(
-            table_name=table_name,
+            table_name=table,
             data=data,
             load_method=load_method,
             dtype=date_columns,
         )
         if result:
-            print(f"table {table_name} loaded from {rel_file}")
+            print(f"table {table} loaded from {rel_file}")
         else:
-            print(f"loading table {table_name} from {rel_file} failed")
+            print(f"loading table {table} from {rel_file} failed")
         return result
 
     def load_tables_from_files(
@@ -207,7 +207,7 @@ class DataCheckSql:
             load_method = self.load_method_from_string(load_method)
         csv_files = expand_files(files, extension=".csv", base_path=base_path)
         parameters = [
-            {"table_name": f.stem, "file": f, "load_method": load_method}
+            {"table": f.stem, "file": f, "load_method": load_method}
             for f in csv_files
         ]
         results = self.runner.run_any(

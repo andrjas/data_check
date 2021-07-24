@@ -2,5 +2,5 @@ steps:
   - run_sql: create_table.sql
   - load:
       file: check/date_test.csv
-      table_name: temp.date_test
+      table: temp.date_test
   - check: check
