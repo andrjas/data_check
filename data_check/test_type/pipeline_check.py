@@ -96,7 +96,7 @@ class PipelineCheck:
             convert_to_path_list=["files"],
         )
         self.register_pipeline_step(
-            "load", self.sql.load_table_from_csv_file, convert_to_path=["csv_file"]
+            "load", self.sql.load_table_from_csv_file, convert_to_path=["file"]
         )
         self.register_pipeline_step("cmd", self.run_cmd)
         self.register_pipeline_step("check", self.run, convert_to_path_list=["files"])

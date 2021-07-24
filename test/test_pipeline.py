@@ -30,6 +30,7 @@ def test_is_pipeline_check(dc: DataCheck):
 
 def test_simple_pipeline(dc: DataCheck):
     result = dc.run_pipeline(Path("checks/pipelines/simple_pipeline"))
+    print(result)
     assert result
 
 

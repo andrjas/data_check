@@ -175,13 +175,13 @@ class DataCheckSql:
     def load_table_from_csv_file(
         self,
         table_name: str,
-        csv_file: Path,
+        file: Path,
         load_method: Union[str, LoadMethod] = LoadMethod.TRUNCATE,
         base_path: Path = Path("."),
     ):
         if isinstance(load_method, str):
             load_method = self.load_method_from_string(load_method)
-        rel_file = base_path / csv_file
+        rel_file = base_path / file
         date_columns = self.get_date_columns(table_name)
         date_column_names = list(date_columns.keys())
         data = read_csv(csv_file=rel_file, parse_dates=date_column_names)
@@ -207,7 +207,7 @@ class DataCheckSql:
             load_method = self.load_method_from_string(load_method)
         csv_files = expand_files(files, extension=".csv", base_path=base_path)
         parameters = [
-            {"table_name": f.stem, "csv_file": f, "load_method": load_method}
+            {"table_name": f.stem, "file": f, "load_method": load_method}
             for f in csv_files
         ]
         results = self.runner.run_any(

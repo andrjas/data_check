@@ -136,7 +136,7 @@ def main(
         else:
             dc.sql.load_table_from_csv_file(
                 table_name=table,
-                csv_file=load,
+                file=load,
                 load_method=load_method,
             )
             sys.exit(0)
