@@ -1,8 +1,8 @@
 steps:
   - cmd:    
-    - echo "start data_check pipeline {{pipeline_path}}"
-    - "echo 'connection: {{connection}}'"
-    - "echo 'connection string {{connection_string}}'"
+    - echo "start data_check pipeline {{PIPELINE_PATH}}"
+    - "echo 'connection: {{CONNECTION}}'"
+    - "echo 'connection string {{CONNECTION_STRING}}'"
   - load_tables: load_pipeline_data
   - cmd: ls
   - check: pipeline_checks

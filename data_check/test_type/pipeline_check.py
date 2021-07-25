@@ -152,9 +152,9 @@ class PipelineCheck:
 
     def template_parameters(self, pipeline_path: Path) -> Dict[str, str]:
         return {
-            "connection": self.config.connection_name,
-            "connection_string": self.config.connection,
-            "pipeline_path": str(pipeline_path),
+            "CONNECTION": self.config.connection_name,
+            "CONNECTION_STRING": self.config.connection,
+            "PIPELINE_PATH": str(pipeline_path),
         }
 
     def get_prepared_parameters(

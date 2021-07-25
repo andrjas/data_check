@@ -87,7 +87,7 @@ steps:
         table: my_schema.other_table
         load_mode: append
     # this will run a python script and pass the connection name
-    - cmd: "python3 /path/to/my_pipeline.py --connection {{connection}}"
+    - cmd: "python3 /path/to/my_pipeline.py --connection {{CONNECTION}}"
     # this will run the CSV checks in the some_checks folder
     - check: some_checks
 ```
