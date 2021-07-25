@@ -155,6 +155,7 @@ class PipelineCheck:
             "CONNECTION": self.config.connection_name,
             "CONNECTION_STRING": self.config.connection,
             "PIPELINE_PATH": str(pipeline_path),
+            "PROJECT_PATH": str(self.config.project_path),
         }
 
     def get_prepared_parameters(

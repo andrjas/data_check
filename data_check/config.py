@@ -20,6 +20,8 @@ class DataCheckConfig:
         if config_path is not None:
             self.config_path = config_path
 
+        self.project_path = Path(".").absolute()
+
     def load_config(self):
         self.config = read_yaml(self.config_path)
         return self

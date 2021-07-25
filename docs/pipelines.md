@@ -189,5 +189,5 @@ You can use some predefined parameters in a pipeline definition:
 
 * CONNECTION: The name of the connection used for this run.
 * CONNECTION_STRING: The connection string as defined in _data\_check.yml_ used for the connection.
-* PROJECT_PATH: The path of the data_check project, i.e. the folder containing _data\_check.yml_.
+* PROJECT_PATH: The path of the data_check project, i.e. the folder where data_check is started from.
 * PIPELINE_PATH: The path to the pipeline, i.e. the folder containing _data\_check\_pipeline.yml_.

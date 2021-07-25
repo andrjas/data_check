@@ -132,9 +132,7 @@ def test_load_from_files_non_existing_dir(sql: DataCheckSql):
 
 
 def test_load_from_csv_file_load_modes(sql: DataCheckSql):
-    sql.load_table_from_csv_file(
-        "test", Path("load_data/test.csv"), LoadMode.TRUNCATE
-    )
+    sql.load_table_from_csv_file("test", Path("load_data/test.csv"), LoadMode.TRUNCATE)
     sql.load_table_from_csv_file("test", Path("load_data/test.csv"), LoadMode.APPEND)
     df = sql.run_query("select id, data from test")
     assert len(df) == 6

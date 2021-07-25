@@ -262,7 +262,7 @@ def test_load_csv_date_with_existing_table_replace(dc: DataCheck):
         "temp.test_date_replace", Path("load_data/test_date.csv"), LoadMode.REPLACE
     )
     df = dc.sql.run_query("select id, data, dat from temp.test_date_replace")
-    assert df.dat.dtype == 'object'
+    assert df.dat.dtype == "object"
 
 
 def test_load_csv_decimal_type(dc: DataCheck):
