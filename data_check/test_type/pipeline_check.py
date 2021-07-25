@@ -146,8 +146,8 @@ class PipelineCheck:
         serial_steps = SerialPipelineSteps(self, steps, path, pipeline_name=str(path))
         return serial_steps.run()
 
-    def run_cmd(self, cmd: List[str], base_path: Path = Path(".")):
-        c = CmdStep(cmd)
+    def run_cmd(self, commands: List[str], base_path: Path = Path(".")):
+        c = CmdStep(commands)
         return c.run(base_path=base_path)
 
     def template_parameters(self, pipeline_path: Path) -> Dict[str, str]:
