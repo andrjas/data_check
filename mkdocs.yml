@@ -3,6 +3,8 @@ nav:
     - Home: index.md
     - Installation: install.md
     - Usage: usage.md
+    - CSV checks: csv_checks.md
+    - Pipelines: pipelines.md
     - HowTos: howtos.md
     - Examples: example.md
     - Development: development.md

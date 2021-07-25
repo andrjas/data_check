@@ -30,56 +30,6 @@ Possible exit codes:
 __Exit code 0:__ All tests run successfully.<br/>
 __Exit code 1:__ At least one test failed.
 
-## SQL file
-
-Each SQL file must contain a single SQL query. The query be run against the database, hence you must use the SQL dialect that the database in use understands.
-
-### Templates
-
-SQL files can contain Jinja2 templates. The templates are replaced with the values defined in _checks/template.yml_. Example:
-
-SQL file:
-```sql
-select '{{template_value}}' as test
-```
-
-_checks/template.yml_:
-```yaml
-template_value: ABC
-```
-
-CSV file:
-
-```csv
-test
-ABC
-```
-
-
-## CSV format
-
-data_check uses a pretty basic CSV format. Each column is separated by a comma without any space around them.
-The first line must contain a header. The columns must match the columns in the SQL file. 
-
-Any columns that do not match between the CSV and the SQL file will be ignored.
-
-```csv
-string_header,int_header,float_header,date_header,null_header
-string,42,42.1,2020-12-20,
-# a comment line
-"second row",42,42.1,2020-12-20,
-```
-
-Each file starting with a '#' is regarded as a comment. You can use comments to annotate the date as they will be completely ignored.
-
-Only the data types strings and decimals are supported. Strings can be optionally enclosed in double quotes (").
-Empty strings are treated as null values.
-
-Any other data type (e.g. date) must be converted to strings/varchar in the SQL query.
-
-## Generating expectation files
-
-If you run `data_check --generate` in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file.
 
 ## Loading data into tables
 
@@ -100,18 +50,29 @@ You can use multiple CSV files or a whole folder to load the data into tables. T
 
 The path will be searched recursively for CSV files. The folder structure doesn't matter when matching the table names, only the file name matters.
 
-### Load methods
+### Load modes
 
-There are multiple methods that control the data loading:
+There are multiple modes that control the data loading:
 
 * truncate - truncate the table before loading the data.
 * replace - drop the table and recreate it based on the columns in the CSV file.
 * append - do not touch the table before loading the data.
 
-By default, the tables will be truncated before loading the data. You can use the other methods with `--load-method`:
+By default, the tables will be truncated before loading the data. You can use the other modes with `--load-mode`:
 
-`data_check --load file.csv --table table_name --load-method replace`
-`data_check --load-tables path/to/tables_folder --load-method append`
+`data_check --load file.csv --table table_name --load-mode replace`
+`data_check --load-tables path/to/tables_folder --load-mode append`
+
+### CSV and data types
+
+When loading data from CSV files, data_check (or more precisely: [pandas](https://pandas.pydata.org/)) will infer the data types from the file.
+When loading the data into the table, the database will usually implicitly convert the data types.
+This works good for simple data types like strings and numbers.
+
+If you need to load date types (or timestamps) and the table has a date column, data_check will infer the date format from the CSV file for that column.
+This doesn't work when using `--load-mode replace` since the table will be dropped before it can be analyzed. This will probably result in a varchar column instead of date.
+
+It's best to use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) for dates.
 
 ## Executing arbitrary SQL code
 

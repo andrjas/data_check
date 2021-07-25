@@ -1,6 +1,17 @@
 # data_check
 
-data_check is a simple data validation tool. Write SQL queries and CSV files with the expected result sets and data_check will test the result sets against the queries. You can also use CSV files to populate tables with data for pipeline tests with data_check.
+data_check is a simple data validation tool. In its most basic form it will execute SQL queries and compare the results against CSV files. But there are more advanced features:
+
+## Features
+
+* [CSV checks](#csv-checks): compare SQL queries against CSV files
+* multiple environments (databases) in the configuration file
+* populate tables from CSV files
+* execute any SQL files on a database
+* more complex [pipelines](#pipelines)
+* run any script/command (via pipelines)
+
+## Database support
 
 data_check should work with any database that works with [SQLAlchemy](https://docs.sqlalchemy.org/en/14/dialects/). Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.
 
@@ -31,6 +42,57 @@ data_check has a simple layout for projects: a single configuration file and a f
         some_test.sql # SQL file with the query to run against the database
         some_test.csv # CSV file with the expected result
         subfolder/    # Tests can be nested in subfolders
+
+## CSV checks
+
+This is the default mode when running data_check. data_check expects a SQL file and a CSV file. The SQL file will be executed against the database and the result is compared with the CSV file. If they match, the test is passed, otherwise it fails.
+
+## Pipelines
+
+If data_check finds a file named _data\_check\_pipeline.yml_ in a folder, it will treat this folder as a pipeline check. Instead of running [CSV checks](#csv-checks) it will execute the steps in the YAML file.
+
+Example project with a pipeline:
+
+    data_check.yml
+    checks/
+        some_test.sql                # this test will run in parallel to the pipeline test
+        some_test.csv
+        sample_pipeline/
+            data_check_pipeline.yml  # configuration for the pipeline
+            data/
+                my_schema.some_table.csv       # data for a table
+            data2/
+                some_data.csv        # other data
+            some_checks/             # folder with CSV checks
+                check1.sql
+                check1.csl
+                ...
+            run_this.sql             # a SQL file that will be executed
+            cleanup.sql
+        other_pipeline/              # you can have multiple pipelines that will run in parallel
+            data_check_pipeline.yml
+            ...
+
+The file _sample\_pipeline/data\_check\_pipeline.yml_ can look like this:
+
+```yaml
+steps:
+    # this will truncate the table my_schema.some_table and load it with the data from data/my_schema.some_table.csv
+    - load_tables: data
+    # this will execute the SQL statement in run_this.sql
+    - run_sql: run_this.sql
+    # this will append the data from data2/some_data.csv to my_schema.other_table
+    - load:
+        file: data2/some_data.csv
+        table: my_schema.other_table
+        load_mode: append
+    # this will run a python script and pass the connection name
+    - cmd: "python3 /path/to/my_pipeline.py --connection {{connection}}"
+    # this will run the CSV checks in the some_checks folder
+    - check: some_checks
+```
+
+Pipeline checks and simple CSV checks can coexist in a project.
 
 ## Documentation
 

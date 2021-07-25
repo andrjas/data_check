@@ -35,10 +35,4 @@ There are currently four databases used for integration tests:
 - Oracle
 - Microsoft SQL Server
 
-All integration tests are located in the _int_test_ folder.
-
-The tests should be executed from the root folder of this Git repository. Run `./int_test/<db>/int_test.sh` to execute a test against a database, e.g. `./int_test/postgres/int_test.sh`
-
-The scripts are using Docker and Docker Compose to set up a Docker container with the database and another with data_check and all required database drivers.
-
-First the same unit tests as mentioned above are run against the database. Then data_check is executed. Each database has its own _checks_ folder in _int_test_ to adhere to different SQL dialects.
+The integration tests are run via [Drone CI](https://www.drone.io/). The file _.drone.yml_ is generated from _.drone.jsonnet_ and checked in into the Git repository. To update _.drone.yml_ run `drone jsonnet  --format --stream`.
