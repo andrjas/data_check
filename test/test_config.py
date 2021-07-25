@@ -31,8 +31,9 @@ def test_custom_config_path():
 def test_select_connection():
     config = DataCheckConfig()
     config.config = {"connections": {"test": "data_check", "test2": "data_check2"}}
-    selected = config.select_connection("test")
+    selected, name = config.select_connection("test")
     assert selected == "data_check"
+    assert name == "test"
 
 
 def test_select_connection_default():
@@ -41,12 +42,14 @@ def test_select_connection_default():
         "connections": {"test": "data_check", "test2": "data_check2"},
         "default_connection": "test2",
     }
-    selected = config.select_connection(connection="")
+    selected, name = config.select_connection(connection="")
     assert selected == "data_check2"
+    assert name == "test2"
 
 
 def test_select_connection_default_without_config():
     config = DataCheckConfig()
     config.config = {"connections": {"test": "data_check", "test2": "data_check2"}}
-    selected = config.select_connection(connection="")
+    selected, name = config.select_connection(connection="")
     assert selected == ""
+    assert name == ""

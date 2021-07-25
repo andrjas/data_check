@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Union
+from typing import List, Dict, Any, Union, Optional
 from pathlib import Path
 from jinja2 import Template
 import pandas as pd
@@ -24,6 +24,10 @@ def expand_files(
     return result
 
 
+def parse_template(data: str, template_data: Dict[str, Any]) -> str:
+    return Template(data).render(**template_data)
+
+
 def read_sql_file(
     sql_file: Path, template_data: Dict[str, Any], encoding: str = "UTF-8"
 ) -> str:
@@ -31,7 +35,7 @@ def read_sql_file(
     Reads the SQL file and returns it as a string.
     Evaluates the templates when needed.
     """
-    return Template(sql_file.read_text(encoding=encoding)).render(**template_data)
+    return parse_template(sql_file.read_text(encoding=encoding), template_data)
 
 
 def get_expect_file(sql_file: Path) -> Path:
@@ -66,5 +70,12 @@ def read_csv(
     )
 
 
-def read_yaml(yaml_file: Path):
-    return yaml.safe_load(yaml_file.open())
+def read_yaml(
+    yaml_file: Path,
+    encoding: str = "UTF-8",
+    template_data: Optional[Dict[str, Any]] = None,
+):
+    data = yaml_file.read_text(encoding=encoding)
+    if template_data:
+        data = parse_template(data, template_data)
+    return yaml.safe_load(data)

@@ -5,7 +5,7 @@ import inspect
 import subprocess
 
 from ..result import DataCheckResult, ResultType
-from ..io import read_yaml
+from ..io import read_yaml, parse_template
 
 DATA_CHECK_PIPELINE_FILE = "data_check_pipeline.yml"
 
@@ -55,7 +55,6 @@ class SerialPipelineSteps:
         if call_method:
             prepared_params = self.data_check.get_prepared_parameters(step_type, params)
             prepared_params.update({"base_path": path})
-            print(f"call {call_method} with {prepared_params} from {params}")
             return call_method(**prepared_params)
         else:
             raise Exception(f"unknown pipeline step: {step_type}")
@@ -127,7 +126,10 @@ class PipelineCheck:
 
     def _parse_pipeline_file(self, pipeline_file: Path) -> Dict[str, Any]:
         if pipeline_file.exists():
-            yaml = read_yaml(pipeline_file)
+            yaml = read_yaml(
+                pipeline_file,
+                template_data=self.template_parameters(pipeline_file.parent),
+            )
             return (
                 yaml if yaml else {}
             )  # yaml can return None, so convert it to an empty dict
@@ -147,6 +149,13 @@ class PipelineCheck:
     def run_cmd(self, cmd: List[str], base_path: Path = Path(".")):
         c = CmdStep(cmd)
         return c.run(base_path=base_path)
+
+    def template_parameters(self, pipeline_path: Path) -> Dict[str, str]:
+        return {
+            "connection": self.config.connection_name,
+            "connection_string": self.config.connection,
+            "pipeline_path": str(pipeline_path),
+        }
 
     def get_prepared_parameters(
         self, method: str, params: Union[str, List[str], Dict[str, Any]]
