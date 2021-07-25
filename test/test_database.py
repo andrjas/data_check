@@ -256,6 +256,15 @@ def test_load_csv_datetime_type(dc: DataCheck):
     assert not dat.empty
 
 
+def test_load_csv_date_with_existing_table_replace(dc: DataCheck):
+    create_test_table_with_date("test_date_replace", "temp", dc)
+    dc.sql.load_table_from_csv_file(
+        "temp.test_date_replace", Path("load_data/test_date.csv"), LoadMethod.REPLACE
+    )
+    df = dc.sql.run_query("select id, data, dat from temp.test_date_replace")
+    assert df.dat.dtype == 'object'
+
+
 def test_load_csv_decimal_type(dc: DataCheck):
     data = pd.DataFrame.from_dict(
         {"id": [0, 1], "data": ["a", "b"], "decim": [0.1, 0.2]}
