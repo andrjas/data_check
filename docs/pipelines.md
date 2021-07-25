@@ -94,7 +94,7 @@ _load_ is like calling `data_check --load ...`. This will load a CSV file into a
     load_mode: append
 ```
 
-You can omit _load\_method_. Then the default mode _truncate_ will be used.
+You can omit _load\_mode_. Then the default mode _truncate_ will be used.
 
 ### load_tables
 
@@ -116,7 +116,7 @@ Long form:
     load_mode: append
 ```
 
-You can omit _load\_method_. Then the default mode _truncate_ will be used.
+You can omit _load\_mode_. Then the default mode _truncate_ will be used.
 
 You can also omit _files_:
 ```yaml

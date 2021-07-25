@@ -116,8 +116,8 @@ def test_pipeline_fails_load_no_csv_file(dc: DataCheck):
     assert not result
 
 
-def test_pipeline_fails_load_invalid_load_method(dc: DataCheck):
-    result = dc.run_pipeline(Path("checks/pipelines/failing/load_invalid_load_method"))
+def test_pipeline_fails_load_invalid_load_mode(dc: DataCheck):
+    result = dc.run_pipeline(Path("checks/pipelines/failing/load_invalid_load_mode"))
     assert not result
     assert "with exception" in result.message
 
@@ -128,9 +128,9 @@ def test_pipeline_fails_load_tables_no_csv_file(dc: DataCheck):
     assert "with exception" in result.message
 
 
-def test_pipeline_fails_load_tables_invalid_load_method(dc: DataCheck):
+def test_pipeline_fails_load_tables_invalid_load_mode(dc: DataCheck):
     result = dc.run_pipeline(
-        Path("checks/pipelines/failing/load_tables_invalid_load_method")
+        Path("checks/pipelines/failing/load_tables_invalid_load_mode")
     )
     assert not result
     assert "with exception" in result.message

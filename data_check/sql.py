@@ -16,21 +16,21 @@ from .io import expand_files, read_csv
 from .runner import DataCheckRunner
 
 
-class LoadMethod(Enum):
+class LoadMode(Enum):
     TRUNCATE = 1
     APPEND = 2
     REPLACE = 3
 
     @staticmethod
-    def from_string(method_name: str):
-        if method_name == "truncate":
-            return LoadMethod.TRUNCATE
-        elif method_name == "append":
-            return LoadMethod.APPEND
-        elif method_name == "replace":
-            return LoadMethod.REPLACE
+    def from_string(mode_name: str):
+        if mode_name == "truncate":
+            return LoadMode.TRUNCATE
+        elif mode_name == "append":
+            return LoadMode.APPEND
+        elif mode_name == "replace":
+            return LoadMode.REPLACE
         else:
-            raise DataCheckException(f"unknown load method: {method_name}")
+            raise DataCheckException(f"unknown load mode: {mode_name}")
 
 
 class DataCheckSql:
@@ -101,15 +101,15 @@ class DataCheckSql:
         except:  # noqa E722
             return False
 
-    def _prepare_table_for_load(self, table_name: str, load_method: LoadMethod):
-        if load_method == LoadMethod.TRUNCATE:
+    def _prepare_table_for_load(self, table_name: str, load_mode: LoadMode):
+        if load_mode == LoadMode.TRUNCATE:
             schema, name = self._parse_table_name(table_name)
             inspector = inspect(self.get_connection())
             if inspector.has_table(table_name=name, schema=schema):
                 self.get_connection().execute(
                     text(f"DELETE FROM {table_name}").execution_options(autocommit=True)
                 )
-        elif load_method == LoadMethod.REPLACE:
+        elif load_mode == LoadMode.REPLACE:
             # Pandas and SQLAlchemy seem to have problems using if_exists="replace"
             # at least in SQLite. That's why we drop the tables here.
             schema, name = self._parse_table_name(table_name)
@@ -131,15 +131,15 @@ class DataCheckSql:
             return (None, table_name.lower())
 
     @staticmethod
-    def _load_method_to_pandas_if_exists(load_method: LoadMethod) -> str:
+    def _load_mode_to_pandas_if_exists(load_mode: LoadMode) -> str:
         # always use "append" since we prepare the tables before loading
         return "append"
 
     def load_table(
-        self, table_name: str, data: pd.DataFrame, load_method: LoadMethod, dtype=None
+        self, table_name: str, data: pd.DataFrame, load_mode: LoadMode, dtype=None
     ):
-        self._prepare_table_for_load(table_name, load_method)
-        if_exists = self._load_method_to_pandas_if_exists(load_method=load_method)
+        self._prepare_table_for_load(table_name, load_mode)
+        if_exists = self._load_mode_to_pandas_if_exists(load_mode=load_mode)
         schema, name = self._parse_table_name(table_name)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")  # ignore SADeprecationWarning
@@ -176,11 +176,11 @@ class DataCheckSql:
         self,
         table: str,
         file: Path,
-        load_method: Union[str, LoadMethod] = LoadMethod.TRUNCATE,
+        load_mode: Union[str, LoadMode] = LoadMode.TRUNCATE,
         base_path: Path = Path("."),
     ):
-        if isinstance(load_method, str):
-            load_method = self.load_method_from_string(load_method)
+        if isinstance(load_mode, str):
+            load_mode = self.load_mode_from_string(load_mode)
         rel_file = base_path / file
         date_columns = self.get_date_columns(table)
         date_column_names = list(date_columns.keys())
@@ -188,7 +188,7 @@ class DataCheckSql:
         result = self.load_table(
             table_name=table,
             data=data,
-            load_method=load_method,
+            load_mode=load_mode,
             dtype=date_columns,
         )
         if result:
@@ -200,14 +200,14 @@ class DataCheckSql:
     def load_tables_from_files(
         self,
         files: List[Path],
-        load_method: Union[str, LoadMethod] = LoadMethod.TRUNCATE,
+        load_mode: Union[str, LoadMode] = LoadMode.TRUNCATE,
         base_path: Path = Path("."),
     ):
-        if isinstance(load_method, str):
-            load_method = self.load_method_from_string(load_method)
+        if isinstance(load_mode, str):
+            load_mode = self.load_mode_from_string(load_mode)
         csv_files = expand_files(files, extension=".csv", base_path=base_path)
         parameters = [
-            {"table": f.stem, "file": f, "load_method": load_method} for f in csv_files
+            {"table": f.stem, "file": f, "load_mode": load_mode} for f in csv_files
         ]
         results = self.runner.run_any(
             run_method=self.load_table_from_csv_file, parameters=parameters
@@ -215,8 +215,8 @@ class DataCheckSql:
         return all(results)
 
     @staticmethod
-    def load_method_from_string(lm_str: str) -> LoadMethod:
-        return LoadMethod.from_string(lm_str)
+    def load_mode_from_string(lm_str: str) -> LoadMode:
+        return LoadMode.from_string(lm_str)
 
     def run_sql(self, sql_text: str):
         sq_text = text(sql_text)

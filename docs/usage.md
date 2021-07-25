@@ -14,7 +14,7 @@
 * `data_check --force` - when set, --generate will overwrite files.
 * `data_check --config CONFIG` - config file to use (default: data_check.yml).
 * `data_check --load PATH --table`-  load table data from a csv into the table
-* `data_check --load-method METHOD` -  how to load the table: truncate (default), append or replace. Use with --load or --load-tables.
+* `data_check --load-mode MODE` -  how to load the table: truncate (default), append or replace. Use with --load or --load-tables.
 * `data_check --load-tables some_folder/or/some_file.csv`-  load tables from a list of csv files
 * `data_check --run-sql some_folder/or/some_file.sql` - run any SQL script in a list of SQL files
 * `data_check --ping` - tries to connect to the database.
@@ -39,7 +39,7 @@ The schema and table names are always case-insensitive, as long as the database 
 
 ### Loading data into a single table
 
-To load data from some CSV file into a table, you can use `data_check --load path/to/csv_file.csv --table schema.table_name`. This will truncate the table and load the content of the CSV file into the table. You can specify different [load methods](usage.md#load-methods) if you do not want to truncate the table.
+To load data from some CSV file into a table, you can use `data_check --load path/to/csv_file.csv --table schema.table_name`. This will truncate the table and load the content of the CSV file into the table. You can specify different [load modes](usage.md#load-modes) if you do not want to truncate the table.
 
 ### Loading data into multiple tables
 

@@ -1,4 +1,4 @@
 steps:
   - load_tables:
       files: no_such_file.csv
-      load_method: invalid
+      load_mode: invalid

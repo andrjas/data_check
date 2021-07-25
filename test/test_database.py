@@ -11,7 +11,7 @@ sys.path.insert(0, my_path + "/../")
 
 from data_check import DataCheck  # noqa E402
 from data_check.config import DataCheckConfig  # noqa E402
-from data_check.sql import LoadMethod  # noqa E402
+from data_check.sql import LoadMode  # noqa E402
 
 # These tests should work on any database.
 # The tests are generic, but in integration tests each database uses specific SQL files.
@@ -175,7 +175,7 @@ def test_sorted_set(dc: DataCheck):
 def test_load_csv_replace(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     dc.sql.load_table_from_csv_file(
-        "temp.test_replace", Path("load_data/test.csv"), LoadMethod.REPLACE
+        "temp.test_replace", Path("load_data/test.csv"), LoadMode.REPLACE
     )
     df = dc.sql.run_query("select id, data from temp.test_replace")
     assert_equal_df(data, df)
@@ -185,7 +185,7 @@ def test_load_csv_replace_with_table(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     create_test_table("test_replace2", "temp", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_replace2", Path("load_data/test.csv"), LoadMethod.REPLACE
+        "temp.test_replace2", Path("load_data/test.csv"), LoadMode.REPLACE
     )
     df = dc.sql.run_query("select id, data from temp.test_replace2")
     assert_equal_df(data, df)
@@ -194,7 +194,7 @@ def test_load_csv_replace_with_table(dc: DataCheck):
 def test_load_csv_truncate(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     dc.sql.load_table_from_csv_file(
-        "temp.test_truncate", Path("load_data/test.csv"), LoadMethod.TRUNCATE
+        "temp.test_truncate", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data from temp.test_truncate")
     assert_equal_df(data, df)
@@ -204,7 +204,7 @@ def test_load_csv_truncate_with_table(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     create_test_table("test_truncate2", "temp", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_truncate2", Path("load_data/test.csv"), LoadMethod.TRUNCATE
+        "temp.test_truncate2", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data from temp.test_truncate2")
     assert_equal_df(data, df)
@@ -213,10 +213,10 @@ def test_load_csv_truncate_with_table(dc: DataCheck):
 def test_load_csv_append(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     dc.sql.load_table_from_csv_file(
-        "temp.test_append", Path("load_data/test.csv"), LoadMethod.TRUNCATE
+        "temp.test_append", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
     dc.sql.load_table_from_csv_file(
-        "temp.test_append", Path("load_data/test.csv"), LoadMethod.APPEND
+        "temp.test_append", Path("load_data/test.csv"), LoadMode.APPEND
     )
     df = dc.sql.run_query("select id, data from temp.test_append")
     # since the same data is loaded twice,
@@ -229,7 +229,7 @@ def test_load_csv_append_with_table(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     create_test_table("test_append2", "temp", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_append2", Path("load_data/test.csv"), LoadMethod.APPEND
+        "temp.test_append2", Path("load_data/test.csv"), LoadMode.APPEND
     )
     df = dc.sql.run_query("select id, data from temp.test_append2")
     assert_equal_df(data, df)
@@ -239,7 +239,7 @@ def test_load_csv_append_with_table(dc: DataCheck):
 def test_load_csv_date_type(dc: DataCheck):
     create_test_table_with_date("test_date", "temp", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_date", Path("load_data/test_date.csv"), LoadMethod.TRUNCATE
+        "temp.test_date", Path("load_data/test_date.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data, dat from temp.test_date")
     dat = df.dat
@@ -249,7 +249,7 @@ def test_load_csv_date_type(dc: DataCheck):
 def test_load_csv_datetime_type(dc: DataCheck):
     create_test_table_with_datetime("test_datetime", "temp", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_datetime", Path("load_data/test_datetime.csv"), LoadMethod.TRUNCATE
+        "temp.test_datetime", Path("load_data/test_datetime.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data, dat from temp.test_datetime")
     dat = df.dat
@@ -259,7 +259,7 @@ def test_load_csv_datetime_type(dc: DataCheck):
 def test_load_csv_date_with_existing_table_replace(dc: DataCheck):
     create_test_table_with_date("test_date_replace", "temp", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_date_replace", Path("load_data/test_date.csv"), LoadMethod.REPLACE
+        "temp.test_date_replace", Path("load_data/test_date.csv"), LoadMode.REPLACE
     )
     df = dc.sql.run_query("select id, data, dat from temp.test_date_replace")
     assert df.dat.dtype == 'object'
@@ -271,7 +271,7 @@ def test_load_csv_decimal_type(dc: DataCheck):
     )
     create_test_table_with_decimal("test_decimals", "temp", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_decimals", Path("load_data/test_decimals.csv"), LoadMethod.TRUNCATE
+        "temp.test_decimals", Path("load_data/test_decimals.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data, decim from temp.test_decimals")
     assert_equal_df(data, df)
@@ -283,7 +283,7 @@ def test_load_csv_less_columns_in_csv(dc: DataCheck):
     )
     create_test_table_with_decimal("test_less_columns_in_csv", "temp", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_less_columns_in_csv", Path("load_data/test.csv"), LoadMethod.TRUNCATE
+        "temp.test_less_columns_in_csv", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data, decim from temp.test_less_columns_in_csv")
     assert_equal_df(data, df)
@@ -295,7 +295,7 @@ def test_load_csv_more_columns_in_csv(dc: DataCheck):
         dc.sql.load_table_from_csv_file(
             "temp.test_more_columns_in_csv",
             Path("load_data/test_decimals.csv"),
-            LoadMethod.TRUNCATE,
+            LoadMode.TRUNCATE,
         )
 
 

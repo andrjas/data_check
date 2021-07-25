@@ -2,4 +2,4 @@ steps:
   - load_tables:
       file: some_table.csv
       table: some_table
-      load_method: invalid
+      load_mode: invalid

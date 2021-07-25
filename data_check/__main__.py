@@ -68,7 +68,7 @@ from data_check.config import DataCheckConfig
     help=f"table name to load data into",
 )
 @click.option(
-    "--load-method",
+    "--load-mode",
     type=str,
     default="truncate",
     help=f"how to load the table: truncate (default), append or replace",
@@ -95,7 +95,7 @@ def main(
     config: Union[str, Path] = DataCheckConfig.config_path,
     load: Optional[Path] = None,
     table: Optional[str] = None,
-    load_method: str = "truncate",
+    load_mode: str = "truncate",
     load_tables: bool = False,
     run_sql: bool = False,
     ping: bool = False,
@@ -137,12 +137,12 @@ def main(
             dc.sql.load_table_from_csv_file(
                 table=table,
                 file=load,
-                load_method=load_method,
+                load_mode=load_mode,
             )
             sys.exit(0)
     elif load_tables:
         path_list = [Path(f) for f in files]
-        dc.sql.load_tables_from_files_str(path_list, load_method_str=load_method)
+        dc.sql.load_tables_from_files(path_list, load_mode=load_mode)
         sys.exit(0)
 
     dc.load_template()
