@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Added
+
+- loading date/timestamp from CSV files
+- pipelines
+
+### Changed
+
+- using Drone CI for integration tests
+- renamed --load-method to --load-mode
+
+### Removed
+
+- old integration test scripts
+
 ## [0.4.0] - 2021-07-01
 
 ### Added
