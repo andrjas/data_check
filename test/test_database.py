@@ -262,7 +262,11 @@ def test_load_csv_date_with_existing_table_replace(dc: DataCheck):
         "temp.test_date_replace", Path("load_data/test_date.csv"), LoadMode.REPLACE
     )
     df = dc.sql.run_query("select id, data, dat from temp.test_date_replace")
-    assert df.dat.dtype == "object"
+    if dc.sql.dialect == "oracle":
+        # in Oracle this is a date type
+        assert df.dat.dtype == "<M8[ns]"
+    else:
+        assert df.dat.dtype == "object"
 
 
 def test_load_csv_decimal_type(dc: DataCheck):
@@ -301,3 +305,25 @@ def test_load_csv_more_columns_in_csv(dc: DataCheck):
 
 def test_dialect(dc: DataCheck):
     assert dc.sql.dialect in ["sqlite", "postgresql", "mysql", "mssql", "oracle"]
+
+
+def test_table_exists(dc: DataCheck):
+    create_test_table("test_table_exists", "temp", dc)
+    assert dc.sql.table_exists("test_table_exists", "temp")
+
+
+def test_table_exists_non_existing(dc: DataCheck):
+    assert not dc.sql.table_exists("test_table_exists_non_existing", "temp")
+
+
+def test_drop_table_if_exists_with_existing_table(dc: DataCheck):
+    create_test_table("test_drop_existing", "temp", dc)
+    dc.sql.drop_table_if_exists("test_drop_existing", "temp")
+    with pytest.raises(Exception):
+        dc.sql.run_query("select * from temp.test_drop_existing")
+
+
+def test_drop_table_if_exists_with_non_existing_table(dc: DataCheck):
+    dc.sql.drop_table_if_exists("test_drop_non_existing", "temp")
+    with pytest.raises(Exception):
+        dc.sql.run_query("select * from temp.test_drop_non_existing")

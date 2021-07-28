@@ -101,6 +101,20 @@ class DataCheckSql:
         except:  # noqa E722
             return False
 
+    def table_exists(self, table_name: str, schema: str):
+        inspector = inspect(self.get_connection())
+        return inspector.has_table(table_name=table_name, schema=schema)
+
+    def drop_table_if_exists(self, table_name: str, schema: str):
+        if self.table_exists(table_name, schema):
+            if schema:
+                drop_stmt = f"DROP TABLE {schema}.{table_name}"
+            else:
+                drop_stmt = f"DROP TABLE {table_name}"
+            self.get_connection().execute(
+                text(drop_stmt).execution_options(autocommit=True)
+            )
+
     def _prepare_table_for_load(self, table_name: str, load_mode: LoadMode):
         if load_mode == LoadMode.TRUNCATE:
             schema, name = self._parse_table_name(table_name)
@@ -113,11 +127,7 @@ class DataCheckSql:
             # Pandas and SQLAlchemy seem to have problems using if_exists="replace"
             # at least in SQLite. That's why we drop the tables here.
             schema, name = self._parse_table_name(table_name)
-            inspector = inspect(self.get_connection())
-            if inspector.has_table(table_name=name, schema=schema):
-                self.get_connection().execute(
-                    text(f"DROP TABLE {table_name}").execution_options(autocommit=True)
-                )
+            self.drop_table_if_exists(name, schema)
 
     def _parse_table_name(self, table_name: str) -> Tuple[Optional[str], str]:
         """Parses the table_name and returns the schema and table_name.
