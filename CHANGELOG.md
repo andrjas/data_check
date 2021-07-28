@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.5.0] - 2021-07-28
+
 ### Added
 
 - loading date/timestamp from CSV files
