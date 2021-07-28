@@ -3,9 +3,10 @@ steps:
     - echo "start data_check pipeline {{PIPELINE_PATH}}"
     - "echo 'connection: {{CONNECTION}}'"
     - "echo 'connection string {{CONNECTION_STRING}}'"
-    - "echo 'project path {{PROJECT_PATH}}'"
+    - echo 'project path {{PROJECT_PATH}}'
   - load_tables: load_pipeline_data
-  - cmd: ls
+  # using 'dir' instead of 'ls' to be compatible with windows
+  - cmd: dir
   - check: pipeline_checks
   - run_sql:
       files: sql_files
@@ -13,6 +14,5 @@ steps:
       file: load_pipeline_data/test_simple_pipeline.csv
       table: other_table
   - cmd:
-    - ls "sql_files"
-    - pwd
+    - dir "sql_files"
     - echo "test"
