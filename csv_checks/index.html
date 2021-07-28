@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Development - data_check</title>
+        <title>CSV checks - data_check</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
@@ -42,8 +42,8 @@
                             <li class="navitem">
                                 <a href="../usage/" class="nav-link">Usage</a>
                             </li>
-                            <li class="navitem">
-                                <a href="../csv_checks/" class="nav-link">CSV checks</a>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">CSV checks</a>
                             </li>
                             <li class="navitem">
                                 <a href="../pipelines/" class="nav-link">Pipelines</a>
@@ -54,8 +54,8 @@
                             <li class="navitem">
                                 <a href="../example/" class="nav-link">Examples</a>
                             </li>
-                            <li class="navitem active">
-                                <a href="./" class="nav-link">Development</a>
+                            <li class="navitem">
+                                <a href="../development/" class="nav-link">Development</a>
                             </li>
                         </ul>
 
@@ -66,12 +66,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../example/" class="nav-link">
+                                <a rel="prev" href="../usage/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
+                                <a rel="next" href="../pipelines/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -93,9 +93,17 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#development" class="nav-link">Development</a>
+            <li class="nav-item" data-level="1"><a href="#csv-checks" class="nav-link">CSV checks</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#testing" class="nav-link">Testing</a>
+            <li class="nav-item" data-level="2"><a href="#sql-file" class="nav-link">SQL file</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#csv-format" class="nav-link">CSV format</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#generating-expectation-files" class="nav-link">Generating expectation files</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -106,29 +114,37 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="development">Development</h1>
-<p><a href="https://python-poetry.org/">poetry</a> must be installed first for development.</p>
-<p>To set up a development environment initially with poetry:</p>
-<pre><code class="language-bash">poetry install
+<h1 id="csv-checks">CSV checks</h1>
+<p>This is the default mode when running data_check. data_check expects a <a href="#sql-file">SQL file</a> and a <a href="#csv-format">CSV file</a>. The SQL file will be executed against the database and the result is compared with the CSV file. If they match, the test is passed, otherwise it fails.</p>
+<h2 id="sql-file">SQL file</h2>
+<p>Each SQL file must contain a single SQL query. The query be run against the database, hence you must use the SQL dialect that the database in use understands.</p>
+<h3 id="templates">Templates</h3>
+<p>SQL files can contain Jinja2 templates. The templates are replaced with the values defined in <em>checks/template.yml</em>. Example:</p>
+<p>SQL file:</p>
+<pre><code class="language-sql">select '{{template_value}}' as test
 </code></pre>
-<p>Later, just activate the virtual environment: <code>poetry shell</code></p>
-<p>Please use <a href="https://github.com/psf/black">Black</a> to format the code before committing any change: <code>black data_check</code></p>
-<h2 id="testing">Testing</h2>
-<p>data_check has two layers of tests:</p>
-<h3 id="unit-tests">Unit tests</h3>
-<p><a href="https://pytest.org/">pytest</a> is used for unit testing. There are two types of test for data_check in the <em>test</em> folder: Basic tests for the code and tests against a database.</p>
-<p>For unit tests an in-memory SQLite database that is integrated into Python is used.</p>
-<p>Run <code>pytest</code> inside the virtual environment to execute the unit tests.</p>
-<h3 id="integration-tests">Integration tests</h3>
-<p>Integration tests are using specific databases and run unit tests and data_check test against this database.</p>
-<p>There are currently four databases used for integration tests:</p>
-<ul>
-<li>PostgreSQL</li>
-<li>MySQL</li>
-<li>Oracle</li>
-<li>Microsoft SQL Server</li>
-</ul>
-<p>The integration tests are run via <a href="https://www.drone.io/">Drone CI</a>. The file <em>.drone.yml</em> is generated from <em>.drone.jsonnet</em> and checked in into the Git repository. To update <em>.drone.yml</em> run <code>drone jsonnet  --format --stream</code>.</p></div>
+<p><em>checks/template.yml</em>:</p>
+<pre><code class="language-yaml">template_value: ABC
+</code></pre>
+<p>CSV file:</p>
+<pre><code class="language-csv">test
+ABC
+</code></pre>
+<h2 id="csv-format">CSV format</h2>
+<p>data_check uses a pretty basic CSV format. Each column is separated by a comma without any space around them.
+The first line must contain a header. The columns must match the columns in the SQL file. </p>
+<p>Any columns that do not match between the CSV and the SQL file will be ignored.</p>
+<pre><code class="language-csv">string_header,int_header,float_header,date_header,null_header
+string,42,42.1,2020-12-20,
+# a comment line
+&quot;second row&quot;,42,42.1,2020-12-20,
+</code></pre>
+<p>Each file starting with a '#' is regarded as a comment. You can use comments to annotate the date as they will be completely ignored.</p>
+<p>Only the data types strings and decimals are supported. Strings can be optionally enclosed in double quotes (").
+Empty strings are treated as null values.</p>
+<p>Any other data type (e.g. date) must be converted to strings/varchar in the SQL query.</p>
+<h2 id="generating-expectation-files">Generating expectation files</h2>
+<p>If you run <code>data_check --generate</code> in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file.</p></div>
             </div>
         </div>
 

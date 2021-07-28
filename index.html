@@ -43,6 +43,12 @@
                                 <a href="usage/" class="nav-link">Usage</a>
                             </li>
                             <li class="navitem">
+                                <a href="csv_checks/" class="nav-link">CSV checks</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="pipelines/" class="nav-link">Pipelines</a>
+                            </li>
+                            <li class="navitem">
                                 <a href="howtos/" class="nav-link">HowTos</a>
                             </li>
                             <li class="navitem">
@@ -89,6 +95,14 @@
             
             <li class="nav-item" data-level="1"><a href="#welcome-to-data_check" class="nav-link">Welcome to data_check</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#features" class="nav-link">Features</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#database-support" class="nav-link">Database support</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#why" class="nav-link">Why?</a>
               <ul class="nav flex-column">
               </ul>
@@ -121,7 +135,17 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="welcome-to-data_check">Welcome to data_check</h1>
-<p>data_check is a simple data validation tool. Write SQL queries and CSV files with the expected result sets and data_check will test the result sets against the queries. You can also use CSV files to <a href="usage/#loading-data-into-tables">populate tables</a> with data for pipeline tests with data_check.</p>
+<p>data_check is a simple data validation tool. In its most basic form it will execute SQL queries and compare the results against CSV files. But there are more advanced features:</p>
+<h2 id="features">Features</h2>
+<ul>
+<li><a href="csv_checks/">CSV checks</a>: compare SQL queries against CSV files</li>
+<li>multiple environments (databases) in the configuration file</li>
+<li><a href="usage/#loading-data-into-tables">populate tables</a> from CSV files</li>
+<li><a href="usage/#executing-arbitrary-sql-code">execute any SQL files on a database</a></li>
+<li>more complex <a href="pipelines/">pipelines</a></li>
+<li>run any script/command (via pipelines)</li>
+</ul>
+<h2 id="database-support">Database support</h2>
 <p>data_check should work with any database that works with <a href="https://docs.sqlalchemy.org/en/14/dialects/">SQLAlchemy</a>. Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.</p>
 <h2 id="why">Why?</h2>
 <p>data_check tries to solve a simple problem in data domains: during development you create multiple SQL queries to validate your data and compare the result manually. With data_check you can organize your data tests and run them automatically, for example in a CI pipeline.</p>
@@ -233,5 +257,5 @@ connections:
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-07-01 18:49:05.872784+00:00
+Build Date UTC : 2021-07-28 15:00:16.607023+00:00
 -->

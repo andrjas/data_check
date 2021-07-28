@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Usage - data_check</title>
+        <title>Pipelines - data_check</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
@@ -39,14 +39,14 @@
                             <li class="navitem">
                                 <a href="../install/" class="nav-link">Installation</a>
                             </li>
-                            <li class="navitem active">
-                                <a href="./" class="nav-link">Usage</a>
+                            <li class="navitem">
+                                <a href="../usage/" class="nav-link">Usage</a>
                             </li>
                             <li class="navitem">
                                 <a href="../csv_checks/" class="nav-link">CSV checks</a>
                             </li>
-                            <li class="navitem">
-                                <a href="../pipelines/" class="nav-link">Pipelines</a>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">Pipelines</a>
                             </li>
                             <li class="navitem">
                                 <a href="../howtos/" class="nav-link">HowTos</a>
@@ -66,12 +66,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../install/" class="nav-link">
+                                <a rel="prev" href="../csv_checks/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../csv_checks/" class="nav-link">
+                                <a rel="next" href="../howtos/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -93,21 +93,25 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#usage" class="nav-link">Usage</a>
+            <li class="nav-item" data-level="1"><a href="#pipelines" class="nav-link">Pipelines</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#commands" class="nav-link">Commands</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#exit-codes" class="nav-link">Exit codes</a>
+            <li class="nav-item" data-level="2"><a href="#example" class="nav-link">Example</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#loading-data-into-tables" class="nav-link">Loading data into tables</a>
+            <li class="nav-item" data-level="2"><a href="#pipeline-configuration" class="nav-link">Pipeline configuration</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#executing-arbitrary-sql-code" class="nav-link">Executing arbitrary SQL code</a>
+            <li class="nav-item" data-level="2"><a href="#steps" class="nav-link">Steps</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#nested-pipelines" class="nav-link">nested pipelines</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#parameters-in-pipelines" class="nav-link">Parameters in pipelines</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -118,70 +122,141 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="usage">Usage</h1>
-<h2 id="commands">Commands</h2>
+<h1 id="pipelines">Pipelines</h1>
+<p>If data_check finds a file named <em>data_check_pipeline.yml</em> in a folder, it will treat this folder as a pipeline check. Instead of running <a href="../csv_checks/">CSV checks</a> it will execute the steps in the YAML file.</p>
+<h2 id="example">Example</h2>
+<p>Example project with a pipeline:</p>
+<pre><code>data_check.yml
+checks/
+    some_test.sql                # this test will run in parallel to the pipeline test
+    some_test.csv
+    sample_pipeline/
+        data_check_pipeline.yml  # configuration for the pipeline
+        data/
+            my_schema.some_table.csv       # data for a table
+        data2/
+            some_data.csv        # other data
+        some_checks/             # folder with CSV checks
+            check1.sql
+            check1.csl
+            ...
+        run_this.sql             # a SQL file that will be executed
+        cleanup.sql
+    other_pipeline/              # you can have multiple pipelines that will run in parallel
+        data_check_pipeline.yml
+        ...
+</code></pre>
+<p>The file <em>sample_pipeline/data_check_pipeline.yml</em> can look like this:</p>
+<pre><code class="language-yaml">steps:
+    # this will truncate the table my_schema.some_table and load it with the data from data/my_schema.some_table.csv
+    - load_tables: data
+    # this will execute the SQL statement in run_this.sql
+    - run_sql: run_this.sql
+    # this will append the data from data2/some_data.csv to my_schema.other_table
+    - load:
+        file: data2/some_data.csv
+        table: my_schema.other_table
+        load_mode: append
+    # this will run a python script and pass the connection name
+    - cmd: &quot;python3 /path/to/my_pipeline.py --connection {{CONNECTION}}&quot;
+    # this will run the CSV checks in the some_checks folder
+    - check: some_checks
+</code></pre>
+<p>Pipeline checks and simple CSV checks can coexist in a project.</p>
+<h2 id="pipeline-configuration">Pipeline configuration</h2>
+<p><em>data_check_pipeline.yml</em> is a YAML file with <em>steps</em> as its main element that contains a list of steps.</p>
+<h2 id="steps">Steps</h2>
+<p><em>steps</em> is a list of steps that are executed in the pipeline sequentially. If any of the steps fail the pipeline will fail and the following steps will not be executed.</p>
+<p>Most steps have a list of files as a parameter. You you only need a single file/path, you can usually use a short form: <code>step_name: path</code>.</p>
+<h3 id="check">check</h3>
+<p><em>check</em> will run <a href="../csv_checks/">CSV checks</a> in a given folder or from a single file. It is like running data_check with this parameter. All checks will be performed in parallel.</p>
+<p>Short form:</p>
+<pre><code class="language-yaml">- check: some_checks
+</code></pre>
+<p>Long form:</p>
+<pre><code class="language-yaml">- check:
+    files:
+    - some_checks
+    - some/other/checks.sql
+</code></pre>
+<p>You can also omit <em>files</em>:</p>
+<pre><code class="language-yaml">- check:
+    - some_checks
+    - some/other/checks.sql
+</code></pre>
+<h3 id="load">load</h3>
+<p><em>load</em> is like calling <code>data_check --load ...</code>. This will load a CSV file into a table.</p>
+<pre><code class="language-yaml">- load:
+    file: check/date_test.csv
+    table: temp.date_test
+    load_mode: append
+</code></pre>
+<p>You can omit <em>load_mode</em>. Then the default mode <em>truncate</em> will be used.</p>
+<h3 id="load_tables">load_tables</h3>
+<p><em>load_tables</em> is like calling <code>data_check --load-tables ...</code>. This will load one or more tables from CSV files and infer the table name from the file name.</p>
+<p>Like with <code>--load-tables</code> the path before the filename has no impact on the inferred table name, only the file name itself.</p>
+<p>Short form:</p>
+<pre><code class="language-yaml">- load_tables: some_path/schema.table_name.csv
+</code></pre>
+<p>Long form:</p>
+<pre><code class="language-yaml">- load_tables:
+    files: 
+      - some_path
+      - some/other/path/schema.other_table.csv
+    load_mode: append
+</code></pre>
+<p>You can omit <em>load_mode</em>. Then the default mode <em>truncate</em> will be used.</p>
+<p>You can also omit <em>files</em>:</p>
+<pre><code class="language-yaml">- load_tables:
+    - some_path
+    - some/other/path/schema.other_table.csv
+</code></pre>
+<h3 id="run_sql">run_sql</h3>
+<p><em>run_sql</em> is like calling <code>data_check --run-sql ...</code>. This will run a SQL file or all SQL files in a folder againts the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call <em>run_sql</em> twice.</p>
+<p>Short form:</p>
+<pre><code class="language-yaml">- run_sql: some_file.sql
+</code></pre>
+<p>Long form:</p>
+<pre><code class="language-yaml">- run_sql:
+    files:
+      - some_file.sql
+      - some_path
+</code></pre>
+<p>You can also omit <em>files</em>:</p>
+<pre><code class="language-yaml">- run_sql:
+    - some_file.sql
+    - some_path
+</code></pre>
+<h3 id="cmd">cmd</h3>
+<p><em>cmd</em> will call any script or program. The commands will be executed sequentially.</p>
+<p>Short form:</p>
+<pre><code class="language-yaml">- cmd: echo &quot;test&quot;
+</code></pre>
+<p>Long form:</p>
+<pre><code class="language-yaml">- cmd:
+  commands:
+    - echo &quot;test&quot;
+    - script/to/start/pipeline.sh
+</code></pre>
+<p>You can also omit <em>commands</em>:</p>
+<pre><code class="language-yaml">- cmd:
+  - echo &quot;test&quot;
+  - script/to/start/pipeline.sh
+</code></pre>
+<h2 id="nested-pipelines">nested pipelines</h2>
+<p>Pipelines can be nested inside other pipelines. Passing a folder with a <em>data_check_pipeline.yml</em> to <em>check</em> will run the pipeline:</p>
+<pre><code class="language-yaml">- check:
+    - some_checks
+    - folder_with_a_pipeline
+</code></pre>
+<h2 id="parameters-in-pipelines">Parameters in pipelines</h2>
+<p>You can use some predefined parameters in a pipeline definition:</p>
 <ul>
-<li><code>data_check</code> - Run data_check agains the default connection in the <em>checks</em> folder.</li>
-<li><code>data_check some_folder</code> - Run data_check agains the default connection in the <em>some_folder</em> folder.</li>
-<li><code>data_check some_folder/some_file.sql</code> - Run data_check against the default connection for a single test.</li>
-<li><code>data_check -c/--connection CONNECTION</code> - use another connection than the default.</li>
-<li><code>data_check -n/--workers WORKERS</code> - use WORKERS threads to run the queries (default: 4).</li>
-<li><code>data_check --print</code> - print failed results data.</li>
-<li><code>data_check --print-format FORMAT</code> - format for printing failed results (pandas, csv).</li>
-<li><code>data_check --print-csv</code> - shortcut for "--print --print-format csv".</li>
-<li><code>data_check -g/--gen/--generate</code> - generate expectation files if they don't exist.</li>
-<li><code>data_check --force</code> - when set, --generate will overwrite files.</li>
-<li><code>data_check --config CONFIG</code> - config file to use (default: data_check.yml).</li>
-<li><code>data_check --load PATH --table</code>-  load table data from a csv into the table</li>
-<li><code>data_check --load-mode MODE</code> -  how to load the table: truncate (default), append or replace. Use with --load or --load-tables.</li>
-<li><code>data_check --load-tables some_folder/or/some_file.csv</code>-  load tables from a list of csv files</li>
-<li><code>data_check --run-sql some_folder/or/some_file.sql</code> - run any SQL script in a list of SQL files</li>
-<li><code>data_check --ping</code> - tries to connect to the database.</li>
-<li><code>data_check --verbose</code> - print verbose output.</li>
-<li><code>data_check --traceback</code> - print traceback output for debugging.</li>
-<li><code>data_check --version</code> - Show the version and exit.</li>
-<li><code>data_check --help</code> - show this help message and exit.</li>
-</ul>
-<h2 id="exit-codes">Exit codes</h2>
-<p>Possible exit codes:</p>
-<p><strong>Exit code 0:</strong> All tests run successfully.<br/>
-<strong>Exit code 1:</strong> At least one test failed.</p>
-<h2 id="loading-data-into-tables">Loading data into tables</h2>
-<p>Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV file to load data into the tables. The <a href="./#csv-format">CSV format</a> is the same as used for testing. The header in the CSV file must match the columns in the table. If the table doesn't exists, it will be created.</p>
-<p>The schema and table names are always case-insensitive, as long as the database supports it. Otherwise they are lowercased.</p>
-<h3 id="loading-data-into-a-single-table">Loading data into a single table</h3>
-<p>To load data from some CSV file into a table, you can use <code>data_check --load path/to/csv_file.csv --table schema.table_name</code>. This will truncate the table and load the content of the CSV file into the table. You can specify different <a href="./#load-modes">load modes</a> if you do not want to truncate the table.</p>
-<h3 id="loading-data-into-multiple-tables">Loading data into multiple tables</h3>
-<p>You can use multiple CSV files or a whole folder to load the data into tables. The table name will be derived from the file name.</p>
-<ul>
-<li><code>data_check --load-tables path/schema.table_1.csv</code> - this will load the data from the CSV file into the table schema.table_1</li>
-<li><code>data_check --load-tables path/to/some_folder</code> - this will load the data from all CSV files in this folder into tables matching the file names.</li>
-</ul>
-<p>The path will be searched recursively for CSV files. The folder structure doesn't matter when matching the table names, only the file name matters.</p>
-<h3 id="load-modes">Load modes</h3>
-<p>There are multiple modes that control the data loading:</p>
-<ul>
-<li>truncate - truncate the table before loading the data.</li>
-<li>replace - drop the table and recreate it based on the columns in the CSV file.</li>
-<li>append - do not touch the table before loading the data.</li>
-</ul>
-<p>By default, the tables will be truncated before loading the data. You can use the other modes with <code>--load-mode</code>:</p>
-<p><code>data_check --load file.csv --table table_name --load-mode replace</code>
-<code>data_check --load-tables path/to/tables_folder --load-mode append</code></p>
-<h3 id="csv-and-data-types">CSV and data types</h3>
-<p>When loading data from CSV files, data_check (or more precisely: <a href="https://pandas.pydata.org/">pandas</a>) will infer the data types from the file.
-When loading the data into the table, the database will usually implicitly convert the data types.
-This works good for simple data types like strings and numbers.</p>
-<p>If you need to load date types (or timestamps) and the table has a date column, data_check will infer the date format from the CSV file for that column.
-This doesn't work when using <code>--load-mode replace</code> since the table will be dropped before it can be analyzed. This will probably result in a varchar column instead of date.</p>
-<p>It's best to use <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> for dates.</p>
-<h2 id="executing-arbitrary-sql-code">Executing arbitrary SQL code</h2>
-<p>You can run any SQL file against the database by using the <code>--run-sql</code> command:</p>
-<p><code>data_check --run-sql sql_file.sql other_file.sql</code></p>
-<p>or a whole folder recursively:</p>
-<p><code>data_check --run-sql some/folder/with/sql_files</code></p>
-<p>All files are run in parallel. If you have dependencies between the files, data_check must be called sequentially for each file.</p>
-<p>Multiple statements in a SQL file usually must be inside an anonymous block. MySQL doesn't support this however.</p></div>
+<li>CONNECTION: The name of the connection used for this run.</li>
+<li>CONNECTION_STRING: The connection string as defined in <em>data_check.yml</em> used for the connection.</li>
+<li>PROJECT_PATH: The path of the data_check project, i.e. the folder where data_check is started from.</li>
+<li>PIPELINE_PATH: The path to the pipeline, i.e. the folder containing <em>data_check_pipeline.yml</em>.</li>
+</ul></div>
             </div>
         </div>
 
