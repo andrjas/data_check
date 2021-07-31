@@ -1,0 +1,1 @@
+create table ct_test (a integer)

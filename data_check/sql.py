@@ -235,6 +235,8 @@ class DataCheckSql:
         )
         try:
             res = result.fetchall()
+            df = pd.DataFrame(data=res, columns=result.keys())
+            print(df.to_csv(index=False))
             return res
         except:
             return bool(result)
