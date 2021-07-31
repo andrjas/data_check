@@ -233,4 +233,8 @@ class DataCheckSql:
         result = self.get_connection().execute(
             sq_text.execution_options(autocommit=True)
         )
-        return result
+        try:
+            res = result.fetchall()
+            return res
+        except:
+            return bool(result)
