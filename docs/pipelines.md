@@ -149,6 +149,14 @@ You can also omit _files_:
     - some_path
 ```
 
+### sql
+
+_sql_ is like calling `data_check --sql ...`. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV.
+
+```yaml
+- sql: select 1 as a, "b" as t
+```
+
 ### cmd
 
 _cmd_ will call any script or program. The commands will be executed sequentially.

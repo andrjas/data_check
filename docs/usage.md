@@ -17,6 +17,7 @@
 * `data_check --load-mode MODE` -  how to load the table: truncate (default), append or replace. Use with --load or --load-tables.
 * `data_check --load-tables some_folder/or/some_file.csv`-  load tables from a list of csv files
 * `data_check --run-sql some_folder/or/some_file.sql` - run any SQL script in a list of SQL files
+* `data_check --sql "SQL statement"` - run any SQL statement. Print result as CSV if it is a query.
 * `data_check --ping` - tries to connect to the database.
 * `data_check --verbose` - print verbose output.
 * `data_check --traceback` - print traceback output for debugging.

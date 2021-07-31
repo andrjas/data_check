@@ -16,3 +16,4 @@ steps:
   - cmd:
     - dir "sql_files"
     - echo "test"
+  - sql: select 1 as a, "b" as t

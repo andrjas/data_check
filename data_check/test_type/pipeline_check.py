@@ -54,7 +54,9 @@ class SerialPipelineSteps:
         call_method = self.data_check.get_pipeline_method(step_type)
         if call_method:
             prepared_params = self.data_check.get_prepared_parameters(step_type, params)
-            prepared_params.update({"base_path": path})
+            argspec = inspect.getfullargspec(call_method)
+            if "base_path" in argspec.args:
+                prepared_params.update({"base_path": path})
             return call_method(**prepared_params)
         else:
             raise Exception(f"unknown pipeline step: {step_type}")
@@ -103,6 +105,7 @@ class PipelineCheck:
         self.register_pipeline_step(
             "run_sql", self.run_sql_files, convert_to_path_list=["files"]
         )
+        self.register_pipeline_step("sql", self.sql.run_sql)
 
     @staticmethod
     def is_pipeline_check(path: Path) -> bool:

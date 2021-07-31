@@ -79,6 +79,11 @@ from data_check.config import DataCheckConfig
 @click.option(
     "--run-sql", is_flag=True, help="run any SQL script in a list of SQL files"
 )
+@click.option(
+    "--sql",
+    type=str,
+    help="run any SQL statement; print result as CSV if it is a query",
+)
 @click.option("--ping", is_flag=True, help="tries to connect to the database")
 @click.option("--verbose", is_flag=True, help="print verbose output")
 @click.option("--traceback", is_flag=True, help="print traceback output for debugging")
@@ -98,6 +103,7 @@ def main(
     load_mode: str = "truncate",
     load_tables: bool = False,
     run_sql: bool = False,
+    sql: str = "",
     ping: bool = False,
     verbose: bool = False,
     traceback: bool = False,
@@ -151,6 +157,12 @@ def main(
         path_list = [Path(f) for f in files]
         dc.run_sql_files(path_list)
         sys.exit(0)
+
+    if sql:
+        if dc.sql.run_sql(sql):
+            sys.exit(0)
+        else:
+            sys.exit(1)
 
     if not files:
         files = [dc_config.checks_path]  # use default checks path if nothing is given
