@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+### Added
+
+- --sql parameter to run SQL statements directly from command line and print the result as CSV
+- sql pipeline step
+-- --run-sql prints result as CSV if it is a query
+
+### Changed
+
+- CSV checks now convert date columns automatically
+- collect_data returns ordered list, i.e. serial runs are deterministically
+
+### Fixed
+
+- run_sql fails if running in parallel with multiple files in a folder
+
 ## [0.5.0] - 2021-07-28
 
 ### Added
