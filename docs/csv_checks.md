@@ -44,10 +44,14 @@ string,42,42.1,2020-12-20,
 
 Each file starting with a '#' is regarded as a comment. You can use comments to annotate the date as they will be completely ignored.
 
-Only the data types strings and decimals are supported. Strings can be optionally enclosed in double quotes (").
+Only the data types strings, decimals and date/timestamps (partially) are supported. Strings can be optionally enclosed in double quotes (").
 Empty strings are treated as null values.
 
-Any other data type (e.g. date) must be converted to strings/varchar in the SQL query.
+data_check recognizes if a column in a SQL query is a date or timestamp and converts the columns in the CSV automatically to timestamps.
+For some databases (PostgreSQL, MySQL) this only works for timestamp columns, not date columns.
+The date format in the CSV file is inferred, but it's best to use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
+
+Any other data type must be converted to strings/varchar in the SQL query.
 
 ## Generating expectation files
 
