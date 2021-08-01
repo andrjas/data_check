@@ -43,19 +43,15 @@ class DataCheck(SimpleCheck, PipelineCheck):
         self, files: List[Path], base_path: Path = Path(".")
     ) -> List[Path]:
         checks = []
-        for f in files:
+        for f in sorted(files):
             rel_file = base_path / f
             if self.is_pipeline_check(rel_file):
                 checks.append(rel_file)
             elif self.is_simple_check(rel_file):
                 checks.append(rel_file)
             elif rel_file.is_dir():
-                # dir_files = list(rel_file.iterdir())
                 rel_files = [d.relative_to(base_path) for d in rel_file.iterdir()]
-                # print("dir_files: ",rel_file)
                 checks.extend(self.collect_checks(rel_files, base_path=base_path))
-            # else:
-            #     print(f"unknown file: {f}")
         return checks
 
     def run(self, files: List[Path], base_path: Path = Path(".")) -> bool:

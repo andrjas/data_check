@@ -91,3 +91,18 @@ def test_collect_checks(dc: DataCheck):
     # This test is also to ensure, that all checks are copied over to int_test
     checks = dc.collect_checks([Path("checks")])
     assert len(checks) == 23
+
+
+def test_collect_checks_returns_sorted_list(dc: DataCheck):
+    checks = dc.collect_checks(
+        [
+            Path("checks/templates"),
+            Path("checks/basic"),
+            Path("checks/generated"),
+            Path("checks/pipelines"),
+            Path("checks/failing"),
+        ]
+    )
+    print(checks)
+
+    assert checks == sorted(checks)
