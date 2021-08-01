@@ -1,10 +1,12 @@
 import sys
 import os
 from pathlib import Path
+from pandas.core.arrays.sparse import dtype
 from pandas.core.frame import DataFrame
 import pytest
 import pandas as pd
 from sqlalchemy import Table, Column, String, Integer, MetaData, Date, Numeric, DateTime
+import datetime
 
 my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
@@ -131,8 +133,12 @@ def test_data_types_float(data_types_check):
     assert data_types_check.float_test == 42.1
 
 
-def test_data_types_date(data_types_check):
-    assert data_types_check.date_test == "2020-12-20"
+def test_data_types_date(data_types_check, dc: DataCheck):
+    if dc.sql.dialect == "sqlite":
+        # sqlite doesn't have a date type
+        assert data_types_check.date_test == "2020-12-20"
+    else:
+        assert data_types_check.date_test == datetime.date(2020, 12, 20)
 
 
 def test_data_types_null(data_types_check):

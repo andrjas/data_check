@@ -53,6 +53,9 @@ class SimpleCheck:
         passed = len(df_diff) == 0
         return (DataCheckResult.passed_to_result_type(passed), df_result)
 
+    def get_date_columns(self, df: pd.DataFrame) -> List[str]:
+        return [k for k in df.keys() if pd.api.types.is_datetime64_any_dtype(df[k])]
+
     def run_test(
         self,
         sql_file: Path,
@@ -76,13 +79,14 @@ class SimpleCheck:
             sql_result = self.sql.run_query(
                 read_sql_file(sql_file=sql_file, template_data=self.template_data)
             )
+            date_columns = self.get_date_columns(sql_result)
         except Exception as exc:
             return self.output.prepare_result(
                 ResultType.FAILED_WITH_EXCEPTION, source=sql_file, exception=exc
             )
 
         try:
-            expect_result = read_csv(expect_file)
+            expect_result = read_csv(expect_file, parse_dates=date_columns)
         except Exception as exc_csv:
             return self.output.prepare_result(
                 ResultType.FAILED_WITH_EXCEPTION, source=expect_file, exception=exc_csv
