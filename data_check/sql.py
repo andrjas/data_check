@@ -129,13 +129,19 @@ class DataCheckSql:
                 text(drop_stmt).execution_options(autocommit=True)
             )
 
+    def _truncate_statement(self, table_name: str) -> str:
+        if self.dialect == "sqlite":
+            return f"DELETE FROM {table_name}"
+        else:
+            return f"TRUNCATE TABLE {table_name}"
+
     def _prepare_table_for_load(self, table_name: str, load_mode: LoadMode):
         if load_mode == LoadMode.TRUNCATE:
             schema, name = self._parse_table_name(table_name)
             inspector = inspect(self.get_connection())
             if inspector.has_table(table_name=name, schema=schema):
                 self.get_connection().execute(
-                    text(f"DELETE FROM {table_name}").execution_options(autocommit=True)
+                    text(self._truncate_statement(table_name)).execution_options(autocommit=True)
                 )
         elif load_mode == LoadMode.REPLACE:
             # Pandas and SQLAlchemy seem to have problems using if_exists="replace"
