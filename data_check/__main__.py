@@ -84,6 +84,7 @@ from data_check.config import DataCheckConfig
     type=str,
     help="run any SQL statement; print result as CSV if it is a query",
 )
+@click.option("--output", "-o", type=click.Path(), help="output path for --sql")
 @click.option("--ping", is_flag=True, help="tries to connect to the database")
 @click.option("--verbose", is_flag=True, help="print verbose output")
 @click.option("--traceback", is_flag=True, help="print traceback output for debugging")
@@ -104,6 +105,7 @@ def main(
     load_tables: bool = False,
     run_sql: bool = False,
     sql: str = "",
+    output: Union[str, Path] = "",
     ping: bool = False,
     verbose: bool = False,
     traceback: bool = False,
@@ -159,7 +161,7 @@ def main(
         sys.exit(0)
 
     if sql:
-        if dc.sql.run_sql(sql):
+        if dc.sql.run_sql(sql, output=output):
             sys.exit(0)
         else:
             sys.exit(1)

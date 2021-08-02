@@ -103,6 +103,4 @@ def test_collect_checks_returns_sorted_list(dc: DataCheck):
             Path("checks/failing"),
         ]
     )
-    print(checks)
-
     assert checks == sorted(checks)

@@ -153,9 +153,26 @@ You can also omit _files_:
 
 _sql_ is like calling `data_check --sql ...`. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV.
 
+Short form:
 ```yaml
 - sql: select 1 as a, "b" as t
 ```
+
+Long form:
+```yaml
+- sql:
+    query: select 1 as a, "b" as t
+```
+
+With _output_ to write a CSV file:
+```yaml
+- sql:
+    query: select 1 as a, "b" as t
+    output: result.csv
+```
+
+_output_ is relative to the pipeline path, unless an absolute path is specified, for example '{{PROJECT_PATH}}/result.csv'.
+
 
 ### cmd
 

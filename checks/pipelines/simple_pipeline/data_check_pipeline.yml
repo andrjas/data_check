@@ -17,3 +17,6 @@ steps:
     - dir "sql_files"
     - echo "test"
   - sql: select 1 as a, "b" as t
+  - sql:
+      query: select 1 as a, "b" as t
+      output: test_output.csv

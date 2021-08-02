@@ -12,7 +12,7 @@ import datetime
 
 
 from .exceptions import DataCheckException
-from .io import expand_files, read_csv
+from .io import expand_files, read_csv, print_csv, write_csv
 from .runner import DataCheckRunner
 
 
@@ -228,15 +228,18 @@ class DataCheckSql:
     def load_mode_from_string(lm_str: str) -> LoadMode:
         return LoadMode.from_string(lm_str)
 
-    def run_sql(self, sql_text: str):
-        sq_text = text(sql_text)
+    def run_sql(
+        self, query: str, output: Union[str, Path] = "", base_path: Path = Path(".")
+    ):
+        sq_text = text(query)
         result = self.get_connection().execute(
             sq_text.execution_options(autocommit=True)
         )
         try:
             res = result.fetchall()
             df = pd.DataFrame(data=res, columns=result.keys())
-            print(df.to_csv(index=False))
+            print_csv(df)
+            write_csv(df, output=output, base_path=base_path)
             return res
         except:
             return bool(result)

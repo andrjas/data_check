@@ -2,6 +2,7 @@ from typing import List, Dict, Any, Union, Optional
 from pathlib import Path
 from jinja2 import Template
 import pandas as pd
+from pandas.core.frame import DataFrame
 import yaml
 
 
@@ -68,6 +69,17 @@ def read_csv(
         parse_dates=parse_dates,
         infer_datetime_format=True,
     )
+
+
+def print_csv(df: DataFrame):
+    print(df.to_csv(index=False))
+
+
+def write_csv(
+    df: DataFrame, output: Union[str, Path] = "", base_path: Path = Path(".")
+):
+    if output:
+        df.to_csv(base_path / output, index=False)
 
 
 def read_yaml(
