@@ -9,6 +9,7 @@ from enum import Enum
 import warnings
 from pathlib import Path
 import datetime
+from collections import namedtuple
 
 
 from .exceptions import DataCheckException
@@ -31,6 +32,19 @@ class LoadMode(Enum):
             return LoadMode.REPLACE
         else:
             raise DataCheckException(f"unknown load mode: {mode_name}")
+
+
+# some data types that need special handling
+ColumnInfo = namedtuple(
+    "ColumnInfo",
+    [
+        "dtypes",
+        "date_columns",
+        "date_column_names",
+        "string_columns",
+        "string_column_names",
+    ],
+)
 
 
 class DataCheckSql:
@@ -163,24 +177,49 @@ class DataCheckSql:
             )
             return True
 
-    def get_date_columns(self, table_name: str):
+    def get_column_types(self, table_name: str):
         schema, name = self._parse_table_name(table_name)
+        try:
+            inspector = inspect(self.get_connection())
+            columns = inspector.get_columns(name, schema=schema)
+            return {c["name"]: c["type"] for c in columns}
+        except (NoSuchTableError, OperationalError):
+            # Python 3.6 might trow an OperationalError
+            return {}
+
+    def get_date_columns(self, table_name: str):
         date_column_types = (
             datetime.datetime,
             datetime.date,
             datetime.time,
         )
-        try:
-            inspector = inspect(self.get_connection())
-            columns = inspector.get_columns(name, schema=schema)
-            return {
-                c["name"]: c["type"]
-                for c in columns
-                if c["type"].python_type in date_column_types
-            }
-        except (NoSuchTableError, OperationalError):
-            # Python 3.6 might trow an OperationalError
-            return {}
+        col_types = self.get_column_types(table_name)
+        return {
+            k: col_types[k]
+            for k in col_types.keys()
+            if col_types[k].python_type in date_column_types
+        }
+
+    def get_string_columns(self, table_name: str):
+        col_types = self.get_column_types(table_name)
+        return {
+            k: col_types[k] for k in col_types.keys() if col_types[k].python_type == str
+        }
+
+    def get_column_info(self, table_name: str) -> ColumnInfo:
+        date_columns = self.get_date_columns(table_name)
+        date_column_names = list(date_columns.keys())
+        string_columns = self.get_string_columns(table_name)
+        string_column_names = list(string_columns.keys())
+        dtypes = dict(date_columns, **string_columns)
+        column_info = ColumnInfo(
+            dtypes=dtypes,
+            date_columns=date_columns,
+            date_column_names=date_column_names,
+            string_columns=string_columns,
+            string_column_names=string_column_names,
+        )
+        return column_info
 
     def load_table_from_csv_file(
         self,
@@ -192,14 +231,18 @@ class DataCheckSql:
         if isinstance(load_mode, str):
             load_mode = self.load_mode_from_string(load_mode)
         rel_file = base_path / file
-        date_columns = self.get_date_columns(table)
-        date_column_names = list(date_columns.keys())
-        data = read_csv(csv_file=rel_file, parse_dates=date_column_names)
+        column_info = self.get_column_info(table)
+
+        data = read_csv(
+            csv_file=rel_file,
+            parse_dates=column_info.date_column_names,
+            string_columns=column_info.string_column_names,
+        )
         result = self.load_table(
             table_name=table,
             data=data,
             load_mode=load_mode,
-            dtype=date_columns,
+            dtype=column_info.dtypes,
         )
         if result:
             print(f"table {table} loaded from {rel_file}")

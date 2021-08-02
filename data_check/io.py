@@ -4,6 +4,7 @@ from jinja2 import Template
 import pandas as pd
 from pandas.core.frame import DataFrame
 import yaml
+from csv import QUOTE_NONNUMERIC
 
 
 def expand_files(
@@ -54,10 +55,13 @@ def get_expect_file(sql_file: Path) -> Path:
 
 
 def read_csv(
-    csv_file: Path, parse_dates: Union[bool, List[str]] = False
+    csv_file: Path,
+    parse_dates: Union[bool, List[str]] = False,
+    string_columns: Dict[str, str] = {},
 ) -> pd.DataFrame:
     if not parse_dates:
         parse_dates = False
+    dtypes = {s: "object" for s in string_columns}
     return pd.read_csv(
         csv_file,
         na_values=[""],  # use empty string as nan
@@ -68,6 +72,7 @@ def read_csv(
         engine="c",
         parse_dates=parse_dates,
         infer_datetime_format=True,
+        dtype=dtypes,
     )
 
 

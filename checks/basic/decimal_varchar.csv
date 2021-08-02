@@ -1,2 +1,2 @@
-decimal_varchar
-1
+decimal_varchar,leading_zero_varchar
+1,0123
