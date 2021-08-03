@@ -46,6 +46,8 @@ class DataCheckOutput:
                 return str(df)
             elif self.print_format.lower() == "csv":
                 return df.to_csv(index=False)
+            elif self.print_format.lower() == "json":
+                return df.to_json(orient="table", indent=2)
             else:
                 raise DataCheckException(f"unknown print format: {self.print_format}")
 

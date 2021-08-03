@@ -7,7 +7,8 @@
 - --sql parameter to run SQL statements directly from command line and print the result as CSV
 - sql pipeline step
 - --output/-o parameter to write --sql generated CSV file
--- --run-sql prints result as CSV if it is a query
+- --run-sql prints result as CSV if it is a query
+- --print --format json and --print-json
 
 ### Changed
 

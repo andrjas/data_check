@@ -28,15 +28,19 @@ from data_check.config import DataCheckConfig
     type=str,
     default=DataCheckConfig.default_print_format,
     help=(
-        "format for printing failed results (pandas, csv); "
+        "format for printing failed results (pandas, csv, json); "
         f"default: {DataCheckConfig.default_print_format}"
     ),
 )
 @click.option(
     "--print-csv",
-    "print_csv",
     is_flag=True,
     help="shortcut for --print --print-format csv",
+)
+@click.option(
+    "--print-json",
+    is_flag=True,
+    help="shortcut for --print --print-format json",
 )
 @click.option(
     "--gen",
@@ -96,6 +100,7 @@ def main(
     print_failed: bool = False,
     print_format: str = DataCheckConfig.default_print_format,
     print_csv: bool = False,
+    print_json: bool = False,
     generate_expectations: bool = False,
     force: bool = False,
     config: Union[str, Path] = DataCheckConfig.config_path,
@@ -116,6 +121,9 @@ def main(
     if print_csv:
         print_failed = True
         print_format = "csv"
+    elif print_json:
+        print_failed = True
+        print_format = "json"
 
     init()  # init colorama
     config = Path(config)

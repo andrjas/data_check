@@ -141,7 +141,9 @@ class DataCheckSql:
             inspector = inspect(self.get_connection())
             if inspector.has_table(table_name=name, schema=schema):
                 self.get_connection().execute(
-                    text(self._truncate_statement(table_name)).execution_options(autocommit=True)
+                    text(self._truncate_statement(table_name)).execution_options(
+                        autocommit=True
+                    )
                 )
         elif load_mode == LoadMode.REPLACE:
             # Pandas and SQLAlchemy seem to have problems using if_exists="replace"
