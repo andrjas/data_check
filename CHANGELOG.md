@@ -13,10 +13,12 @@
 
 - CSV checks now convert date columns automatically
 - collect_data returns ordered list, i.e. serial runs are deterministically
+- using truncate table instead of delete where possible
 
 ### Fixed
 
 - run_sql fails if running in parallel with multiple files in a folder
+- CSV handling numbers with leading zeros as strings
 
 ## [0.5.0] - 2021-07-28
 
