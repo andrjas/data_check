@@ -1,2 +1,2 @@
-string_test,int_test,float_test,date_test,null_test,whitespace_test,empty_string_test
-string,42,42.1,2020-12-20,,   ,
+string_test,int_test,float_test,date_test,null_test,whitespace_test,empty_string_test,inf_date_test
+string,42,42.1,2020-12-20 00:00:00,,   ,,9999-12-31 00:00:00

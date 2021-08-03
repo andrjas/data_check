@@ -1,7 +1,6 @@
 import sys
 import os
 from pathlib import Path
-from pandas.core.arrays.sparse import dtype
 from pandas.core.frame import DataFrame
 import pytest
 import pandas as pd
@@ -134,11 +133,11 @@ def test_data_types_float(data_types_check):
 
 
 def test_data_types_date(data_types_check, dc: DataCheck):
-    if dc.sql.dialect == "sqlite":
-        # sqlite doesn't have a date type
-        assert data_types_check.date_test == "2020-12-20"
-    else:
-        assert data_types_check.date_test == datetime.date(2020, 12, 20)
+    # if dc.sql.dialect == "sqlite":
+    #     # sqlite doesn't have a date type
+    #     assert data_types_check.date_test == "2020-12-20"
+    # else:
+    assert data_types_check.date_test == datetime.date(2020, 12, 20)
 
 
 def test_data_types_null(data_types_check):

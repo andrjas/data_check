@@ -9,6 +9,7 @@ from enum import Enum
 import warnings
 from pathlib import Path
 import datetime
+from dateutil.parser import isoparse
 from collections import namedtuple
 
 
@@ -95,6 +96,27 @@ class DataCheckSql:
     def dialect(self) -> str:
         return self.get_connection().dialect.name
 
+    @staticmethod
+    def date_parser(ds):
+        if isinstance(ds, str):
+            return isoparse(ds)
+        return ds
+
+    def parse_date_hint(self, query: str) -> List[str]:
+        lines = [l.strip() for l in query.splitlines()]
+        comment_lines = [
+            l.replace("--", "", 1).strip() for l in lines if l.startswith("--")
+        ]
+        date_hints = [
+            l.replace("date:", "", 1) for l in comment_lines if l.startswith("date:")
+        ]
+
+        hints = []
+        for dh in date_hints:
+            _hints = dh.split(",")
+            hints.extend(h.strip() for h in _hints)
+        return hints
+
     def run_query(self, query: str) -> pd.DataFrame:
         """
         Run a query on the database and return a Pandas DataFrame with the result.
@@ -115,11 +137,11 @@ class DataCheckSql:
         except:  # noqa E722
             return False
 
-    def table_exists(self, table_name: str, schema: str):
+    def table_exists(self, table_name: str, schema: Optional[str]):
         inspector = inspect(self.get_connection())
         return inspector.has_table(table_name=table_name, schema=schema)
 
-    def drop_table_if_exists(self, table_name: str, schema: str):
+    def drop_table_if_exists(self, table_name: str, schema: Optional[str]):
         if self.table_exists(table_name, schema):
             if schema:
                 drop_stmt = f"DROP TABLE {schema}.{table_name}"

@@ -90,7 +90,7 @@ def test_run_sql_files(dc: DataCheck):
 def test_collect_checks(dc: DataCheck):
     # This test is also to ensure, that all checks are copied over to int_test
     checks = dc.collect_checks([Path("checks")])
-    assert len(checks) == 23
+    assert len(checks) == 24
 
 
 def test_collect_checks_returns_sorted_list(dc: DataCheck):

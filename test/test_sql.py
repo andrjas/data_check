@@ -2,6 +2,7 @@ import sys
 import os
 import pytest
 from sqlalchemy.exc import OperationalError
+import datetime
 
 
 # add the parent path to PYTHONPATH
@@ -87,3 +88,56 @@ def test_run_sql_ddl_and_insert(sql: DataCheckSql):
     sql.run_sql("insert into test values ('a')")
     res = sql.run_sql("select a from test")
     assert res == [("a",)]
+
+
+def test_parse_date_hint(sql: DataCheckSql):
+    dh = sql.parse_date_hint(
+        """-- date: dc1, dc2
+select 1
+"""
+    )
+    assert dh == ["dc1", "dc2"]
+
+
+def test_parse_no_date_hint(sql: DataCheckSql):
+    dh = sql.parse_date_hint("""select 1""")
+    assert dh == []
+
+
+def test_parse_date_hint_newline(sql: DataCheckSql):
+    dh = sql.parse_date_hint(
+        """
+-- date: dc1, dc2
+select 1
+"""
+    )
+    assert dh == ["dc1", "dc2"]
+
+
+def test_parse_date_hint_newline_sep(sql: DataCheckSql):
+    dh = sql.parse_date_hint(
+        """
+   -- date: dc1, dc2
+select 1
+"""
+    )
+    assert dh == ["dc1", "dc2"]
+
+
+def test_parse_date_hint_no_sep(sql: DataCheckSql):
+    dh = sql.parse_date_hint(
+        """--date:dc1,dc2
+select 1
+"""
+    )
+    assert dh == ["dc1", "dc2"]
+
+
+def test_parse_multiple_date_hint(sql: DataCheckSql):
+    dh = sql.parse_date_hint(
+        """-- date: dc1, dc2
+    -- date: dc3
+select 1
+"""
+    )
+    assert dh == ["dc1", "dc2", "dc3"]

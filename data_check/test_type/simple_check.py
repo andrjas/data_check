@@ -79,11 +79,13 @@ class SimpleCheck:
             )
 
         try:
-            sql_result = self.sql.run_query(
-                read_sql_file(sql_file=sql_file, template_data=self.template_data)
-            )
+            query = read_sql_file(sql_file=sql_file, template_data=self.template_data)
+            sql_result = self.sql.run_query(query)
             date_columns = self.get_date_columns(sql_result)
             string_columns = self.get_string_columns(sql_result)
+            extra_dates = self.sql.parse_date_hint(query)
+            for ed in extra_dates:
+                sql_result[ed] = sql_result[ed].apply(self.sql.date_parser)
         except Exception as exc:
             return self.output.prepare_result(
                 ResultType.FAILED_WITH_EXCEPTION, source=sql_file, exception=exc
@@ -93,6 +95,8 @@ class SimpleCheck:
             expect_result = read_csv(
                 expect_file, parse_dates=date_columns, string_columns=string_columns
             )
+            for ed in extra_dates:
+                expect_result[ed] = expect_result[ed].apply(self.sql.date_parser)
         except Exception as exc_csv:
             return self.output.prepare_result(
                 ResultType.FAILED_WITH_EXCEPTION, source=expect_file, exception=exc_csv
