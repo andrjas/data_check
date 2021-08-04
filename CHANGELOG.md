@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.6.0] - 2021-08-04
+
 ### Added
 
 - --sql parameter to run SQL statements directly from command line and print the result as CSV
@@ -9,6 +11,8 @@
 - --output/-o parameter to write --sql generated CSV file
 - --run-sql prints result as CSV if it is a query
 - --print --format json and --print-json
+- date hints
+- support for large dates (e.g. 9999-12-31 00:00:00)
 
 ### Changed
 

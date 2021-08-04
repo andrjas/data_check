@@ -53,6 +53,20 @@ The date format in the CSV file is inferred, but it's best to use [ISO 8601](htt
 
 Any other data type must be converted to strings/varchar in the SQL query.
 
+## Large date values
+
+data_check uses primarly pandas Timestamp to store date values. However, there is a [limit](https://pandas.pydata.org/docs/reference/api/pandas.Timestamp.max.html) how large the date can be (currently 2262-04-11 23:47:16.854775807). If you need to process larger date values (especially 9999-12-31 to represent "infinity" in historized tables), data_check needs some input to process it right. Otherwise the column in the SQL query will have the value [NaT](https://pandas.pydata.org/pandas-docs/stable/user_guide/missing_data.html) but the result from the CSV file will have the date represented as a string and the test will fail.
+
+The SQL query can have a date hint to tell data_check to parse this column as a [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+```sql
+-- date: some_date_column, other_date_column
+select ...
+```
+
+This will tell data_check to parse the columns _some\_date\_column_ and _other\_date\_column_ as dates in the SQL query as well as in the CSV file.
+
+
 ## Generating expectation files
 
 If you run `data_check --generate` in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file.
