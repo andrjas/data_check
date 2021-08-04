@@ -227,6 +227,21 @@ checks/
     - some_file.sql
     - some_path
 </code></pre>
+<h3 id="sql">sql</h3>
+<p><em>sql</em> is like calling <code>data_check --sql ...</code>. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV.</p>
+<p>Short form:</p>
+<pre><code class="language-yaml">- sql: select 1 as a, &quot;b&quot; as t
+</code></pre>
+<p>Long form:</p>
+<pre><code class="language-yaml">- sql:
+    query: select 1 as a, &quot;b&quot; as t
+</code></pre>
+<p>With <em>output</em> to write a CSV file:</p>
+<pre><code class="language-yaml">- sql:
+    query: select 1 as a, &quot;b&quot; as t
+    output: result.csv
+</code></pre>
+<p><em>output</em> is relative to the pipeline path, unless an absolute path is specified, for example '{{PROJECT_PATH}}/result.csv'.</p>
 <h3 id="cmd">cmd</h3>
 <p><em>cmd</em> will call any script or program. The commands will be executed sequentially.</p>
 <p>Short form:</p>

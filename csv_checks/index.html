@@ -103,6 +103,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#large-date-values" class="nav-link">Large date values</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#generating-expectation-files" class="nav-link">Generating expectation files</a>
               <ul class="nav flex-column">
               </ul>
@@ -140,9 +144,19 @@ string,42,42.1,2020-12-20,
 &quot;second row&quot;,42,42.1,2020-12-20,
 </code></pre>
 <p>Each file starting with a '#' is regarded as a comment. You can use comments to annotate the date as they will be completely ignored.</p>
-<p>Only the data types strings and decimals are supported. Strings can be optionally enclosed in double quotes (").
+<p>Only the data types strings, decimals and date/timestamps (partially) are supported. Strings can be optionally enclosed in double quotes (").
 Empty strings are treated as null values.</p>
-<p>Any other data type (e.g. date) must be converted to strings/varchar in the SQL query.</p>
+<p>data_check recognizes if a column in a SQL query is a date or timestamp and converts the columns in the CSV automatically to timestamps.
+For some databases (PostgreSQL, MySQL) this only works for timestamp columns, not date columns.
+The date format in the CSV file is inferred, but it's best to use <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a>.</p>
+<p>Any other data type must be converted to strings/varchar in the SQL query.</p>
+<h2 id="large-date-values">Large date values</h2>
+<p>data_check uses primarly pandas Timestamp to store date values. However, there is a <a href="https://pandas.pydata.org/docs/reference/api/pandas.Timestamp.max.html">limit</a> how large the date can be (currently 2262-04-11 23:47:16.854775807). If you need to process larger date values (especially 9999-12-31 to represent "infinity" in historized tables), data_check needs some input to process it right. Otherwise the column in the SQL query will have the value <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/missing_data.html">NaT</a> but the result from the CSV file will have the date represented as a string and the test will fail.</p>
+<p>The SQL query can have a date hint to tell data_check to parse this column as a <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a>:</p>
+<pre><code class="language-sql">-- date: some_date_column, other_date_column
+select ...
+</code></pre>
+<p>This will tell data_check to parse the columns <em>some_date_column</em> and <em>other_date_column</em> as dates in the SQL query as well as in the CSV file.</p>
 <h2 id="generating-expectation-files">Generating expectation files</h2>
 <p>If you run <code>data_check --generate</code> in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file.</p></div>
             </div>

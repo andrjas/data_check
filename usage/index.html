@@ -129,6 +129,7 @@
 <li><code>data_check --print</code> - print failed results data.</li>
 <li><code>data_check --print-format FORMAT</code> - format for printing failed results (pandas, csv).</li>
 <li><code>data_check --print-csv</code> - shortcut for "--print --print-format csv".</li>
+<li><code>data_check --print-json</code> - shortcut for "--print --print-format json".</li>
 <li><code>data_check -g/--gen/--generate</code> - generate expectation files if they don't exist.</li>
 <li><code>data_check --force</code> - when set, --generate will overwrite files.</li>
 <li><code>data_check --config CONFIG</code> - config file to use (default: data_check.yml).</li>
@@ -136,6 +137,8 @@
 <li><code>data_check --load-mode MODE</code> -  how to load the table: truncate (default), append or replace. Use with --load or --load-tables.</li>
 <li><code>data_check --load-tables some_folder/or/some_file.csv</code>-  load tables from a list of csv files</li>
 <li><code>data_check --run-sql some_folder/or/some_file.sql</code> - run any SQL script in a list of SQL files</li>
+<li><code>data_check --sql "SQL statement"</code> - run any SQL statement. Print result as CSV if it is a query.</li>
+<li><code>data_check -o/--output PATH</code> - output path for --sql.</li>
 <li><code>data_check --ping</code> - tries to connect to the database.</li>
 <li><code>data_check --verbose</code> - print verbose output.</li>
 <li><code>data_check --traceback</code> - print traceback output for debugging.</li>
