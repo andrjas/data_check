@@ -80,4 +80,6 @@ class DataCheck(SimpleCheck, PipelineCheck):
         )
 
     def generate_expectations(self, files: List[Path], force: bool = False):
-        self.generator.generate_expectations(self.collect_checks(files), force)
+        self.generator.generate_expectations(
+            self.collect_checks(files), force, template_data=self.template_data
+        )
