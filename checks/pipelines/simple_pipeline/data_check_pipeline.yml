@@ -8,7 +8,7 @@ steps:
   # using 'dir' instead of 'ls' to be compatible with windows
   - cmd: dir
   - check: pipeline_checks
-  - run_sql:
+  - sql_path:
       files: sql_files
   - load:
       file: load_pipeline_data/test_simple_pipeline.csv

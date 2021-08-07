@@ -21,7 +21,7 @@ local python_test(version) =
 
 local generic_int_test = [
     "bash -c 'while ! poetry run data_check --ping; do echo \"waiting for db\"; sleep 1; done'",
-    "poetry run data_check --run-sql prepare",
+    "poetry run data_check --sql-path prepare",
     "poetry run pytest ../../test/test_database.py ../../test/test_data_check.py",
     "poetry run data_check --generate checks/generated",
     "poetry run data_check checks/basic checks/generated --traceback",

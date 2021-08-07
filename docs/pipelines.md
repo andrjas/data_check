@@ -33,7 +33,7 @@ steps:
     # this will truncate the table my_schema.some_table and load it with the data from data/my_schema.some_table.csv
     - load_tables: data
     # this will execute the SQL statement in run_this.sql
-    - run_sql: run_this.sql
+    - sql_path: run_this.sql
     # this will append the data from data2/some_data.csv to my_schema.other_table
     - load:
         file: data2/some_data.csv
@@ -125,18 +125,18 @@ You can also omit _files_:
     - some/other/path/schema.other_table.csv
 ```
 
-### run_sql
+### sql_path
 
-_run\_sql_ is like calling `data_check --run-sql ...`. This will run a SQL file or all SQL files in a folder againts the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call _run\_sql_ twice.
+_sql\_path_ is like calling `data_check --sql-path ...`. This will run a SQL file or all SQL files in a folder againts the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call _sql\_path_ twice.
 
 Short form:
 ```yaml
-- run_sql: some_file.sql
+- sql_path: some_file.sql
 ```
 
 Long form:
 ```yaml
-- run_sql:
+- sql_path:
     files:
       - some_file.sql
       - some_path
@@ -144,7 +144,7 @@ Long form:
 
 You can also omit _files_:
 ```yaml
-- run_sql:
+- sql_path:
     - some_file.sql
     - some_path
 ```

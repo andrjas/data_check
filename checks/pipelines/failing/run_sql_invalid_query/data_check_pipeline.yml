@@ -1,2 +1,2 @@
 steps:
-  - run_sql: invalid.sql
+  - sql_path: invalid.sql

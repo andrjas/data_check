@@ -103,7 +103,7 @@ class PipelineCheck:
         self.register_pipeline_step("cmd", self.run_cmd)
         self.register_pipeline_step("check", self.run, convert_to_path_list=["files"])
         self.register_pipeline_step(
-            "run_sql", self.run_sql_files, convert_to_path_list=["files"]
+            "sql_path", self.run_sql_files, convert_to_path_list=["files"]
         )
         self.register_pipeline_step("sql", self.run_sql_query)
 

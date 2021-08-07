@@ -288,18 +288,18 @@ def test_generate_force():
     )
 
 
-def test_run_sql():
-    out = run(["data_check", "--run-sql", "run_sql/run_test.sql"])
+def test_sql_path():
+    out = run(["data_check", "--sql-path", "run_sql/run_test.sql"])
     print(out)
     assert "executing:" in out
     assert "select 1 as a" in out
 
 
-def test_run_sql_failing_sql():
+def test_sql_path_failing_sql():
     with pytest.raises(CalledProcessError):
-        run(["data_check", "--run-sql", "failing/run_sql/invalid.sql"])
+        run(["data_check", "--sql-path", "failing/run_sql/invalid.sql"])
 
 
-def test_run_sql_no_file():
+def test_sql_path_no_file():
     with pytest.raises(CalledProcessError):
-        run(["data_check", "--run-sql", "failing/run_sql/no_such_file.sql"])
+        run(["data_check", "--sql-path", "failing/run_sql/no_such_file.sql"])
