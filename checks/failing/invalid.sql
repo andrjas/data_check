@@ -1,1 +1,1 @@
-selct 'check1'
+selct 'check1' {{from_dual}}

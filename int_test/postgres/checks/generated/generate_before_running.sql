@@ -1,1 +1,0 @@
-select 'gen' as generated

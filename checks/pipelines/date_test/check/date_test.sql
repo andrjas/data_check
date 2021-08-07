@@ -1,1 +1,1 @@
-select id, data, dat from temp.date_test
+select id, data, dat from {{test_schema}}.date_test

@@ -1,1 +1,1 @@
-CREATE SCHEMA temp
+CREATE SCHEMA main

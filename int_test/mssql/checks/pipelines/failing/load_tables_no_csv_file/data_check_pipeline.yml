@@ -1,4 +1,0 @@
-steps:
-  - load_tables:
-      files: no_such_file.csv
-      load_mode: invalid

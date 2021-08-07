@@ -1,1 +1,8 @@
 template_value: ABC
+from_dual: "from dual"
+decimal_type: decimal
+date_type: date
+test_date: "to_date('2020-12-20', 'yyyy-mm-dd')"
+varchar_type: varchar2(10)
+test_schema: main
+huge_date: to_date('9999-12-31', 'yyyy-mm-dd')

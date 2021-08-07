@@ -1,1 +1,8 @@
 template_value: ABC
+from_dual: ""
+decimal_type: numeric
+date_type: datetime
+test_date: "CONVERT(DATETIME, '2020-12-20', 120)"
+varchar_type: varchar(10)
+test_schema: main
+huge_date: CONVERT(DATETIME, '9999-12-31', 120)

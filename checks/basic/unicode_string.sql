@@ -1,1 +1,1 @@
-select 'aöüß!"§$%&/()=?' as unicode_text
+select 'aöüß!"§$%&/()=?' as unicode_text {{from_dual}}

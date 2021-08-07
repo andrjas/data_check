@@ -1,1 +1,1 @@
-select 1 as inv
+select 1 as inv {{from_dual}}

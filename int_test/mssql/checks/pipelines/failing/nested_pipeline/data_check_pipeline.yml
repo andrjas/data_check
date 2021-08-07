@@ -1,3 +1,0 @@
-steps:
-  - cmd: echo "nested test"
-  - check: run_sql_no_file

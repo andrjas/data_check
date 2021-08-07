@@ -12,6 +12,9 @@ steps:
   pull: if-not-exists
   image: local/poetry_oracle
   commands:
+  - cp -rn checks int_test/oracle
+  - cp -rn load_data int_test/oracle
+  - cp -rn run_sql int_test/oracle
   - poetry install -E oracle
   - cd int_test/oracle
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
@@ -77,14 +80,19 @@ steps:
   pull: if-not-exists
   image: local/poetry:3.8
   commands:
+  - cp -rn checks int_test/sqlite
+  - cp -rn load_data int_test/sqlite
+  - cp -rn run_sql int_test/sqlite
   - poetry install
+  - cd int_test/sqlite
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
-  - poetry run pytest test/test_database.py test/test_data_check.py
+  - poetry run data_check --run-sql prepare
+  - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
   - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
-  - poetry run data_check checks/pipelines/simple_pipeline --traceback --workers 1
-  - poetry run data_check checks/pipelines/date_test --traceback --print --workers 1
+  - poetry run data_check checks/pipelines/simple_pipeline --traceback
+  - poetry run data_check checks/pipelines/date_test --traceback --print
 
 ---
 kind: pipeline
@@ -116,6 +124,9 @@ steps:
   pull: if-not-exists
   image: local/poetry:3.8
   commands:
+  - cp -rn checks int_test/mysql
+  - cp -rn load_data int_test/mysql
+  - cp -rn run_sql int_test/mysql
   - poetry install -E mysql
   - cd int_test/mysql
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
@@ -165,6 +176,9 @@ steps:
   pull: if-not-exists
   image: local/poetry:3.8
   commands:
+  - cp -rn checks int_test/postgres
+  - cp -rn load_data int_test/postgres
+  - cp -rn run_sql int_test/postgres
   - poetry install -E postgres
   - cd int_test/postgres
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
@@ -214,6 +228,9 @@ steps:
   pull: if-not-exists
   image: local/poetry_mssql
   commands:
+  - cp -rn checks int_test/mssql
+  - cp -rn load_data int_test/mssql
+  - cp -rn run_sql int_test/mssql
   - poetry install -E mssql
   - cd int_test/mssql
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'

@@ -31,18 +31,6 @@ local generic_int_test = [
 ];
 
 
-local sqllite_int_test = [
-    "bash -c 'while ! poetry run data_check --ping; do echo \"waiting for db\"; sleep 1; done'",
-    "poetry run pytest test/test_database.py test/test_data_check.py",
-    "poetry run data_check --generate checks/generated",
-    "poetry run data_check checks/basic checks/generated --traceback",
-    "bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'",
-    "poetry run data_check checks/pipelines/simple_pipeline --traceback --workers 1",
-    "poetry run data_check checks/pipelines/date_test --traceback --print --workers 1",
-];
-
-
-
 local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, pipeline_extra={}, int_test=generic_int_test) = 
 {
     kind: "pipeline",
@@ -69,12 +57,19 @@ local int_pipeline(db, image, prepare_commands, environment={}, db_image="", ser
 
 local sqlite_test() = int_pipeline("sqlite", "local/poetry:3.8",
 [
-    "poetry install"
-], int_test=sqllite_int_test);
+    "cp -rn checks int_test/sqlite",
+    "cp -rn load_data int_test/sqlite",
+    "cp -rn run_sql int_test/sqlite",
+    "poetry install",
+    "cd int_test/sqlite"
+]);
 
 
 local postgres_test() = int_pipeline("postgres", "local/poetry:3.8",
 [
+    "cp -rn checks int_test/postgres",
+    "cp -rn load_data int_test/postgres",
+    "cp -rn run_sql int_test/postgres",
     "poetry install -E postgres",
     "cd int_test/postgres"
 ],
@@ -85,6 +80,9 @@ local postgres_test() = int_pipeline("postgres", "local/poetry:3.8",
 
 local mysql_test() = int_pipeline("mysql", "local/poetry:3.8",
 [
+    "cp -rn checks int_test/mysql",
+    "cp -rn load_data int_test/mysql",
+    "cp -rn run_sql int_test/mysql",
     "poetry install -E mysql",
     "cd int_test/mysql"
 ],
@@ -95,6 +93,9 @@ local mysql_test() = int_pipeline("mysql", "local/poetry:3.8",
 
 local mssql_test() = int_pipeline("mssql", "local/poetry_mssql",
 [
+    "cp -rn checks int_test/mssql",
+    "cp -rn load_data int_test/mssql",
+    "cp -rn run_sql int_test/mssql",
     "poetry install -E mssql",
     "cd int_test/mssql"
 ],
@@ -107,6 +108,9 @@ local mssql_test() = int_pipeline("mssql", "local/poetry_mssql",
 
 local oracle_test() = int_pipeline("oracle", "local/poetry_oracle",
 [
+    "cp -rn checks int_test/oracle",
+    "cp -rn load_data int_test/oracle",
+    "cp -rn run_sql int_test/oracle",
     "poetry install -E oracle",
     "cd int_test/oracle"
 ],

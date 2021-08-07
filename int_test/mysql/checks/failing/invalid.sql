@@ -1,1 +1,0 @@
-selct 'check1'

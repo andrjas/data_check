@@ -155,19 +155,19 @@ _sql_ is like calling `data_check --sql ...`. This will execute a SQL statement 
 
 Short form:
 ```yaml
-- sql: select 1 as a, "b" as t
+- sql: select 1 as a, 'b' as t
 ```
 
 Long form:
 ```yaml
 - sql:
-    query: select 1 as a, "b" as t
+    query: select 1 as a, 'b' as t
 ```
 
 With _output_ to write a CSV file:
 ```yaml
 - sql:
-    query: select 1 as a, "b" as t
+    query: select 1 as a, 'b' as t
     output: result.csv
 ```
 

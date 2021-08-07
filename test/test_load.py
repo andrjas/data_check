@@ -121,7 +121,7 @@ def test_load_from_files(sql: DataCheckSql):
     data2 = pd.DataFrame.from_dict({"id": [3, 4, 5], "data": ["d", "e", "f"]})
     sql.load_tables_from_files([Path("load_data/tables")], LoadMode.REPLACE)
     df1 = sql.run_query("select id, data from test1")
-    df2 = sql.run_query("select id, data from TEMP.TEST2")
+    df2 = sql.run_query("select id, data from MAIN.TEST2")
     assert_equal_df(data1, df1)
     assert_equal_df(data2, df2)
 
@@ -148,8 +148,8 @@ def test_load_from_csv_file_non_existing_file(sql: DataCheckSql):
 def test_load_from_dataframe_schema(sql: DataCheckSql):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     sql.get_connection().execute(
-        "create table TEMP.TEST (id number(10), data varchar2(10))"
+        "create table MAIN.TEST (id number(10), data varchar2(10))"
     )
-    sql.load_table("temp.test", data, LoadMode.APPEND)
-    df = sql.run_query("select id, data from TEMP.TEST")
+    sql.load_table("main.test", data, LoadMode.APPEND)
+    df = sql.run_query("select id, data from MAIN.TEST")
     assert_equal_df(data, df)

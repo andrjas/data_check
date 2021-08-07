@@ -1,2 +1,0 @@
-steps:
-  - run_sql: no_such_file.sql

@@ -1,5 +1,5 @@
-select 2 as t
+select 2 as t {{from_dual}}
 union all
-select 3 as t
+select 3 as t {{from_dual}}
 union all
-select 1 as t
+select 1 as t {{from_dual}}

@@ -16,7 +16,7 @@ steps:
   - cmd:
     - dir "sql_files"
     - echo "test"
-  - sql: select 1 as a, "b" as t
+  - sql: select 1 as a, 'b' as t {{from_dual}}
   - sql:
-      query: select 1 as a, "b" as t
+      query: select 1 as a, 'b' as t {{from_dual}}
       output: test_output.csv

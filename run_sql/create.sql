@@ -1,1 +1,1 @@
-create table ct_test (a integer)
+create table ct_test (a {{decimal_type}})

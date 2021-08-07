@@ -32,6 +32,10 @@ def create_test_table(table_name: str, schema: str, dc: DataCheck):
         dc.sql.run_sql(
             f"create table {schema}.{table_name} (id number(10), data varchar2(10))"
         )
+    elif dc.sql.dialect == "sqlite":
+        dc.sql.run_sql(
+            f"create table {schema}.{table_name} (id decimal, data varchar(10))"
+        )
     else:
         metadata = MetaData(dc.sql.get_engine())
         Table(
@@ -92,6 +96,13 @@ def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
             (
                 f"create table {schema}.{table_name} "
                 "(id number(10), data varchar2(10), decim decimal(10, 4))"
+            )
+        )
+    elif dc.sql.dialect == "sqlite":
+        dc.sql.run_sql(
+            (
+                f"create table {schema}.{table_name} "
+                "(id decimal, data varchar(10), decim decimal)"
             )
         )
     else:
@@ -180,50 +191,50 @@ def test_sorted_set(dc: DataCheck):
 def test_load_csv_replace(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     dc.sql.load_table_from_csv_file(
-        "temp.test_replace", Path("load_data/test.csv"), LoadMode.REPLACE
+        "main.test_replace", Path("load_data/test.csv"), LoadMode.REPLACE
     )
-    df = dc.sql.run_query("select id, data from temp.test_replace")
+    df = dc.sql.run_query("select id, data from main.test_replace")
     assert_equal_df(data, df)
 
 
 def test_load_csv_replace_with_table(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
-    create_test_table("test_replace2", "temp", dc)
+    create_test_table("test_replace2", "main", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_replace2", Path("load_data/test.csv"), LoadMode.REPLACE
+        "main.test_replace2", Path("load_data/test.csv"), LoadMode.REPLACE
     )
-    df = dc.sql.run_query("select id, data from temp.test_replace2")
+    df = dc.sql.run_query("select id, data from main.test_replace2")
     assert_equal_df(data, df)
 
 
 def test_load_csv_truncate(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     dc.sql.load_table_from_csv_file(
-        "temp.test_truncate", Path("load_data/test.csv"), LoadMode.TRUNCATE
+        "main.test_truncate", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
-    df = dc.sql.run_query("select id, data from temp.test_truncate")
+    df = dc.sql.run_query("select id, data from main.test_truncate")
     assert_equal_df(data, df)
 
 
 def test_load_csv_truncate_with_table(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
-    create_test_table("test_truncate2", "temp", dc)
+    create_test_table("test_truncate2", "main", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_truncate2", Path("load_data/test.csv"), LoadMode.TRUNCATE
+        "main.test_truncate2", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
-    df = dc.sql.run_query("select id, data from temp.test_truncate2")
+    df = dc.sql.run_query("select id, data from main.test_truncate2")
     assert_equal_df(data, df)
 
 
 def test_load_csv_append(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     dc.sql.load_table_from_csv_file(
-        "temp.test_append", Path("load_data/test.csv"), LoadMode.TRUNCATE
+        "main.test_append", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
     dc.sql.load_table_from_csv_file(
-        "temp.test_append", Path("load_data/test.csv"), LoadMode.APPEND
+        "main.test_append", Path("load_data/test.csv"), LoadMode.APPEND
     )
-    df = dc.sql.run_query("select id, data from temp.test_append")
+    df = dc.sql.run_query("select id, data from main.test_append")
     # since the same data is loaded twice,
     # the merge will also work on one copy of the data
     assert_equal_df(data, df)
@@ -232,41 +243,41 @@ def test_load_csv_append(dc: DataCheck):
 
 def test_load_csv_append_with_table(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
-    create_test_table("test_append2", "temp", dc)
+    create_test_table("test_append2", "main", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_append2", Path("load_data/test.csv"), LoadMode.APPEND
+        "main.test_append2", Path("load_data/test.csv"), LoadMode.APPEND
     )
-    df = dc.sql.run_query("select id, data from temp.test_append2")
+    df = dc.sql.run_query("select id, data from main.test_append2")
     assert_equal_df(data, df)
     assert len(df) == 3
 
 
 def test_load_csv_date_type(dc: DataCheck):
-    create_test_table_with_date("test_date", "temp", dc)
+    create_test_table_with_date("test_date", "main", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_date", Path("load_data/test_date.csv"), LoadMode.TRUNCATE
+        "main.test_date", Path("load_data/test_date.csv"), LoadMode.TRUNCATE
     )
-    df = dc.sql.run_query("select id, data, dat from temp.test_date")
+    df = dc.sql.run_query("select id, data, dat from main.test_date")
     dat = df.dat
     assert not dat.empty
 
 
 def test_load_csv_datetime_type(dc: DataCheck):
-    create_test_table_with_datetime("test_datetime", "temp", dc)
+    create_test_table_with_datetime("test_datetime", "main", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_datetime", Path("load_data/test_datetime.csv"), LoadMode.TRUNCATE
+        "main.test_datetime", Path("load_data/test_datetime.csv"), LoadMode.TRUNCATE
     )
-    df = dc.sql.run_query("select id, data, dat from temp.test_datetime")
+    df = dc.sql.run_query("select id, data, dat from main.test_datetime")
     dat = df.dat
     assert not dat.empty
 
 
 def test_load_csv_date_with_existing_table_replace(dc: DataCheck):
-    create_test_table_with_date("test_date_replace", "temp", dc)
+    create_test_table_with_date("test_date_replace", "main", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_date_replace", Path("load_data/test_date.csv"), LoadMode.REPLACE
+        "main.test_date_replace", Path("load_data/test_date.csv"), LoadMode.REPLACE
     )
-    df = dc.sql.run_query("select id, data, dat from temp.test_date_replace")
+    df = dc.sql.run_query("select id, data, dat from main.test_date_replace")
     if dc.sql.dialect == "oracle":
         # in Oracle this is a date type
         assert df.dat.dtype == "<M8[ns]"
@@ -278,11 +289,11 @@ def test_load_csv_decimal_type(dc: DataCheck):
     data = pd.DataFrame.from_dict(
         {"id": [0, 1], "data": ["a", "b"], "decim": [0.1, 0.2]}
     )
-    create_test_table_with_decimal("test_decimals", "temp", dc)
+    create_test_table_with_decimal("test_decimals", "main", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_decimals", Path("load_data/test_decimals.csv"), LoadMode.TRUNCATE
+        "main.test_decimals", Path("load_data/test_decimals.csv"), LoadMode.TRUNCATE
     )
-    df = dc.sql.run_query("select id, data, decim from temp.test_decimals")
+    df = dc.sql.run_query("select id, data, decim from main.test_decimals")
     assert_equal_df(data, df)
 
 
@@ -290,19 +301,19 @@ def test_load_csv_less_columns_in_csv(dc: DataCheck):
     data = pd.DataFrame.from_dict(
         {"id": [0, 1, 2], "data": ["a", "b", "c"], "decim": [pd.NA, pd.NA, pd.NA]}
     )
-    create_test_table_with_decimal("test_less_columns_in_csv", "temp", dc)
+    create_test_table_with_decimal("test_less_columns_in_csv", "main", dc)
     dc.sql.load_table_from_csv_file(
-        "temp.test_less_columns_in_csv", Path("load_data/test.csv"), LoadMode.TRUNCATE
+        "main.test_less_columns_in_csv", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
-    df = dc.sql.run_query("select id, data, decim from temp.test_less_columns_in_csv")
+    df = dc.sql.run_query("select id, data, decim from main.test_less_columns_in_csv")
     assert_equal_df(data, df)
 
 
 def test_load_csv_more_columns_in_csv(dc: DataCheck):
-    create_test_table("test_more_columns_in_csv", "temp", dc)
+    create_test_table("test_more_columns_in_csv", "main", dc)
     with pytest.raises(Exception):
         dc.sql.load_table_from_csv_file(
-            "temp.test_more_columns_in_csv",
+            "main.test_more_columns_in_csv",
             Path("load_data/test_decimals.csv"),
             LoadMode.TRUNCATE,
         )
@@ -313,22 +324,22 @@ def test_dialect(dc: DataCheck):
 
 
 def test_table_exists(dc: DataCheck):
-    create_test_table("test_table_exists", "temp", dc)
-    assert dc.sql.table_exists("test_table_exists", "temp")
+    create_test_table("test_table_exists", "main", dc)
+    assert dc.sql.table_exists("test_table_exists", "main")
 
 
 def test_table_exists_non_existing(dc: DataCheck):
-    assert not dc.sql.table_exists("test_table_exists_non_existing", "temp")
+    assert not dc.sql.table_exists("test_table_exists_non_existing", "main")
 
 
 def test_drop_table_if_exists_with_existing_table(dc: DataCheck):
-    create_test_table("test_drop_existing", "temp", dc)
-    dc.sql.drop_table_if_exists("test_drop_existing", "temp")
+    create_test_table("test_drop_existing", "main", dc)
+    dc.sql.drop_table_if_exists("test_drop_existing", "main")
     with pytest.raises(Exception):
-        dc.sql.run_query("select * from temp.test_drop_existing")
+        dc.sql.run_query("select * from main.test_drop_existing")
 
 
 def test_drop_table_if_exists_with_non_existing_table(dc: DataCheck):
-    dc.sql.drop_table_if_exists("test_drop_non_existing", "temp")
+    dc.sql.drop_table_if_exists("test_drop_non_existing", "main")
     with pytest.raises(Exception):
-        dc.sql.run_query("select * from temp.test_drop_non_existing")
+        dc.sql.run_query("select * from main.test_drop_non_existing")
