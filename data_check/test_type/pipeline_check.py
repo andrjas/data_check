@@ -5,7 +5,7 @@ import inspect
 import subprocess
 
 from ..result import DataCheckResult, ResultType
-from ..io import read_yaml, parse_template
+from ..io import read_yaml
 
 DATA_CHECK_PIPELINE_FILE = "data_check_pipeline.yml"
 
@@ -105,7 +105,7 @@ class PipelineCheck:
         self.register_pipeline_step(
             "run_sql", self.run_sql_files, convert_to_path_list=["files"]
         )
-        self.register_pipeline_step("sql", self.sql.run_sql)
+        self.register_pipeline_step("sql", self.run_sql_query)
 
     @staticmethod
     def is_pipeline_check(path: Path) -> bool:
@@ -131,7 +131,10 @@ class PipelineCheck:
         if pipeline_file.exists():
             yaml = read_yaml(
                 pipeline_file,
-                template_data=self.template_parameters(pipeline_file.parent),
+                template_data=dict(
+                    self.template_parameters(pipeline_file.parent),
+                    **self.template_data,
+                ),
             )
             return (
                 yaml if yaml else {}

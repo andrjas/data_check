@@ -1,10 +1,10 @@
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 
 from .config import DataCheckConfig
 from .result import DataCheckResult
 from .output import DataCheckOutput
-from .io import expand_files, read_sql_file, read_yaml
+from .io import expand_files, read_sql_file, read_yaml, parse_template
 from .sql import DataCheckSql
 from .generator import DataCheckGenerator
 from .runner import DataCheckRunner
@@ -78,6 +78,12 @@ class DataCheck(SimpleCheck, PipelineCheck):
         return all(
             self.runner.run_any(run_method=self.run_sql_file, parameters=parameters)
         )
+
+    def run_sql_query(
+        self, query: str, output: Union[str, Path] = "", base_path: Path = Path(".")
+    ):
+        sql_query = parse_template(query, template_data=self.template_data)
+        return self.sql.run_sql(sql_query, output, base_path)
 
     def generate_expectations(self, files: List[Path], force: bool = False):
         self.generator.generate_expectations(

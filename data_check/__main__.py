@@ -169,7 +169,7 @@ def main(
         sys.exit(0)
 
     if sql:
-        if dc.sql.run_sql(sql, output=output):
+        if dc.run_sql_query(sql, output=output):
             sys.exit(0)
         else:
             sys.exit(1)
