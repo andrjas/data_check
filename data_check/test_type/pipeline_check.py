@@ -3,6 +3,7 @@ from typing import Callable, List, Dict, Any, Union, Optional
 from copy import deepcopy
 import inspect
 import subprocess
+from functools import partial
 
 from ..result import DataCheckResult, ResultType
 from ..io import read_yaml
@@ -75,7 +76,6 @@ class CmdStep:
             return False
 
     def run(self, base_path: Path = Path(".")):
-        # print(f"run {self.cmd}")
         if isinstance(self.cmd, List):
             for c in self.cmd:
                 if not self._run_cmd(c, base_path=base_path):
@@ -105,7 +105,8 @@ class PipelineCheck:
         self.register_pipeline_step(
             "sql_path", self.run_sql_files, convert_to_path_list=["files"]
         )
-        self.register_pipeline_step("sql", self.run_sql_query)
+        pipeline_run_sql_query = partial(self.run_sql_query, print_query=True)
+        self.register_pipeline_step("sql", pipeline_run_sql_query)
 
     @staticmethod
     def is_pipeline_check(path: Path) -> bool:

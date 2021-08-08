@@ -80,9 +80,15 @@ class DataCheck(SimpleCheck, PipelineCheck):
         )
 
     def run_sql_query(
-        self, query: str, output: Union[str, Path] = "", base_path: Path = Path(".")
+        self,
+        query: str,
+        output: Union[str, Path] = "",
+        base_path: Path = Path("."),
+        print_query=False,
     ):
         sql_query = parse_template(query, template_data=self.template_data)
+        if print_query:
+            print(f"-- {sql_query}")
         return self.sql.run_sql(sql_query, output, base_path)
 
     def generate_expectations(self, files: List[Path], force: bool = False):
