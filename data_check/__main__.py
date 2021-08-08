@@ -33,11 +33,6 @@ from data_check.config import DataCheckConfig
     ),
 )
 @click.option(
-    "--print-csv",
-    is_flag=True,
-    help="shortcut for --print --print-format csv",
-)
-@click.option(
     "--print-json",
     is_flag=True,
     help="shortcut for --print --print-format json",
@@ -99,7 +94,6 @@ def main(
     workers: int = DataCheckConfig.parallel_workers,
     print_failed: bool = False,
     print_format: str = DataCheckConfig.default_print_format,
-    print_csv: bool = False,
     print_json: bool = False,
     generate_expectations: bool = False,
     force: bool = False,
@@ -118,10 +112,7 @@ def main(
 ):
     """ FILES: list of checks files or folders"""
 
-    if print_csv:
-        print_failed = True
-        print_format = "csv"
-    elif print_json:
+    if print_json:
         print_failed = True
         print_format = "json"
 

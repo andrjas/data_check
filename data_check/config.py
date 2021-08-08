@@ -12,7 +12,7 @@ class DataCheckConfig:
 
     parallel_workers = 4
 
-    default_print_format = "pandas"
+    default_print_format = "csv"
 
     def __init__(self, config_path: Optional[Path] = None) -> None:
         self.config: Dict[str, Any] = {}
