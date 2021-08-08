@@ -32,14 +32,19 @@ class DataCheckOutput:
         )  # print newline to separate other results from the overall result message
         print(f"overall result: {overall_result_msg}")
 
+    def prepare_pprint_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        if "_merge" in df.columns:
+            df["_diff"] = ""
+            df.loc[df._merge == "left_only", ["_diff"]] = "db"
+            df.loc[df._merge == "right_only", ["_diff"]] = "expected"
+            df = df.drop(["_merge"], axis=1)
+        return df.sort_values(by=list(df.columns), axis=0)
+
     def pprint_failed(self, df: pd.DataFrame) -> str:
         """
         Prints a DataFrame with diff information and returns it as a string.
         """
-        df["_diff"] = ""
-        df.loc[df._merge == "left_only", ["_diff"]] = "db"
-        df.loc[df._merge == "right_only", ["_diff"]] = "expected"
-        return self.pprint_df(df.drop(["_merge"], axis=1))
+        return self.pprint_df(self.prepare_pprint_df(df))
 
     def pprint_df(self, df: pd.DataFrame) -> str:
         with pd.option_context("display.max_rows", None, "display.max_columns", None):
