@@ -3,10 +3,12 @@ from .io import read_yaml
 from typing import Optional, Dict, Any, Tuple
 
 
+TEMPLATE_FILE = "template.yml"
+CHECKS_PATH = "checks"
+
+
 class DataCheckConfig:
     config_path = Path("data_check.yml")
-    checks_path = Path("checks")
-    tempate_path = Path("template.yml")
 
     parallel_workers = 4
 
@@ -21,9 +23,50 @@ class DataCheckConfig:
             self.config_path = config_path
 
         self.project_path = Path(".").absolute()
+        self.base_path = Path(".").absolute()
 
-    def load_config(self):
-        self.config = read_yaml(self.config_path)
+    @property
+    def checks_path(self) -> Path:
+        """Returns CHECKS_PATH if data_check is started from the project folder,
+        otherwise it returns the base_path (pwd).
+
+        This is NOT the default path for the "checks" folder (this is: CHECKS_PATH),
+        but the path where data_check should start looking for checks
+        if none are given on the command line.
+        """
+        if self.project_path == self.base_path:
+            return self.project_path / CHECKS_PATH
+        else:
+            return self.base_path
+
+    @property
+    def template_path(self) -> Path:
+        return self.project_path / CHECKS_PATH / TEMPLATE_FILE
+
+    def find_config(self, base_path: Path) -> Path:
+        abs_base_path = base_path.absolute()
+        config_path = abs_base_path / self.config_path
+        if not config_path.exists():
+            if abs_base_path.parent == abs_base_path:
+                raise Exception(f"could not find {self.config_path} in {abs_base_path}")
+            return self.find_config(abs_base_path.parent)
+        return abs_base_path / self.config_path
+
+    def load_config(self, base_path=Path(".")):
+        try:
+            config_path = self.find_config(base_path)
+        except Exception:
+            # raise basically the same exception as in find_config
+            # but with base_path for better debugging
+            raise Exception(
+                f"could not find {self.config_path} in {base_path.absolute()}"
+            )
+
+        # project_path is always the directory where the config file is stored
+        self.project_path = config_path.parent
+        self.base_path = base_path.absolute()
+        self.config_path = config_path
+        self.config = read_yaml(config_path)
         return self
 
     def set_connection(self, connection: str):

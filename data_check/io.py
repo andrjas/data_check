@@ -4,7 +4,6 @@ from jinja2 import Template
 import pandas as pd
 from pandas.core.frame import DataFrame
 import yaml
-import datetime
 
 
 def expand_files(
@@ -96,3 +95,14 @@ def read_yaml(
     if template_data:
         data = parse_template(data, template_data)
     return yaml.safe_load(data)
+
+
+def rel_path(path: Path) -> Path:
+    """
+    Returns the path relative to where data_check is started from
+    if it's relative to this path.
+    """
+    try:
+        return path.absolute().relative_to(Path(".").absolute())
+    except ValueError:
+        return path

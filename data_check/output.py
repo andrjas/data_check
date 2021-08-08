@@ -7,6 +7,7 @@ from typing import Optional
 
 from .exceptions import DataCheckException
 from .result import DataCheckResult, ResultType
+from .io import rel_path
 
 
 class DataCheckOutput:
@@ -79,17 +80,19 @@ class DataCheckOutput:
         exception: Optional[Exception] = None,
     ) -> DataCheckResult:
         passed = DataCheckResult.result_type_passed(result_type)
+        # always print path relative to where data_check is started
+        rel_source = rel_path(source)
         if result_type == ResultType.PASSED:
             assert isinstance(result, pd.DataFrame)
-            return self._passed_result(passed, source, result)
+            return self._passed_result(passed, rel_source, result)
         elif result_type == ResultType.FAILED:
             assert isinstance(result, pd.DataFrame)
-            return self._failed_result(passed, source, result)
+            return self._failed_result(passed, rel_source, result)
         elif result_type == ResultType.NO_EXPECTED_RESULTS_FILE:
-            return self._no_expected_file_result(passed, source)
+            return self._no_expected_file_result(passed, rel_source)
         elif result_type == ResultType.FAILED_WITH_EXCEPTION:
             assert isinstance(exception, Exception)
-            return self._failed_with_exception_result(passed, source, exception)
+            return self._failed_with_exception_result(passed, rel_source, exception)
 
     def _passed_result(
         self, passed: bool, source: Path, result: pd.DataFrame

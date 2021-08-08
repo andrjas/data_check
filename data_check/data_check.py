@@ -29,9 +29,8 @@ class DataCheck(SimpleCheck, PipelineCheck):
         self.register_pipelines()
 
     def load_template(self):
-        template_yaml = self.config.checks_path / self.config.tempate_path
-        if template_yaml.exists():
-            self.template_data = read_yaml(template_yaml)
+        if self.config.template_path.exists():
+            self.template_data = read_yaml(self.config.template_path)
 
     def delegate_test(self, path: Path) -> DataCheckResult:
         if self.is_pipeline_check(path):
@@ -42,16 +41,17 @@ class DataCheck(SimpleCheck, PipelineCheck):
     def collect_checks(
         self, files: List[Path], base_path: Path = Path(".")
     ) -> List[Path]:
+        base_path = base_path.absolute()
         checks = []
         for f in sorted(files):
-            rel_file = base_path / f
-            if self.is_pipeline_check(rel_file):
-                checks.append(rel_file)
-            elif self.is_simple_check(rel_file):
-                checks.append(rel_file)
-            elif rel_file.is_dir():
-                rel_files = [d.relative_to(base_path) for d in rel_file.iterdir()]
-                checks.extend(self.collect_checks(rel_files, base_path=base_path))
+            abs_file = f if f.is_absolute() else base_path / f
+            if self.is_pipeline_check(abs_file):
+                checks.append(abs_file)
+            elif self.is_simple_check(abs_file):
+                checks.append(abs_file)
+            elif abs_file.is_dir():
+                dir_files = [d for d in abs_file.iterdir()]
+                checks.extend(self.collect_checks(dir_files, base_path=base_path))
         return checks
 
     def run(self, files: List[Path], base_path: Path = Path(".")) -> bool:

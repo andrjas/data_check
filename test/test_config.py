@@ -1,11 +1,20 @@
 import sys
 import os
 from pathlib import Path
+import pytest
 
 my_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, my_path + "/../")
 
 from data_check.config import DataCheckConfig  # noqa E402
+
+
+T_CONFIG = """
+default_connection: t
+
+connections:
+    t: sqlite+pysqlite://
+"""
 
 
 def test_read_config():
@@ -53,3 +62,118 @@ def test_select_connection_default_without_config():
     selected, name = config.select_connection(connection="")
     assert selected == ""
     assert name == ""
+
+
+def test_load_config_from_subpath(tmp_path: Path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    sp = tmp_path / "subpath"
+    sp.mkdir(parents=True, exist_ok=True)
+    config = DataCheckConfig().load_config(base_path=sp)
+    assert config.config.get("default_connection") == "t"
+
+
+def test_load_config_from_subpath2(tmp_path: Path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    sp = tmp_path / "subpath" / "sp2"
+    sp.mkdir(parents=True, exist_ok=True)
+    config = DataCheckConfig().load_config(base_path=sp)
+    assert config.config.get("default_connection") == "t"
+
+
+def test_load_config_no_config(tmp_path: Path):
+    with pytest.raises(Exception) as e:
+        DataCheckConfig().load_config(base_path=tmp_path)
+    assert "could not find " in str(e.value)
+
+
+def test_project_path_is_parent_of_config(tmp_path: Path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    config = DataCheckConfig().load_config(base_path=tmp_path)
+    assert config.project_path == tmp_path
+
+
+def test_project_path_is_parent_of_config_when_started_in_subpath(tmp_path: Path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    sp = tmp_path / "subpath" / "sp2"
+    sp.mkdir(parents=True, exist_ok=True)
+    config = DataCheckConfig().load_config(base_path=sp)
+    assert config.project_path == tmp_path
+
+
+def test_template_path(tmp_path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    config = DataCheckConfig().load_config(tmp_path)
+    assert (
+        config.template_path.absolute()
+        == tmp_path.absolute() / "checks" / "template.yml"
+    )
+
+
+def test_template_path_with_subdir(tmp_path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    sp = tmp_path / "subpath"
+    sp.mkdir(parents=True, exist_ok=True)
+    config = DataCheckConfig().load_config(base_path=sp)
+    assert (
+        config.template_path.absolute()
+        == tmp_path.absolute() / "checks" / "template.yml"
+    )
+
+
+def test_project_path(tmp_path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    config = DataCheckConfig().load_config(tmp_path)
+    assert config.project_path == tmp_path
+
+
+def test_project_path_subdir(tmp_path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    sp = tmp_path / "subpath" / "sp2"
+    sp.mkdir(parents=True, exist_ok=True)
+    config = DataCheckConfig().load_config(base_path=sp)
+    assert config.project_path == tmp_path
+
+
+def test_checks_path(tmp_path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    config = DataCheckConfig().load_config(tmp_path)
+    assert config.checks_path == tmp_path / "checks"
+
+
+def test_checks_path_subdir(tmp_path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    sp = tmp_path / "subpath" / "sp2"
+    sp.mkdir(parents=True, exist_ok=True)
+    config = DataCheckConfig().load_config(base_path=sp)
+    assert config.checks_path == sp
+
+
+def test_base_path(tmp_path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    config = DataCheckConfig().load_config(tmp_path)
+    assert config.base_path == tmp_path
+
+
+def test_base_path_subdir(tmp_path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG)
+    sp = tmp_path / "subpath" / "sp2"
+    sp.mkdir(parents=True, exist_ok=True)
+    config = DataCheckConfig().load_config(base_path=sp)
+    assert config.base_path == sp
+
+
+def test_base_path_default():
+    config = DataCheckConfig().load_config()
+    assert config.base_path == Path(".").absolute()

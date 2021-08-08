@@ -12,7 +12,9 @@ local python_test(version) =
             "image": "local/poetry:"+version,
             "commands": [
                 "poetry install",
-                "poetry run pytest test"
+                "poetry run pytest test",
+                "cd checks/basic",
+                "poetry run data_check",
             ]
         }
     ]
