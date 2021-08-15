@@ -1,5 +1,5 @@
 steps:
-  - sql_path: create_table.sql
+  - sql_file: create_table.sql
   - load:
       file: check/date_test.csv
       table: main.date_test

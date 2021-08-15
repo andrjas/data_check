@@ -1,2 +1,2 @@
 steps:
-  - sql_path: no_such_file.sql
+  - sql_file: no_such_file.sql

@@ -15,8 +15,9 @@
 * `data_check --config CONFIG` - config file to use (default: data_check.yml).
 * `data_check --load PATH --table`-  load table data from a csv into the table
 * `data_check --load-mode MODE` -  how to load the table: truncate (default), append or replace. Use with --load or --load-tables.
-* `data_check --load-tables some_folder/or/some_file.csv`-  load tables from a list of csv files
-* `data_check --sql-path some_folder/or/some_file.sql` - run any SQL script in a list of SQL files
+* `data_check --load-tables some_folder/or/some_file.csv`-  load tables from a list of csv files.
+* `data_check --sql-files some_folder/or/some_file.sql` - run any SQL script in a list of SQL files.
+* `data_check --sql-file some_folder/or/some_file.sql` - alias for --sql-files.
 * `data_check --sql "SQL statement"` - run any SQL statement. Print result as CSV if it is a query.
 * `data_check -o/--output PATH` - output path for --sql.
 * `data_check --ping` - tries to connect to the database.
@@ -78,14 +79,16 @@ It's best to use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) for dates.
 
 ## Executing arbitrary SQL code
 
-You can run any SQL file against the database by using the `--sql-path` command:
+You can run any SQL file against the database by using the `--sql-files` command:
 
-`data_check --sql-path sql_file.sql other_file.sql`
+`data_check --sql-files sql_file.sql other_file.sql`
 
 or a whole folder recursively:
 
-`data_check --sql-path some/folder/with/sql_files`
+`data_check --sql-files some/folder/with/sql_files`
 
 All files are run in parallel. If you have dependencies between the files, data_check must be called sequentially for each file.
 
 Multiple statements in a SQL file usually must be inside an anonymous block. MySQL doesn't support this however.
+
+`--sql-file` is an alias for `--sql-files`. Use it to indicate, that you only want to run a single file.

@@ -76,7 +76,11 @@ from data_check.config import DataCheckConfig
     "--load-tables", is_flag=True, help="load tables from a list of csv files"
 )
 @click.option(
-    "--sql-path", is_flag=True, help="run any SQL script in a list of SQL files"
+    "--sql-file",
+    "--sql-files",
+    "sql_files",
+    is_flag=True,
+    help="run any SQL script in a list of SQL files",
 )
 @click.option(
     "--sql",
@@ -102,7 +106,7 @@ def main(
     table: Optional[str] = None,
     load_mode: str = "truncate",
     load_tables: bool = False,
-    sql_path: bool = False,
+    sql_files: bool = False,
     sql: str = "",
     output: Union[str, Path] = "",
     ping: bool = False,
@@ -156,7 +160,7 @@ def main(
 
     dc.load_template()
 
-    if sql_path:
+    if sql_files:
         path_list = [Path(f) for f in files]
         dc.run_sql_files(path_list)
         sys.exit(0)

@@ -18,7 +18,7 @@ steps:
   - poetry install -E oracle
   - cd int_test/oracle
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
-  - poetry run data_check --sql-path prepare
+  - poetry run data_check --sql-files prepare
   - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
   - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
@@ -88,7 +88,7 @@ steps:
   - poetry install
   - cd int_test/sqlite
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
-  - poetry run data_check --sql-path prepare
+  - poetry run data_check --sql-files prepare
   - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
   - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
@@ -134,7 +134,7 @@ steps:
   - poetry install -E mysql
   - cd int_test/mysql
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
-  - poetry run data_check --sql-path prepare
+  - poetry run data_check --sql-files prepare
   - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
   - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
@@ -188,7 +188,7 @@ steps:
   - poetry install -E postgres
   - cd int_test/postgres
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
-  - poetry run data_check --sql-path prepare
+  - poetry run data_check --sql-files prepare
   - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
   - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
@@ -242,7 +242,7 @@ steps:
   - poetry install -E mssql
   - cd int_test/mssql
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
-  - poetry run data_check --sql-path prepare
+  - poetry run data_check --sql-files prepare
   - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
   - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
