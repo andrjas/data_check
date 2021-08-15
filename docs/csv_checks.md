@@ -69,4 +69,6 @@ This will tell data_check to parse the columns _some\_date\_column_ and _other\_
 
 ## Generating expectation files
 
-If you run `data_check --generate` in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file.
+If you run `data_check --generate` in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add `--force` to overwrite existing CSV files.
+
+You can also generate expectation files for [pipelines](pipelines.md#generating-pipeline.checks). If you run `--generate` on a project with pipelines, beware though that the pipelines will be executed!

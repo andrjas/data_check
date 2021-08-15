@@ -1,8 +1,9 @@
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Dict, Any
 
 from .sql import DataCheckSql
 from .io import get_expect_file, read_sql_file, rel_path
+from .result import DataCheckResult
 
 
 class DataCheckGenerator:
@@ -11,7 +12,7 @@ class DataCheckGenerator:
 
     def gen_expectation(
         self, sql_file: Path, force: bool = False, template_data: Dict[str, Any] = {}
-    ):
+    ) -> DataCheckResult:
         """
         Executes the query for a data_check test
         and stores the result in the csv file.
@@ -23,16 +24,7 @@ class DataCheckGenerator:
                 read_sql_file(sql_file=sql_file, template_data=template_data)
             )
             result.to_csv(expect_result, index=False)
-            print(f"expectation written to {_rel_path}")
+            output = f"expectation written to {_rel_path}"
         else:
-            print(f"expectation skipped for {_rel_path}")
-
-    def generate_expectations(
-        self, files: List[Path], force: bool = False, template_data: Dict[str, Any] = {}
-    ):
-        """
-        Generated a expected results file for each file if it doesn't exists yet.
-        """
-        for file in files:
-            if file.is_file() and file.suffix.lower() == ".sql":
-                self.gen_expectation(file, force, template_data)
+            output = f"expectation skipped for {_rel_path}"
+        return DataCheckResult(True, output, output)

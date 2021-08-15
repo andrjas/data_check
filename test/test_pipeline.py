@@ -166,3 +166,56 @@ def test_pipeline_no_steps(dc: DataCheck):
 def test_pipeline_failing_nested_pipeline_fails(dc: DataCheck):
     result = dc.run_pipeline(Path("checks/pipelines/failing/nested_pipeline"))
     assert not result
+
+
+def test_pipeline_generate(dc: DataCheck, tmp_path: Path):
+    p1 = tmp_path / "p1"
+    p1.mkdir()
+    dcp = p1 / "data_check_pipeline.yml"
+    dcp.write_text(
+        """
+steps:
+    - check: c1
+"""
+    )
+    c1 = p1 / "c1"
+    c1.mkdir()
+    check = c1 / "check.sql"
+    check.write_text(
+        """
+select 1 as a
+"""
+    )
+    dc.config.generate_mode = True
+    result = dc.run_pipeline(p1)
+    assert result
+    check_csv = c1 / "check.csv"
+    assert check_csv.exists()
+
+
+def test_pipeline_generate_force(dc: DataCheck, tmp_path: Path):
+    p1 = tmp_path / "p1"
+    p1.mkdir()
+    dcp = p1 / "data_check_pipeline.yml"
+    dcp.write_text(
+        """
+steps:
+    - check: c1
+"""
+    )
+    c1 = p1 / "c1"
+    c1.mkdir()
+    check = c1 / "check.sql"
+    check.write_text(
+        """
+select 1 as a
+"""
+    )
+    check_csv = c1 / "check.csv"
+    check_csv.write_text("test")
+    dc.config.generate_mode = True
+    dc.config.force = True
+    result = dc.run_pipeline(p1)
+    assert result
+    assert check_csv.exists()
+    assert check_csv.read_text() == "a\n1\n"

@@ -59,27 +59,3 @@ def test_gen_expectation_force_overwrite(tmp_path: Path):
 
     assert expect_result.exists()
     assert expect_result.read_text().strip() == "test\n1"
-
-
-def test_generate_expectations_no_overwrite(tmp_path: Path):
-    sql, sql_file, _, expect_result = prepare_sql(tmp_path=tmp_path)
-    expect_result.write_text("test")
-    generator = DataCheckGenerator(sql=sql)
-    generator.generate_expectations([sql_file])
-
-    sql.run_query.assert_not_called()
-
-    assert expect_result.exists()
-    assert expect_result.read_text().strip() == "test"
-
-
-def test_generate_expectations_force_overwrite(tmp_path: Path):
-    sql, sql_file, sql_text, expect_result = prepare_sql(tmp_path=tmp_path)
-    expect_result.write_text("test")
-    generator = DataCheckGenerator(sql=sql)
-    generator.generate_expectations([sql_file], force=True)
-
-    sql.run_query.assert_called_once_with(sql_text)
-
-    assert expect_result.exists()
-    assert expect_result.read_text().strip() == "test\n1"

@@ -35,6 +35,10 @@ class DataCheck(SimpleCheck, PipelineCheck):
     def delegate_test(self, path: Path) -> DataCheckResult:
         if self.is_pipeline_check(path):
             return self.run_pipeline(path)
+        elif self.config.generate_mode:
+            return self.generator.gen_expectation(
+                sql_file=path, force=self.config.force, template_data=self.template_data
+            )
         else:
             return self.run_test(path)
 
@@ -64,7 +68,8 @@ class DataCheck(SimpleCheck, PipelineCheck):
         results = self.runner.run(self.delegate_test, all_checks)
 
         overall_result = all(results)
-        self.output.pprint_overall_result(overall_result)
+        if self.config.print_overall_result:
+            self.output.pprint_overall_result(overall_result)
         return overall_result
 
     def run_sql_file(self, file: Path):
@@ -90,8 +95,3 @@ class DataCheck(SimpleCheck, PipelineCheck):
         if print_query:
             print(f"-- {sql_query}")
         return self.sql.run_sql(sql_query, output, base_path)
-
-    def generate_expectations(self, files: List[Path], force: bool = False):
-        self.generator.generate_expectations(
-            self.collect_checks(files), force, template_data=self.template_data
-        )

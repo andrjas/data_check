@@ -121,6 +121,8 @@ def main(
     dc_config = (
         DataCheckConfig(config_path=config).load_config().set_connection(connection)
     )
+    dc_config.generate_mode = generate_expectations
+    dc_config.force = force
 
     if not dc_config.connection:
         click.echo(f"unknown connection: {connection}")
@@ -169,9 +171,7 @@ def main(
         files = [dc_config.checks_path]  # use default checks path if nothing is given
     path_list = [Path(f) for f in files]
 
-    if generate_expectations:
-        dc.generate_expectations(path_list, force)
-    elif ping:
+    if ping:
         test = dc.sql.test_connection()
         if test:
             click.echo("connecting succeeded")

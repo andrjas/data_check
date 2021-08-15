@@ -5,3 +5,4 @@ dist/
 .vscode/
 .hypothesis
 checks/generated/generate_before_running.csv
+checks/generated/huge_date.csv

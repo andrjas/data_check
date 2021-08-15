@@ -25,6 +25,14 @@ class DataCheckConfig:
         self.project_path = Path(".").absolute()
         self.base_path = Path(".").absolute()
 
+        self.generate_mode = False
+        self.force = False
+
+    @property
+    def print_overall_result(self):
+        """When to print the overall result on console."""
+        return not self.generate_mode
+
     @property
     def checks_path(self) -> Path:
         """Returns CHECKS_PATH if data_check is started from the project folder,

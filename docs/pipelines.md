@@ -216,3 +216,8 @@ You can use some predefined parameters in a pipeline definition:
 * CONNECTION_STRING: The connection string as defined in _data\_check.yml_ used for the connection.
 * PROJECT_PATH: The path of the data_check project, i.e. the folder containing _data\_check.yml_.
 * PIPELINE_PATH: The path to the pipeline, i.e. the folder containing _data\_check\_pipeline.yml_.
+
+
+## Generating pipeline checks
+
+Like [generating expectation files](csv_checks.md#generating-expectation-files) you can also run `data_check --generate` for a pipeline. In this mode the pipeline is executed, but each _check_ step will generate the CSV files instead of running the actual checks. Adding `--force` will overwrite existing CSV files.
