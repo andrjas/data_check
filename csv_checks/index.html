@@ -158,7 +158,8 @@ select ...
 </code></pre>
 <p>This will tell data_check to parse the columns <em>some_date_column</em> and <em>other_date_column</em> as dates in the SQL query as well as in the CSV file.</p>
 <h2 id="generating-expectation-files">Generating expectation files</h2>
-<p>If you run <code>data_check --generate</code> in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file.</p></div>
+<p>If you run <code>data_check --generate</code> in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add <code>--force</code> to overwrite existing CSV files.</p>
+<p>You can also generate expectation files for <a href="../pipelines/#generating-pipeline.checks">pipelines</a>. If you run <code>--generate</code> on a project with pipelines, beware though that the pipelines will be executed!</p></div>
             </div>
         </div>
 

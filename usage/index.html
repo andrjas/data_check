@@ -127,16 +127,16 @@
 <li><code>data_check -c/--connection CONNECTION</code> - use another connection than the default.</li>
 <li><code>data_check -n/--workers WORKERS</code> - use WORKERS threads to run the queries (default: 4).</li>
 <li><code>data_check --print</code> - print failed results data.</li>
-<li><code>data_check --print-format FORMAT</code> - format for printing failed results (pandas, csv).</li>
-<li><code>data_check --print-csv</code> - shortcut for "--print --print-format csv".</li>
+<li><code>data_check --print-format FORMAT</code> - format for printing failed results (csv (default), pandas, json).</li>
 <li><code>data_check --print-json</code> - shortcut for "--print --print-format json".</li>
 <li><code>data_check -g/--gen/--generate</code> - generate expectation files if they don't exist.</li>
 <li><code>data_check --force</code> - when set, --generate will overwrite files.</li>
 <li><code>data_check --config CONFIG</code> - config file to use (default: data_check.yml).</li>
 <li><code>data_check --load PATH --table</code>-  load table data from a csv into the table</li>
 <li><code>data_check --load-mode MODE</code> -  how to load the table: truncate (default), append or replace. Use with --load or --load-tables.</li>
-<li><code>data_check --load-tables some_folder/or/some_file.csv</code>-  load tables from a list of csv files</li>
-<li><code>data_check --run-sql some_folder/or/some_file.sql</code> - run any SQL script in a list of SQL files</li>
+<li><code>data_check --load-tables some_folder/or/some_file.csv</code>-  load tables from a list of csv files.</li>
+<li><code>data_check --sql-files some_folder/or/some_file.sql</code> - run any SQL script in a list of SQL files.</li>
+<li><code>data_check --sql-file some_folder/or/some_file.sql</code> - alias for --sql-files.</li>
 <li><code>data_check --sql "SQL statement"</code> - run any SQL statement. Print result as CSV if it is a query.</li>
 <li><code>data_check -o/--output PATH</code> - output path for --sql.</li>
 <li><code>data_check --ping</code> - tries to connect to the database.</li>
@@ -179,12 +179,13 @@ This works good for simple data types like strings and numbers.</p>
 This doesn't work when using <code>--load-mode replace</code> since the table will be dropped before it can be analyzed. This will probably result in a varchar column instead of date.</p>
 <p>It's best to use <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> for dates.</p>
 <h2 id="executing-arbitrary-sql-code">Executing arbitrary SQL code</h2>
-<p>You can run any SQL file against the database by using the <code>--run-sql</code> command:</p>
-<p><code>data_check --run-sql sql_file.sql other_file.sql</code></p>
+<p>You can run any SQL file against the database by using the <code>--sql-files</code> command:</p>
+<p><code>data_check --sql-files sql_file.sql other_file.sql</code></p>
 <p>or a whole folder recursively:</p>
-<p><code>data_check --run-sql some/folder/with/sql_files</code></p>
+<p><code>data_check --sql-files some/folder/with/sql_files</code></p>
 <p>All files are run in parallel. If you have dependencies between the files, data_check must be called sequentially for each file.</p>
-<p>Multiple statements in a SQL file usually must be inside an anonymous block. MySQL doesn't support this however.</p></div>
+<p>Multiple statements in a SQL file usually must be inside an anonymous block. MySQL doesn't support this however.</p>
+<p><code>--sql-file</code> is an alias for <code>--sql-files</code>. Use it to indicate, that you only want to run a single file.</p></div>
             </div>
         </div>
 

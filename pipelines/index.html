@@ -115,6 +115,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#generating-pipeline-checks" class="nav-link">Generating pipeline checks</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -151,7 +155,7 @@ checks/
     # this will truncate the table my_schema.some_table and load it with the data from data/my_schema.some_table.csv
     - load_tables: data
     # this will execute the SQL statement in run_this.sql
-    - run_sql: run_this.sql
+    - sql_file: run_this.sql
     # this will append the data from data2/some_data.csv to my_schema.other_table
     - load:
         file: data2/some_data.csv
@@ -211,34 +215,37 @@ checks/
     - some_path
     - some/other/path/schema.other_table.csv
 </code></pre>
-<h3 id="run_sql">run_sql</h3>
-<p><em>run_sql</em> is like calling <code>data_check --run-sql ...</code>. This will run a SQL file or all SQL files in a folder againts the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call <em>run_sql</em> twice.</p>
+<h3 id="sql_files">sql_files</h3>
+<p><em>sql_files</em> is like calling <code>data_check --sql-files ...</code>. This will run a SQL file or all SQL files in a folder againts the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call <em>sql_files</em> twice. <em>sql_file</em> is an alias for <em>sql_files</em>.</p>
 <p>Short form:</p>
-<pre><code class="language-yaml">- run_sql: some_file.sql
+<pre><code class="language-yaml">- sql_files: some_file.sql
+</code></pre>
+<p>Using the alias:</p>
+<pre><code class="language-yaml">- sql_file: some_file.sql
 </code></pre>
 <p>Long form:</p>
-<pre><code class="language-yaml">- run_sql:
+<pre><code class="language-yaml">- sql_files:
     files:
       - some_file.sql
       - some_path
 </code></pre>
 <p>You can also omit <em>files</em>:</p>
-<pre><code class="language-yaml">- run_sql:
+<pre><code class="language-yaml">- sql_files:
     - some_file.sql
     - some_path
 </code></pre>
 <h3 id="sql">sql</h3>
 <p><em>sql</em> is like calling <code>data_check --sql ...</code>. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV.</p>
 <p>Short form:</p>
-<pre><code class="language-yaml">- sql: select 1 as a, &quot;b&quot; as t
+<pre><code class="language-yaml">- sql: select 1 as a, 'b' as t
 </code></pre>
 <p>Long form:</p>
 <pre><code class="language-yaml">- sql:
-    query: select 1 as a, &quot;b&quot; as t
+    query: select 1 as a, 'b' as t
 </code></pre>
 <p>With <em>output</em> to write a CSV file:</p>
 <pre><code class="language-yaml">- sql:
-    query: select 1 as a, &quot;b&quot; as t
+    query: select 1 as a, 'b' as t
     output: result.csv
 </code></pre>
 <p><em>output</em> is relative to the pipeline path, unless an absolute path is specified, for example '{{PROJECT_PATH}}/result.csv'.</p>
@@ -269,9 +276,11 @@ checks/
 <ul>
 <li>CONNECTION: The name of the connection used for this run.</li>
 <li>CONNECTION_STRING: The connection string as defined in <em>data_check.yml</em> used for the connection.</li>
-<li>PROJECT_PATH: The path of the data_check project, i.e. the folder where data_check is started from.</li>
+<li>PROJECT_PATH: The path of the data_check project, i.e. the folder containing <em>data_check.yml</em>.</li>
 <li>PIPELINE_PATH: The path to the pipeline, i.e. the folder containing <em>data_check_pipeline.yml</em>.</li>
-</ul></div>
+</ul>
+<h2 id="generating-pipeline-checks">Generating pipeline checks</h2>
+<p>Like <a href="../csv_checks/#generating-expectation-files">generating expectation files</a> you can also run <code>data_check --generate</code> for a pipeline. In this mode the pipeline is executed, but each <em>check</em> step will generate the CSV files instead of running the actual checks. Adding <code>--force</code> will overwrite existing CSV files.</p></div>
             </div>
         </div>
 
