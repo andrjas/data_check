@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.7.0] - 2021-08-16
+
 ### Added
 
 - SQLite int tests
