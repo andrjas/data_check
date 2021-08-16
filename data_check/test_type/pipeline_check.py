@@ -94,11 +94,13 @@ class PipelineCheck:
     def register_pipelines(self):
         self.register_pipeline_step(
             "load_tables",
-            self.sql.load_tables_from_files,
+            self.sql.table_loader.load_tables_from_files,
             convert_to_path_list=["files"],
         )
         self.register_pipeline_step(
-            "load", self.sql.load_table_from_csv_file, convert_to_path=["file"]
+            "load",
+            self.sql.table_loader.load_table_from_csv_file,
+            convert_to_path=["file"],
         )
         self.register_pipeline_step("cmd", self.run_cmd)
         self.register_pipeline_step("check", self.run, convert_to_path_list=["files"])

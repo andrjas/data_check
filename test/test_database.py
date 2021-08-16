@@ -190,7 +190,7 @@ def test_sorted_set(dc: DataCheck):
 
 def test_load_csv_replace(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_replace", Path("load_data/test.csv"), LoadMode.REPLACE
     )
     df = dc.sql.run_query("select id, data from main.test_replace")
@@ -200,7 +200,7 @@ def test_load_csv_replace(dc: DataCheck):
 def test_load_csv_replace_with_table(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     create_test_table("test_replace2", "main", dc)
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_replace2", Path("load_data/test.csv"), LoadMode.REPLACE
     )
     df = dc.sql.run_query("select id, data from main.test_replace2")
@@ -209,7 +209,7 @@ def test_load_csv_replace_with_table(dc: DataCheck):
 
 def test_load_csv_truncate(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_truncate", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data from main.test_truncate")
@@ -219,7 +219,7 @@ def test_load_csv_truncate(dc: DataCheck):
 def test_load_csv_truncate_with_table(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     create_test_table("test_truncate2", "main", dc)
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_truncate2", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data from main.test_truncate2")
@@ -228,10 +228,10 @@ def test_load_csv_truncate_with_table(dc: DataCheck):
 
 def test_load_csv_append(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_append", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_append", Path("load_data/test.csv"), LoadMode.APPEND
     )
     df = dc.sql.run_query("select id, data from main.test_append")
@@ -244,7 +244,7 @@ def test_load_csv_append(dc: DataCheck):
 def test_load_csv_append_with_table(dc: DataCheck):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     create_test_table("test_append2", "main", dc)
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_append2", Path("load_data/test.csv"), LoadMode.APPEND
     )
     df = dc.sql.run_query("select id, data from main.test_append2")
@@ -254,7 +254,7 @@ def test_load_csv_append_with_table(dc: DataCheck):
 
 def test_load_csv_date_type(dc: DataCheck):
     create_test_table_with_date("test_date", "main", dc)
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_date", Path("load_data/test_date.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data, dat from main.test_date")
@@ -264,7 +264,7 @@ def test_load_csv_date_type(dc: DataCheck):
 
 def test_load_csv_datetime_type(dc: DataCheck):
     create_test_table_with_datetime("test_datetime", "main", dc)
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_datetime", Path("load_data/test_datetime.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data, dat from main.test_datetime")
@@ -274,7 +274,7 @@ def test_load_csv_datetime_type(dc: DataCheck):
 
 def test_load_csv_date_with_existing_table_replace(dc: DataCheck):
     create_test_table_with_date("test_date_replace", "main", dc)
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_date_replace", Path("load_data/test_date.csv"), LoadMode.REPLACE
     )
     df = dc.sql.run_query("select id, data, dat from main.test_date_replace")
@@ -290,7 +290,7 @@ def test_load_csv_decimal_type(dc: DataCheck):
         {"id": [0, 1], "data": ["a", "b"], "decim": [0.1, 0.2]}
     )
     create_test_table_with_decimal("test_decimals", "main", dc)
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_decimals", Path("load_data/test_decimals.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data, decim from main.test_decimals")
@@ -302,7 +302,7 @@ def test_load_csv_less_columns_in_csv(dc: DataCheck):
         {"id": [0, 1, 2], "data": ["a", "b", "c"], "decim": [pd.NA, pd.NA, pd.NA]}
     )
     create_test_table_with_decimal("test_less_columns_in_csv", "main", dc)
-    dc.sql.load_table_from_csv_file(
+    dc.sql.table_loader.load_table_from_csv_file(
         "main.test_less_columns_in_csv", Path("load_data/test.csv"), LoadMode.TRUNCATE
     )
     df = dc.sql.run_query("select id, data, decim from main.test_less_columns_in_csv")
@@ -312,7 +312,7 @@ def test_load_csv_less_columns_in_csv(dc: DataCheck):
 def test_load_csv_more_columns_in_csv(dc: DataCheck):
     create_test_table("test_more_columns_in_csv", "main", dc)
     with pytest.raises(Exception):
-        dc.sql.load_table_from_csv_file(
+        dc.sql.table_loader.load_table_from_csv_file(
             "main.test_more_columns_in_csv",
             Path("load_data/test_decimals.csv"),
             LoadMode.TRUNCATE,
@@ -325,21 +325,23 @@ def test_dialect(dc: DataCheck):
 
 def test_table_exists(dc: DataCheck):
     create_test_table("test_table_exists", "main", dc)
-    assert dc.sql.table_exists("test_table_exists", "main")
+    assert dc.sql.table_loader.table_exists("test_table_exists", "main")
 
 
 def test_table_exists_non_existing(dc: DataCheck):
-    assert not dc.sql.table_exists("test_table_exists_non_existing", "main")
+    assert not dc.sql.table_loader.table_exists(
+        "test_table_exists_non_existing", "main"
+    )
 
 
 def test_drop_table_if_exists_with_existing_table(dc: DataCheck):
     create_test_table("test_drop_existing", "main", dc)
-    dc.sql.drop_table_if_exists("test_drop_existing", "main")
+    dc.sql.table_loader.drop_table_if_exists("test_drop_existing", "main")
     with pytest.raises(Exception):
         dc.sql.run_query("select * from main.test_drop_existing")
 
 
 def test_drop_table_if_exists_with_non_existing_table(dc: DataCheck):
-    dc.sql.drop_table_if_exists("test_drop_non_existing", "main")
+    dc.sql.table_loader.drop_table_if_exists("test_drop_non_existing", "main")
     with pytest.raises(Exception):
         dc.sql.run_query("select * from main.test_drop_non_existing")

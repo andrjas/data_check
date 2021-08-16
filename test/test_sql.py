@@ -2,7 +2,6 @@ import sys
 import os
 import pytest
 from sqlalchemy.exc import OperationalError
-import datetime
 
 
 # add the parent path to PYTHONPATH
@@ -33,35 +32,6 @@ def test_test_connection(sql: DataCheckSql):
     assert test
 
 
-def test_parse_table_name_with_schema(sql: DataCheckSql):
-    tn = "a.b"
-    schema, name = sql._parse_table_name(tn)
-    assert schema == "a"
-    assert name == "b"
-
-
-def test_parse_table_name(sql: DataCheckSql):
-    tn = "b"
-    schema, name = sql._parse_table_name(tn)
-    assert schema is None
-    assert name == "b"
-
-
-def test_parse_table_name_dot(sql: DataCheckSql):
-    tn = "."
-    schema, name = sql._parse_table_name(tn)
-    assert schema == ""
-    assert name == ""
-
-
-def test_parse_table_name_with_schema_with_db(sql: DataCheckSql):
-    tn = "db.a.b"
-    schema, name = sql._parse_table_name(tn)
-    # this looks wrong, but multiple databases are currently not supported
-    assert schema == "db"
-    assert name == "a.b"
-
-
 def test_run_sql_query(sql: DataCheckSql):
     res = sql.run_sql("select 1 as test")
     assert res
@@ -88,56 +58,3 @@ def test_run_sql_ddl_and_insert(sql: DataCheckSql):
     sql.run_sql("insert into test values ('a')")
     res = sql.run_sql("select a from test")
     assert res == [("a",)]
-
-
-def test_parse_date_hint(sql: DataCheckSql):
-    dh = sql.parse_date_hint(
-        """-- date: dc1, dc2
-select 1
-"""
-    )
-    assert dh == ["dc1", "dc2"]
-
-
-def test_parse_no_date_hint(sql: DataCheckSql):
-    dh = sql.parse_date_hint("""select 1""")
-    assert dh == []
-
-
-def test_parse_date_hint_newline(sql: DataCheckSql):
-    dh = sql.parse_date_hint(
-        """
--- date: dc1, dc2
-select 1
-"""
-    )
-    assert dh == ["dc1", "dc2"]
-
-
-def test_parse_date_hint_newline_sep(sql: DataCheckSql):
-    dh = sql.parse_date_hint(
-        """
-   -- date: dc1, dc2
-select 1
-"""
-    )
-    assert dh == ["dc1", "dc2"]
-
-
-def test_parse_date_hint_no_sep(sql: DataCheckSql):
-    dh = sql.parse_date_hint(
-        """--date:dc1,dc2
-select 1
-"""
-    )
-    assert dh == ["dc1", "dc2"]
-
-
-def test_parse_multiple_date_hint(sql: DataCheckSql):
-    dh = sql.parse_date_hint(
-        """-- date: dc1, dc2
-    -- date: dc3
-select 1
-"""
-    )
-    assert dh == ["dc1", "dc2", "dc3"]

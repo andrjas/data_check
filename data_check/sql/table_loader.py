@@ -1,38 +1,15 @@
-from typing import Dict, Any, Optional, Tuple, List, Union
-from os import path
-from sqlalchemy import create_engine, inspect
-from sqlalchemy.engine import Engine, Connection
+from typing import Optional, Tuple, List, Union
+from sqlalchemy import inspect
 from sqlalchemy.sql import text
 from sqlalchemy.exc import NoSuchTableError, OperationalError
 import pandas as pd
-from enum import Enum
 import warnings
 from pathlib import Path
 import datetime
-from dateutil.parser import isoparse
 from collections import namedtuple
 
-
-from .exceptions import DataCheckException
-from .io import expand_files, read_csv, print_csv, write_csv
-from .runner import DataCheckRunner
-
-
-class LoadMode(Enum):
-    TRUNCATE = 1
-    APPEND = 2
-    REPLACE = 3
-
-    @staticmethod
-    def from_string(mode_name: str):
-        if mode_name == "truncate":
-            return LoadMode.TRUNCATE
-        elif mode_name == "append":
-            return LoadMode.APPEND
-        elif mode_name == "replace":
-            return LoadMode.REPLACE
-        else:
-            raise DataCheckException(f"unknown load mode: {mode_name}")
+from ..io import expand_files, read_csv
+from .load_mode import LoadMode
 
 
 # some data types that need special handling
@@ -48,97 +25,16 @@ ColumnInfo = namedtuple(
 )
 
 
-class DataCheckSql:
-    def __init__(
-        self, connection: str, runner: DataCheckRunner = DataCheckRunner(workers=1)
-    ) -> None:
-        self.connection = connection
-        self.__connection: Optional[Connection] = None
-        self.__engine: Optional[Engine] = None
-        self.runner = runner
+class TableLoader:
+    """
+    Helper class that implements the methods to load a table from a CSV file.
+    """
 
-    def get_db_params(self) -> Dict[str, Any]:
-        """
-        Return parameter specific to a database.
-        """
-        return {}  # no special parameters needed for now
-
-    def _keep_connection(self):
-        # Do not keep the connection if runner has more than 1 workers.
-        # Cannot pickle otherwise.
-        return self.runner.workers == 1
-
-    def get_engine(self, extra_params: Dict[str, Any] = {}) -> Engine:
-        """
-        Return the database engine for the connection.
-        """
-        if self.__engine is None:
-            _engine = create_engine(
-                path.expandvars(self.connection),
-                **{**self.get_db_params(), **extra_params},
-            )
-            if self._keep_connection():
-                self.__engine = _engine
-            else:
-                return _engine
-        return self.__engine
-
-    def get_connection(self) -> Connection:
-        if self.__connection is None:
-            _connection = self.get_engine().connect()
-            if self._keep_connection():
-                self.__connection = _connection
-            else:
-                return _connection
-        return self.__connection
-
-    @property
-    def dialect(self) -> str:
-        return self.get_connection().dialect.name
-
-    @staticmethod
-    def date_parser(ds):
-        if isinstance(ds, str):
-            return isoparse(ds)
-        return ds
-
-    def parse_date_hint(self, query: str) -> List[str]:
-        lines = [l.strip() for l in query.splitlines()]
-        comment_lines = [
-            l.replace("--", "", 1).strip() for l in lines if l.startswith("--")
-        ]
-        date_hints = [
-            l.replace("date:", "", 1) for l in comment_lines if l.startswith("date:")
-        ]
-
-        hints = []
-        for dh in date_hints:
-            _hints = dh.split(",")
-            hints.extend(h.strip() for h in _hints)
-        return hints
-
-    def run_query(self, query: str) -> pd.DataFrame:
-        """
-        Run a query on the database and return a Pandas DataFrame with the result.
-        """
-        if not self.connection:
-            raise DataCheckException(f"undefined connection: {self.connection}")
-        return pd.read_sql_query(query, self.get_connection())
-
-    def test_connection(self) -> bool:
-        """
-        Returns True if we can connect to the database.
-        Mainly for integration tests.
-        """
-        engine = self.get_engine(extra_params={"pool_pre_ping": True})
-        try:
-            engine.connect()
-            return True
-        except:  # noqa E722
-            return False
+    def __init__(self, sql):
+        self.sql = sql
 
     def table_exists(self, table_name: str, schema: Optional[str]):
-        inspector = inspect(self.get_connection())
+        inspector = inspect(self.sql.get_connection())
         return inspector.has_table(table_name=table_name, schema=schema)
 
     def drop_table_if_exists(self, table_name: str, schema: Optional[str]):
@@ -147,12 +43,12 @@ class DataCheckSql:
                 drop_stmt = f"DROP TABLE {schema}.{table_name}"
             else:
                 drop_stmt = f"DROP TABLE {table_name}"
-            self.get_connection().execute(
+            self.sql.get_connection().execute(
                 text(drop_stmt).execution_options(autocommit=True)
             )
 
     def _truncate_statement(self, table_name: str) -> str:
-        if self.dialect == "sqlite":
+        if self.sql.dialect == "sqlite":
             return f"DELETE FROM {table_name}"
         else:
             return f"TRUNCATE TABLE {table_name}"
@@ -160,9 +56,9 @@ class DataCheckSql:
     def _prepare_table_for_load(self, table_name: str, load_mode: LoadMode):
         if load_mode == LoadMode.TRUNCATE:
             schema, name = self._parse_table_name(table_name)
-            inspector = inspect(self.get_connection())
+            inspector = inspect(self.sql.get_connection())
             if inspector.has_table(table_name=name, schema=schema):
-                self.get_connection().execute(
+                self.sql.get_connection().execute(
                     text(self._truncate_statement(table_name)).execution_options(
                         autocommit=True
                     )
@@ -200,7 +96,7 @@ class DataCheckSql:
             data.to_sql(
                 name=name,
                 schema=schema,
-                con=self.get_connection(),
+                con=self.sql.get_connection(),
                 if_exists=if_exists,
                 index=False,
                 dtype=dtype,
@@ -210,7 +106,7 @@ class DataCheckSql:
     def get_column_types(self, table_name: str):
         schema, name = self._parse_table_name(table_name)
         try:
-            inspector = inspect(self.get_connection())
+            inspector = inspect(self.sql.get_connection())
             columns = inspector.get_columns(name, schema=schema)
             return {c["name"]: c["type"] for c in columns}
         except (NoSuchTableError, OperationalError):
@@ -292,7 +188,7 @@ class DataCheckSql:
         parameters = [
             {"table": f.stem, "file": f, "load_mode": load_mode} for f in csv_files
         ]
-        results = self.runner.run_any(
+        results = self.sql.runner.run_any(
             run_method=self.load_table_from_csv_file, parameters=parameters
         )
         return all(results)
@@ -300,19 +196,3 @@ class DataCheckSql:
     @staticmethod
     def load_mode_from_string(lm_str: str) -> LoadMode:
         return LoadMode.from_string(lm_str)
-
-    def run_sql(
-        self, query: str, output: Union[str, Path] = "", base_path: Path = Path(".")
-    ):
-        sq_text = text(query)
-        result = self.get_connection().execute(
-            sq_text.execution_options(autocommit=True)
-        )
-        try:
-            res = result.fetchall()
-            df = pd.DataFrame(data=res, columns=result.keys())
-            print_csv(df)
-            write_csv(df, output=output, base_path=base_path)
-            return res
-        except:
-            return bool(result)

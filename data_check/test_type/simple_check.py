@@ -6,6 +6,7 @@ from ..config import DataCheckConfig
 from ..result import DataCheckResult, ResultType
 from ..output import DataCheckOutput
 from ..io import expand_files, read_sql_file, get_expect_file, read_csv, read_yaml
+from ..sql.tools import date_parser, parse_date_hint
 
 
 class SimpleCheck:
@@ -85,9 +86,9 @@ class SimpleCheck:
             sql_result = self.sql.run_query(query)
             date_columns = self.get_date_columns(sql_result)
             string_columns = self.get_string_columns(sql_result)
-            extra_dates = self.sql.parse_date_hint(query)
+            extra_dates = parse_date_hint(query)
             for ed in extra_dates:
-                sql_result[ed] = sql_result[ed].apply(self.sql.date_parser)
+                sql_result[ed] = sql_result[ed].apply(date_parser)
         except Exception as exc:
             return self.output.prepare_result(
                 ResultType.FAILED_WITH_EXCEPTION, source=sql_file, exception=exc
@@ -98,7 +99,7 @@ class SimpleCheck:
                 expect_file, parse_dates=date_columns, string_columns=string_columns
             )
             for ed in extra_dates:
-                expect_result[ed] = expect_result[ed].apply(self.sql.date_parser)
+                expect_result[ed] = expect_result[ed].apply(date_parser)
         except Exception as exc_csv:
             return self.output.prepare_result(
                 ResultType.FAILED_WITH_EXCEPTION, source=expect_file, exception=exc_csv
