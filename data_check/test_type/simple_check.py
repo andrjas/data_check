@@ -51,6 +51,8 @@ class SimpleCheck:
 
         # empty diff means there are no differences and the test has passed
         passed = len(df_diff) == 0
+        if passed and len(sql_result) != len(expect_result):
+            return (ResultType.FAILED_DIFFERENT_LENGTH, df_result)
         return (DataCheckResult.passed_to_result_type(passed), df_result)
 
     def get_date_columns(self, df: pd.DataFrame) -> List[str]:

@@ -98,6 +98,8 @@ class DataCheckOutput:
         elif result_type == ResultType.FAILED_WITH_EXCEPTION:
             assert isinstance(exception, Exception)
             return self._failed_with_exception_result(passed, rel_source, exception)
+        elif result_type == ResultType.FAILED_DIFFERENT_LENGTH:
+            return self._failed_result_different_length(passed, rel_source)
 
     def _passed_result(
         self, passed: bool, source: Path, result: pd.DataFrame
@@ -111,6 +113,15 @@ class DataCheckOutput:
         message = f"{source}: {self.failed_message}"
         if self.print_failed:
             message += linesep + self.pprint_failed(result.copy())
+        return DataCheckResult(passed=passed, result=result, message=message)
+
+    def _failed_result_different_length(
+        self, passed: bool, source: Path
+    ) -> DataCheckResult:
+        message = f"{source}: {self.failed_message}"
+        result = "same data but the length differs"
+        if self.print_failed:
+            message += linesep + result
         return DataCheckResult(passed=passed, result=result, message=message)
 
     def _no_expected_file_result(self, passed: bool, source: Path) -> DataCheckResult:
