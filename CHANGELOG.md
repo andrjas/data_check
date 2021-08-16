@@ -2,6 +2,27 @@
 
 ## [Unreleased]
 
+### Added
+
+- SQLite int tests
+- --sql parses templates in statement
+- can start data_check in a subfolder of a project
+- print sql statement in pipeline
+- pipeline --generate mode
+
+### Changed
+
+- refactored int tests using templates and pre-built docker images
+- renamed --run-sql/run_sql to --sql-files/sql_files
+- marking tests as failed if result length differs
+- --print outputs CSV format
+- --print output is sorted 
+
+### Removed
+
+- --print-csv (as this is what --print does now)
+
+
 ## [0.6.0] - 2021-08-04
 
 ### Added

@@ -36,3 +36,5 @@ There are currently four databases used for integration tests:
 - Microsoft SQL Server
 
 The integration tests are run via [Drone CI](https://www.drone.io/). The file _.drone.yml_ is generated from _.drone.jsonnet_ and checked in into the Git repository. To update _.drone.yml_ run `drone jsonnet  --format --stream`.
+
+To speed up integration tests the CI pipeline uses local, pre-build docker images. These images are maintained in a separate [repository](https://github.com/andrjas/data_check_images).
