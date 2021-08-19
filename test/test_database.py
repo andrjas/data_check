@@ -282,7 +282,7 @@ def test_load_csv_date_with_existing_table_replace(dc: DataCheck):
         # in Oracle this is a date type
         assert df.dat.dtype == "<M8[ns]"
     else:
-        assert df.dat.dtype == "object"
+        assert df.dat.dtype == "datetime64[ns]"
 
 
 def test_load_csv_decimal_type(dc: DataCheck):

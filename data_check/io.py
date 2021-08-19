@@ -4,6 +4,7 @@ from jinja2 import Template
 import pandas as pd
 from pandas.core.frame import DataFrame
 import yaml
+from dateutil.parser import isoparse as _isoparse
 
 
 def expand_files(
@@ -70,7 +71,7 @@ def read_csv(
         quoting=0,
         engine="c",
         parse_dates=parse_dates,
-        infer_datetime_format=True,
+        date_parser=isoparse,
         dtype=dtypes,
     )
 
@@ -106,3 +107,10 @@ def rel_path(path: Path) -> Path:
         return path.absolute().relative_to(Path(".").absolute())
     except ValueError:
         return path
+
+
+def isoparse(column):
+    if len(column) < 10:
+        # must be at least of format YYYY-MM-DD to be a date
+        raise ValueError()
+    return _isoparse(column)

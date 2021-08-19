@@ -2,10 +2,8 @@ from pathlib import Path
 import pandas as pd
 from typing import List, Tuple, Dict, Any
 
-from ..config import DataCheckConfig
 from ..result import DataCheckResult, ResultType
-from ..output import DataCheckOutput
-from ..io import expand_files, read_sql_file, get_expect_file, read_csv, read_yaml
+from ..io import read_sql_file, get_expect_file, read_csv
 from ..sql.tools import date_parser, parse_date_hint
 
 
@@ -56,12 +54,6 @@ class SimpleCheck:
             return (ResultType.FAILED_DIFFERENT_LENGTH, df_result)
         return (DataCheckResult.passed_to_result_type(passed), df_result)
 
-    def get_date_columns(self, df: pd.DataFrame) -> List[str]:
-        return [k for k in df.keys() if pd.api.types.is_datetime64_any_dtype(df[k])]
-
-    def get_string_columns(self, df: pd.DataFrame) -> List[str]:
-        return [k for k in df.keys() if pd.api.types.is_string_dtype(df[k])]
-
     def run_test(
         self,
         sql_file: Path,
@@ -83,12 +75,7 @@ class SimpleCheck:
 
         try:
             query = read_sql_file(sql_file=sql_file, template_data=self.template_data)
-            sql_result = self.sql.run_query(query)
-            date_columns = self.get_date_columns(sql_result)
-            string_columns = self.get_string_columns(sql_result)
-            extra_dates = parse_date_hint(query)
-            for ed in extra_dates:
-                sql_result[ed] = sql_result[ed].apply(date_parser)
+            sql_result = self.sql.run_query_with_result(query)
         except Exception as exc:
             return self.output.prepare_result(
                 ResultType.FAILED_WITH_EXCEPTION, source=sql_file, exception=exc
@@ -96,17 +83,17 @@ class SimpleCheck:
 
         try:
             expect_result = read_csv(
-                expect_file, parse_dates=date_columns, string_columns=string_columns
+                expect_file,
+                parse_dates=sql_result.date_columns,
+                string_columns=sql_result.string_columns,
             )
-            for ed in extra_dates:
-                expect_result[ed] = expect_result[ed].apply(date_parser)
         except Exception as exc_csv:
             return self.output.prepare_result(
                 ResultType.FAILED_WITH_EXCEPTION, source=expect_file, exception=exc_csv
             )
 
         result_type, df_result = SimpleCheck.get_result(
-            sql_result, expect_result, return_all
+            sql_result.df, expect_result, return_all
         )
         return self.output.prepare_result(
             result_type, source=sql_file, result=df_result

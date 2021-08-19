@@ -11,6 +11,7 @@ from ..exceptions import DataCheckException
 from ..io import print_csv, write_csv
 from ..runner import DataCheckRunner
 from .table_loader import TableLoader
+from .query_result import QueryResult
 
 
 class DataCheckSql:
@@ -75,9 +76,12 @@ class DataCheckSql:
         """
         Run a query on the database and return a Pandas DataFrame with the result.
         """
+        return self.run_query_with_result(query).df
+
+    def run_query_with_result(self, query: str) -> QueryResult:
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
-        return pd.read_sql_query(query, self.get_connection())
+        return QueryResult(query, self.get_connection().execute(query))
 
     def test_connection(self) -> bool:
         """
