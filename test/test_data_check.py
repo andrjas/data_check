@@ -19,6 +19,12 @@ def dc() -> DataCheck:
     config = DataCheckConfig().load_config().set_connection("test")
     _dc = DataCheck(config)
     _dc.load_template()
+    _dc.output.configure_output(
+        verbose=True,
+        traceback=True,
+        print_failed=True,
+        print_format="json",
+    )
     return _dc
 
 
