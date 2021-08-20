@@ -81,7 +81,7 @@ class DataCheckSql:
     def run_query_with_result(self, query: str) -> QueryResult:
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
-        return QueryResult(query, self.get_connection().execute(query))
+        return QueryResult(query, self.get_connection().execute(text(query)))
 
     def test_connection(self) -> bool:
         """

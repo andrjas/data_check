@@ -110,7 +110,7 @@ def rel_path(path: Path) -> Path:
 
 
 def isoparse(column):
-    if len(column) < 10:
+    if len(str(column)) < 10:
         # must be at least of format YYYY-MM-DD to be a date
         raise ValueError()
-    return _isoparse(column)
+    return _isoparse(str(column))
