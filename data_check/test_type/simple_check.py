@@ -1,10 +1,9 @@
 from pathlib import Path
 import pandas as pd
-from typing import List, Tuple, Dict, Any
+from typing import Tuple
 
 from ..result import DataCheckResult, ResultType
 from ..io import read_sql_file, get_expect_file, read_csv
-from ..sql.tools import date_parser, parse_date_hint
 
 
 class SimpleCheck:
