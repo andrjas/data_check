@@ -149,12 +149,12 @@ def test_data_types_float(data_types_check):
     assert data_types_check.float_test == 42.1
 
 
-def test_data_types_date(data_types_check, dc: DataCheck):
-    # if dc.sql.dialect == "sqlite":
-    #     # sqlite doesn't have a date type
-    #     assert data_types_check.date_test == "2020-12-20"
-    # else:
+def test_data_types_date(data_types_check):
     assert data_types_check.date_test == datetime.date(2020, 12, 20)
+
+
+def test_data_types_huge_date(data_types_check):
+    assert data_types_check.inf_date_test == datetime.datetime(9999, 12, 31)
 
 
 def test_data_types_null(data_types_check):
@@ -266,6 +266,22 @@ def test_load_csv_date_type(dc: DataCheck):
     df = dc.sql.run_query("select id, data, dat from main.test_date")
     dat = df.dat
     assert not dat.empty
+
+
+def test_load_csv_date_type_huge_date(dc: DataCheck):
+    data = pd.DataFrame.from_dict(
+        {
+            "id": [0, 1],
+            "data": ["a", "b"],
+            "dat": [datetime.datetime(2021, 1, 25), datetime.datetime(9999, 12, 31)],
+        }
+    )
+    create_test_table_with_date("test_date_huge", "main", dc)
+    dc.sql.table_loader.load_table_from_csv_file(
+        "main.test_date_huge", Path("load_data/test_date_huge.csv"), LoadMode.TRUNCATE
+    )
+    df = dc.sql.run_query("select id, data, dat from main.test_date_huge")
+    assert_equal_df(data, df)
 
 
 def test_load_csv_datetime_type(dc: DataCheck):
