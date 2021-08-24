@@ -25,6 +25,7 @@ steps:
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
   - poetry run data_check checks/pipelines/date_test --traceback --print
+  - poetry run data_check checks/pipelines/leading_zeros --traceback --print
   environment:
     LANG: en_US.utf-8
     LC_ALL: en_US.utf-8
@@ -95,6 +96,7 @@ steps:
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
   - poetry run data_check checks/pipelines/date_test --traceback --print
+  - poetry run data_check checks/pipelines/leading_zeros --traceback --print
 
 ---
 kind: pipeline
@@ -141,6 +143,7 @@ steps:
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
   - poetry run data_check checks/pipelines/date_test --traceback --print
+  - poetry run data_check checks/pipelines/leading_zeros --traceback --print
   environment:
     MYSQL_ROOT_PASSWORD: data_check
 
@@ -195,6 +198,7 @@ steps:
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
   - poetry run data_check checks/pipelines/date_test --traceback --print
+  - poetry run data_check checks/pipelines/leading_zeros --traceback --print
   environment:
     POSTGRES_PASSWORD: data_check
 
@@ -249,6 +253,7 @@ steps:
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
   - poetry run data_check checks/pipelines/date_test --traceback --print
+  - poetry run data_check checks/pipelines/leading_zeros --traceback --print
   environment:
     ACCEPT_EULA: Y
     MSSQL_PID: Express

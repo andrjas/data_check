@@ -30,6 +30,7 @@ local generic_int_test = [
     "bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'",
     "poetry run data_check checks/pipelines/simple_pipeline --traceback",
     "poetry run data_check checks/pipelines/date_test --traceback --print",
+    "poetry run data_check checks/pipelines/leading_zeros --traceback --print",
 ];
 
 

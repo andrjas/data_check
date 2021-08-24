@@ -192,3 +192,13 @@ def test_parse_table_name_with_schema_with_db(sql: DataCheckSql):
     # this looks wrong, but multiple databases are currently not supported
     assert schema == "db"
     assert name == "a.b"
+
+
+def test_load_leading_zeros_string(sql: DataCheckSql):
+    data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["123", "012", "000"]})
+    sql.get_connection().execute(
+        "create table TEMP.TEST (id number(10), data varchar2(10))"
+    )
+    sql.table_loader.load_table("temp.test", data, LoadMode.TRUNCATE)
+    df = sql.run_query("select id, data from TEMP.TEST")
+    assert_equal_df(data, df)
