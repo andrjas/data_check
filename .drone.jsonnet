@@ -12,7 +12,7 @@ local python_test(version) =
             "image": "local/poetry:"+version,
             "commands": [
                 "poetry install",
-                "poetry run pytest test",
+                "poetry run pytest test int_test/cli",
                 "cd checks/basic",
                 "poetry run data_check",
             ]
@@ -24,7 +24,7 @@ local python_test(version) =
 local generic_int_test = [
     "bash -c 'while ! poetry run data_check --ping; do echo \"waiting for db\"; sleep 1; done'",
     "poetry run data_check --sql-files prepare",
-    "poetry run pytest ../../test/test_database.py ../../test/test_data_check.py",
+    "poetry run pytest ../../test/database",
     "poetry run data_check --generate checks/generated",
     "poetry run data_check checks/basic checks/generated --traceback",
     "bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'",

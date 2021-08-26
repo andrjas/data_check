@@ -19,7 +19,7 @@ steps:
   - cd int_test/oracle
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
   - poetry run data_check --sql-files prepare
-  - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
+  - poetry run pytest ../../test/database
   - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
@@ -65,7 +65,7 @@ steps:
   image: local/poetry:3.6.2
   commands:
   - poetry install
-  - poetry run pytest test
+  - poetry run pytest test int_test/cli
   - cd checks/basic
   - poetry run data_check
 
@@ -90,7 +90,7 @@ steps:
   - cd int_test/sqlite
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
   - poetry run data_check --sql-files prepare
-  - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
+  - poetry run pytest ../../test/database
   - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
@@ -112,7 +112,7 @@ steps:
   image: local/poetry:3.7
   commands:
   - poetry install
-  - poetry run pytest test
+  - poetry run pytest test int_test/cli
   - cd checks/basic
   - poetry run data_check
 
@@ -137,7 +137,7 @@ steps:
   - cd int_test/mysql
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
   - poetry run data_check --sql-files prepare
-  - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
+  - poetry run pytest ../../test/database
   - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
@@ -167,7 +167,7 @@ steps:
   image: local/poetry:3.8
   commands:
   - poetry install
-  - poetry run pytest test
+  - poetry run pytest test int_test/cli
   - cd checks/basic
   - poetry run data_check
 
@@ -192,7 +192,7 @@ steps:
   - cd int_test/postgres
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
   - poetry run data_check --sql-files prepare
-  - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
+  - poetry run pytest ../../test/database
   - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'
@@ -222,7 +222,7 @@ steps:
   image: local/poetry:3.9
   commands:
   - poetry install
-  - poetry run pytest test
+  - poetry run pytest test int_test/cli
   - cd checks/basic
   - poetry run data_check
 
@@ -247,7 +247,7 @@ steps:
   - cd int_test/mssql
   - bash -c 'while ! poetry run data_check --ping; do echo "waiting for db"; sleep 1; done'
   - poetry run data_check --sql-files prepare
-  - poetry run pytest ../../test/test_database.py ../../test/test_data_check.py
+  - poetry run pytest ../../test/database
   - poetry run data_check --generate checks/generated
   - poetry run data_check checks/basic checks/generated --traceback
   - bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'

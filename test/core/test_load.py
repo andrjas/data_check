@@ -2,6 +2,7 @@ import sys
 import os
 import pytest
 import pandas as pd
+from pandas.testing import assert_frame_equal
 from pathlib import Path
 
 
@@ -20,24 +21,19 @@ def sql() -> DataCheckSql:
     return _sql
 
 
-def assert_equal_df(df1: pd.DataFrame, df2: pd.DataFrame) -> bool:
-    df_diff = df1.merge(df2, how="outer", indicator=True)
-    assert df_diff[df_diff["_merge"] != "both"].empty
-
-
 def test_load_from_dataframe_append(sql: DataCheckSql):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     sql.get_connection().execute("create table test (id number(10), data varchar2(10))")
     sql.table_loader.load_table("test", data, LoadMode.APPEND)
     df = sql.run_query("select id, data from test")
-    assert_equal_df(data, df)
+    assert_frame_equal(data, df)
 
 
 def test_load_from_dataframe_append_creates_table_if_no_table_exists(sql: DataCheckSql):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     sql.table_loader.load_table("test", data, LoadMode.APPEND)
     df = sql.run_query("select id, data from test")
-    assert_equal_df(data, df)
+    assert_frame_equal(data, df)
 
 
 def test_load_from_dataframe_append_adds_data(sql: DataCheckSql):
@@ -50,7 +46,7 @@ def test_load_from_dataframe_append_adds_data(sql: DataCheckSql):
     sql.table_loader.load_table("test", data, LoadMode.APPEND)
     sql.table_loader.load_table("test", data2, LoadMode.APPEND)
     df = sql.run_query("select id, data from test")
-    assert_equal_df(full_data, df)
+    assert_frame_equal(full_data, df)
 
 
 def test_load_from_dataframe_truncate(sql: DataCheckSql):
@@ -58,7 +54,7 @@ def test_load_from_dataframe_truncate(sql: DataCheckSql):
     sql.get_connection().execute("create table test (id number(10), data varchar2(10))")
     sql.table_loader.load_table("test", data, LoadMode.TRUNCATE)
     df = sql.run_query("select id, data from test")
-    assert_equal_df(data, df)
+    assert_frame_equal(data, df)
 
 
 def test_load_from_dataframe_truncate_deletes_data(sql: DataCheckSql):
@@ -68,7 +64,7 @@ def test_load_from_dataframe_truncate_deletes_data(sql: DataCheckSql):
     data2 = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "d"]})
     sql.table_loader.load_table("test", data2, LoadMode.TRUNCATE)
     df = sql.run_query("select id, data from test")
-    assert_equal_df(data2, df)
+    assert_frame_equal(data2, df)
 
 
 def test_load_from_dataframe_truncate_creates_table_if_no_table_exists(
@@ -77,7 +73,7 @@ def test_load_from_dataframe_truncate_creates_table_if_no_table_exists(
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     sql.table_loader.load_table("test", data, LoadMode.TRUNCATE)
     df = sql.run_query("select id, data from test")
-    assert_equal_df(data, df)
+    assert_frame_equal(data, df)
 
 
 def test_load_from_dataframe_replace(sql: DataCheckSql):
@@ -85,7 +81,7 @@ def test_load_from_dataframe_replace(sql: DataCheckSql):
     sql.get_connection().execute("create table test (id number(10), data varchar2(10))")
     sql.table_loader.load_table("test", data, LoadMode.REPLACE)
     df = sql.run_query("select id, data from test")
-    assert_equal_df(data, df)
+    assert_frame_equal(data, df)
 
 
 def test_load_from_dataframe_replace_creates_table_if_no_table_exists(
@@ -94,7 +90,7 @@ def test_load_from_dataframe_replace_creates_table_if_no_table_exists(
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     sql.table_loader.load_table("test", data, LoadMode.REPLACE)
     df = sql.run_query("select id, data from test")
-    assert_equal_df(data, df)
+    assert_frame_equal(data, df)
 
 
 def test_load_from_dataframe_replace_deletes_data(sql: DataCheckSql):
@@ -105,7 +101,7 @@ def test_load_from_dataframe_replace_deletes_data(sql: DataCheckSql):
     data2 = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "d"]})
     sql.table_loader.load_table("test", data2, LoadMode.REPLACE)
     df = sql.run_query("select id, data from test")
-    assert_equal_df(data2, df)
+    assert_frame_equal(data2, df)
 
 
 def test_load_from_csv_file(sql: DataCheckSql):
@@ -115,7 +111,7 @@ def test_load_from_csv_file(sql: DataCheckSql):
         "test", Path("load_data/test.csv"), LoadMode.REPLACE
     )
     df = sql.run_query("select id, data from test")
-    assert_equal_df(data, df)
+    assert_frame_equal(data, df)
 
 
 def test_load_from_files(sql: DataCheckSql):
@@ -126,8 +122,8 @@ def test_load_from_files(sql: DataCheckSql):
     )
     df1 = sql.run_query("select id, data from test1")
     df2 = sql.run_query("select id, data from MAIN.TEST2")
-    assert_equal_df(data1, df1)
-    assert_equal_df(data2, df2)
+    assert_frame_equal(data1, df1)
+    assert_frame_equal(data2, df2)
 
 
 def test_load_from_files_non_existing_dir(sql: DataCheckSql):
@@ -162,7 +158,7 @@ def test_load_from_dataframe_schema(sql: DataCheckSql):
     )
     sql.table_loader.load_table("main.test", data, LoadMode.APPEND)
     df = sql.run_query("select id, data from MAIN.TEST")
-    assert_equal_df(data, df)
+    assert_frame_equal(data, df)
 
 
 def test_parse_table_name_with_schema(sql: DataCheckSql):
@@ -201,4 +197,4 @@ def test_load_leading_zeros_string(sql: DataCheckSql):
     )
     sql.table_loader.load_table("temp.test", data, LoadMode.TRUNCATE)
     df = sql.run_query("select id, data from TEMP.TEST")
-    assert_equal_df(data, df)
+    assert_frame_equal(data, df)
