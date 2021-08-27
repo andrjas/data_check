@@ -219,3 +219,35 @@ select 1 as a
     assert result
     assert check_csv.exists()
     assert check_csv.read_text() == "a\n1\n"
+
+
+def test_pipeline_path_is_absolute_path(dc: DataCheck):
+    tp = dc.template_parameters(pipeline_path=Path("checks/pipelines/simple_pipeline"))
+    pipeline_path = Path(tp["PIPELINE_PATH"])
+    assert pipeline_path.is_absolute()
+    assert pipeline_path == Path("checks/pipelines/simple_pipeline").absolute()
+
+
+def test_pipeline_name(dc: DataCheck):
+    tp = dc.template_parameters(pipeline_path=Path("checks/pipelines/simple_pipeline"))
+    pipeline_name = tp["PIPELINE_NAME"]
+    assert pipeline_name == "simple_pipeline"
+
+
+def test_project_path_is_absolute_path(dc: DataCheck):
+    tp = dc.template_parameters(pipeline_path=Path("checks/pipelines/simple_pipeline"))
+    project_path = Path(tp["PROJECT_PATH"])
+    assert project_path.is_absolute()
+    assert project_path == Path(".").absolute()
+
+
+def test_pipeline_template_connection(dc: DataCheck):
+    tp = dc.template_parameters(pipeline_path=Path("checks/pipelines/simple_pipeline"))
+    connection = tp["CONNECTION"]
+    assert connection == "test"
+
+
+def test_pipeline_template_connection_string(dc: DataCheck):
+    tp = dc.template_parameters(pipeline_path=Path("checks/pipelines/simple_pipeline"))
+    connection_string = tp["CONNECTION_STRING"]
+    assert connection_string == "sqlite+pysqlite://"

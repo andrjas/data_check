@@ -166,7 +166,8 @@ class PipelineCheck:
         return {
             "CONNECTION": self.config.connection_name,
             "CONNECTION_STRING": self.config.connection,
-            "PIPELINE_PATH": str(pipeline_path),
+            "PIPELINE_PATH": str(pipeline_path.absolute()),
+            "PIPELINE_NAME": str(pipeline_path.name),
             "PROJECT_PATH": str(self.config.project_path),
         }
 
