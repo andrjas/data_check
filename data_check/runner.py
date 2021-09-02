@@ -1,14 +1,18 @@
 import concurrent.futures
-from typing import Callable, List, Any, Dict
+from typing import Callable, List, Any, Dict, Optional
 from pathlib import Path
 
 
 from .result import DataCheckResult
+from .output import DataCheckOutput
 
 
 class DataCheckRunner:
-    def __init__(self, workers: int) -> None:
+    def __init__(self, workers: int, output: Optional[DataCheckOutput] = None) -> None:
         self.workers = workers
+        if output is None:
+            output = DataCheckOutput()
+        self.output = output
 
     @property
     def executor(self):
@@ -37,7 +41,7 @@ class DataCheckRunner:
         for future in concurrent.futures.as_completed(result_futures):
             dc_result = future.result()
             results.append(dc_result)
-            print(dc_result.message)
+            self.output.print(dc_result.message)
         return results
 
     def run_serial(
@@ -51,7 +55,7 @@ class DataCheckRunner:
         for f in all_files:
             dc_result = run_method(f)
             results.append(dc_result)
-            print(dc_result.message)
+            self.output.print(dc_result.message)
         return results
 
     def run_any(

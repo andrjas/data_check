@@ -30,8 +30,9 @@ class TableLoader:
     Helper class that implements the methods to load a table from a CSV file.
     """
 
-    def __init__(self, sql):
+    def __init__(self, sql, output):
         self.sql = sql
+        self.output = output
 
     def table_exists(self, table_name: str, schema: Optional[str]):
         inspector = inspect(self.sql.get_connection())
@@ -171,9 +172,9 @@ class TableLoader:
             dtype=column_info.dtypes,
         )
         if result:
-            print(f"table {table} loaded from {rel_file}")
+            self.output.print(f"table {table} loaded from {rel_file}")
         else:
-            print(f"loading table {table} from {rel_file} failed")
+            self.output.print(f"loading table {table} from {rel_file} failed")
         return result
 
     def load_tables_from_files(

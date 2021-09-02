@@ -1,12 +1,6 @@
-import sys
-import os
 from pathlib import Path
 from unittest.mock import create_autospec
 import pandas as pd
-
-
-my_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, my_path + "/../")
 
 
 from data_check.generator import DataCheckGenerator  # noqa E402

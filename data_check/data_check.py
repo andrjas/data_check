@@ -20,10 +20,12 @@ class DataCheck(SimpleCheck, PipelineCheck):
     def __init__(self, config: DataCheckConfig = DataCheckConfig()):
         PipelineCheck.__init__(self)
         self.config = config
-        self.runner = DataCheckRunner(config.parallel_workers)
-        self.sql = DataCheckSql(connection=config.connection, runner=self.runner)
-        self.generator = DataCheckGenerator(self.sql)
         self.output = DataCheckOutput()
+        self.runner = DataCheckRunner(config.parallel_workers, output=self.output)
+        self.sql = DataCheckSql(
+            connection=config.connection, runner=self.runner, output=self.output
+        )
+        self.generator = DataCheckGenerator(self.sql)
         self.template_data: Dict[str, Any] = {}
 
         self.register_pipelines()
@@ -74,8 +76,8 @@ class DataCheck(SimpleCheck, PipelineCheck):
 
     def run_sql_file(self, file: Path):
         sql_text = read_sql_file(sql_file=file, template_data=self.template_data)
-        print("executing:")
-        print(sql_text)
+        self.output.print("executing:")
+        self.output.print(sql_text)
         return self.sql.run_sql(query=sql_text)
 
     def run_sql_files(self, files: List[Path], base_path: Path = Path(".")):
@@ -93,5 +95,5 @@ class DataCheck(SimpleCheck, PipelineCheck):
     ):
         sql_query = parse_template(query, template_data=self.template_data)
         if print_query:
-            print(f"-- {sql_query}")
+            self.output.print(f"-- {sql_query}")
         return self.sql.run_sql(sql_query, output, base_path)

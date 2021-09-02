@@ -76,8 +76,8 @@ def read_csv(
     )
 
 
-def print_csv(df: DataFrame):
-    print(df.to_csv(index=False))
+def print_csv(df: DataFrame, print_method):
+    print_method(df.to_csv(index=False))
 
 
 def write_csv(

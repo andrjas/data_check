@@ -1,10 +1,6 @@
-import sys
 import os
 from pathlib import Path
 import pytest
-
-my_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, my_path + "/../")
 
 
 from data_check.io import expand_files, read_sql_file, get_expect_file  # noqa E402

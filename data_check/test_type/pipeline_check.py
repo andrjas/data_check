@@ -64,16 +64,23 @@ class SerialPipelineSteps:
 
 
 class CmdStep:
-    def __init__(self, cmd: Union[str, List[str]]) -> None:
+    def __init__(self, cmd: Union[str, List[str]], output) -> None:
         self.cmd = cmd
+        self.output = output
 
     def _run_cmd(self, cmd: str, base_path: Path = Path(".")):
-        print(f"# {cmd}")
-        try:
-            subprocess.run(args=cmd, cwd=base_path, shell=True, check=True)
-            return True
-        except subprocess.CalledProcessError:
-            return False
+        self.output.print(f"# {cmd}")
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            cwd=base_path,
+            shell=True,
+        )
+        with process.stdout:
+            self.output.handle_subprocess_output(process.stdout)
+        exitcode = process.wait()
+        return exitcode == 0
 
     def run(self, base_path: Path = Path(".")):
         if isinstance(self.cmd, List):
@@ -159,7 +166,7 @@ class PipelineCheck:
         return serial_steps.run()
 
     def run_cmd(self, commands: List[str], base_path: Path = Path(".")):
-        c = CmdStep(commands)
+        c = CmdStep(commands, self.output)
         return c.run(base_path=base_path)
 
     def template_parameters(self, pipeline_path: Path) -> Dict[str, str]:

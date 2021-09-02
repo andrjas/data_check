@@ -91,6 +91,7 @@ from data_check.config import DataCheckConfig
 @click.option("--ping", is_flag=True, help="tries to connect to the database")
 @click.option("--verbose", is_flag=True, help="print verbose output")
 @click.option("--traceback", is_flag=True, help="print traceback output for debugging")
+@click.option("--quiet", is_flag=True, help="do not print any output")
 @click.version_option(version=version("data-check"))
 @click.argument("files", nargs=-1, type=click.Path())
 def main(
@@ -112,6 +113,7 @@ def main(
     ping: bool = False,
     verbose: bool = False,
     traceback: bool = False,
+    quiet: bool = False,
     files: List[Union[str, Path]] = [],
 ):
     """ FILES: list of checks files or folders"""
@@ -140,6 +142,7 @@ def main(
         traceback=traceback,
         print_failed=print_failed,
         print_format=print_format,
+        quiet=quiet,
     )
 
     if load:
@@ -178,10 +181,8 @@ def main(
     if ping:
         test = dc.sql.test_connection()
         if test:
-            click.echo("connecting succeeded")
             sys.exit(0)
         else:
-            click.echo("connecting failed")
             sys.exit(1)
     else:
         result = dc.run(path_list)

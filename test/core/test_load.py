@@ -1,14 +1,8 @@
-import sys
-import os
 import pytest
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from pathlib import Path
 
-
-# add the parent path to PYTHONPATH
-my_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, my_path + "/../")
 
 from data_check.sql import DataCheckSql, LoadMode  # noqa E402
 from data_check.config import DataCheckConfig  # noqa E402

@@ -74,6 +74,7 @@ class SimpleCheck:
 
         try:
             query = read_sql_file(sql_file=sql_file, template_data=self.template_data)
+            # self.output.log(f"run query: {query}")
             sql_result = self.sql.run_query_with_result(query)
         except Exception as exc:
             return self.output.prepare_result(

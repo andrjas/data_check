@@ -1,13 +1,9 @@
-import sys
-import os
 from pathlib import Path
 from pandas.core.frame import DataFrame
 import pytest
 import pandas as pd
 import datetime
 
-my_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, my_path + "/../")
 
 from data_check import DataCheck  # noqa E402
 from data_check.config import DataCheckConfig  # noqa E402

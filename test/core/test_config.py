@@ -1,10 +1,6 @@
-import sys
-import os
 from pathlib import Path
 import pytest
 
-my_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, my_path + "/../")
 
 from data_check.config import DataCheckConfig  # noqa E402
 

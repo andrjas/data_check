@@ -1,5 +1,3 @@
-import sys
-import os
 from pathlib import Path
 import pytest
 import pandas as pd
@@ -7,8 +5,6 @@ from pandas.testing import assert_frame_equal
 from sqlalchemy import Table, Column, String, Integer, MetaData, Date, Numeric, DateTime
 import datetime
 
-my_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, my_path + "/../")
 
 from data_check import DataCheck  # noqa E402
 from data_check.config import DataCheckConfig  # noqa E402

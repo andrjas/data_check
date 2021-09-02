@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 from ..exceptions import DataCheckException
+from ..output import DataCheckOutput
 from ..io import print_csv, write_csv
 from ..runner import DataCheckRunner
 from .table_loader import TableLoader
@@ -16,12 +17,23 @@ from .query_result import QueryResult
 
 class DataCheckSql:
     def __init__(
-        self, connection: str, runner: DataCheckRunner = DataCheckRunner(workers=1)
+        self,
+        connection: str,
+        runner: Optional[DataCheckRunner] = None,
+        output: Optional[DataCheckOutput] = None,
     ) -> None:
         self.connection = connection
         self.__connection: Optional[Connection] = None
         self.__engine: Optional[Engine] = None
+
+        if output is None:
+            output = DataCheckOutput()
+        self.output = output
+
+        if runner is None:
+            runner = DataCheckRunner(workers=1, output=self.output)
         self.runner = runner
+
         self._table_loader: Optional[TableLoader] = None
 
     @property
@@ -30,7 +42,7 @@ class DataCheckSql:
         Lazy-load a TableLoader.
         """
         if self._table_loader is None:
-            self._table_loader = TableLoader(self)
+            self._table_loader = TableLoader(self, self.output)
         return self._table_loader
 
     def get_db_params(self) -> Dict[str, Any]:
@@ -43,6 +55,7 @@ class DataCheckSql:
         # Do not keep the connection if runner has more than 1 workers.
         # Cannot pickle otherwise.
         return self.runner.workers == 1
+        # return True
 
     def get_engine(self, extra_params: Dict[str, Any] = {}) -> Engine:
         """
@@ -51,6 +64,8 @@ class DataCheckSql:
         if self.__engine is None:
             _engine = create_engine(
                 path.expandvars(self.connection),
+                # poolclass=QueuePool,
+                # pool_size=20,
                 **{**self.get_db_params(), **extra_params},
             )
             if self._keep_connection():
@@ -81,7 +96,10 @@ class DataCheckSql:
     def run_query_with_result(self, query: str) -> QueryResult:
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
-        return QueryResult(query, self.get_connection().execute(text(query)))
+        # self.output.log(f"start query {query}", level="VERBOSE")
+        result = QueryResult(query, self.get_connection().execute(text(query)))
+        # self.output.log(f"finished query {query} {id(x)}", level="VERBOSE")
+        return result
 
     def test_connection(self) -> bool:
         """
@@ -91,8 +109,10 @@ class DataCheckSql:
         engine = self.get_engine(extra_params={"pool_pre_ping": True})
         try:
             engine.connect()
+            self.output.print("connecting succeeded")
             return True
         except:  # noqa E722
+            self.output.print("connecting failed")
             return False
 
     def run_sql(
@@ -105,7 +125,7 @@ class DataCheckSql:
         try:
             res = result.fetchall()
             df = pd.DataFrame(data=res, columns=result.keys())
-            print_csv(df)
+            print_csv(df, self.output.print)
             write_csv(df, output=output, base_path=base_path)
             return res
         except:

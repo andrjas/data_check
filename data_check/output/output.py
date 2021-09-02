@@ -3,11 +3,12 @@ import pandas as pd
 from colorama import Fore, Style
 import traceback
 from os import linesep
-from typing import Optional
+from typing import Optional, Any
 
-from .exceptions import DataCheckException
-from .result import DataCheckResult, ResultType
-from .io import rel_path
+from ..exceptions import DataCheckException
+from ..result import DataCheckResult, ResultType
+from ..io import rel_path
+from .handler import OutputHandler
 
 
 class DataCheckOutput:
@@ -16,21 +17,39 @@ class DataCheckOutput:
         self.traceback = False
         self.print_failed = False
         self.print_format = "pandas"
+        self.quiet = False
+        self.handler = OutputHandler(self.quiet)
 
     def configure_output(
-        self, verbose: bool, traceback: bool, print_failed: bool, print_format: str
+        self,
+        verbose: bool,
+        traceback: bool,
+        print_failed: bool,
+        print_format: str,
+        quiet: bool = False,
     ):
         self.verbose = verbose
         self.traceback = traceback
         self.print_failed = print_failed
         self.print_format = print_format
+        self.quiet = quiet
+
+        self.handler.quiet = quiet
+
+    def print(self, msg: Any, prefix: str = ""):
+        self.handler.print(msg, prefix)
+
+    def log(self, msg: Any, prefix: str = "", level="INFO"):
+        self.handler.log(msg, prefix, level)
+
+    def handle_subprocess_output(self, pipe):
+        self.handler.handle_subprocess_output(pipe)
 
     def pprint_overall_result(self, passed: bool) -> None:
         overall_result_msg = self.passed_message if passed else self.failed_message
-        print(
-            ""
-        )  # print newline to separate other results from the overall result message
-        print(f"overall result: {overall_result_msg}")
+        # print newline to separate other results from the overall result message
+        self.print("")
+        self.print(f"overall result: {overall_result_msg}")
 
     def prepare_pprint_df(self, df: pd.DataFrame) -> pd.DataFrame:
         if "_merge" in df.columns:

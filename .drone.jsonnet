@@ -22,7 +22,7 @@ local python_test(version) =
 
 
 local generic_int_test = [
-    "bash -c 'while ! poetry run data_check --ping; do echo \"waiting for db\"; sleep 1; done'",
+    "bash -c 'while ! poetry run data_check --ping --quiet; do echo \"waiting for db\"; sleep 1; done'",
     "poetry run data_check --sql-files prepare",
     "poetry run pytest ../../test/database",
     "poetry run data_check --generate checks/generated",
