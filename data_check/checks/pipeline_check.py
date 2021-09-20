@@ -5,6 +5,7 @@ import inspect
 import subprocess
 from functools import partial
 
+from .base_check import BaseCheck
 from ..result import DataCheckResult, ResultType
 from ..io import read_yaml
 
@@ -13,9 +14,15 @@ DATA_CHECK_PIPELINE_FILE = "data_check_pipeline.yml"
 
 class SerialPipelineSteps:
     def __init__(
-        self, data_check, steps: List[Any], path: Path, pipeline_name: str
+        self,
+        data_check,
+        pipeline_check,
+        steps: List[Any],
+        path: Path,
+        pipeline_name: str,
     ) -> None:
         self.data_check = data_check
+        self.pipeline_check = pipeline_check
         self.path = path
         self.steps = steps
         self.pipeline_name = pipeline_name
@@ -52,12 +59,15 @@ class SerialPipelineSteps:
     def run_pipeline_step(self, path: Path, step: Dict[str, Any]):
         step_type = next(iter(step.keys()))
         params = next(iter(step.values()))
-        call_method = self.data_check.get_pipeline_method(step_type)
+        call_method = self.pipeline_check.get_pipeline_method(step_type)
         if call_method:
-            prepared_params = self.data_check.get_prepared_parameters(step_type, params)
+            prepared_params = self.pipeline_check.get_prepared_parameters(
+                step_type, params
+            )
             argspec = inspect.getfullargspec(call_method)
             if "base_path" in argspec.args:
                 prepared_params.update({"base_path": path})
+            print("rps", step_type, call_method, prepared_params)
             return call_method(**prepared_params)
         else:
             raise Exception(f"unknown pipeline step: {step_type}")
@@ -77,6 +87,7 @@ class CmdStep:
             cwd=base_path,
             shell=True,
         )
+        assert process.stdout is not None
         with process.stdout:
             self.output.handle_subprocess_output(process.stdout)
         exitcode = process.wait()
@@ -94,34 +105,40 @@ class CmdStep:
         return True
 
 
-class PipelineCheck:
-    def __init__(self) -> None:
+class PipelineCheck(BaseCheck):
+    def __init__(self, data_check, check_path: Path) -> None:
+        super().__init__(data_check, check_path)
         self.pipeline_steps = {}
+        self.register_pipelines()
 
     def register_pipelines(self):
         self.register_pipeline_step(
             "load_tables",
-            self.sql.table_loader.load_tables_from_files,
+            self.data_check.sql.table_loader.load_tables_from_files,
             convert_to_path_list=["files"],
         )
         self.register_pipeline_step(
             "load",
-            self.sql.table_loader.load_table_from_csv_file,
+            self.data_check.sql.table_loader.load_table_from_csv_file,
             convert_to_path=["file"],
         )
         self.register_pipeline_step("cmd", self.run_cmd)
-        self.register_pipeline_step("check", self.run, convert_to_path_list=["files"])
         self.register_pipeline_step(
-            "sql_files", self.run_sql_files, convert_to_path_list=["files"]
+            "check", self.data_check.run, convert_to_path_list=["files"]
         )
         self.register_pipeline_step(
-            "sql_file", self.run_sql_files, convert_to_path_list=["files"]
+            "sql_files", self.data_check.run_sql_files, convert_to_path_list=["files"]
         )
-        pipeline_run_sql_query = partial(self.run_sql_query, print_query=True)
+        self.register_pipeline_step(
+            "sql_file", self.data_check.run_sql_files, convert_to_path_list=["files"]
+        )
+        pipeline_run_sql_query = partial(
+            self.data_check.run_sql_query, print_query=True
+        )
         self.register_pipeline_step("sql", pipeline_run_sql_query)
 
     @staticmethod
-    def is_pipeline_check(path: Path) -> bool:
+    def is_check_path(path: Path) -> bool:
         return path.is_dir() and (path / DATA_CHECK_PIPELINE_FILE).exists()
 
     def register_pipeline_step(
@@ -146,7 +163,7 @@ class PipelineCheck:
                 pipeline_file,
                 template_data=dict(
                     self.template_parameters(pipeline_file.parent),
-                    **self.template_data,
+                    **self.data_check.template_data,
                 ),
             )
             return (
@@ -160,22 +177,28 @@ class PipelineCheck:
         steps = pipeline_config.get("steps", [])
         return steps if steps else []
 
-    def run_pipeline(self, path: Path) -> DataCheckResult:
-        steps = self._get_steps(path)
-        serial_steps = SerialPipelineSteps(self, steps, path, pipeline_name=str(path))
+    def run_test(self) -> DataCheckResult:
+        steps = self._get_steps(self.check_path)
+        serial_steps = SerialPipelineSteps(
+            self.data_check,
+            self,
+            steps,
+            self.check_path,
+            pipeline_name=str(self.check_path),
+        )
         return serial_steps.run()
 
     def run_cmd(self, commands: List[str], base_path: Path = Path(".")):
-        c = CmdStep(commands, self.output)
+        c = CmdStep(commands, self.data_check.output)
         return c.run(base_path=base_path)
 
     def template_parameters(self, pipeline_path: Path) -> Dict[str, str]:
         return {
-            "CONNECTION": self.config.connection_name,
-            "CONNECTION_STRING": self.config.connection,
+            "CONNECTION": self.data_check.config.connection_name,
+            "CONNECTION_STRING": self.data_check.config.connection,
             "PIPELINE_PATH": str(pipeline_path.absolute()),
             "PIPELINE_NAME": str(pipeline_path.name),
-            "PROJECT_PATH": str(self.config.project_path),
+            "PROJECT_PATH": str(self.data_check.config.project_path),
         }
 
     def get_prepared_parameters(

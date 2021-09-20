@@ -29,7 +29,7 @@ def dc() -> DataCheck:
 
 @pytest.fixture
 def data_types_check(dc: DataCheck):
-    res = dc.run_test(Path("checks/basic/data_types.sql"), return_all=True)
+    res = dc.get_check(Path("checks/basic/data_types.sql")).run_test(return_all=True)
     assert isinstance(res.result, DataFrame)
     assert not res.result.empty
     return res.result.iloc[0]
@@ -70,12 +70,12 @@ def test_data_types_whitespace(data_types_check):
 
 
 def test_float_decimal_conversion(dc: DataCheck):
-    res = dc.run_test(Path("checks/basic/float.sql"))
+    res = dc.get_check(Path("checks/basic/float.sql")).run_test()
     assert res
 
 
 def test_unicode(dc: DataCheck):
-    res = dc.run_test(Path("checks/basic/unicode_string.sql"))
+    res = dc.get_check(Path("checks/basic/unicode_string.sql")).run_test()
     assert res
 
 
@@ -83,12 +83,12 @@ def test_decimal_varchar(dc: DataCheck):
     """
     Test a varchar column, that has only decimals in the csv file
     """
-    res = dc.run_test(Path("checks/basic/decimal_varchar.sql"))
+    res = dc.get_check(Path("checks/basic/decimal_varchar.sql")).run_test()
     assert res
 
 
 def test_sorted_set(dc: DataCheck):
-    res = dc.run_test(Path("checks/basic/sorted_set.sql"))
+    res = dc.get_check(Path("checks/basic/sorted_set.sql")).run_test()
     assert res
 
 
@@ -97,5 +97,5 @@ def test_dialect(dc: DataCheck):
 
 
 def test_leading_zeros_string(dc: DataCheck):
-    res = dc.run_test(Path("checks/basic/leading_zeros.sql"))
+    res = dc.get_check(Path("checks/basic/leading_zeros.sql")).run_test()
     assert res

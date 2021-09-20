@@ -16,8 +16,8 @@ class DataCheckConfig:
 
     def __init__(self, config_path: Optional[Path] = None) -> None:
         self.config: Dict[str, Any] = {}
-        self.connection: str
-        self.connection_name: str
+        self.connection: Optional[str] = None
+        self.connection_name: Optional[str] = None
 
         if config_path is not None:
             self.config_path = config_path

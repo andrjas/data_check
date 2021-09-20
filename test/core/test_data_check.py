@@ -3,7 +3,8 @@ from pathlib import Path
 
 
 from data_check import DataCheck  # noqa E402
-from data_check.config import DataCheckConfig  # noqa E402
+from data_check.config import DataCheckConfig
+from data_check.checks.csv_check import CSVCheck  # noqa E402
 
 # Basic data_check unit tests
 
@@ -26,7 +27,7 @@ def test_raise_exception_if_running_without_connection():
     config = DataCheckConfig()
     config.connection = str(None)
     dc = DataCheck(config)
-    result = dc.run_test(Path("checks/basic/simple_string.sql"))
+    result = dc.get_check(Path("checks/basic/simple_string.sql")).run_test()
     assert not result
     assert "generated an exception" in result.result
 
@@ -48,3 +49,8 @@ def test_collect_checks_returns_sorted_list(dc: DataCheck):
         ]
     )
     assert checks == sorted(checks)
+
+
+def test_get_check(dc: DataCheck):
+    check = dc.get_check(Path("checks/basic/simple_string.sql"))
+    assert isinstance(check, CSVCheck)

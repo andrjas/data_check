@@ -1,60 +1,63 @@
 from pathlib import Path
-from typing import List, Dict, Any, Union
+from typing import List, Dict, Any, Union, Optional
+
+from data_check.checks.base_check import BaseCheck
 
 from .config import DataCheckConfig
 from .result import DataCheckResult
 from .output import DataCheckOutput
 from .io import expand_files, read_sql_file, read_yaml, parse_template
 from .sql import DataCheckSql
-from .generator import DataCheckGenerator
+from .checks.generator import DataCheckGenerator
 from .runner import DataCheckRunner
-from .test_type.simple_check import SimpleCheck
-from .test_type.pipeline_check import PipelineCheck
+from .checks.csv_check import CSVCheck
+from .checks.pipeline_check import PipelineCheck
 
 
-class DataCheck(SimpleCheck, PipelineCheck):
+class DataCheck:
     """
     Main class for data_check.
     """
 
-    def __init__(self, config: DataCheckConfig = DataCheckConfig()):
-        PipelineCheck.__init__(self)
+    def __init__(self, config: Optional[DataCheckConfig] = None):
+        if config is None:
+            config = DataCheckConfig()
         self.config = config
         self.output = DataCheckOutput()
         self.runner = DataCheckRunner(config.parallel_workers, output=self.output)
         self.sql = DataCheckSql(
             connection=config.connection, runner=self.runner, output=self.output
         )
-        self.generator = DataCheckGenerator(self.sql)
         self.template_data: Dict[str, Any] = {}
-
-        self.register_pipelines()
 
     def load_template(self):
         if self.config.template_path.exists():
             self.template_data = read_yaml(self.config.template_path)
 
-    def delegate_test(self, path: Path) -> DataCheckResult:
-        if self.is_pipeline_check(path):
-            return self.run_pipeline(path)
-        elif self.config.generate_mode:
-            return self.generator.gen_expectation(
-                sql_file=path, force=self.config.force, template_data=self.template_data
-            )
+    def delegate_test(self, check: BaseCheck) -> DataCheckResult:
+        return check.run_test()
+
+    def get_check(self, check_path: Path) -> Optional[BaseCheck]:
+        if PipelineCheck.is_check_path(check_path):
+            return PipelineCheck(self, check_path)
+        elif CSVCheck.is_check_path(check_path):
+            if self.config.generate_mode:
+                return DataCheckGenerator(self, check_path)
+            else:
+                return CSVCheck(self, check_path)
         else:
-            return self.run_test(path)
+            return None
 
     def collect_checks(
         self, files: List[Path], base_path: Path = Path(".")
-    ) -> List[Path]:
+    ) -> List[BaseCheck]:
         base_path = base_path.absolute()
         checks = []
         for f in sorted(files):
             abs_file = f if f.is_absolute() else base_path / f
-            if self.is_pipeline_check(abs_file):
-                checks.append(abs_file)
-            elif self.is_simple_check(abs_file):
-                checks.append(abs_file)
+            check = self.get_check(abs_file)
+            if check is not None:
+                checks.append(check)
             elif abs_file.is_dir():
                 dir_files = [d for d in abs_file.iterdir()]
                 checks.extend(self.collect_checks(dir_files, base_path=base_path))
@@ -65,9 +68,8 @@ class DataCheck(SimpleCheck, PipelineCheck):
         Runs a data_check test for all element in the list.
         Returns True, if all calls returned True, otherweise False.
         """
-        # all_files = expand_files(files, base_path=base_path)
         all_checks = self.collect_checks(files, base_path=base_path)
-        results = self.runner.run(self.delegate_test, all_checks)
+        results = self.runner.run_checks(self.delegate_test, all_checks)
 
         overall_result = all(results)
         if self.config.print_overall_result:

@@ -3,8 +3,9 @@ from unittest.mock import create_autospec
 import pandas as pd
 
 
-from data_check.generator import DataCheckGenerator  # noqa E402
+from data_check.checks.generator import DataCheckGenerator  # noqa E402
 from data_check.sql import DataCheckSql  # noqa E402
+from data_check import DataCheck  # noqa E402
 
 
 def prepare_sql(tmp_path: Path):
@@ -14,13 +15,15 @@ def prepare_sql(tmp_path: Path):
     sql = create_autospec(DataCheckSql, instance=True)
     sql.run_query.return_value = pd.DataFrame.from_dict({"test": [1]})
     expect_result = tmp_path / "a.csv"
-    return sql, sql_file, sql_text, expect_result
+    data_check = DataCheck()
+    data_check.sql = sql
+    return data_check, sql, sql_file, sql_text, expect_result
 
 
 def test_gen_expectation(tmp_path: Path):
-    sql, sql_file, sql_text, expect_result = prepare_sql(tmp_path=tmp_path)
+    data_check, sql, sql_file, sql_text, expect_result = prepare_sql(tmp_path=tmp_path)
 
-    generator = DataCheckGenerator(sql=sql)
+    generator = DataCheckGenerator(data_check, sql_file)
     generator.gen_expectation(sql_file=sql_file)
 
     sql.run_query.assert_called_once_with(sql_text)
@@ -30,10 +33,10 @@ def test_gen_expectation(tmp_path: Path):
 
 
 def test_gen_expectation_no_overwrite(tmp_path: Path):
-    sql, sql_file, _, expect_result = prepare_sql(tmp_path=tmp_path)
+    data_check, sql, sql_file, _, expect_result = prepare_sql(tmp_path=tmp_path)
     expect_result.write_text("test")
 
-    generator = DataCheckGenerator(sql=sql)
+    generator = DataCheckGenerator(data_check, sql_file)
     generator.gen_expectation(sql_file=sql_file)
 
     sql.run_query.assert_not_called()
@@ -43,10 +46,10 @@ def test_gen_expectation_no_overwrite(tmp_path: Path):
 
 
 def test_gen_expectation_force_overwrite(tmp_path: Path):
-    sql, sql_file, sql_text, expect_result = prepare_sql(tmp_path=tmp_path)
+    data_check, sql, sql_file, sql_text, expect_result = prepare_sql(tmp_path=tmp_path)
     expect_result.write_text("test")
 
-    generator = DataCheckGenerator(sql=sql)
+    generator = DataCheckGenerator(data_check, sql_file)
     generator.gen_expectation(sql_file=sql_file, force=True)
 
     sql.run_query.assert_called_once_with(sql_text)
