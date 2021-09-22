@@ -8,10 +8,8 @@ from .result import DataCheckResult
 from .output import DataCheckOutput
 from .io import expand_files, read_sql_file, read_yaml, parse_template
 from .sql import DataCheckSql
-from .checks.generator import DataCheckGenerator
 from .runner import DataCheckRunner
-from .checks.csv_check import CSVCheck
-from .checks.pipeline_check import PipelineCheck
+from .checks import DataCheckGenerator, CSVCheck, PipelineCheck, EmptySetCheck
 
 
 class DataCheck:
@@ -40,6 +38,8 @@ class DataCheck:
     def get_check(self, check_path: Path) -> Optional[BaseCheck]:
         if PipelineCheck.is_check_path(check_path):
             return PipelineCheck(self, check_path)
+        elif EmptySetCheck.is_check_path(check_path):
+            return EmptySetCheck(self, check_path)
         elif CSVCheck.is_check_path(check_path):
             if self.config.generate_mode:
                 return DataCheckGenerator(self, check_path)

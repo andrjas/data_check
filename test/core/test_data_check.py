@@ -2,9 +2,12 @@ import pytest
 from pathlib import Path
 
 
-from data_check import DataCheck  # noqa E402
+from data_check import DataCheck
+from data_check.checks.empty_set_check import EmptySetCheck  # noqa E402
 from data_check.config import DataCheckConfig
 from data_check.checks.csv_check import CSVCheck  # noqa E402
+from data_check.checks.pipeline_check import PipelineCheck  # noqa E402
+from data_check.checks.generator import DataCheckGenerator  # noqa E402
 
 # Basic data_check unit tests
 
@@ -35,7 +38,7 @@ def test_raise_exception_if_running_without_connection():
 def test_collect_checks(dc: DataCheck):
     # This test is also to ensure, that all checks are copied over to int_test
     checks = dc.collect_checks([Path("checks")])
-    assert len(checks) == 28
+    assert len(checks) == 30
 
 
 def test_collect_checks_returns_sorted_list(dc: DataCheck):
@@ -51,6 +54,27 @@ def test_collect_checks_returns_sorted_list(dc: DataCheck):
     assert checks == sorted(checks)
 
 
-def test_get_check(dc: DataCheck):
+def test_get_check_none(dc: DataCheck):
+    check = dc.get_check(Path("checks/basic"))
+    assert check is None
+
+
+def test_get_check_csv_check(dc: DataCheck):
     check = dc.get_check(Path("checks/basic/simple_string.sql"))
     assert isinstance(check, CSVCheck)
+
+
+def test_get_check_pipeline_check(dc: DataCheck):
+    check = dc.get_check(Path("checks/pipelines/simple_pipeline"))
+    assert isinstance(check, PipelineCheck)
+
+
+def test_get_check_generator(dc: DataCheck):
+    dc.config.generate_mode = True
+    check = dc.get_check(Path("checks/basic/simple_string.sql"))
+    assert isinstance(check, DataCheckGenerator)
+
+
+def test_get_check_empty_set_check(dc: DataCheck):
+    check = dc.get_check(Path("checks/empty_sets/basic/empty_query.sql"))
+    assert isinstance(check, EmptySetCheck)

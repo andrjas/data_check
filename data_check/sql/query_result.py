@@ -74,3 +74,6 @@ class QueryResult:
             self._load_df()
         assert isinstance(self._df, pd.DataFrame)
         return self._df
+
+    def __len__(self):
+        return len(self.df)
