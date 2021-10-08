@@ -26,7 +26,7 @@ local generic_int_test = [
     "poetry run data_check --sql-files prepare",
     "poetry run pytest ../../test/database",
     "poetry run data_check --generate checks/generated",
-    "poetry run data_check checks/basic checks/generated checks/empty_sets/basic --traceback",
+    "poetry run data_check checks/basic checks/generated checks/empty_sets/basic checks/excel/basic --traceback",
     "bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'",
     "bash -c 'if ! poetry run data_check checks/empty_sets/failing; then exit 0; else exit 1; fi'",
     "poetry run data_check checks/pipelines/simple_pipeline --traceback",

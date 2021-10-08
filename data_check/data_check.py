@@ -9,7 +9,13 @@ from .output import DataCheckOutput
 from .io import expand_files, read_sql_file, read_yaml, parse_template
 from .sql import DataCheckSql
 from .runner import DataCheckRunner
-from .checks import DataCheckGenerator, CSVCheck, PipelineCheck, EmptySetCheck
+from .checks import (
+    DataCheckGenerator,
+    CSVCheck,
+    PipelineCheck,
+    EmptySetCheck,
+    ExcelCheck,
+)
 
 
 class DataCheck:
@@ -40,6 +46,8 @@ class DataCheck:
             return PipelineCheck(self, check_path)
         elif EmptySetCheck.is_check_path(check_path):
             return EmptySetCheck(self, check_path)
+        elif ExcelCheck.is_check_path(check_path):
+            return ExcelCheck(self, check_path)
         elif CSVCheck.is_check_path(check_path):
             if self.config.generate_mode:
                 return DataCheckGenerator(self, check_path)

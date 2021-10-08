@@ -1,6 +1,8 @@
 from pathlib import Path
 import pandas as pd
-from typing import Tuple
+from typing import Tuple, Union
+
+from data_check.sql.query_result import QueryResult
 
 from .base_check import BaseCheck
 from ..result import DataCheckResult, ResultType
@@ -54,6 +56,35 @@ class CSVCheck(BaseCheck):
             return (ResultType.FAILED_DIFFERENT_LENGTH, df_result)
         return (DataCheckResult.passed_to_result_type(passed), df_result)
 
+    def read_sql_file(self, sql_file: Path) -> Union[DataCheckResult, QueryResult]:
+        try:
+            query = read_sql_file(
+                sql_file=sql_file, template_data=self.data_check.template_data
+            )
+            return self.data_check.sql.run_query_with_result(query)
+        except Exception as exc:
+            return self.data_check.output.prepare_result(
+                ResultType.FAILED_WITH_EXCEPTION, source=sql_file, exception=exc
+            )
+
+    def read_expect_file(
+        self, expect_file: Path, parse_dates, string_columns
+    ) -> Union[DataCheckResult, pd.DataFrame]:
+        try:
+            expect_result = read_csv(
+                expect_file,
+                parse_dates=parse_dates,
+                string_columns=string_columns,
+            )
+            return expect_result
+        except Exception as exc_csv:
+            return self.data_check.output.prepare_result(
+                ResultType.FAILED_WITH_EXCEPTION, source=expect_file, exception=exc_csv
+            )
+
+    def get_expect_file(self, sql_file: Path) -> Path:
+        return get_expect_file(sql_file)
+
     def run_test(
         self,
         return_all: bool = False,
@@ -66,34 +97,21 @@ class CSVCheck(BaseCheck):
         not only the failed ones.
         """
         sql_file = self.check_path
-        expect_file = get_expect_file(sql_file)
+        expect_file = self.get_expect_file(sql_file)
         if not expect_file.exists():
             # no need to run queries, if no expected results found
             return self.data_check.output.prepare_result(
                 ResultType.NO_EXPECTED_RESULTS_FILE, source=sql_file
             )
+        sql_result = self.read_sql_file(sql_file=sql_file)
+        if isinstance(sql_result, DataCheckResult):
+            return sql_result
 
-        try:
-            query = read_sql_file(
-                sql_file=sql_file, template_data=self.data_check.template_data
-            )
-            # self.output.log(f"run query: {query}")
-            sql_result = self.data_check.sql.run_query_with_result(query)
-        except Exception as exc:
-            return self.data_check.output.prepare_result(
-                ResultType.FAILED_WITH_EXCEPTION, source=sql_file, exception=exc
-            )
-
-        try:
-            expect_result = read_csv(
-                expect_file,
-                parse_dates=sql_result.date_columns,
-                string_columns=sql_result.string_columns,
-            )
-        except Exception as exc_csv:
-            return self.data_check.output.prepare_result(
-                ResultType.FAILED_WITH_EXCEPTION, source=expect_file, exception=exc_csv
-            )
+        expect_result = self.read_expect_file(
+            expect_file, sql_result.date_columns, sql_result.string_columns
+        )
+        if isinstance(expect_result, DataCheckResult):
+            return expect_result
 
         result_type, df_result = CSVCheck.get_result(
             sql_result.df, expect_result, return_all

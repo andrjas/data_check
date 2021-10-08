@@ -3,11 +3,14 @@ from pathlib import Path
 
 
 from data_check import DataCheck
-from data_check.checks.empty_set_check import EmptySetCheck  # noqa E402
+from data_check.checks import (
+    CSVCheck,
+    PipelineCheck,
+    EmptySetCheck,
+    DataCheckGenerator,
+    ExcelCheck,
+)  # noqa E402
 from data_check.config import DataCheckConfig
-from data_check.checks.csv_check import CSVCheck  # noqa E402
-from data_check.checks.pipeline_check import PipelineCheck  # noqa E402
-from data_check.checks.generator import DataCheckGenerator  # noqa E402
 
 # Basic data_check unit tests
 
@@ -78,3 +81,8 @@ def test_get_check_generator(dc: DataCheck):
 def test_get_check_empty_set_check(dc: DataCheck):
     check = dc.get_check(Path("checks/empty_sets/basic/empty_query.sql"))
     assert isinstance(check, EmptySetCheck)
+
+
+def test_get_check_excel_check(dc: DataCheck):
+    check = dc.get_check(Path("checks/excel/basic/simple_excel.sql"))
+    assert isinstance(check, ExcelCheck)
