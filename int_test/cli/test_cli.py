@@ -34,6 +34,32 @@ def test_help():
     assert out.startswith("Usage: data_check")
 
 
+def all_options():
+    help_output = run(["data_check", "--help"])
+    lines = help_output.split("Options:", maxsplit=1)[1].strip().splitlines()
+    options = []
+    for opt in lines:
+        opt = opt.strip()
+        if opt and opt.startswith("-"):
+            for o in opt.split(" "):
+                if o.startswith("-"):
+                    o = o.rstrip(",")
+                    options.append(o)
+    return options
+
+
+def test_all_options_tested():
+    dc_options = all_options()
+    tested_options = Path(__file__).read_text()
+
+    join = []
+    for option in dc_options:
+        if f'"{option}"' in tested_options:
+            join.append(option)
+
+    assert set(join) == set(dc_options)
+
+
 def test_single_file_check():
     out = run_check(["data_check"])
     assert_passed(out)
@@ -98,6 +124,11 @@ def test_print():
         run(["data_check", "--print", "checks/failing/expected_to_fail.sql"])
     assert_failed(e.value.output)
     assert "check1,_diff" in e.value.output
+
+
+def test_print_json():
+    with pytest.raises(CalledProcessError) as e:
+        run(["data_check", "--print-json", "checks/failing/expected_to_fail.sql"])
 
 
 def test_print_format_csv():
@@ -282,6 +313,13 @@ def test_sql_file():
     assert "select 1 as a" in out
 
 
+def test_sql_files():
+    out = run(["data_check", "--sql-files", "run_sql"])
+    print(out)
+    assert "executing:" in out
+    assert "select 1 as a" in out
+
+
 def test_sql_file_failing_sql():
     with pytest.raises(CalledProcessError):
         run(["data_check", "--sql-file", "failing/run_sql/invalid.sql"])
@@ -290,3 +328,127 @@ def test_sql_file_failing_sql():
 def test_sql_file_no_file():
     with pytest.raises(CalledProcessError):
         run(["data_check", "--sql-file", "failing/run_sql/no_such_file.sql"])
+
+
+def test_load_tables():
+    out = run(["data_check", "--load-tables", "load_data/test.csv"])
+    assert out.strip() == "table test loaded from load_data/test.csv"
+
+
+def test_load_tables_folder():
+    out = run(["data_check", "--load-tables", "load_data"])
+    assert "table test loaded from load_data/test.csv" in out
+    assert "table main.test2 loaded from load_data/tables/main.test2.csv" in out
+
+
+def test_sql():
+    out = run(["data_check", "--sql", "select 1 as a"])
+    assert out.strip() == "a\n1"
+
+
+def test_sql_output():
+    test_output = Path("test_sql_output_1.csv")
+    if test_output.exists():
+        test_output.unlink()
+    out = run(["data_check", "--sql", "select 1 as a", "--output", str(test_output)])
+    exists = test_output.exists()
+    test_output.unlink()
+    assert out.strip() == "a\n1"
+    assert exists
+
+
+def test_sql_output_o():
+    test_output = Path("test_sql_output_2.csv")
+    if test_output.exists():
+        test_output.unlink()
+    out = run(["data_check", "--sql", "select 1 as a", "-o", str(test_output)])
+    exists = test_output.exists()
+    test_output.unlink()
+    assert out.strip() == "a\n1"
+    assert exists
+
+
+def test_sql_invalid_query():
+    with pytest.raises(CalledProcessError) as e:
+        run(["data_check", "--sql", "selct 1 as a"])
+
+
+def test_load_table():
+    out = run(
+        ["data_check", "--load", "load_data/test.csv", "--table", "test_load_table"]
+    )
+    assert out.strip() == "table test_load_table loaded from load_data/test.csv"
+
+
+def test_load_mode_truncate():
+    out = run(
+        [
+            "data_check",
+            "--load",
+            "load_data/test.csv",
+            "--table",
+            "test_load_table_truncate",
+            "--load-mode",
+            "truncate",
+        ]
+    )
+    assert (
+        out.strip() == "table test_load_table_truncate loaded from load_data/test.csv"
+    )
+
+
+def test_load_mode_append():
+    out = run(
+        [
+            "data_check",
+            "--load",
+            "load_data/test.csv",
+            "--table",
+            "test_load_table_append",
+            "--load-mode",
+            "append",
+        ]
+    )
+    assert out.strip() == "table test_load_table_append loaded from load_data/test.csv"
+
+
+def test_load_mode_replace():
+    out = run(
+        [
+            "data_check",
+            "--load",
+            "load_data/test.csv",
+            "--table",
+            "test_load_table_replace",
+            "--load-mode",
+            "replace",
+        ]
+    )
+    assert out.strip() == "table test_load_table_replace loaded from load_data/test.csv"
+
+
+def test_load_mode_invalid():
+    with pytest.raises(CalledProcessError) as e:
+        run(
+            [
+                "data_check",
+                "--load",
+                "load_data/test.csv",
+                "--table",
+                "test_load_table_invalid",
+                "--load-mode",
+                "invalid",
+            ]
+        )
+
+
+def test_load_mode_with_load_tables():
+    out = run(
+        ["data_check", "--load-tables", "load_data/test.csv", "--load-mode", "append"]
+    )
+    assert out.strip() == "table test loaded from load_data/test.csv"
+
+
+def test_quiet():
+    out = run(["data_check", "--ping", "--quiet"])
+    assert out.strip() == ""
