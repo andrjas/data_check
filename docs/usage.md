@@ -21,6 +21,7 @@
 * `data_check --sql "SQL statement"` - run any SQL statement. Print result as CSV if it is a query.
 * `data_check -o/--output PATH` - output path for --sql.
 * `data_check --ping` - tries to connect to the database.
+* `data_check --quiet` - do not print any output.
 * `data_check --verbose` - print verbose output.
 * `data_check --traceback` - print traceback output for debugging.
 * `data_check --version` - Show the version and exit.
