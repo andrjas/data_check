@@ -28,7 +28,7 @@ class ExcelCheck(CSVCheck):
         return df
 
     def read_expect_file(
-        self, expect_file: Path, parse_dates, string_columns
+        self, expect_file: Path, string_columns
     ) -> Union[DataCheckResult, pd.DataFrame]:
         try:
             expect_result = pd.read_excel(

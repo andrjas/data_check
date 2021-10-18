@@ -203,7 +203,7 @@ def test_load_csv_date_type_huge_date(dc: DataCheck):
             "dat": [datetime.datetime(2021, 1, 25), datetime.datetime(9999, 12, 31)],
         }
     )
-    create_test_table_with_date("test_date_huge", "main", dc)
+    create_test_table_with_datetime("test_date_huge", "main", dc)
     dc.sql.table_loader.load_table_from_csv_file(
         "main.test_date_huge", Path("load_data/test_date_huge.csv"), LoadMode.TRUNCATE
     )
@@ -222,7 +222,7 @@ def test_load_csv_datetime_type(dc: DataCheck):
 
 
 def test_load_csv_date_with_existing_table_replace(dc: DataCheck):
-    create_test_table_with_date("test_date_replace", "main", dc)
+    create_test_table_with_datetime("test_date_replace", "main", dc)
     dc.sql.table_loader.load_table_from_csv_file(
         "main.test_date_replace", Path("load_data/test_date.csv"), LoadMode.REPLACE
     )

@@ -4,7 +4,8 @@ from jinja2 import Template
 import pandas as pd
 from pandas.core.frame import DataFrame
 import yaml
-from dateutil.parser import isoparse as _isoparse
+
+from .date import isoparse, parse_date_columns
 
 
 def expand_files(
@@ -57,12 +58,18 @@ def get_expect_file(sql_file: Path) -> Path:
 def read_csv(
     csv_file: Path,
     parse_dates: Union[bool, List[str]] = False,
-    string_columns: Dict[str, str] = {},
+    string_columns: List[str] = [],
 ) -> pd.DataFrame:
+    """Reads a CSV file and returns a DataFrame with the data from the file.
+    If parse_dates is given, .date.isoparse is used to convert the columns in parse_dates to datetime.
+    If parse_dates is not given, .date.parse_date_columns is used to try to convert all columns to datetime.
+
+    string_columns holds a list of all columns that should be treated as strings, without any convertion.
+    """
     if not parse_dates:
         parse_dates = False
     dtypes = {s: "object" for s in string_columns}
-    return pd.read_csv(
+    df = pd.read_csv(
         csv_file,
         na_values=[""],  # use empty string as nan
         keep_default_na=False,
@@ -74,6 +81,9 @@ def read_csv(
         date_parser=isoparse,
         dtype=dtypes,
     )
+    if not parse_dates:
+        _, df = parse_date_columns(df)
+    return df
 
 
 def print_csv(df: DataFrame, print_method):
@@ -107,10 +117,3 @@ def rel_path(path: Path) -> Path:
         return path.absolute().relative_to(Path(".").absolute())
     except ValueError:
         return path
-
-
-def isoparse(column):
-    if len(str(column)) < 10:
-        # must be at least of format YYYY-MM-DD to be a date
-        raise ValueError()
-    return _isoparse(str(column))

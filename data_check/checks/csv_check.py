@@ -68,12 +68,11 @@ class CSVCheck(BaseCheck):
             )
 
     def read_expect_file(
-        self, expect_file: Path, parse_dates, string_columns
+        self, expect_file: Path, string_columns
     ) -> Union[DataCheckResult, pd.DataFrame]:
         try:
             expect_result = read_csv(
                 expect_file,
-                parse_dates=parse_dates,
                 string_columns=string_columns,
             )
             return expect_result
@@ -107,9 +106,7 @@ class CSVCheck(BaseCheck):
         if isinstance(sql_result, DataCheckResult):
             return sql_result
 
-        expect_result = self.read_expect_file(
-            expect_file, sql_result.date_columns, sql_result.string_columns
-        )
+        expect_result = self.read_expect_file(expect_file, sql_result.string_columns)
         if isinstance(expect_result, DataCheckResult):
             return expect_result
 

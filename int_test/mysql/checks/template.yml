@@ -6,3 +6,5 @@ test_date: "TIMESTAMP('2020-12-20')"
 varchar_type: varchar(10)
 test_schema: main
 huge_date: TIMESTAMP('9999-12-31')
+empty_string_date: >
+                    ''

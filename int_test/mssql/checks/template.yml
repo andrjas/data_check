@@ -6,3 +6,7 @@ test_date: "CONVERT(DATETIME, '2020-12-20', 120)"
 varchar_type: varchar(10)
 test_schema: main
 huge_date: CONVERT(DATETIME, '9999-12-31', 120)
+
+# MSSQL converts an empty string to '1900-01-01 00:00:00.000',
+# so we threat the empty string as null for this check
+empty_string_date: 'null'

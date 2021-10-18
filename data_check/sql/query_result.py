@@ -2,7 +2,7 @@ import pandas as pd
 from typing import List, Optional
 from pandas.api.types import is_string_dtype
 
-from ..io import isoparse
+from ..date import parse_date_columns
 
 
 class QueryResult:
@@ -45,28 +45,14 @@ class QueryResult:
             if is_string_dtype(self._df[k]) and k not in self.date_columns
         ]
 
-    def _isoparse(self, column):
-        if len(column) < 10:
-            # must be at least of format YYYY-MM-DD to be a date
-            raise ValueError()
-        return isoparse(column)
-
-    def _parse_date_columns(self, df: pd.DataFrame) -> pd.DataFrame:
-        for column_name, column in df.items():
-            try:
-                _col = column.apply(isoparse)
-                df[column_name] = _col
-                self._date_columns.append(str(column_name))
-            except Exception:
-                pass
-        return df
-
     def _load_df(self):
         # use coerce_float=True as it is used in pandas by default
         frame = pd.DataFrame.from_records(
             self.data, columns=self.columns, coerce_float=True
         )
-        self._df = self._parse_date_columns(frame)
+        date_cols, df = parse_date_columns(frame)
+        self._date_columns = date_cols
+        self._df = df
 
     @property
     def df(self) -> pd.DataFrame:

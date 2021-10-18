@@ -1,4 +1,3 @@
--- date: date_test, inf_date_test
 select
     'string' as string_test,
     42 as int_test,

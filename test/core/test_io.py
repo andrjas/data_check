@@ -3,7 +3,11 @@ from pathlib import Path
 import pytest
 
 
-from data_check.io import expand_files, read_sql_file, get_expect_file  # noqa E402
+from data_check.io import (
+    expand_files,
+    read_sql_file,
+    get_expect_file,
+)
 
 
 def test_expand_files():
