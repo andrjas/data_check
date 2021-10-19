@@ -86,3 +86,8 @@ def test_get_check_empty_set_check(dc: DataCheck):
 def test_get_check_excel_check(dc: DataCheck):
     check = dc.get_check(Path("checks/excel/basic/simple_excel.sql"))
     assert isinstance(check, ExcelCheck)
+
+
+def test_run_fail_if_path_doesnt_exist(dc: DataCheck):
+    result = dc.run([Path("non_existing_checks")])
+    assert not result

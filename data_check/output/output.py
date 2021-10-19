@@ -119,6 +119,8 @@ class DataCheckOutput:
             return self._failed_with_exception_result(passed, rel_source, exception)
         elif result_type == ResultType.FAILED_DIFFERENT_LENGTH:
             return self._failed_result_different_length(passed, rel_source)
+        elif result_type == ResultType.FAILED_PATH_NOT_EXISTS:
+            return self._failed_path_not_exists(passed, rel_source)
 
     def _passed_result(
         self, passed: bool, source: Path, result: pd.DataFrame
@@ -164,5 +166,14 @@ class DataCheckOutput:
         return DataCheckResult(
             passed=passed,
             result=f"{source} generated an exception: {exception}",
+            message=message,
+        )
+
+    def _failed_path_not_exists(self, passed: bool, source: Path) -> DataCheckResult:
+        warn = self.str_warn("PATH DOESN'T EXIST")
+        message = f"{source}: {warn}"
+        return DataCheckResult(
+            passed=passed,
+            result=f"{source}: PATH DOESN'T EXIST",
             message=message,
         )

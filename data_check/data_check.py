@@ -15,6 +15,7 @@ from .checks import (
     PipelineCheck,
     EmptySetCheck,
     ExcelCheck,
+    PathNotExists,
 )
 
 
@@ -42,7 +43,9 @@ class DataCheck:
         return check.run_test()
 
     def get_check(self, check_path: Path) -> Optional[BaseCheck]:
-        if PipelineCheck.is_check_path(check_path):
+        if PathNotExists.is_check_path(check_path):
+            return PathNotExists(self, check_path)
+        elif PipelineCheck.is_check_path(check_path):
             return PipelineCheck(self, check_path)
         elif EmptySetCheck.is_check_path(check_path):
             return EmptySetCheck(self, check_path)
