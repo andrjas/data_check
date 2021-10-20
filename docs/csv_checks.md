@@ -48,23 +48,10 @@ Only the data types strings, decimals and date/timestamps (partially) are suppor
 Empty strings are treated as null values.
 
 data_check recognizes if a column in a SQL query is a date or timestamp and converts the columns in the CSV automatically to timestamps.
-For some databases (PostgreSQL, MySQL) this only works for timestamp columns, not date columns.
-The date format in the CSV file is inferred, but it's best to use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
+For some databases (PostgreSQL, MySQL) this only works for timestamp/datetime columns, not date columns.
+The date format in the CSV file must use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601), for example "2021-12-30" or "2021-12-30 13:45:56".
 
 Any other data type must be converted to strings/varchar in the SQL query.
-
-## Large date values
-
-data_check uses primarly pandas Timestamp to store date values. However, there is a [limit](https://pandas.pydata.org/docs/reference/api/pandas.Timestamp.max.html) how large the date can be (currently 2262-04-11 23:47:16.854775807). If you need to process larger date values (especially 9999-12-31 to represent "infinity" in historized tables), data_check needs some input to process it right. Otherwise the column in the SQL query will have the value [NaT](https://pandas.pydata.org/pandas-docs/stable/user_guide/missing_data.html) but the result from the CSV file will have the date represented as a string and the test will fail.
-
-The SQL query can have a date hint to tell data_check to parse this column as a [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-
-```sql
--- date: some_date_column, other_date_column
-select ...
-```
-
-This will tell data_check to parse the columns _some\_date\_column_ and _other\_date\_column_ as dates in the SQL query as well as in the CSV file.
 
 
 ## Generating expectation files
