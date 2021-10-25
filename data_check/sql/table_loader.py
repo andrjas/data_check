@@ -148,7 +148,7 @@ class TableLoader:
         )
         return column_info
 
-    def load_table_from_csv_file(
+    def load_table_from_file(
         self,
         table: str,
         file: Path,
@@ -159,12 +159,8 @@ class TableLoader:
             load_mode = self.load_mode_from_string(load_mode)
         rel_file = base_path / file
         column_info = self.get_column_info(table)
+        data = self.load_df_from_file(rel_file, column_info)
 
-        data = read_csv(
-            csv_file=rel_file,
-            parse_dates=column_info.date_column_names,
-            string_columns=column_info.string_column_names,
-        )
         result = self.load_table(
             table_name=table,
             data=data,
@@ -177,6 +173,21 @@ class TableLoader:
             self.output.print(f"loading table {table} from {rel_file} failed")
         return result
 
+    def load_df_from_file(self, file: Path, column_info: ColumnInfo) -> pd.DataFrame:
+        if file.suffix.lower() == ".csv":
+            data = read_csv(
+                csv_file=file,
+                parse_dates=column_info.date_column_names,
+                string_columns=column_info.string_column_names,
+            )
+        elif file.suffix.lower() == ".xlsx":
+            data = pd.read_excel(
+                file, sheet_name=0, header=0, engine="openpyxl", dtype="object"
+            )
+        else:
+            raise Exception(f"file type unsupported: {file.suffix.lower()}")
+        return data
+
     def load_tables_from_files(
         self,
         files: List[Path],
@@ -185,12 +196,14 @@ class TableLoader:
     ):
         if isinstance(load_mode, str):
             load_mode = self.load_mode_from_string(load_mode)
-        csv_files = expand_files(files, extension=".csv", base_path=base_path)
+        flat_files = expand_files(
+            files, extension=[".csv", ".xlsx"], base_path=base_path
+        )
         parameters = [
-            {"table": f.stem, "file": f, "load_mode": load_mode} for f in csv_files
+            {"table": f.stem, "file": f, "load_mode": load_mode} for f in flat_files
         ]
         results = self.sql.runner.run_any(
-            run_method=self.load_table_from_csv_file, parameters=parameters
+            run_method=self.load_table_from_file, parameters=parameters
         )
         return all(results)
 

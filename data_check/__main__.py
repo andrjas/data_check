@@ -150,7 +150,7 @@ def main(
             click.echo("--table must be specified")
             sys.exit(1)
         else:
-            dc.sql.table_loader.load_table_from_csv_file(
+            dc.sql.table_loader.load_table_from_file(
                 table=table,
                 file=load,
                 load_mode=load_mode,

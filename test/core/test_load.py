@@ -8,6 +8,11 @@ from data_check.sql import DataCheckSql, LoadMode  # noqa E402
 from data_check.config import DataCheckConfig  # noqa E402
 
 
+@pytest.fixture(scope="module", params=["csv", "xlsx"])
+def file_type(request):
+    return request.param
+
+
 @pytest.fixture
 def sql() -> DataCheckSql:
     dc_config = DataCheckConfig().load_config().set_connection("test")
@@ -98,13 +103,15 @@ def test_load_from_dataframe_replace_deletes_data(sql: DataCheckSql):
     assert_frame_equal(data2, df)
 
 
-def test_load_from_csv_file(sql: DataCheckSql):
+def test_load_from_file(sql: DataCheckSql, file_type):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
-    sql.get_connection().execute("create table test (id number(10), data varchar2(10))")
-    sql.table_loader.load_table_from_csv_file(
-        "test", Path("load_data/test.csv"), LoadMode.REPLACE
+    sql.get_connection().execute(
+        f"create table test_{file_type} (id number(10), data varchar2(10))"
     )
-    df = sql.run_query("select id, data from test")
+    sql.table_loader.load_table_from_file(
+        f"test_{file_type}", Path(f"load_data/test.{file_type}"), LoadMode.REPLACE
+    )
+    df = sql.run_query(f"select id, data from test_{file_type}")
     assert_frame_equal(data, df)
 
 
@@ -127,21 +134,23 @@ def test_load_from_files_non_existing_dir(sql: DataCheckSql):
         )
 
 
-def test_load_from_csv_file_load_modes(sql: DataCheckSql):
-    sql.table_loader.load_table_from_csv_file(
-        "test", Path("load_data/test.csv"), LoadMode.TRUNCATE
+def test_load_from_file_load_modes(sql: DataCheckSql, file_type):
+    sql.table_loader.load_table_from_file(
+        f"test_{file_type}", Path(f"load_data/test.{file_type}"), LoadMode.TRUNCATE
     )
-    sql.table_loader.load_table_from_csv_file(
-        "test", Path("load_data/test.csv"), LoadMode.APPEND
+    sql.table_loader.load_table_from_file(
+        f"test_{file_type}", Path(f"load_data/test.{file_type}"), LoadMode.APPEND
     )
-    df = sql.run_query("select id, data from test")
+    df = sql.run_query(f"select id, data from test_{file_type}")
     assert len(df) == 6
 
 
-def test_load_from_csv_file_non_existing_file(sql: DataCheckSql):
+def test_load_from_file_non_existing_file(sql: DataCheckSql, file_type):
     with pytest.raises(FileNotFoundError):
-        sql.table_loader.load_table_from_csv_file(
-            "test", Path("load_data/non_existing.csv"), LoadMode.TRUNCATE
+        sql.table_loader.load_table_from_file(
+            f"test_{file_type}",
+            Path(f"load_data/non_existing.{file_type}"),
+            LoadMode.TRUNCATE,
         )
 
 

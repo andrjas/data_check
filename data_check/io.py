@@ -9,19 +9,26 @@ from .date import isoparse, parse_date_columns
 
 
 def expand_files(
-    files: List[Path], extension: str = ".sql", base_path: Path = Path(".")
+    files: List[Path],
+    extension: Union[str, List[str]] = ".sql",
+    base_path: Path = Path("."),
 ) -> List[Path]:
     """
     Expands the list of files or folders,
     with all SQL files in a folder as seperate files.
     """
+    if isinstance(extension, str):
+        extensions = [extension]
+    else:
+        extensions = extension
     result: List[Path] = []
     for f in files:
         rel_file = base_path / f
         if rel_file.is_file():
             result.append(rel_file)
         elif rel_file.is_dir():
-            result.extend(rel_file.glob(f"**/*{extension}"))
+            for ext in extensions:
+                result.extend(rel_file.glob(f"**/*{ext}"))
         else:
             raise Exception(f"unexpected path: {rel_file}")
     return result

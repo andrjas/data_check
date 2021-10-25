@@ -336,8 +336,9 @@ def test_load_tables():
 
 
 def test_load_tables_folder():
-    out = run(["data_check", "--load-tables", "load_data"])
-    assert "table test loaded from load_data/test.csv" in out
+    out = run(["data_check", "--load-tables", "load_data/tables"])
+    assert "table test1 loaded from load_data/tables/test1.csv" in out
+    assert "table test3 loaded from load_data/tables/test3.xlsx" in out
     assert "table main.test2 loaded from load_data/tables/main.test2.csv" in out
 
 
@@ -378,6 +379,19 @@ def test_load_table():
         ["data_check", "--load", "load_data/test.csv", "--table", "test_load_table"]
     )
     assert out.strip() == "table test_load_table loaded from load_data/test.csv"
+
+
+def test_load_table_excel():
+    out = run(
+        [
+            "data_check",
+            "--load",
+            "load_data/test.xlsx",
+            "--table",
+            "test_load_table_excel",
+        ]
+    )
+    assert out.strip() == "table test_load_table_excel loaded from load_data/test.xlsx"
 
 
 def test_load_mode_truncate():

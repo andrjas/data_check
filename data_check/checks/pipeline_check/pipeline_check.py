@@ -27,7 +27,7 @@ class PipelineCheck(BaseCheck):
         )
         self.register_pipeline_step(
             "load",
-            self.data_check.sql.table_loader.load_table_from_csv_file,
+            self.data_check.sql.table_loader.load_table_from_file,
             convert_to_path=["file"],
         )
         self.register_pipeline_step("cmd", self.run_cmd)
