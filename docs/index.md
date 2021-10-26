@@ -1,12 +1,13 @@
 # Welcome to data_check
 
-data_check is a simple data validation tool. In its most basic form it will execute SQL queries and compare the results against CSV files. But there are more advanced features:
+data_check is a simple data validation tool. In its most basic form it will execute SQL queries and compare the results against CSV or Excel files. But there are more advanced features:
 
 ## Features
 
 * [CSV checks](csv_checks.md): compare SQL queries against CSV files
+* Excel support: Use Excel (xlsx) instead of CSV
 * multiple environments (databases) in the configuration file
-* [populate tables](usage.md#loading-data-into-tables) from CSV files
+* [populate tables](usage.md#loading-data-into-tables) from CSV or Excel files
 * [execute any SQL files on a database](usage.md#executing-arbitrary-sql-code)
 * more complex [pipelines](pipelines.md)
 * run any script/command (via pipelines)
@@ -29,11 +30,13 @@ To create a new project folder write a data_check.yml for the [configuration](in
 
 data_check has a simple layout for projects: a single configuration file and a folder with the test files. You can also organize the test files in subfolders.
 
-    data_check.yml    # The configuration file
-    checks/           # Default folder for data tests
-        some_test.sql # SQL file with the query to run against the database
-        some_test.csv # CSV file with the expected result
-        subfolder/    # Tests can be nested in subfolders
+    data_check.yml      # The configuration file
+    checks/             # Default folder for data tests
+        some_test.sql   # SQL file with the query to run against the database
+        some_test.csv   # CSV file with the expected result
+        other_test.sql  # SQL file with another test
+        other_test.xlsx # Expected result for other_test.sql in an Excel file
+        subfolder/      # Tests can be nested in subfolders
 
 ## Configuration
 
