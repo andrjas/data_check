@@ -56,7 +56,7 @@ _data\_check\_pipeline.yml_ is a YAML file with _steps_ as its main element that
 
 _steps_ is a list of steps that are executed in the pipeline sequentially. If any of the steps fail the pipeline will fail and the following steps will not be executed.
 
-Most steps have a list of files as a parameter. You you only need a single file/path, you can usually use a short form: `step_name: path`.
+Most steps have a list of files as a parameter. If you only need a single file/path, you can usually use a short form: `step_name: path`.
 
 ### check
 
@@ -127,7 +127,7 @@ You can also omit _files_:
 
 ### sql_files
 
-_sql\_files_ is like calling `data_check --sql-files ...`. This will run a SQL file or all SQL files in a folder againts the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call _sql\_files_ twice. _sql\_file_ is an alias for _sql\_files_.
+_sql\_files_ is like calling `data_check --sql-files ...`. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call _sql\_files_ twice. _sql\_file_ is an alias for _sql\_files_.
 
 Short form:
 ```yaml
@@ -219,8 +219,8 @@ You can use some predefined parameters in a pipeline definition:
 
 * CONNECTION: The name of the connection used for this run.
 * CONNECTION_STRING: The connection string as defined in _data\_check.yml_ used for the connection.
-* PROJECT_PATH: The path of the data_check project, i.e. the folder containing _data\_check.yml_.
-* PIPELINE_PATH: The absolute path to the pipeline, i.e. the folder containing _data\_check\_pipeline.yml_.
+* PROJECT_PATH: The path of the data_check project (the folder containing _data\_check.yml_).
+* PIPELINE_PATH: The absolute path to the pipeline (the folder containing _data\_check\_pipeline.yml_).
 * PIPELINE_NAME: The name of the folder containing _data\_check\_pipeline.yml_.
 
 

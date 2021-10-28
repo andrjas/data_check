@@ -26,7 +26,7 @@ checks/basic/unicode_string.sql: PASSED
 
 ## Tests structure
 
-You can structure your test in many ways. You can also mix there structures.
+You can structure your test in many ways. You can also mix these structures.
 
 ### By pipeline
 
@@ -62,7 +62,7 @@ checks/
         ...
 ```
 
-This way you can run quick test, e.g. schema validation, many times during development. Other tests that must process a lot of data can be run less frequently, e.g. in a integration environment.
+This way you can run quick test, for example schema validation, many times during development. Other tests that must process a lot of data can be run less frequently, for example in an integration environment.
 
 ## Database URLs
 

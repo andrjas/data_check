@@ -2,8 +2,8 @@
 
 ## Commands
 
-* `data_check` - Run data_check agains the default connection in the _checks_ folder.
-* `data_check some_folder` - Run data_check agains the default connection in the _some_folder_ folder.
+* `data_check` - Run data_check against the default connection in the _checks_ folder.
+* `data_check some_folder` - Run data_check against the default connection in the _some_folder_ folder.
 * `data_check some_folder/some_file.sql` - Run data_check against the default connection for a single test.
 * `data_check -c/--connection CONNECTION` - use another connection than the default.
 * `data_check -n/--workers WORKERS` - use WORKERS threads to run the queries (default: 4).
@@ -39,7 +39,7 @@ __Exit code 1:__ At least one test failed.
 
 Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV or Excel files to load data into tables. The [CSV format](usage.md#csv-format) is the same as used for testing. The header in the CSV file or the first row in the Excel file must match the columns in the table. Additionally, Excel cells can use its native date/datetime format.
 
-If the table doesn't exists, it will be created. The schema and table names are always case-insensitive, as long as the database supports it. Otherwise they are lowercased.
+If the table doesn't exist, it will be created. The schema and table names are always case-insensitive, as long as the database supports it. Otherwise, they are lowercased.
 
 ### Loading data into a single table
 
@@ -50,7 +50,7 @@ To load data from some CSV or Excel file into a table, you can use `data_check -
 You can use multiple CSV and Excel files or a whole folder to load the data into tables. The table name will be derived from the file name.
 
 * `data_check --load-tables path/schema.table_1.csv` - this will load the data from the CSV file into the table schema.table_1
-* `data_check --load-tables path/schema.table_2.xlsx` - this will load the data from the Exceö file into the table schema.table_2
+* `data_check --load-tables path/schema.table_2.xlsx` - this will load the data from the Excel file into the table schema.table_2
 * `data_check --load-tables path/to/some_folder` - this will load the data from all CSV and Excel files in this folder into tables matching the file names.
 
 The path will be searched recursively for CSV and Excel files. The folder structure doesn't matter when matching the table names, only the file name matters.

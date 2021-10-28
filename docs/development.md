@@ -18,7 +18,7 @@ data_check has two layers of tests:
 
 ### Unit tests
 
-[pytest](https://pytest.org/) is used for unit testing. There are two types of test for data_check in the _test_ folder: Basic tests for the code and tests against a database.
+[pytest](https://pytest.org/) is used for unit testing. There are two types of tests for data_check in the _test_ folder: Basic tests for the code and tests against a database.
 
 For unit tests an in-memory SQLite database that is integrated into Python is used.
 

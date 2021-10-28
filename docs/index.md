@@ -1,6 +1,6 @@
 # Welcome to data_check
 
-data_check is a simple data validation tool. In its most basic form it will execute SQL queries and compare the results against CSV or Excel files. But there are more advanced features:
+data_check is a simple data validation tool. In its most basic form, it will execute SQL queries and compare the results against CSV or Excel files. But there are more advanced features:
 
 ## Features
 

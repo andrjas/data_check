@@ -4,7 +4,7 @@ This is the default mode when running data_check. data_check expects a [SQL file
 
 ## SQL file
 
-Each SQL file must contain a single SQL query. The query be run against the database, hence you must use the SQL dialect that the database in use understands.
+Each SQL file must contain a single SQL query. The query will be executed in the database, hence you must use the SQL dialect that the database in use understands.
 
 ### Templates
 
@@ -30,7 +30,7 @@ ABC
 
 ## CSV format
 
-data_check uses a pretty basic CSV format. Each column is separated by a comma without any space around them.
+data_check uses a basic CSV format. Each column is separated by a comma without any space around them.
 The first line must contain a header. The columns must match the columns in the SQL file. 
 
 Any columns that do not match between the CSV and the SQL file will be ignored.

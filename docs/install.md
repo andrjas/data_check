@@ -1,6 +1,6 @@
 # Installing data_check
 
-Depending on your system there are many ways to install data_check. Generally the steps are always the same:
+Depending on your system there are many ways to install data_check. Generally, the steps are always the same:
 
 - create a virtual environment
 - activate the virtual environment
