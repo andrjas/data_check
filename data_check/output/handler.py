@@ -1,6 +1,7 @@
 import multiprocessing
 from typing import Any
 import os
+import locale
 
 
 class OutputHandler:
@@ -10,6 +11,7 @@ class OutputHandler:
 
     def __init__(self, quiet: bool):
         self.quiet = quiet
+        self.encoding = locale.getpreferredencoding(False)
 
     @property
     def is_main(self):
@@ -34,4 +36,9 @@ class OutputHandler:
 
     def handle_subprocess_output(self, pipe):
         for line in iter(pipe.readline, b""):
-            self.print(line.decode().rstrip(os.linesep))
+            try:
+                # try printing the line with the system encoding
+                self.print(line.decode(self.encoding).rstrip(os.linesep))
+            except Exception:
+                # if this doesn't help, print the raw bytes without the b''
+                self.print(str(line)[2:-1].rstrip(os.linesep))

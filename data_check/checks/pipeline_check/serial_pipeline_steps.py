@@ -60,7 +60,6 @@ class SerialPipelineSteps:
             argspec = inspect.getfullargspec(call_method)
             if "base_path" in argspec.args:
                 prepared_params.update({"base_path": path})
-            print("rps", step_type, call_method, prepared_params)
             return call_method(**prepared_params)
         else:
             raise Exception(f"unknown pipeline step: {step_type}")
