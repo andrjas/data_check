@@ -54,6 +54,21 @@ The date format in the CSV file must use [ISO 8601](https://en.wikipedia.org/wik
 Any other data type must be converted to strings/varchar in the SQL query.
 
 
+## Empty dataset checks
+
+If you expect the result of the SQL query to be empty, you do not have to write a CSV file with the header. Instead, create a file with the ending _.empty_.
+Since the column names do not matter, the check will pass, if the SQL query does not return any values.
+
+The _.empty_ file can be empty or contain any data. data_check does not read the content from this file.
+
+Example:
+
+```
+empty_query.sql
+empty_query.empty
+```
+
+
 ## Generating expectation files
 
 If you run `data_check --generate` in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add `--force` to overwrite existing CSV files.

@@ -11,6 +11,7 @@ data_check is a simple data validation tool. In its most basic form, it will exe
 * [execute any SQL files on a database](usage.md#executing-arbitrary-sql-code)
 * more complex [pipelines](pipelines.md)
 * run any script/command (via pipelines)
+* simplified checks for [empty datasets](csv_checks.md#empty-dataset-checks)
 
 ## Database support
 
@@ -30,13 +31,15 @@ To create a new project folder write a data_check.yml for the [configuration](in
 
 data_check has a simple layout for projects: a single configuration file and a folder with the test files. You can also organize the test files in subfolders.
 
-    data_check.yml      # The configuration file
-    checks/             # Default folder for data tests
-        some_test.sql   # SQL file with the query to run against the database
-        some_test.csv   # CSV file with the expected result
-        other_test.sql  # SQL file with another test
-        other_test.xlsx # Expected result for other_test.sql in an Excel file
-        subfolder/      # Tests can be nested in subfolders
+    data_check.yml          # The configuration file
+    checks/                 # Default folder for data tests
+        some_test.sql       # SQL file with the query to run against the database
+        some_test.csv       # CSV file with the expected result
+        other_test.sql      # SQL file with another test
+        other_test.xlsx     # Expected result for other_test.sql in an Excel file
+        empty_result.sql    # SQL file with a result set that is expected to be empty
+        empty_result.empty  # empty file for empty_result.sql
+        subfolder/          # Tests can be nested in subfolders
 
 ## Configuration
 
