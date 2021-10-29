@@ -2,6 +2,34 @@
 
 ## [Unreleased]
 
+
+## [0.8.0] - 2021-10-29
+
+### Added
+
+- Excel support (for checks and loading tables)
+- --quiet suppresses all output
+- simpler empty dataset checks
+- testing if all commands are documented
+- tests for nullable date columns
+- tests for large dates (9999-12-31)
+
+### Changed
+
+- date handling: columns from the database and CSV files are better recognized as dates
+- tests are split into multiple folders
+- cli tests are moved to integration tests
+- refactoring: DataCheck class no longer inherits the check classes
+
+### Removed
+
+- date hints
+
+### Fixed
+
+- checks now fail if an invalid path is given
+
+
 ## [0.7.0] - 2021-08-16
 
 ### Added
