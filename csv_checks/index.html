@@ -12,11 +12,11 @@
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
 
         <script src="../js/jquery-1.10.2.min.js" defer></script>
         <script src="../js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
@@ -103,7 +103,7 @@
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#large-date-values" class="nav-link">Large date values</a>
+            <li class="nav-item" data-level="2"><a href="#empty-dataset-checks" class="nav-link">Empty dataset checks</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -121,7 +121,7 @@
 <h1 id="csv-checks">CSV checks</h1>
 <p>This is the default mode when running data_check. data_check expects a <a href="#sql-file">SQL file</a> and a <a href="#csv-format">CSV file</a>. The SQL file will be executed against the database and the result is compared with the CSV file. If they match, the test is passed, otherwise it fails.</p>
 <h2 id="sql-file">SQL file</h2>
-<p>Each SQL file must contain a single SQL query. The query be run against the database, hence you must use the SQL dialect that the database in use understands.</p>
+<p>Each SQL file must contain a single SQL query. The query will be executed in the database, hence you must use the SQL dialect that the database in use understands.</p>
 <h3 id="templates">Templates</h3>
 <p>SQL files can contain Jinja2 templates. The templates are replaced with the values defined in <em>checks/template.yml</em>. Example:</p>
 <p>SQL file:</p>
@@ -135,7 +135,7 @@
 ABC
 </code></pre>
 <h2 id="csv-format">CSV format</h2>
-<p>data_check uses a pretty basic CSV format. Each column is separated by a comma without any space around them.
+<p>data_check uses a basic CSV format. Each column is separated by a comma without any space around them.
 The first line must contain a header. The columns must match the columns in the SQL file. </p>
 <p>Any columns that do not match between the CSV and the SQL file will be ignored.</p>
 <pre><code class="language-csv">string_header,int_header,float_header,date_header,null_header
@@ -147,16 +147,17 @@ string,42,42.1,2020-12-20,
 <p>Only the data types strings, decimals and date/timestamps (partially) are supported. Strings can be optionally enclosed in double quotes (").
 Empty strings are treated as null values.</p>
 <p>data_check recognizes if a column in a SQL query is a date or timestamp and converts the columns in the CSV automatically to timestamps.
-For some databases (PostgreSQL, MySQL) this only works for timestamp columns, not date columns.
-The date format in the CSV file is inferred, but it's best to use <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a>.</p>
+For some databases (PostgreSQL, MySQL) this only works for timestamp/datetime columns, not date columns.
+The date format in the CSV file must use <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a>, for example "2021-12-30" or "2021-12-30 13:45:56".</p>
 <p>Any other data type must be converted to strings/varchar in the SQL query.</p>
-<h2 id="large-date-values">Large date values</h2>
-<p>data_check uses primarly pandas Timestamp to store date values. However, there is a <a href="https://pandas.pydata.org/docs/reference/api/pandas.Timestamp.max.html">limit</a> how large the date can be (currently 2262-04-11 23:47:16.854775807). If you need to process larger date values (especially 9999-12-31 to represent "infinity" in historized tables), data_check needs some input to process it right. Otherwise the column in the SQL query will have the value <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/missing_data.html">NaT</a> but the result from the CSV file will have the date represented as a string and the test will fail.</p>
-<p>The SQL query can have a date hint to tell data_check to parse this column as a <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a>:</p>
-<pre><code class="language-sql">-- date: some_date_column, other_date_column
-select ...
+<h2 id="empty-dataset-checks">Empty dataset checks</h2>
+<p>If you expect the result of the SQL query to be empty, you do not have to write a CSV file with the header. Instead, create a file with the ending <em>.empty</em>.
+Since the column names do not matter, the check will pass, if the SQL query does not return any values.</p>
+<p>The <em>.empty</em> file can be empty or contain any data. data_check does not read the content from this file.</p>
+<p>Example:</p>
+<pre><code>empty_query.sql
+empty_query.empty
 </code></pre>
-<p>This will tell data_check to parse the columns <em>some_date_column</em> and <em>other_date_column</em> as dates in the SQL query as well as in the CSV file.</p>
 <h2 id="generating-expectation-files">Generating expectation files</h2>
 <p>If you run <code>data_check --generate</code> in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add <code>--force</code> to overwrite existing CSV files.</p>
 <p>You can also generate expectation files for <a href="../pipelines/#generating-pipeline.checks">pipelines</a>. If you run <code>--generate</code> on a project with pipelines, beware though that the pipelines will be executed!</p></div>
@@ -182,16 +183,13 @@ select ...
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
             </div>
             <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
+                <p>From here you can search these documents. Enter your search terms below.</p>
                 <form>
                     <div class="form-group">
                         <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
                     </div>
                 </form>
-                <div id="mkdocs-search-results"></div>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
             </div>
             <div class="modal-footer">
             </div>

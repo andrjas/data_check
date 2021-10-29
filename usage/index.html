@@ -12,11 +12,11 @@
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
 
         <script src="../js/jquery-1.10.2.min.js" defer></script>
         <script src="../js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
@@ -121,8 +121,8 @@
 <h1 id="usage">Usage</h1>
 <h2 id="commands">Commands</h2>
 <ul>
-<li><code>data_check</code> - Run data_check agains the default connection in the <em>checks</em> folder.</li>
-<li><code>data_check some_folder</code> - Run data_check agains the default connection in the <em>some_folder</em> folder.</li>
+<li><code>data_check</code> - Run data_check against the default connection in the <em>checks</em> folder.</li>
+<li><code>data_check some_folder</code> - Run data_check against the default connection in the <em>some_folder</em> folder.</li>
 <li><code>data_check some_folder/some_file.sql</code> - Run data_check against the default connection for a single test.</li>
 <li><code>data_check -c/--connection CONNECTION</code> - use another connection than the default.</li>
 <li><code>data_check -n/--workers WORKERS</code> - use WORKERS threads to run the queries (default: 4).</li>
@@ -140,6 +140,7 @@
 <li><code>data_check --sql "SQL statement"</code> - run any SQL statement. Print result as CSV if it is a query.</li>
 <li><code>data_check -o/--output PATH</code> - output path for --sql.</li>
 <li><code>data_check --ping</code> - tries to connect to the database.</li>
+<li><code>data_check --quiet</code> - do not print any output.</li>
 <li><code>data_check --verbose</code> - print verbose output.</li>
 <li><code>data_check --traceback</code> - print traceback output for debugging.</li>
 <li><code>data_check --version</code> - Show the version and exit.</li>
@@ -150,22 +151,23 @@
 <p><strong>Exit code 0:</strong> All tests run successfully.<br/>
 <strong>Exit code 1:</strong> At least one test failed.</p>
 <h2 id="loading-data-into-tables">Loading data into tables</h2>
-<p>Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV file to load data into the tables. The <a href="./#csv-format">CSV format</a> is the same as used for testing. The header in the CSV file must match the columns in the table. If the table doesn't exists, it will be created.</p>
-<p>The schema and table names are always case-insensitive, as long as the database supports it. Otherwise they are lowercased.</p>
+<p>Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV or Excel files to load data into tables. The <a href="./#csv-format">CSV format</a> is the same as used for testing. The header in the CSV file or the first row in the Excel file must match the columns in the table. Additionally, Excel cells can use its native date/datetime format.</p>
+<p>If the table doesn't exist, it will be created. The schema and table names are always case-insensitive, as long as the database supports it. Otherwise, they are lowercased.</p>
 <h3 id="loading-data-into-a-single-table">Loading data into a single table</h3>
-<p>To load data from some CSV file into a table, you can use <code>data_check --load path/to/csv_file.csv --table schema.table_name</code>. This will truncate the table and load the content of the CSV file into the table. You can specify different <a href="./#load-modes">load modes</a> if you do not want to truncate the table.</p>
+<p>To load data from some CSV or Excel file into a table, you can use <code>data_check --load path/to/some_file.[csv/xlsx] --table schema.table_name</code>. This will truncate the table and load the content of the file into the table. You can specify different <a href="./#load-modes">load modes</a> if you do not want to truncate the table.</p>
 <h3 id="loading-data-into-multiple-tables">Loading data into multiple tables</h3>
-<p>You can use multiple CSV files or a whole folder to load the data into tables. The table name will be derived from the file name.</p>
+<p>You can use multiple CSV and Excel files or a whole folder to load the data into tables. The table name will be derived from the file name.</p>
 <ul>
 <li><code>data_check --load-tables path/schema.table_1.csv</code> - this will load the data from the CSV file into the table schema.table_1</li>
-<li><code>data_check --load-tables path/to/some_folder</code> - this will load the data from all CSV files in this folder into tables matching the file names.</li>
+<li><code>data_check --load-tables path/schema.table_2.xlsx</code> - this will load the data from the Excel file into the table schema.table_2</li>
+<li><code>data_check --load-tables path/to/some_folder</code> - this will load the data from all CSV and Excel files in this folder into tables matching the file names.</li>
 </ul>
-<p>The path will be searched recursively for CSV files. The folder structure doesn't matter when matching the table names, only the file name matters.</p>
+<p>The path will be searched recursively for CSV and Excel files. The folder structure doesn't matter when matching the table names, only the file name matters.</p>
 <h3 id="load-modes">Load modes</h3>
 <p>There are multiple modes that control the data loading:</p>
 <ul>
 <li>truncate - truncate the table before loading the data.</li>
-<li>replace - drop the table and recreate it based on the columns in the CSV file.</li>
+<li>replace - drop the table and recreate it based on the columns in the CSV or Excel file.</li>
 <li>append - do not touch the table before loading the data.</li>
 </ul>
 <p>By default, the tables will be truncated before loading the data. You can use the other modes with <code>--load-mode</code>:</p>
@@ -175,9 +177,9 @@
 <p>When loading data from CSV files, data_check (or more precisely: <a href="https://pandas.pydata.org/">pandas</a>) will infer the data types from the file.
 When loading the data into the table, the database will usually implicitly convert the data types.
 This works good for simple data types like strings and numbers.</p>
-<p>If you need to load date types (or timestamps) and the table has a date column, data_check will infer the date format from the CSV file for that column.
+<p>If you need to load date types (or timestamps) and the table has a date column, data_check will try to convert these columns in the CSV file into a datetime.
 This doesn't work when using <code>--load-mode replace</code> since the table will be dropped before it can be analyzed. This will probably result in a varchar column instead of date.</p>
-<p>It's best to use <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> for dates.</p>
+<p>Use <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> for dates, like for [CSV checks]((csv_checks.md#csv-format)</p>
 <h2 id="executing-arbitrary-sql-code">Executing arbitrary SQL code</h2>
 <p>You can run any SQL file against the database by using the <code>--sql-files</code> command:</p>
 <p><code>data_check --sql-files sql_file.sql other_file.sql</code></p>
@@ -185,7 +187,11 @@ This doesn't work when using <code>--load-mode replace</code> since the table wi
 <p><code>data_check --sql-files some/folder/with/sql_files</code></p>
 <p>All files are run in parallel. If you have dependencies between the files, data_check must be called sequentially for each file.</p>
 <p>Multiple statements in a SQL file usually must be inside an anonymous block. MySQL doesn't support this however.</p>
-<p><code>--sql-file</code> is an alias for <code>--sql-files</code>. Use it to indicate, that you only want to run a single file.</p></div>
+<p><code>--sql-file</code> is an alias for <code>--sql-files</code>. Use it to indicate, that you only want to run a single file.</p>
+<p>You can also run a SQL statement directly from the command line:</p>
+<p><code>data_check --sql "select * from tableX"</code></p>
+<p>This will execute the query and, if it is a query, print the result as CSV. You can also write the result into a file:</p>
+<p><code>data_check --sql "select * from tableX" --output some_file.csv</code></p></div>
             </div>
         </div>
 
@@ -208,16 +214,13 @@ This doesn't work when using <code>--load-mode replace</code> since the table wi
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
             </div>
             <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
+                <p>From here you can search these documents. Enter your search terms below.</p>
                 <form>
                     <div class="form-group">
                         <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
                     </div>
                 </form>
-                <div id="mkdocs-search-results"></div>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
             </div>
             <div class="modal-footer">
             </div>

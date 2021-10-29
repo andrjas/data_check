@@ -12,11 +12,11 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
 
         <script src="js/jquery-1.10.2.min.js" defer></script>
         <script src="js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
@@ -135,15 +135,17 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="welcome-to-data_check">Welcome to data_check</h1>
-<p>data_check is a simple data validation tool. In its most basic form it will execute SQL queries and compare the results against CSV files. But there are more advanced features:</p>
+<p>data_check is a simple data validation tool. In its most basic form, it will execute SQL queries and compare the results against CSV or Excel files. But there are more advanced features:</p>
 <h2 id="features">Features</h2>
 <ul>
 <li><a href="csv_checks/">CSV checks</a>: compare SQL queries against CSV files</li>
+<li>Excel support: Use Excel (xlsx) instead of CSV</li>
 <li>multiple environments (databases) in the configuration file</li>
-<li><a href="usage/#loading-data-into-tables">populate tables</a> from CSV files</li>
+<li><a href="usage/#loading-data-into-tables">populate tables</a> from CSV or Excel files</li>
 <li><a href="usage/#executing-arbitrary-sql-code">execute any SQL files on a database</a></li>
 <li>more complex <a href="pipelines/">pipelines</a></li>
 <li>run any script/command (via pipelines)</li>
+<li>simplified checks for <a href="csv_checks/#empty-dataset-checks">empty datasets</a></li>
 </ul>
 <h2 id="database-support">Database support</h2>
 <p>data_check should work with any database that works with <a href="https://docs.sqlalchemy.org/en/14/dialects/">SQLAlchemy</a>. Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.</p>
@@ -154,11 +156,15 @@
 <p>To create a new project folder write a data_check.yml for the <a href=".#configuration">configuration</a> and put your <a href=".#test-files">test files</a> in the <em>checks</em> folder.</p>
 <h2 id="project-layout">Project layout</h2>
 <p>data_check has a simple layout for projects: a single configuration file and a folder with the test files. You can also organize the test files in subfolders.</p>
-<pre><code>data_check.yml    # The configuration file
-checks/           # Default folder for data tests
-    some_test.sql # SQL file with the query to run against the database
-    some_test.csv # CSV file with the expected result
-    subfolder/    # Tests can be nested in subfolders
+<pre><code>data_check.yml          # The configuration file
+checks/                 # Default folder for data tests
+    some_test.sql       # SQL file with the query to run against the database
+    some_test.csv       # CSV file with the expected result
+    other_test.sql      # SQL file with another test
+    other_test.xlsx     # Expected result for other_test.sql in an Excel file
+    empty_result.sql    # SQL file with a result set that is expected to be empty
+    empty_result.empty  # empty file for empty_result.sql
+    subfolder/          # Tests can be nested in subfolders
 </code></pre>
 <h2 id="configuration">Configuration</h2>
 <p>data_check uses the data_check.yml file in the current folder for configuration.
@@ -196,16 +202,13 @@ connections:
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
             </div>
             <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
+                <p>From here you can search these documents. Enter your search terms below.</p>
                 <form>
                     <div class="form-group">
                         <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
                     </div>
                 </form>
-                <div id="mkdocs-search-results"></div>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
             </div>
             <div class="modal-footer">
             </div>
@@ -256,6 +259,6 @@ connections:
 </html>
 
 <!--
-MkDocs version : 1.1.2
-Build Date UTC : 2021-08-16 16:58:37.774554+00:00
+MkDocs version : 1.2.3
+Build Date UTC : 2021-10-29 03:35:38.244403+00:00
 -->
