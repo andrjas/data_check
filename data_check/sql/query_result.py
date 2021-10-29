@@ -13,11 +13,6 @@ class QueryResult:
         self._df: Optional[pd.DataFrame] = None
         self._date_columns: List[str] = []
 
-        # We fetch columns and data here, but do not store 'result'
-        # since we might use the QueryResult in another thread.
-        # self.columns = result.keys()
-        # self.data = result.fetchall()
-
     @property
     def data(self):
         if self._data is None:

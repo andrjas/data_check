@@ -55,7 +55,6 @@ class DataCheckSql:
         # Do not keep the connection if runner has more than 1 workers.
         # Cannot pickle otherwise.
         return self.runner.workers == 1
-        # return True
 
     def get_engine(self, extra_params: Dict[str, Any] = {}) -> Engine:
         """
@@ -64,8 +63,6 @@ class DataCheckSql:
         if self.__engine is None:
             _engine = create_engine(
                 path.expandvars(self.connection),
-                # poolclass=QueuePool,
-                # pool_size=20,
                 **{**self.get_db_params(), **extra_params},
             )
             if self._keep_connection():
@@ -96,9 +93,7 @@ class DataCheckSql:
     def run_query_with_result(self, query: str) -> QueryResult:
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
-        # self.output.log(f"start query {query}", level="VERBOSE")
         result = QueryResult(query, self.get_connection().execute(text(query)))
-        # self.output.log(f"finished query {query} {id(x)}", level="VERBOSE")
         return result
 
     def test_connection(self) -> bool:
