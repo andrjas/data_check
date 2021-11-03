@@ -42,8 +42,12 @@ class CSVCheck(BaseCheck):
         sql_result.fillna(value=pd.NA, inplace=True)
         # using "" instead of r'^$' doesn't work somehow, so we need to use regex
         sql_result.replace(r"^$", pd.NA, regex=True, inplace=True)
+        # replace empty datetime values with empty string
+        sql_result.replace({pd.NaT: pd.NA}, inplace=True)
 
         expect_result.fillna(value=pd.NA, inplace=True)
+        expect_result.replace(r"^$", pd.NA, regex=True, inplace=True)
+        expect_result.replace({pd.NaT: pd.NA}, inplace=True)
 
         df_merged = CSVCheck.merge_results(sql_result, expect_result)
         df_diff = df_merged[df_merged._merge != "both"]
