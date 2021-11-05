@@ -34,9 +34,8 @@ class CSVCheck(BaseCheck):
     def is_check_path(path: Path):
         return path.suffix.lower() == ".sql"
 
-    @staticmethod
     def get_result(
-        sql_result: pd.DataFrame, expect_result: pd.DataFrame, return_all: bool
+        self, sql_result: pd.DataFrame, expect_result: pd.DataFrame, return_all: bool
     ) -> Tuple[ResultType, pd.DataFrame]:
         # replace missing values and None with pd.NA
         sql_result.fillna(value=pd.NA, inplace=True)
@@ -52,6 +51,7 @@ class CSVCheck(BaseCheck):
         df_merged = CSVCheck.merge_results(sql_result, expect_result)
         df_diff = df_merged[df_merged._merge != "both"]
         assert isinstance(df_diff, pd.DataFrame)  # assert a DataFrame, not a Series
+        return_all = return_all or self.data_check.output.verbose
         df_result = df_merged if return_all else df_diff
 
         # empty diff means there are no differences and the test has passed
@@ -114,7 +114,7 @@ class CSVCheck(BaseCheck):
         if isinstance(expect_result, DataCheckResult):
             return expect_result
 
-        result_type, df_result = CSVCheck.get_result(
+        result_type, df_result = self.get_result(
             sql_result.df, expect_result, return_all
         )
         return self.data_check.output.prepare_result(

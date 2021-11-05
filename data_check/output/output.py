@@ -126,6 +126,8 @@ class DataCheckOutput:
         self, passed: bool, source: Path, result: pd.DataFrame
     ) -> DataCheckResult:
         message = f"{source}: {self.passed_message}"
+        if self.print_failed and self.verbose:
+            message += linesep + self.pprint_failed(result.copy())
         return DataCheckResult(passed=passed, result=result, message=message)
 
     def _failed_result(
