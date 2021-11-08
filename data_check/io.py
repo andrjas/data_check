@@ -81,6 +81,7 @@ def read_csv(
         na_values=[""],  # use empty string as nan
         keep_default_na=False,
         comment="#",
+        escapechar="\\",
         quotechar='"',
         quoting=0,
         engine="c",
@@ -101,7 +102,10 @@ def write_csv(
     df: DataFrame, output: Union[str, Path] = "", base_path: Path = Path(".")
 ):
     if output:
-        df.to_csv(base_path / output, index=False)
+        result = df.to_csv(index=False)
+        # escape # in strings that would otherwise be treated as the start of a comment
+        result = result.replace("#", "\\#")
+        Path(base_path / output).write_text(result)
 
 
 def read_yaml(

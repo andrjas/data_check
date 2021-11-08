@@ -3,7 +3,7 @@ from typing import Dict, Any
 
 from .base_check import BaseCheck
 
-from ..io import get_expect_file, read_sql_file, rel_path
+from ..io import get_expect_file, read_sql_file, rel_path, write_csv
 from ..result import DataCheckResult
 
 
@@ -23,7 +23,7 @@ class DataCheckGenerator(BaseCheck):
             result = self.data_check.sql.run_query(
                 read_sql_file(sql_file=sql_file, template_data=template_data)
             )
-            result.to_csv(expect_result, index=False)
+            write_csv(result, expect_result)
             output = f"expectation written to {_rel_path}"
         else:
             output = f"expectation skipped for {_rel_path}"

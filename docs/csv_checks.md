@@ -42,7 +42,8 @@ string,42,42.1,2020-12-20,
 "second row",42,42.1,2020-12-20,
 ```
 
-Each file starting with a '#' is regarded as a comment. You can use comments to annotate the date as they will be completely ignored.
+Anything after '#' is regarded as a comment. You can use comments to annotate the date as they will be completely ignored.
+You can escape the start of the comment with '\' and threat the rest of the line as data.
 
 Only the data types strings, decimals and date/timestamps (partially) are supported. Strings can be optionally enclosed in double quotes (").
 Empty strings are treated as null values.

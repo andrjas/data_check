@@ -41,7 +41,7 @@ def test_raise_exception_if_running_without_connection():
 def test_collect_checks(dc: DataCheck):
     # This test is also to ensure, that all checks are copied over to int_test
     checks = dc.collect_checks([Path("checks")])
-    assert len(checks) == 36
+    assert len(checks) == 37
 
 
 def test_collect_checks_returns_sorted_list(dc: DataCheck):
