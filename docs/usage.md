@@ -10,7 +10,7 @@
 * `data_check --print` - print failed results data.
 * `data_check --print-format FORMAT` - format for printing failed results (csv (default), pandas, json).
 * `data_check --print-json` - shortcut for "--print --print-format json".
-* `data_check -g/--gen/--generate` - generate expectation files if they don't exist.
+* `data_check -g/--generate` - generate expectation files if they don't exist.
 * `data_check --force` - when set, --generate will overwrite files.
 * `data_check --config CONFIG` - config file to use (default: data_check.yml).
 * `data_check --load PATH --table`-  load table data from a csv into the table

@@ -38,7 +38,6 @@ from data_check.config import DataCheckConfig
     help="shortcut for --print --print-format json",
 )
 @click.option(
-    "--gen",
     "--generate",
     "-g",
     "generate_expectations",

@@ -235,26 +235,6 @@ def test_g():
     )
 
 
-def test_gen():
-    gen_csv = Path("checks/generated/generate_before_running_gen.csv")
-    gen_sql_org = Path("checks/generated/generate_before_running.sql")
-    gen_sql = Path("checks/generated/generate_before_running_gen.sql")
-    if gen_csv.exists():
-        os.unlink(gen_csv)
-    if gen_sql.exists():
-        os.unlink(gen_sql)
-    shutil.copy(gen_sql_org, gen_sql)
-    out = run(["data_check", "--gen", str(gen_sql)])
-    assert gen_csv.exists()
-    os.unlink(gen_csv)
-    os.unlink(gen_sql)
-    start_line = (
-        f"expectation written to checks{sep}"
-        f"generated{sep}generate_before_running_gen.csv"
-    )
-    assert out.startswith(start_line)
-
-
 def test_generate():
     gen_csv = Path("checks/generated/generate_before_running.csv")
     if gen_csv.exists():
