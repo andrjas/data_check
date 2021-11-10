@@ -7,3 +7,4 @@ varchar_type: varchar2(10)
 test_schema: main
 huge_date: to_date('9999-12-31', 'yyyy-mm-dd')
 empty_string_date: "cast('' as date)"
+unicode_column_name: '"testcol_äöü"'
