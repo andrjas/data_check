@@ -99,3 +99,10 @@ def test_dialect(dc: DataCheck):
 def test_leading_zeros_string(dc: DataCheck):
     res = dc.get_check(Path("checks/basic/leading_zeros.sql")).run_test()
     assert res
+
+
+def test_lookup_bindings(dc: DataCheck):
+    dc.load_lookups()
+    res = dc.get_check(Path("checks/templates/binding.sql")).run_test()
+    print(res)
+    assert res

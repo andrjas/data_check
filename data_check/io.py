@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Union, Optional
+from typing import List, Dict, Any, Union, Optional, cast
 from pathlib import Path
 from jinja2 import Template
 import pandas as pd
@@ -103,6 +103,7 @@ def write_csv(
 ):
     if output:
         result = df.to_csv(index=False)
+        result = cast(str, result)
         # escape # in strings that would otherwise be treated as the start of a comment
         result = result.replace("#", "\\#")
         Path(base_path / output).write_text(result)

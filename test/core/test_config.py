@@ -100,7 +100,7 @@ def test_project_path_is_parent_of_config_when_started_in_subpath(tmp_path: Path
     assert config.project_path == tmp_path
 
 
-def test_template_path(tmp_path):
+def test_template_path(tmp_path: Path):
     cfg = tmp_path / "data_check.yml"
     cfg.write_text(T_CONFIG)
     config = DataCheckConfig().load_config(tmp_path)
@@ -110,7 +110,7 @@ def test_template_path(tmp_path):
     )
 
 
-def test_template_path_with_subdir(tmp_path):
+def test_template_path_with_subdir(tmp_path: Path):
     cfg = tmp_path / "data_check.yml"
     cfg.write_text(T_CONFIG)
     sp = tmp_path / "subpath"
@@ -122,14 +122,14 @@ def test_template_path_with_subdir(tmp_path):
     )
 
 
-def test_project_path(tmp_path):
+def test_project_path(tmp_path: Path):
     cfg = tmp_path / "data_check.yml"
     cfg.write_text(T_CONFIG)
     config = DataCheckConfig().load_config(tmp_path)
     assert config.project_path == tmp_path
 
 
-def test_project_path_subdir(tmp_path):
+def test_project_path_subdir(tmp_path: Path):
     cfg = tmp_path / "data_check.yml"
     cfg.write_text(T_CONFIG)
     sp = tmp_path / "subpath" / "sp2"
@@ -138,14 +138,14 @@ def test_project_path_subdir(tmp_path):
     assert config.project_path == tmp_path
 
 
-def test_checks_path(tmp_path):
+def test_checks_path(tmp_path: Path):
     cfg = tmp_path / "data_check.yml"
     cfg.write_text(T_CONFIG)
     config = DataCheckConfig().load_config(tmp_path)
     assert config.checks_path == tmp_path / "checks"
 
 
-def test_checks_path_subdir(tmp_path):
+def test_checks_path_subdir(tmp_path: Path):
     cfg = tmp_path / "data_check.yml"
     cfg.write_text(T_CONFIG)
     sp = tmp_path / "subpath" / "sp2"
@@ -154,14 +154,14 @@ def test_checks_path_subdir(tmp_path):
     assert config.checks_path == sp
 
 
-def test_base_path(tmp_path):
+def test_base_path(tmp_path: Path):
     cfg = tmp_path / "data_check.yml"
     cfg.write_text(T_CONFIG)
     config = DataCheckConfig().load_config(tmp_path)
     assert config.base_path == tmp_path
 
 
-def test_base_path_subdir(tmp_path):
+def test_base_path_subdir(tmp_path: Path):
     cfg = tmp_path / "data_check.yml"
     cfg.write_text(T_CONFIG)
     sp = tmp_path / "subpath" / "sp2"

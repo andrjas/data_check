@@ -1,15 +1,19 @@
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, TYPE_CHECKING
 import inspect
 
 from ...result import DataCheckResult, ResultType
+
+if TYPE_CHECKING:
+    from data_check import DataCheck
+    from data_check.checks import PipelineCheck
 
 
 class SerialPipelineSteps:
     def __init__(
         self,
-        data_check,
-        pipeline_check,
+        data_check: "DataCheck",
+        pipeline_check: "PipelineCheck",
         steps: List[Any],
         path: Path,
         pipeline_name: str,

@@ -1,10 +1,13 @@
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, TYPE_CHECKING
 import subprocess
+
+if TYPE_CHECKING:
+    from data_check.output import DataCheckOutput
 
 
 class CmdStep:
-    def __init__(self, cmd: Union[str, List[str]], output) -> None:
+    def __init__(self, cmd: Union[str, List[str]], output: "DataCheckOutput") -> None:
         self.cmd = cmd
         self.output = output
 

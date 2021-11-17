@@ -15,7 +15,9 @@ class EmptySetCheck(BaseCheck):
             query = read_sql_file(
                 sql_file=self.check_path, template_data=self.data_check.template_data
             )
-            sql_result = self.data_check.sql.run_query_with_result(query)
+            sql_result = self.data_check.sql.run_query_with_result(
+                query, params=self.data_check.sql_params
+            )
             if len(sql_result) == 0:
                 return self.data_check.output.prepare_result(
                     ResultType.PASSED, source=self.check_path, result=sql_result.df

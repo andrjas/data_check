@@ -17,6 +17,7 @@ from .checks import (
     ExcelCheck,
     PathNotExists,
 )
+from .utils.lookup_loader import load_lookups_from_path
 
 
 class DataCheck:
@@ -30,10 +31,17 @@ class DataCheck:
         self.config = config
         self.output = DataCheckOutput()
         self.runner = DataCheckRunner(config.parallel_workers, output=self.output)
+        if not isinstance(config.connection, str):
+            raise Exception("connection is not initialized")
         self.sql = DataCheckSql(
             connection=config.connection, runner=self.runner, output=self.output
         )
         self.template_data: Dict[str, Any] = {}
+        self.lookup_data: Dict[str, Any] = {}
+
+    @property
+    def sql_params(self) -> Dict[str, Any]:
+        return self.lookup_data
 
     def load_template(self):
         if self.config.template_path.exists():
@@ -63,7 +71,7 @@ class DataCheck:
         self, files: List[Path], base_path: Path = Path(".")
     ) -> List[BaseCheck]:
         base_path = base_path.absolute()
-        checks = []
+        checks: List[BaseCheck] = []
         for f in sorted(files):
             abs_file = f if f.is_absolute() else base_path / f
             check = self.get_check(abs_file)
@@ -104,9 +112,12 @@ class DataCheck:
         query: str,
         output: Union[str, Path] = "",
         base_path: Path = Path("."),
-        print_query=False,
+        print_query: bool = False,
     ):
         sql_query = parse_template(query, template_data=self.template_data)
         if print_query:
             self.output.print(f"-- {sql_query}")
         return self.sql.run_sql(sql_query, output, base_path)
+
+    def load_lookups(self):
+        self.lookup_data.update(load_lookups_from_path(self))

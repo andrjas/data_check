@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from typing import Union
+from typing import Union, List, cast
 
 from .csv_check import CSVCheck
 from ..result import DataCheckResult, ResultType
@@ -28,11 +28,15 @@ class ExcelCheck(CSVCheck):
         return df
 
     def read_expect_file(
-        self, expect_file: Path, string_columns
+        self, expect_file: Path, string_columns: List[str]
     ) -> Union[DataCheckResult, pd.DataFrame]:
         try:
-            expect_result = pd.read_excel(
-                expect_file, sheet_name=0, header=0, engine="openpyxl", dtype="object"
+            expect_result: pd.DataFrame = pd.read_excel(
+                cast(str, expect_file),
+                sheet_name=0,
+                header=0,
+                engine="openpyxl",
+                dtype="object",
             )
             return self.clean_excel_df(expect_result)
         except Exception as exc_csv:

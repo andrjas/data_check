@@ -1,8 +1,11 @@
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional, Union, List
 from os import path
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine, Connection
+from sqlalchemy.engine.row import Row
+from sqlalchemy.engine.cursor import CursorResult
 from sqlalchemy.sql import text
+from sqlalchemy.sql.expression import bindparam
 import pandas as pd
 from pathlib import Path
 
@@ -84,16 +87,22 @@ class DataCheckSql:
     def dialect(self) -> str:
         return self.get_connection().dialect.name
 
-    def run_query(self, query: str) -> pd.DataFrame:
+    def run_query(self, query: str, params: Dict[str, Any] = {}) -> pd.DataFrame:
         """
         Run a query on the database and return a Pandas DataFrame with the result.
         """
-        return self.run_query_with_result(query).df
+        return self.run_query_with_result(query, params=params).df
 
-    def run_query_with_result(self, query: str) -> QueryResult:
+    def run_query_with_result(
+        self, query: str, params: Dict[str, Any] = {}
+    ) -> QueryResult:
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
-        result = QueryResult(query, self.get_connection().execute(text(query)))
+        sql = text(query)
+        for bp in sql._bindparams.keys():
+            sql = sql.bindparams(bindparam(bp, expanding=True))
+
+        result = QueryResult(query, self.get_connection().execute(sql, **params))
         return result
 
     def test_connection(self) -> bool:
@@ -114,14 +123,15 @@ class DataCheckSql:
         self, query: str, output: Union[str, Path] = "", base_path: Path = Path(".")
     ):
         sq_text = text(query)
-        result = self.get_connection().execute(
+        result: CursorResult = self.get_connection().execute(
             sq_text.execution_options(autocommit=True)
         )
         try:
-            res = result.fetchall()
-            df = pd.DataFrame(data=res, columns=result.keys())
+            res: List[Row] = result.fetchall()
+            columns: List[str] = result.keys()
+            df = pd.DataFrame(data=res, columns=columns)
             print_csv(df, self.output.print)
             write_csv(df, output=output, base_path=base_path)
             return res
-        except:
+        except Exception:
             return bool(result)

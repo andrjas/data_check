@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 from colorama import init
 from importlib_metadata import version
-from typing import Union, List, Optional
+from typing import Union, List, Optional, cast
 
 from data_check.data_check import DataCheck
 from data_check.config import DataCheckConfig
@@ -58,18 +58,18 @@ from data_check.config import DataCheckConfig
 @click.option(
     "--load",
     type=click.Path(),
-    help=f"load table data from a csv",
+    help="load table data from a csv",
 )
 @click.option(
     "--table",
     type=str,
-    help=f"table name to load data into",
+    help="table name to load data into",
 )
 @click.option(
     "--load-mode",
     type=str,
     default="truncate",
-    help=f"how to load the table: truncate (default), append or replace",
+    help="how to load the table: truncate (default), append or replace",
 )
 @click.option(
     "--load-tables", is_flag=True, help="load tables from a list of csv files"
@@ -91,7 +91,7 @@ from data_check.config import DataCheckConfig
 @click.option("--verbose", is_flag=True, help="print verbose output")
 @click.option("--traceback", is_flag=True, help="print traceback output for debugging")
 @click.option("--quiet", is_flag=True, help="do not print any output")
-@click.version_option(version=version("data-check"))
+@click.version_option(version=cast(str, version("data-check")))
 @click.argument("files", nargs=-1, type=click.Path())
 def main(
     connection: str = "",
@@ -163,11 +163,13 @@ def main(
     dc.load_template()
 
     if sql_files:
+        dc.load_lookups()
         path_list = [Path(f) for f in files]
         dc.run_sql_files(path_list)
         sys.exit(0)
 
     if sql:
+        dc.load_lookups()
         if dc.run_sql_query(sql, output=output):
             sys.exit(0)
         else:
@@ -184,6 +186,7 @@ def main(
         else:
             sys.exit(1)
     else:
+        dc.load_lookups()
         result = dc.run(path_list)
         if not result:
             sys.exit(1)

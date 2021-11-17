@@ -21,7 +21,7 @@ def dc() -> DataCheck:
 
 @pytest.fixture
 def pc(dc: DataCheck) -> PipelineCheck:
-    _pc = PipelineCheck(dc, None)
+    _pc = PipelineCheck(dc, Path("."))
     return _pc
 
 

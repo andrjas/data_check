@@ -1,5 +1,5 @@
 import multiprocessing
-from typing import Any
+from typing import IO, Any
 import os
 import locale
 
@@ -29,12 +29,12 @@ class OutputHandler:
             print(msg)
         self.write_log(msg)
 
-    def log(self, msg: Any, prefix: str = "", level="INFO"):
+    def log(self, msg: Any, prefix: str = "", level: str = "INFO"):
         if not self.is_main:
             prefix = f"{prefix}@{multiprocessing.current_process().name}"
         self.print(f"{level}: {str(msg)}", prefix=prefix)
 
-    def handle_subprocess_output(self, pipe):
+    def handle_subprocess_output(self, pipe: IO[bytes]):
         for line in iter(pipe.readline, b""):
             try:
                 # try printing the line with the system encoding

@@ -21,7 +21,8 @@ class DataCheckGenerator(BaseCheck):
         _rel_path = rel_path(expect_result)
         if not expect_result.exists() or force:
             result = self.data_check.sql.run_query(
-                read_sql_file(sql_file=sql_file, template_data=template_data)
+                read_sql_file(sql_file=sql_file, template_data=template_data),
+                params=self.data_check.sql_params,
             )
             write_csv(result, expect_result)
             output = f"expectation written to {_rel_path}"

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Callable, List, Dict, Any, Union, Optional
+from typing import Callable, List, Dict, Any, Union, Optional, TYPE_CHECKING, cast
 from copy import deepcopy
 import inspect
 from functools import partial
@@ -10,13 +10,16 @@ from ...io import read_yaml
 from .serial_pipeline_steps import SerialPipelineSteps
 from .cmd_step import CmdStep
 
+if TYPE_CHECKING:
+    from data_check import DataCheck
+
 DATA_CHECK_PIPELINE_FILE = "data_check_pipeline.yml"
 
 
 class PipelineCheck(BaseCheck):
-    def __init__(self, data_check, check_path: Path) -> None:
+    def __init__(self, data_check: "DataCheck", check_path: Path) -> None:
         super().__init__(data_check, check_path)
-        self.pipeline_steps = {}
+        self.pipeline_steps: Dict[str, Dict[str, Any]] = {}
         self.register_pipelines()
 
     def register_pipelines(self):
@@ -62,7 +65,7 @@ class PipelineCheck(BaseCheck):
             "convert_to_path": convert_to_path,
         }
 
-    def get_pipeline_method(self, step_name):
+    def get_pipeline_method(self, step_name: str) -> Optional[Callable[..., Any]]:
         return self.pipeline_steps.get(step_name, {}).get("method", None)
 
     def _parse_pipeline_file(self, pipeline_file: Path) -> Dict[str, Any]:
@@ -102,8 +105,8 @@ class PipelineCheck(BaseCheck):
 
     def template_parameters(self, pipeline_path: Path) -> Dict[str, str]:
         return {
-            "CONNECTION": self.data_check.config.connection_name,
-            "CONNECTION_STRING": self.data_check.config.connection,
+            "CONNECTION": cast(str, self.data_check.config.connection_name),
+            "CONNECTION_STRING": cast(str, self.data_check.config.connection),
             "PIPELINE_PATH": str(pipeline_path.absolute()),
             "PIPELINE_NAME": str(pipeline_path.name),
             "PROJECT_PATH": str(self.data_check.config.project_path),

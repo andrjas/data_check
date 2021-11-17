@@ -65,7 +65,9 @@ class CSVCheck(BaseCheck):
             query = read_sql_file(
                 sql_file=sql_file, template_data=self.data_check.template_data
             )
-            return self.data_check.sql.run_query_with_result(query)
+            return self.data_check.sql.run_query_with_result(
+                query, params=self.data_check.sql_params
+            )
         except Exception as exc:
             return self.data_check.output.prepare_result(
                 ResultType.FAILED_WITH_EXCEPTION, source=sql_file, exception=exc

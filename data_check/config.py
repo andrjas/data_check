@@ -5,6 +5,7 @@ from typing import Optional, Dict, Any, Tuple
 
 TEMPLATE_FILE = "template.yml"
 CHECKS_PATH = "checks"
+LOOKUPS_PATH = "lookups"
 
 
 class DataCheckConfig:
@@ -51,6 +52,10 @@ class DataCheckConfig:
     def template_path(self) -> Path:
         return self.project_path / CHECKS_PATH / TEMPLATE_FILE
 
+    @property
+    def lookups_path(self) -> Path:
+        return self.project_path / LOOKUPS_PATH
+
     def find_config(self, base_path: Path) -> Path:
         abs_base_path = base_path.absolute()
         config_path = abs_base_path / self.config_path
@@ -60,7 +65,7 @@ class DataCheckConfig:
             return self.find_config(abs_base_path.parent)
         return abs_base_path / self.config_path
 
-    def load_config(self, base_path=Path(".")):
+    def load_config(self, base_path: Path = Path(".")):
         try:
             config_path = self.find_config(base_path)
         except Exception:

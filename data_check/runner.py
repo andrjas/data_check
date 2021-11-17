@@ -1,6 +1,5 @@
 import concurrent.futures
 from typing import Callable, List, Any, Dict, Optional
-from pathlib import Path
 
 from .checks.base_check import BaseCheck
 from .result import DataCheckResult

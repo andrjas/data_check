@@ -5,7 +5,7 @@ import pandas as pd
 
 from data_check.checks.generator import DataCheckGenerator  # noqa E402
 from data_check.sql import DataCheckSql  # noqa E402
-from data_check import DataCheck  # noqa E402
+from data_check import DataCheck, DataCheckConfig  # noqa E402
 
 
 def prepare_sql(tmp_path: Path):
@@ -15,7 +15,9 @@ def prepare_sql(tmp_path: Path):
     sql = create_autospec(DataCheckSql, instance=True)
     sql.run_query.return_value = pd.DataFrame.from_dict({"test": [1]})
     expect_result = tmp_path / "a.csv"
-    data_check = DataCheck()
+    config = DataCheckConfig()
+    config.set_connection("")
+    data_check = DataCheck(config=config)
     data_check.sql = sql
     return data_check, sql, sql_file, sql_text, expect_result
 
@@ -26,7 +28,7 @@ def test_gen_expectation(tmp_path: Path):
     generator = DataCheckGenerator(data_check, sql_file)
     generator.gen_expectation(sql_file=sql_file)
 
-    sql.run_query.assert_called_once_with(sql_text)
+    sql.run_query.assert_called_once_with(sql_text, params={})
 
     assert expect_result.exists()
     assert expect_result.read_text().strip() == "test\n1"
@@ -52,7 +54,7 @@ def test_gen_expectation_force_overwrite(tmp_path: Path):
     generator = DataCheckGenerator(data_check, sql_file)
     generator.gen_expectation(sql_file=sql_file, force=True)
 
-    sql.run_query.assert_called_once_with(sql_text)
+    sql.run_query.assert_called_once_with(sql_text, params={})
 
     assert expect_result.exists()
     assert expect_result.read_text().strip() == "test\n1"

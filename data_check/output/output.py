@@ -3,7 +3,7 @@ import pandas as pd
 from colorama import Fore, Style
 import traceback
 from os import linesep
-from typing import Optional, Any
+from typing import IO, Optional, Any, Tuple, Union, List, cast
 
 from ..exceptions import DataCheckException
 from ..result import DataCheckResult, ResultType
@@ -39,10 +39,10 @@ class DataCheckOutput:
     def print(self, msg: Any, prefix: str = ""):
         self.handler.print(msg, prefix)
 
-    def log(self, msg: Any, prefix: str = "", level="INFO"):
+    def log(self, msg: Any, prefix: str = "", level: str = "INFO"):
         self.handler.log(msg, prefix, level)
 
-    def handle_subprocess_output(self, pipe):
+    def handle_subprocess_output(self, pipe: IO[bytes]):
         self.handler.handle_subprocess_output(pipe)
 
     def pprint_overall_result(self, passed: bool) -> None:
@@ -100,27 +100,32 @@ class DataCheckOutput:
         self,
         result_type: ResultType,
         source: Path,
-        result: Optional[pd.DataFrame] = None,
+        result: Union[pd.DataFrame, List[Tuple[str, pd.DataFrame]], None] = None,
         exception: Optional[Exception] = None,
     ) -> DataCheckResult:
         passed = DataCheckResult.result_type_passed(result_type)
         # always print path relative to where data_check is started
         rel_source = rel_path(source)
         if result_type == ResultType.PASSED:
-            assert isinstance(result, pd.DataFrame)
-            return self._passed_result(passed, rel_source, result)
+            return self._passed_result(passed, rel_source, cast(pd.DataFrame, result))
         elif result_type == ResultType.FAILED:
-            assert isinstance(result, pd.DataFrame)
-            return self._failed_result(passed, rel_source, result)
+            return self._failed_result(passed, rel_source, cast(pd.DataFrame, result))
+        elif result_type == ResultType.FAILED_WITH_MULTIPLE_FAILURES:
+            return self._failed_result_multiple_failures(
+                passed, rel_source, cast(List[Tuple[str, pd.DataFrame]], result)
+            )
         elif result_type == ResultType.NO_EXPECTED_RESULTS_FILE:
             return self._no_expected_file_result(passed, rel_source)
         elif result_type == ResultType.FAILED_WITH_EXCEPTION:
-            assert isinstance(exception, Exception)
-            return self._failed_with_exception_result(passed, rel_source, exception)
+            return self._failed_with_exception_result(
+                passed, rel_source, cast(Exception, exception)
+            )
         elif result_type == ResultType.FAILED_DIFFERENT_LENGTH:
             return self._failed_result_different_length(passed, rel_source)
         elif result_type == ResultType.FAILED_PATH_NOT_EXISTS:
             return self._failed_path_not_exists(passed, rel_source)
+        else:
+            raise Exception(f"unknown ResultType: {result_type}")
 
     def _passed_result(
         self, passed: bool, source: Path, result: pd.DataFrame
@@ -137,6 +142,23 @@ class DataCheckOutput:
         if self.print_failed:
             message += linesep + self.pprint_failed(result.copy())
         return DataCheckResult(passed=passed, result=result, message=message)
+
+    def _failed_result_multiple_failures(
+        self, passed: bool, source: Path, result: List[Tuple[str, pd.DataFrame]]
+    ) -> DataCheckResult:
+        message = f"{source}: {self.failed_message}"
+        failure_message = ""
+        for failure in result:
+            failure_message += (
+                linesep
+                + failure[0]
+                + ":"
+                + linesep
+                + self.pprint_failed(failure[1].copy())
+            )
+        if self.print_failed:
+            message += failure_message
+        return DataCheckResult(passed=passed, result=failure_message, message=message)
 
     def _failed_result_different_length(
         self, passed: bool, source: Path
@@ -164,7 +186,11 @@ class DataCheckOutput:
         if self.verbose:
             message += linesep + str(exception)
         if self.traceback:
-            message += linesep + traceback.format_exc()
+            message += linesep + "".join(
+                traceback.format_exception(
+                    value=exception, tb=exception.__traceback__, etype=Exception
+                )
+            )
         return DataCheckResult(
             passed=passed,
             result=f"{source} generated an exception: {exception}",

@@ -10,6 +10,7 @@ class ResultType(Enum):
     NO_EXPECTED_RESULTS_FILE = 4
     FAILED_DIFFERENT_LENGTH = 5
     FAILED_PATH_NOT_EXISTS = 6
+    FAILED_WITH_MULTIPLE_FAILURES = 7
 
 
 class DataCheckResult:
