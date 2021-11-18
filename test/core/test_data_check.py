@@ -1,5 +1,6 @@
 import pytest
 from pathlib import Path
+from unittest.mock import create_autospec
 
 
 from data_check import DataCheck
@@ -11,6 +12,7 @@ from data_check.checks import (
     ExcelCheck,
 )  # noqa E402
 from data_check.config import DataCheckConfig
+from data_check.sql.sql import DataCheckSql
 
 # Basic data_check unit tests
 
@@ -141,3 +143,15 @@ def test_load_lookups_without_lookup_folder(dc: DataCheck, tmp_path: Path):
 def test_sql_params(dc: DataCheck):
     dc.load_lookups()
     assert dc.sql_params == dc.lookup_data
+
+
+def test_run_sql_query_is_templated(dc: DataCheck):
+    p = Path("checks/basic/simple_string.sql")
+    assert "{{" in p.read_text()
+    sql = create_autospec(DataCheckSql, instance=True)
+    dc.sql = sql
+    dc.run_sql_file(p)
+    sql.run_sql.assert_called_once()
+    _, kwargs = sql.run_sql.call_args_list[0]
+    query = kwargs["query"]
+    assert "{{" not in query
