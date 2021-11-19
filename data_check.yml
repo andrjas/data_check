@@ -1,4 +1,5 @@
 default_connection: test
+# log: data_check.log
 
 connections:
     test: sqlite+pysqlite://

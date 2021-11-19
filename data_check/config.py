@@ -28,6 +28,7 @@ class DataCheckConfig:
 
         self.generate_mode = False
         self.force = False
+        self.log_path: Optional[Path] = None
 
     @property
     def print_overall_result(self):
@@ -80,6 +81,8 @@ class DataCheckConfig:
         self.base_path = base_path.absolute()
         self.config_path = config_path
         self.config = read_yaml(config_path)
+        _log_path = self.config.get("log", None)
+        self.log_path = Path(_log_path) if _log_path else None
         return self
 
     def set_connection(self, connection: str):

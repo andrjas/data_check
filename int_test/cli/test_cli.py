@@ -446,3 +446,27 @@ def test_load_mode_with_load_tables():
 def test_quiet():
     out = run(["data_check", "--ping", "--quiet"])
     assert out.strip() == ""
+
+
+def test_log():
+    log = Path("test_log.txt")
+    if log.exists():
+        log.unlink()
+    run(["data_check", "checks/basic/simple_string.sql", "--log", str(log)])
+    log_text = log.read_text()
+    log_exists = log.exists()
+    log.unlink()
+    assert log_exists
+    assert log_text.strip() != ""
+
+
+def test_log_quiet():
+    log = Path("test_log_quiet.txt")
+    if log.exists():
+        log.unlink()
+    run(["data_check", "checks/basic/simple_string.sql", "--log", str(log), "--quiet"])
+    log_text = log.read_text()
+    log_exists = log.exists()
+    log.unlink()
+    assert log_exists
+    assert log_text.strip() != ""

@@ -19,6 +19,7 @@ class DataCheckOutput:
         self.print_format = "pandas"
         self.quiet = False
         self.handler = OutputHandler(self.quiet)
+        self.log_path = None
 
     def configure_output(
         self,
@@ -27,14 +28,17 @@ class DataCheckOutput:
         print_failed: bool,
         print_format: str,
         quiet: bool = False,
+        log_path: Optional[Path] = None,
     ):
         self.verbose = verbose
         self.traceback = traceback
         self.print_failed = print_failed
         self.print_format = print_format
         self.quiet = quiet
+        self.log_path = log_path
 
         self.handler.quiet = quiet
+        self.handler.log_path = log_path
 
     def print(self, msg: Any, prefix: str = ""):
         self.handler.print(msg, prefix)

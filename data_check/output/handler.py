@@ -1,7 +1,9 @@
 import multiprocessing
-from typing import IO, Any
+from typing import IO, Any, Optional
 import os
 import locale
+from pathlib import Path
+import datetime
 
 
 class OutputHandler:
@@ -12,13 +14,17 @@ class OutputHandler:
     def __init__(self, quiet: bool):
         self.quiet = quiet
         self.encoding = locale.getpreferredencoding(False)
+        self.log_path: Optional[Path] = None
 
     @property
     def is_main(self):
         return multiprocessing.current_process().name == "MainProcess"
 
     def write_log(self, msg: str):
-        pass
+        if self.log_path:
+            with self.log_path.open("a") as log:
+                s_log = f"{datetime.datetime.now()}: {msg}{os.linesep}"
+                log.write(s_log)
 
     def print(self, msg: Any, prefix: str = ""):
         if prefix:

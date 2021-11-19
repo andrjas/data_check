@@ -91,6 +91,7 @@ from data_check.config import DataCheckConfig
 @click.option("--verbose", is_flag=True, help="print verbose output")
 @click.option("--traceback", is_flag=True, help="print traceback output for debugging")
 @click.option("--quiet", is_flag=True, help="do not print any output")
+@click.option("--log", type=click.Path(), help="write output to a log file")
 @click.version_option(version=cast(str, version("data-check")))
 @click.argument("files", nargs=-1, type=click.Path())
 def main(
@@ -113,6 +114,7 @@ def main(
     verbose: bool = False,
     traceback: bool = False,
     quiet: bool = False,
+    log: Optional[Union[str, Path]] = None,
     files: List[Union[str, Path]] = [],
 ):
     """ FILES: list of checks files or folders"""
@@ -128,6 +130,8 @@ def main(
     )
     dc_config.generate_mode = generate_expectations
     dc_config.force = force
+    if log:
+        dc_config.log_path = Path(log)
 
     if not dc_config.connection:
         click.echo(f"unknown connection: {connection}")
@@ -142,6 +146,8 @@ def main(
         print_failed=print_failed,
         print_format=print_format,
         quiet=quiet,
+        # set log_path from config, so we can also use it from the config file
+        log_path=dc_config.log_path,
     )
 
     if load:

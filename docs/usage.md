@@ -24,6 +24,7 @@
 * `data_check --quiet` - do not print any output.
 * `data_check --verbose` - print verbose output.
 * `data_check --traceback` - print traceback output for debugging.
+* `data_check --log LOGFILE` - write output to a log file.
 * `data_check --version` - Show the version and exit.
 * `data_check --help` - show this help message and exit.
 
