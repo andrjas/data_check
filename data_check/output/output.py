@@ -46,8 +46,8 @@ class DataCheckOutput:
     def log(self, msg: Any, prefix: str = "", level: str = "INFO"):
         self.handler.log(msg, prefix, level)
 
-    def handle_subprocess_output(self, pipe: IO[bytes]):
-        self.handler.handle_subprocess_output(pipe)
+    def handle_subprocess_output(self, pipe: IO[bytes], print: bool = True):
+        self.handler.handle_subprocess_output(pipe, print=print)
 
     def pprint_overall_result(self, passed: bool) -> None:
         overall_result_msg = self.passed_message if passed else self.failed_message

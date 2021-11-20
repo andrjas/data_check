@@ -20,3 +20,7 @@ steps:
   - sql:
       query: select 1 as a, 'b' as t {{from_dual}}
       output: test_output.csv
+  - cmd:
+      commands:
+      - echo "not printed"
+      print: false

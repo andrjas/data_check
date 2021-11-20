@@ -99,8 +99,10 @@ class PipelineCheck(BaseCheck):
         )
         return serial_steps.run()
 
-    def run_cmd(self, commands: List[str], base_path: Path = Path(".")):
-        c = CmdStep(commands, self.data_check.output)
+    def run_cmd(
+        self, commands: List[str], print: bool = True, base_path: Path = Path(".")
+    ):
+        c = CmdStep(commands, self.data_check.output, print=print)
         return c.run(base_path=base_path)
 
     def template_parameters(self, pipeline_path: Path) -> Dict[str, str]:

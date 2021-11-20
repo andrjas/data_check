@@ -7,9 +7,12 @@ if TYPE_CHECKING:
 
 
 class CmdStep:
-    def __init__(self, cmd: Union[str, List[str]], output: "DataCheckOutput") -> None:
+    def __init__(
+        self, cmd: Union[str, List[str]], output: "DataCheckOutput", print: bool = True
+    ) -> None:
         self.cmd = cmd
         self.output = output
+        self.print = print
 
     def _run_cmd(self, cmd: str, base_path: Path = Path(".")):
         self.output.print(f"# {cmd}")
@@ -22,7 +25,7 @@ class CmdStep:
         )
         assert process.stdout is not None
         with process.stdout:
-            self.output.handle_subprocess_output(process.stdout)
+            self.output.handle_subprocess_output(process.stdout, print=self.print)
         exitcode = process.wait()
         return exitcode == 0
 

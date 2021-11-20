@@ -26,12 +26,12 @@ class OutputHandler:
                 s_log = f"{datetime.datetime.now()}: {msg}{os.linesep}"
                 log.write(s_log)
 
-    def print(self, msg: Any, prefix: str = ""):
+    def print(self, msg: Any, prefix: str = "", _print: bool = True):
         if prefix:
             msg = f"{prefix}: {str(msg)}"
         else:
             msg = str(msg)
-        if not self.quiet:
+        if not self.quiet and _print:
             print(msg)
         self.write_log(msg)
 
@@ -40,11 +40,11 @@ class OutputHandler:
             prefix = f"{prefix}@{multiprocessing.current_process().name}"
         self.print(f"{level}: {str(msg)}", prefix=prefix)
 
-    def handle_subprocess_output(self, pipe: IO[bytes]):
+    def handle_subprocess_output(self, pipe: IO[bytes], print: bool = True):
         for line in iter(pipe.readline, b""):
             try:
                 # try printing the line with the system encoding
-                self.print(line.decode(self.encoding).rstrip(os.linesep))
+                self.print(line.decode(self.encoding).rstrip(os.linesep), _print=print)
             except Exception:
                 # if this doesn't help, print the raw bytes without the b''
-                self.print(str(line)[2:-1].rstrip(os.linesep))
+                self.print(str(line)[2:-1].rstrip(os.linesep), _print=print)
