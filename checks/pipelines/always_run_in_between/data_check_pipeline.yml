@@ -1,0 +1,5 @@
+steps:
+  - sql: create table always_run_b1 (i {{decimal_type}})
+  - always_run:
+    - sql: create table always_run_b2 (i {{decimal_type}})
+  - sql: create table always_run_b3 (i {{decimal_type}})

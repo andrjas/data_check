@@ -47,6 +47,7 @@ class PipelineCheck(BaseCheck):
             self.data_check.run_sql_query, print_query=True
         )
         self.register_pipeline_step("sql", pipeline_run_sql_query)
+        self.register_pipeline_step("always_run", self.always_run)
 
     @staticmethod
     def is_check_path(path: Path) -> bool:
@@ -104,6 +105,19 @@ class PipelineCheck(BaseCheck):
     ):
         c = CmdStep(commands, self.data_check.output, print=print)
         return c.run(base_path=base_path)
+
+    def always_run(self, steps: List[Any]) -> DataCheckResult:
+        serial_steps = SerialPipelineSteps(
+            self.data_check,
+            self,
+            steps,
+            self.check_path,
+            pipeline_name=str(self.check_path),
+        )
+        # Also return the result of the run,
+        # so that if all steps pass,
+        # the overall result will be also passed.
+        return serial_steps.run()
 
     def template_parameters(self, pipeline_path: Path) -> Dict[str, str]:
         return {

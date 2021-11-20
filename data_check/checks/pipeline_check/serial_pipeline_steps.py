@@ -23,12 +23,14 @@ class SerialPipelineSteps:
         self.path = path
         self.steps = steps
         self.pipeline_name = pipeline_name
+        self.processed_step_indices: List[int] = []
 
     def run(self) -> DataCheckResult:
-        for step in self.steps:
+        for idx, step in enumerate(self.steps):
             try:
-                result = self.run_pipeline_step(self.path, step)
+                result = self.run_pipeline_step(self.path, step, idx)
                 if not result:
+                    self.process_always_run()
                     result_msg = (
                         f"pipeline {self.pipeline_name}: "
                         f"{self.data_check.output.failed_message}"
@@ -39,6 +41,7 @@ class SerialPipelineSteps:
                         message=result_msg,
                     )
             except Exception as e:
+                self.process_always_run()
                 return self.data_check.output.prepare_result(
                     result_type=ResultType.FAILED_WITH_EXCEPTION,
                     source=self.path,
@@ -53,7 +56,14 @@ class SerialPipelineSteps:
             ),
         )
 
-    def run_pipeline_step(self, path: Path, step: Dict[str, Any]):
+    def process_always_run(self):
+        for idx, step in enumerate(self.steps):
+            if idx not in self.processed_step_indices:
+                # just run the step but ignore any result or output
+                self.run_pipeline_step(self.path, step, idx)
+
+    def run_pipeline_step(self, path: Path, step: Dict[str, Any], idx: int):
+        self.processed_step_indices.append(idx)
         step_type = next(iter(step.keys()))
         params = next(iter(step.values()))
         call_method = self.pipeline_check.get_pipeline_method(step_type)

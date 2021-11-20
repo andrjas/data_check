@@ -25,6 +25,14 @@ def pc(dc: DataCheck) -> PipelineCheck:
     return _pc
 
 
+def check_table_exists(table_name: str, dc: DataCheck) -> bool:
+    try:
+        dc.sql.run_query(f"select * from {table_name}")
+        return True
+    except Exception:
+        return False
+
+
 def test_is_pipeline_check():
     assert PipelineCheck.is_check_path(Path("checks/pipelines/simple_pipeline"))
 
@@ -159,6 +167,24 @@ def test_pipeline_fails_run_sql_invalid_query(pc: PipelineCheck):
     result = pc.run_test()
     assert not result
     assert "with exception" in result.message
+
+
+def test_pipeline_fails_always_run_failing(pc: PipelineCheck):
+    pc.check_path = Path("checks/pipelines/failing/always_run")
+    result = pc.run_test()
+    assert not result
+    assert "with exception" in result.message
+    assert not check_table_exists("always_run_1", pc.data_check)
+    assert check_table_exists("always_run_2", pc.data_check)
+
+
+def test_pipeline_always_run_in_between(pc: PipelineCheck):
+    pc.check_path = Path("checks/pipelines/always_run_in_between")
+    result = pc.run_test()
+    assert result
+    assert check_table_exists("always_run_b1", pc.data_check)
+    assert check_table_exists("always_run_b2", pc.data_check)
+    assert check_table_exists("always_run_b3", pc.data_check)
 
 
 def test_pipeline_empty_pipeline(pc: PipelineCheck):
