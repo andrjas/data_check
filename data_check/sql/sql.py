@@ -115,7 +115,8 @@ class DataCheckSql:
             engine.connect()
             self.output.print("connecting succeeded")
             return True
-        except:  # noqa E722
+        except Exception as e:  # noqa E722
+            self.output.print_exception(e)
             self.output.print("connecting failed")
             return False
 

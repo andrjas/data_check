@@ -40,6 +40,18 @@ class DataCheckOutput:
         self.handler.quiet = quiet
         self.handler.log_path = log_path
 
+    def print_exception(self, exc: Exception):
+        if self.traceback:
+            self.print(
+                "".join(
+                    traceback.format_exception(
+                        value=exc, tb=exc.__traceback__, etype=Exception
+                    )
+                )
+            )
+        elif self.verbose:
+            self.print(str(exc))
+
     def print(self, msg: Any, prefix: str = ""):
         self.handler.print(msg, prefix)
 
