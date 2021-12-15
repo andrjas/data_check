@@ -75,3 +75,38 @@ empty_query.empty
 If you run `data_check --generate` in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add `--force` to overwrite existing CSV files.
 
 You can also generate expectation files for [pipelines](pipelines.md#generating-pipeline.checks). If you run `--generate` on a project with pipelines, beware though that the pipelines will be executed!
+
+## Lookups
+
+Lookups are a way to reuse the result of a query in multiple other queries. You can use lookups for example to return all table names that you want to exclude from your tests and use the table names to filter them from your queries.
+
+To create a lookup, put a SQL file in the _lookups_ folder. To use the lookup in a query, use the lookup name like a subquery or list. The lookup name is the SQL filename prefixed with a colon (':') and without the file ending. If a lookup file is in subfolders, each subfolder is part of the lookup name with a double underscore ('__') as the separator between folders and the SQL filename.
+
+Only the first column from a lookup query is used, other columns are ignored.
+
+Example:
+
+_some\_check.sql_:
+```sql
+select a
+from some_table
+where b in :b1
+ or a in :sub_lkp__b2
+```
+
+_lookups/b1.sql_:
+```sql
+select 'b' as b
+union all
+select 'c' as b
+
+```
+
+_lookups/sub\_lkp/b2.sql_:
+```sql
+select 1 as b
+union all
+select 2 as b
+```
+
+In this example `:b1` is loaded from the file _lookups/b1.sql_ and `:sub_lkp__b2` from _lookups/sub\_lkp/b2.sql_.

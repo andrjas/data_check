@@ -36,6 +36,17 @@ __Exit code 0:__ All tests run successfully.<br/>
 __Exit code 1:__ At least one test failed.
 
 
+## Logging
+
+`--log` will write the output to a log file and to the console. With `--quiet` the output will only be printed to the log file. If the file exists, the output will be appended.
+
+You can also set the log file in data_check.yml:
+
+```yaml
+log: logfile.txt
+```
+
+
 ## Loading data into tables
 
 Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV or Excel files to load data into tables. The [CSV format](usage.md#csv-format) is the same as used for testing. The header in the CSV file or the first row in the Excel file must match the columns in the table. Additionally, Excel cells can use its native date/datetime format.

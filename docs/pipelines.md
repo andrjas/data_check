@@ -43,6 +43,8 @@ steps:
     - cmd: "python3 /path/to/my_pipeline.py --connection {{CONNECTION}}"
     # this will run the CSV checks in the some_checks folder
     - check: some_checks
+    - always_run:
+        - sql_file: run_this_always.sql
 ```
 
 Pipeline checks and simple CSV checks can coexist in a project.
@@ -52,7 +54,7 @@ Pipeline checks and simple CSV checks can coexist in a project.
 _data\_check\_pipeline.yml_ is a YAML file with _steps_ as its main element that contains a list of steps.
 
 
-## Steps
+## steps
 
 _steps_ is a list of steps that are executed in the pipeline sequentially. If any of the steps fail the pipeline will fail and the following steps will not be executed.
 
@@ -181,7 +183,7 @@ _output_ is relative to the pipeline path, unless an absolute path is specified,
 
 ### cmd
 
-_cmd_ will call any script or program. The commands will be executed sequentially.
+_cmd_ will call any script or program. The commands will be executed sequentially. The optional _print_ parameter can disable console output of the command.
 
 Short form:
 ```yaml
@@ -194,7 +196,10 @@ Long form:
   commands:
     - echo "test"
     - script/to/start/pipeline.sh
+  print: false
 ```
+
+With `print: false` no output is printed from the commands.
 
 You can also omit _commands_:
 ```yaml
@@ -202,6 +207,24 @@ You can also omit _commands_:
   - echo "test"
   - script/to/start/pipeline.sh
 ```
+
+### always_run
+
+_always\_run_ is a container for other steps. These steps will always be executed, even if any other step fail. If _always\_run_ is between other steps, it will be executed in order.
+
+Example:
+```yaml
+steps:
+  - sql_file: might_fail.sql
+  - always_run:
+    - sql_file: run_after_failing.sql
+    - cmd: some_script.sh
+  - cmd: other_script.sh
+  - always_run:
+    - sql_file: finish.sql
+```
+
+In this example, if _might\_fail.sql_ fails, _run\_after\_failing.sql_, _some\_script.sh_ and _finish.sql_ will be run in this order. If _might\_fail.sql_ does not fail, _other\_script.sh_ is executed after _run\_after\_failing.sql_ and _some\_script.sh_. _finish.sql_ will then run at the end (even when _other\_script.sh_ fails).
 
 ## nested pipelines
 
