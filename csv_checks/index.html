@@ -111,6 +111,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#lookups" class="nav-link">Lookups</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -143,7 +147,8 @@ string,42,42.1,2020-12-20,
 # a comment line
 &quot;second row&quot;,42,42.1,2020-12-20,
 </code></pre>
-<p>Each file starting with a '#' is regarded as a comment. You can use comments to annotate the date as they will be completely ignored.</p>
+<p>Anything after '#' is regarded as a comment. You can use comments to annotate the date as they will be completely ignored.
+You can escape the start of the comment with '\' and threat the rest of the line as data.</p>
 <p>Only the data types strings, decimals and date/timestamps (partially) are supported. Strings can be optionally enclosed in double quotes (").
 Empty strings are treated as null values.</p>
 <p>data_check recognizes if a column in a SQL query is a date or timestamp and converts the columns in the CSV automatically to timestamps.
@@ -160,7 +165,30 @@ empty_query.empty
 </code></pre>
 <h2 id="generating-expectation-files">Generating expectation files</h2>
 <p>If you run <code>data_check --generate</code> in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add <code>--force</code> to overwrite existing CSV files.</p>
-<p>You can also generate expectation files for <a href="../pipelines/#generating-pipeline.checks">pipelines</a>. If you run <code>--generate</code> on a project with pipelines, beware though that the pipelines will be executed!</p></div>
+<p>You can also generate expectation files for <a href="../pipelines/#generating-pipeline.checks">pipelines</a>. If you run <code>--generate</code> on a project with pipelines, beware though that the pipelines will be executed!</p>
+<h2 id="lookups">Lookups</h2>
+<p>Lookups are a way to reuse the result of a query in multiple other queries. You can use lookups for example to return all table names that you want to exclude from your tests and use the table names to filter them from your queries.</p>
+<p>To create a lookup, put a SQL file in the <em>lookups</em> folder. To use the lookup in a query, use the lookup name like a subquery or list. The lookup name is the SQL filename prefixed with a colon (':') and without the file ending. If a lookup file is in subfolders, each subfolder is part of the lookup name with a double underscore ('__') as the separator between folders and the SQL filename.</p>
+<p>Only the first column from a lookup query is used, other columns are ignored.</p>
+<p>Example:</p>
+<p><em>some_check.sql</em>:</p>
+<pre><code class="language-sql">select a
+from some_table
+where b in :b1
+ or a in :sub_lkp__b2
+</code></pre>
+<p><em>lookups/b1.sql</em>:</p>
+<pre><code class="language-sql">select 'b' as b
+union all
+select 'c' as b
+
+</code></pre>
+<p><em>lookups/sub_lkp/b2.sql</em>:</p>
+<pre><code class="language-sql">select 1 as b
+union all
+select 2 as b
+</code></pre>
+<p>In this example <code>:b1</code> is loaded from the file <em>lookups/b1.sql</em> and <code>:sub_lkp__b2</code> from <em>lookups/sub_lkp/b2.sql</em>.</p></div>
             </div>
         </div>
 

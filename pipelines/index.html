@@ -103,7 +103,7 @@
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#steps" class="nav-link">Steps</a>
+            <li class="nav-item" data-level="2"><a href="#steps" class="nav-link">steps</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -165,11 +165,13 @@ checks/
     - cmd: &quot;python3 /path/to/my_pipeline.py --connection {{CONNECTION}}&quot;
     # this will run the CSV checks in the some_checks folder
     - check: some_checks
+    - always_run:
+        - sql_file: run_this_always.sql
 </code></pre>
 <p>Pipeline checks and simple CSV checks can coexist in a project.</p>
 <h2 id="pipeline-configuration">Pipeline configuration</h2>
 <p><em>data_check_pipeline.yml</em> is a YAML file with <em>steps</em> as its main element that contains a list of steps.</p>
-<h2 id="steps">Steps</h2>
+<h2 id="steps">steps</h2>
 <p><em>steps</em> is a list of steps that are executed in the pipeline sequentially. If any of the steps fail the pipeline will fail and the following steps will not be executed.</p>
 <p>Most steps have a list of files as a parameter. If you only need a single file/path, you can usually use a short form: <code>step_name: path</code>.</p>
 <h3 id="check">check</h3>
@@ -250,7 +252,7 @@ checks/
 </code></pre>
 <p><em>output</em> is relative to the pipeline path, unless an absolute path is specified, for example '{{PROJECT_PATH}}/result.csv'.</p>
 <h3 id="cmd">cmd</h3>
-<p><em>cmd</em> will call any script or program. The commands will be executed sequentially.</p>
+<p><em>cmd</em> will call any script or program. The commands will be executed sequentially. The optional <em>print</em> parameter can disable console output of the command.</p>
 <p>Short form:</p>
 <pre><code class="language-yaml">- cmd: echo &quot;test&quot;
 </code></pre>
@@ -259,12 +261,27 @@ checks/
   commands:
     - echo &quot;test&quot;
     - script/to/start/pipeline.sh
+  print: false
 </code></pre>
+<p>With <code>print: false</code> no output is printed from the commands.</p>
 <p>You can also omit <em>commands</em>:</p>
 <pre><code class="language-yaml">- cmd:
   - echo &quot;test&quot;
   - script/to/start/pipeline.sh
 </code></pre>
+<h3 id="always_run">always_run</h3>
+<p><em>always_run</em> is a container for other steps. These steps will always be executed, even if any other step fail. If <em>always_run</em> is between other steps, it will be executed in order.</p>
+<p>Example:</p>
+<pre><code class="language-yaml">steps:
+  - sql_file: might_fail.sql
+  - always_run:
+    - sql_file: run_after_failing.sql
+    - cmd: some_script.sh
+  - cmd: other_script.sh
+  - always_run:
+    - sql_file: finish.sql
+</code></pre>
+<p>In this example, if <em>might_fail.sql</em> fails, <em>run_after_failing.sql</em>, <em>some_script.sh</em> and <em>finish.sql</em> will be run in this order. If <em>might_fail.sql</em> does not fail, <em>other_script.sh</em> is executed after <em>run_after_failing.sql</em> and <em>some_script.sh</em>. <em>finish.sql</em> will then run at the end (even when <em>other_script.sh</em> fails).</p>
 <h2 id="nested-pipelines">nested pipelines</h2>
 <p>Pipelines can be nested inside other pipelines. Passing a folder with a <em>data_check_pipeline.yml</em> to <em>check</em> will run the pipeline:</p>
 <pre><code class="language-yaml">- check:

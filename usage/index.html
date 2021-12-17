@@ -103,6 +103,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#logging" class="nav-link">Logging</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#loading-data-into-tables" class="nav-link">Loading data into tables</a>
               <ul class="nav flex-column">
               </ul>
@@ -129,7 +133,7 @@
 <li><code>data_check --print</code> - print failed results data.</li>
 <li><code>data_check --print-format FORMAT</code> - format for printing failed results (csv (default), pandas, json).</li>
 <li><code>data_check --print-json</code> - shortcut for "--print --print-format json".</li>
-<li><code>data_check -g/--gen/--generate</code> - generate expectation files if they don't exist.</li>
+<li><code>data_check -g/--generate</code> - generate expectation files if they don't exist.</li>
 <li><code>data_check --force</code> - when set, --generate will overwrite files.</li>
 <li><code>data_check --config CONFIG</code> - config file to use (default: data_check.yml).</li>
 <li><code>data_check --load PATH --table</code>-  load table data from a csv into the table</li>
@@ -143,6 +147,7 @@
 <li><code>data_check --quiet</code> - do not print any output.</li>
 <li><code>data_check --verbose</code> - print verbose output.</li>
 <li><code>data_check --traceback</code> - print traceback output for debugging.</li>
+<li><code>data_check --log LOGFILE</code> - write output to a log file.</li>
 <li><code>data_check --version</code> - Show the version and exit.</li>
 <li><code>data_check --help</code> - show this help message and exit.</li>
 </ul>
@@ -150,6 +155,11 @@
 <p>Possible exit codes:</p>
 <p><strong>Exit code 0:</strong> All tests run successfully.<br/>
 <strong>Exit code 1:</strong> At least one test failed.</p>
+<h2 id="logging">Logging</h2>
+<p><code>--log</code> will write the output to a log file and to the console. With <code>--quiet</code> the output will only be printed to the log file. If the file exists, the output will be appended.</p>
+<p>You can also set the log file in data_check.yml:</p>
+<pre><code class="language-yaml">log: logfile.txt
+</code></pre>
 <h2 id="loading-data-into-tables">Loading data into tables</h2>
 <p>Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV or Excel files to load data into tables. The <a href="./#csv-format">CSV format</a> is the same as used for testing. The header in the CSV file or the first row in the Excel file must match the columns in the table. Additionally, Excel cells can use its native date/datetime format.</p>
 <p>If the table doesn't exist, it will be created. The schema and table names are always case-insensitive, as long as the database supports it. Otherwise, they are lowercased.</p>
