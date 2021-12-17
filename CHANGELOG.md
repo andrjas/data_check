@@ -2,6 +2,29 @@
 
 ## [Unreleased]
 
+## [0.9.0] - 2021-12-17
+
+### Added
+
+- lookups
+- always_run steps in pipelines
+- print parameter in cmd pipeline step
+- logging in config file and --log argument
+- tests that --sql and sql in a pipeline use templates
+- test for non-ASCII characters in column names
+- '\' as escape character in CSVs
+- --print/--print-json with --verbose prints the output even if it's matching
+
+
+### Removed
+
+- --gen argument (use -g or --generate instead)
+
+### Fixed
+
+- handling pd.NaT
+- --generate escapes '#' in CSV
+- --ping works with --verbose and --traceback
 
 ## [0.8.0] - 2021-10-29
 
