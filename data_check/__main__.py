@@ -117,7 +117,7 @@ def main(
     log: Optional[Union[str, Path]] = None,
     files: List[Union[str, Path]] = [],
 ):
-    """ FILES: list of checks files or folders"""
+    """FILES: list of checks files or folders"""
 
     if print_json:
         print_failed = True
