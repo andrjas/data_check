@@ -48,7 +48,7 @@ def test_data_types_float(data_types_check):
 
 
 def test_data_types_date(data_types_check):
-    assert data_types_check.date_test == datetime.date(2020, 12, 20)
+    assert data_types_check.date_test == datetime.datetime(2020, 12, 20)
 
 
 def test_data_types_huge_date(data_types_check):

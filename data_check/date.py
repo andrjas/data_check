@@ -2,6 +2,7 @@ from typing import List, Tuple, Union
 import pandas as pd
 from dateutil.parser import isoparse as _isoparse
 import math
+import warnings
 
 
 def parse_date_columns(df: pd.DataFrame) -> Tuple[List[str], pd.DataFrame]:
@@ -14,7 +15,9 @@ def parse_date_columns(df: pd.DataFrame) -> Tuple[List[str], pd.DataFrame]:
         # only try to convert, if some values exist in the column
         if not column.isna().all():
             try:
-                _col = column.apply(isoparse, convert_dtype=False)
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", category=FutureWarning)
+                    _col = column.apply(isoparse, convert_dtype=False)
                 df[column_name] = _col
                 _date_columns.append(str(column_name))
             except Exception:
