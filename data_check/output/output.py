@@ -4,6 +4,7 @@ from colorama import Fore, Style
 import traceback
 from os import linesep
 from typing import IO, Optional, Any, Tuple, Union, List, cast
+import sys
 
 from ..exceptions import DataCheckException
 from ..result import DataCheckResult, ResultType
@@ -40,15 +41,18 @@ class DataCheckOutput:
         self.handler.quiet = quiet
         self.handler.log_path = log_path
 
+    @staticmethod
+    def format_exception(exc: Exception):
+        if sys.version_info >= (3, 10):
+            return traceback.format_exception(exc)
+        else:
+            return traceback.format_exception(
+                value=exc, tb=exc.__traceback__, etype=Exception
+            )
+
     def print_exception(self, exc: Exception):
         if self.traceback:
-            self.print(
-                "".join(
-                    traceback.format_exception(
-                        value=exc, tb=exc.__traceback__, etype=Exception
-                    )
-                )
-            )
+            self.print("".join(self.format_exception(exc)))
         elif self.verbose:
             self.print(str(exc))
 
@@ -202,11 +206,7 @@ class DataCheckOutput:
         if self.verbose:
             message += linesep + str(exception)
         if self.traceback:
-            message += linesep + "".join(
-                traceback.format_exception(
-                    value=exception, tb=exception.__traceback__, etype=Exception
-                )
-            )
+            message += linesep + "".join(self.format_exception(exception))
         return DataCheckResult(
             passed=passed,
             result=f"{source} generated an exception: {exception}",
