@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+
+### Fixed
+
+- --sql --output produces empty lines and \r\r\n on windows
+- --generate produces non-UTF8 files
+
+
 ## [0.9.0] - 2021-12-17
 
 ### Added
