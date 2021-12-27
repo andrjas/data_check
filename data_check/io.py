@@ -102,10 +102,10 @@ def write_csv(
     df: DataFrame, output: Union[str, Path] = "", base_path: Path = Path(".")
 ):
     if output:
-        result = df.to_csv(index=False, line_terminator='\n')
+        result = df.to_csv(index=False, line_terminator="\n")
         # escape # in strings that would otherwise be treated as the start of a comment
         result = result.replace("#", "\\#")
-        Path(base_path / output).write_text(result, encoding='utf8')
+        Path(base_path / output).write_text(result, encoding="utf8")
 
 
 def read_yaml(
