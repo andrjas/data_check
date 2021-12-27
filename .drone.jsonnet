@@ -151,12 +151,8 @@ pipeline_extra={
 
 [
 oracle_test(),
-python_test("3.6.2"),
 sqlite_test(),
-python_test("3.7"),
 mysql_test(),
-python_test("3.8"),
 postgres_test(),
-python_test("3.9"),
 mssql_test(),
 ]

@@ -56,24 +56,6 @@ volumes:
 ---
 kind: pipeline
 type: docker
-name: python_3.6.2
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: python
-  image: local/poetry:3.6.2
-  commands:
-  - poetry install
-  - poetry run pytest test int_test/cli
-  - cd checks/basic
-  - poetry run data_check
-
----
-kind: pipeline
-type: docker
 name: sqlite
 
 platform:
@@ -101,24 +83,6 @@ steps:
   - poetry run data_check checks/pipelines/simple_pipeline --traceback
   - poetry run data_check checks/pipelines/date_test --traceback --print
   - poetry run data_check checks/pipelines/leading_zeros --traceback --print
-
----
-kind: pipeline
-type: docker
-name: python_3.7
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: python
-  image: local/poetry:3.7
-  commands:
-  - poetry install
-  - poetry run pytest test int_test/cli
-  - cd checks/basic
-  - poetry run data_check
 
 ---
 kind: pipeline
@@ -162,24 +126,6 @@ services:
 ---
 kind: pipeline
 type: docker
-name: python_3.8
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: python
-  image: local/poetry:3.8
-  commands:
-  - poetry install
-  - poetry run pytest test int_test/cli
-  - cd checks/basic
-  - poetry run data_check
-
----
-kind: pipeline
-type: docker
 name: postgres
 
 platform:
@@ -215,24 +161,6 @@ services:
   image: postgres:13
   environment:
     POSTGRES_PASSWORD: data_check
-
----
-kind: pipeline
-type: docker
-name: python_3.9
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: python
-  image: local/poetry:3.9
-  commands:
-  - poetry install
-  - poetry run pytest test int_test/cli
-  - cd checks/basic
-  - poetry run data_check
 
 ---
 kind: pipeline
