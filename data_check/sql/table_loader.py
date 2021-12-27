@@ -1,4 +1,5 @@
-from typing import Optional, Tuple, List, Union
+from __future__ import annotations
+from typing import Optional, Tuple, List, Union, Any, Dict, TYPE_CHECKING
 from sqlalchemy import inspect
 from sqlalchemy.sql import text
 from sqlalchemy.exc import NoSuchTableError, OperationalError
@@ -6,23 +7,24 @@ import pandas as pd
 import warnings
 from pathlib import Path
 import datetime
-from collections import namedtuple
+from dataclasses import dataclass
+
+if TYPE_CHECKING:
+    from data_check.sql import DataCheckSql
+    from data_check.output import DataCheckOutput
 
 from ..io import expand_files, read_csv
 from .load_mode import LoadMode
 
 
 # some data types that need special handling
-ColumnInfo = namedtuple(
-    "ColumnInfo",
-    [
-        "dtypes",
-        "date_columns",
-        "date_column_names",
-        "string_columns",
-        "string_column_names",
-    ],
-)
+@dataclass
+class ColumnInfo:
+    dtypes: Dict[Any, Any]
+    date_columns: Dict[Any, Any]
+    date_column_names: List[str]
+    string_columns: Dict[Any, Any]
+    string_column_names: List[str]
 
 
 class TableLoader:
@@ -30,7 +32,7 @@ class TableLoader:
     Helper class that implements the methods to load a table from a CSV file.
     """
 
-    def __init__(self, sql, output):
+    def __init__(self, sql: DataCheckSql, output: DataCheckOutput):
         self.sql = sql
         self.output = output
 
@@ -110,8 +112,7 @@ class TableLoader:
             inspector = inspect(self.sql.get_connection())
             columns = inspector.get_columns(name, schema=schema)
             return {c["name"]: c["type"] for c in columns}
-        except (NoSuchTableError, OperationalError):
-            # Python 3.6 might trow an OperationalError
+        except NoSuchTableError:
             return {}
 
     def get_date_columns(self, table_name: str):

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING, Tuple, List, Any, Dict
 from pathlib import Path
 from data_check.io import expand_files, read_sql_file
@@ -7,7 +8,7 @@ if TYPE_CHECKING:
 
 
 def load_lookup(
-    data_check: "DataCheck", lf: Path, lookups_path: Path
+    data_check: DataCheck, lf: Path, lookups_path: Path
 ) -> Tuple[str, List[Any]]:
     lf_path = lf.relative_to(lookups_path)  # remove "lookups"
     if lf_path.parent.parts:
@@ -24,7 +25,7 @@ def load_lookup(
     return (lf_path, lkp_value)
 
 
-def load_lookups_from_path(data_check: "DataCheck") -> Dict[str, Any]:
+def load_lookups_from_path(data_check: DataCheck) -> Dict[str, Any]:
     lookups_path = data_check.config.lookups_path
     lookup_data: Dict[str, Any] = {}
     if lookups_path.exists():

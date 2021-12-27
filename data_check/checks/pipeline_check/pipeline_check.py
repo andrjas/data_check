@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pathlib import Path
 from typing import Callable, List, Dict, Any, Union, Optional, TYPE_CHECKING, cast
 from copy import deepcopy
@@ -17,7 +18,7 @@ DATA_CHECK_PIPELINE_FILE = "data_check_pipeline.yml"
 
 
 class PipelineCheck(BaseCheck):
-    def __init__(self, data_check: "DataCheck", check_path: Path) -> None:
+    def __init__(self, data_check: DataCheck, check_path: Path) -> None:
         super().__init__(data_check, check_path)
         self.pipeline_steps: Dict[str, Dict[str, Any]] = {}
         self.register_pipelines()

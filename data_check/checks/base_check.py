@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -8,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class BaseCheck:
-    def __init__(self, data_check: "DataCheck", check_path: Path) -> None:
+    def __init__(self, data_check: DataCheck, check_path: Path) -> None:
         self.data_check = data_check
         self.check_path = check_path  # path to the check (some file or folder)
 
@@ -19,7 +20,7 @@ class BaseCheck:
     def is_check_path(path: Path) -> bool:
         return False
 
-    def __lt__(self, other: "BaseCheck") -> bool:
+    def __lt__(self, other: BaseCheck) -> bool:
         return self.check_path < other.check_path
 
     def __repr__(self) -> str:

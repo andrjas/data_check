@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pathlib import Path
 from typing import List, Union, TYPE_CHECKING
 import subprocess
@@ -8,7 +9,7 @@ if TYPE_CHECKING:
 
 class CmdStep:
     def __init__(
-        self, cmd: Union[str, List[str]], output: "DataCheckOutput", print: bool = True
+        self, cmd: Union[str, List[str]], output: DataCheckOutput, print: bool = True
     ) -> None:
         self.cmd = cmd
         self.output = output

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pathlib import Path
 from typing import List, Dict, Any, TYPE_CHECKING
 import inspect
@@ -12,8 +13,8 @@ if TYPE_CHECKING:
 class SerialPipelineSteps:
     def __init__(
         self,
-        data_check: "DataCheck",
-        pipeline_check: "PipelineCheck",
+        data_check: DataCheck,
+        pipeline_check: PipelineCheck,
         steps: List[Any],
         path: Path,
         pipeline_name: str,
