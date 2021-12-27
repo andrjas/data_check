@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [0.10.0] - 2021-12-27
+
+### Added
+
+- python 3.10 support
+- tox to test multiple python versions
+
+### Removed
+
+- python 3.6 support
+- python tests in int_test
 
 ### Fixed
 

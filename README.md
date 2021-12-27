@@ -20,7 +20,7 @@ data_check should work with any database that works with [SQLAlchemy](https://do
 
 ## Quickstart
 
-You need Python 3.6.2 or above to run data_check. The easiest way to install data_check is via [pipx](https://github.com/pipxproject/pipx):
+You need Python 3.7.1 or above to run data_check. The easiest way to install data_check is via [pipx](https://github.com/pipxproject/pipx):
 
 `pipx install data-check`
 
