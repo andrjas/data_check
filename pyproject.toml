@@ -44,7 +44,7 @@ pytest-parallel = "^0.1.0"
 coverage = "^6"
 
 [tool.poetry.scripts]
-data_check = "data_check.__main__:main"
+data_check = "data_check.cli.main:main"
 
 [tool.poetry.extras]
 postgres = ["psycopg2-binary"]

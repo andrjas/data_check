@@ -4,7 +4,7 @@ import re
 
 
 def all_click_options():
-    main_py = Path(__file__).parent.parent.parent / "data_check" / "__main__.py"
+    main_py = Path(__file__).parent.parent.parent / "data_check" / "cli" / "main.py"
     assert main_py.exists()
     options = re.findall(r'"--?[^"\s]+"', main_py.read_text())
     return [o.rstrip('"').lstrip('"') for o in options]
@@ -19,6 +19,6 @@ def test_all_options_are_documented():
 
     join = []
     for opt in all_options:
-        if re.search(r"\* \`data_check\s+[^\`]*" + opt + "[\`\s\/]", usage_txt):
+        if re.search(r"\* \`data_check\s+[^\`]*" + opt + r"[\`\s\/]", usage_txt):
             join.append(opt)
     assert set(join) == set(all_options)
