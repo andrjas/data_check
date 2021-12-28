@@ -1,23 +1,31 @@
-import pytest
-from subprocess import check_output, CalledProcessError
+from click.testing import CliRunner, Result
 import os
 from pathlib import Path
 import shutil
-from os import sep
-from typing import List
+from os import linesep, sep
+from typing import List, Optional
+
+from data_check.cli.main import main
 
 
-def run(command: List[str]):
-    return check_output(command, universal_newlines=True)
+def run(command: List[str], workers: Optional[int] = 1) -> Result:
+    runner = CliRunner()
+    if not workers:
+        workers_cmd = []
+    else:
+        workers_cmd = ["-n", str(workers)]
+    result = runner.invoke(main, command + workers_cmd)
+    return result
 
 
-def run_check(command: List[str]):
-    return run(command + ["checks/basic/simple_string.sql"])
+def run_check(command: List[str], workers: Optional[int] = 1):
+    return run(command + ["checks/basic/simple_string.sql"], workers=workers)
 
 
-def assert_passed(out: str):
+def assert_passed(result: Result):
+    assert result.exit_code == 0
     assert (
-        out.replace("\x1b[0m", "").replace("\x1b[32m", "")
+        result.output.replace("\x1b[0m", "").replace("\x1b[32m", "")
         == f"""checks{sep}basic{sep}simple_string.sql: PASSED
 
 overall result: PASSED
@@ -25,19 +33,21 @@ overall result: PASSED
     )
 
 
-def assert_failed(out: str):
-    assert "overall result: FAILED" in out
+def assert_failed(result: Result):
+    assert result.exit_code == 1
+    assert "overall result: FAILED" in result.output
 
 
 def test_help():
-    out = run(["data_check", "--help"])
-    assert out.startswith("Usage: data_check")
+    res = run(["--help"])
+    assert res.exit_code == 0
+    assert res.output.startswith("Usage:")
 
 
 def all_options():
-    help_output = run(["data_check", "--help"])
-    lines = help_output.split("Options:", maxsplit=1)[1].strip().splitlines()
-    options = []
+    res = run(["--help"])
+    lines = res.output.split("Options:", maxsplit=1)[1].strip().splitlines()
+    options: List[str] = []
     for opt in lines:
         opt = opt.strip()
         if opt and opt.startswith("-"):
@@ -52,7 +62,7 @@ def test_all_options_tested():
     dc_options = all_options()
     tested_options = Path(__file__).read_text()
 
-    join = []
+    join: List[str] = []
     for option in dc_options:
         if f'"{option}"' in tested_options:
             join.append(option)
@@ -61,160 +71,147 @@ def test_all_options_tested():
 
 
 def test_single_file_check():
-    out = run_check(["data_check"])
-    assert_passed(out)
+    res = run_check([])
+    assert_passed(res)
 
 
 def test_run_without_parameters():
-    with pytest.raises(CalledProcessError) as e:
-        run(["data_check"])
-    assert_failed(e.value.output)
+    res = run([], workers=None)
+    assert_failed(res)
 
 
 def test_failing():
-    with pytest.raises(CalledProcessError) as e:
-        run(["data_check", "checks/failing/expected_to_fail.sql"])
-    assert_failed(e.value.output)
+    res = run(["checks/failing/expected_to_fail.sql"])
+    assert_failed(res)
 
 
 def test_invalid():
-    with pytest.raises(CalledProcessError) as e:
-        run(["data_check", "checks/failing/invalid.sql"])
-    assert_failed(e.value.output)
+    res = run(["checks/failing/invalid.sql"])
+    assert_failed(res)
     assert (
-        f"FAILED (with exception in checks{sep}failing{sep}invalid.sql)"
-        in e.value.output
+        f"FAILED (with exception in checks{sep}failing{sep}invalid.sql)" in res.output
     )
 
 
 def test_c():
-    out = run_check(["data_check", "-c", "test2"])
+    out = run_check(["-c", "test2"])
     assert_passed(out)
 
 
 def test_connection():
-    out = run_check(["data_check", "--connection", "test2"])
+    out = run_check(["--connection", "test2"])
     assert_passed(out)
 
 
 def test_unknown_connection():
-    with pytest.raises(CalledProcessError) as e:
-        run_check(["data_check", "--connection", "unknown"])
-
-    assert "unknown connection: unknown" in e.value.output
+    res = run_check(["--connection", "unknown"])
+    assert res.exit_code == 1
+    assert "unknown connection: unknown" in res.output
 
 
 def test_n():
-    out = run_check(["data_check", "-n", "1"])
+    out = run_check(["-n", "1"])
     assert_passed(out)
 
 
 def test_workers():
-    out = run_check(["data_check", "--workers", "1"])
+    out = run_check(["--workers", "1"])
     assert_passed(out)
 
 
 def test_workers_invalid_number():
-    with pytest.raises(CalledProcessError):
-        run_check(["data_check", "--workers", "a"])
+    res = run_check(["--workers", "a"], workers=None)
+    assert res.exit_code == 2
 
 
 def test_print():
-    with pytest.raises(CalledProcessError) as e:
-        run(["data_check", "--print", "checks/failing/expected_to_fail.sql"])
-    assert_failed(e.value.output)
-    assert "check1,_diff" in e.value.output
+    res = run(["--print", "checks/failing/expected_to_fail.sql"])
+    assert_failed(res)
+    assert "check1,_diff" in res.output
 
 
 def test_print_json():
-    with pytest.raises(CalledProcessError) as e:
-        run(["data_check", "--print-json", "checks/failing/expected_to_fail.sql"])
+    res = run(["--print-json", "checks/failing/expected_to_fail.sql"])
+    assert res.exit_code == 1
 
 
 def test_print_format_csv():
-    with pytest.raises(CalledProcessError) as e:
-        run(
-            [
-                "data_check",
-                "--print",
-                "--print-format",
-                "csv",
-                "checks/failing/expected_to_fail.sql",
-            ]
-        )
-    assert_failed(e.value.output)
-    assert "check1,_diff" in e.value.output
+    res = run(
+        [
+            "--print",
+            "--print-format",
+            "csv",
+            "checks/failing/expected_to_fail.sql",
+        ]
+    )
+    assert_failed(res)
+    assert "check1,_diff" in res.output
 
 
 def test_print_format_pandas():
-    with pytest.raises(CalledProcessError) as e:
-        run(
-            [
-                "data_check",
-                "--print",
-                "--print-format",
-                "pandas",
-                "checks/failing/expected_to_fail.sql",
-            ]
-        )
-    assert_failed(e.value.output)
-    assert "_diff" in e.value.output
+    res = run(
+        [
+            "--print",
+            "--print-format",
+            "pandas",
+            "checks/failing/expected_to_fail.sql",
+        ]
+    )
+    assert_failed(res)
+    assert "_diff" in res.output
 
 
 def test_print_format_unknown():
-    with pytest.raises(CalledProcessError):
-        run(
-            [
-                "data_check",
-                "--print",
-                "--print-format",
-                "unknown",
-                "checks/failing/expected_to_fail.sql",
-            ]
-        )
+    res = run(
+        [
+            "--print",
+            "--print-format",
+            "unknown",
+            "checks/failing/expected_to_fail.sql",
+        ]
+    )
+    assert res.exit_code == 1
 
 
 def test_config():
-    out = run_check(["data_check", "--config", "data_check.yml"])
+    out = run_check(["--config", "data_check.yml"])
     assert_passed(out)
 
 
 def test_config_invalid_path():
-    with pytest.raises(CalledProcessError):
-        run_check(["data_check", "--config", "dos_not_exists.yml"])
+    res = run_check(["--config", "dos_not_exists.yml"])
+    assert res.exit_code == 1
 
 
 def test_ping():
-    out = run(["data_check", "--ping"])
-    assert out.strip() == "connecting succeeded"
+    res = run(["--ping"])
+    assert res.exit_code == 0
+    assert res.output.strip() == "connecting succeeded"
 
 
 def test_invalid_verbose():
-    with pytest.raises(CalledProcessError) as e:
-        run(["data_check", "--verbose", "checks/failing/invalid.sql"])
-    assert_failed(e.value.output)
+    res = run(["--verbose", "checks/failing/invalid.sql"])
+    assert_failed(res)
     assert (
-        f"FAILED (with exception in checks{sep}failing{sep}invalid.sql)"
-        in e.value.output
+        f"FAILED (with exception in checks{sep}failing{sep}invalid.sql)" in res.output
     )
-    assert '(sqlite3.OperationalError) near "selct": syntax error' in e.value.output
+    assert '(sqlite3.OperationalError) near "selct": syntax error' in res.output
 
 
 def test_invalid_traceback():
-    with pytest.raises(CalledProcessError) as e:
-        run(["data_check", "--traceback", "checks/failing/invalid.sql"])
-    assert_failed(e.value.output)
+    res = run(["--traceback", "checks/failing/invalid.sql"])
+    assert_failed(res)
     assert (
-        f"FAILED (with exception in checks{sep}failing{sep}invalid.sql)"
-        in e.value.output
+        f"FAILED (with exception in checks{sep}failing{sep}invalid.sql)" in res.output
     )
-    assert '(sqlite3.OperationalError) near "selct": syntax error' in e.value.output
-    assert "Traceback (most recent call last):" in e.value.output
+    assert '(sqlite3.OperationalError) near "selct": syntax error' in res.output
+    assert "Traceback (most recent call last):" in res.output
 
 
 def test_version():
-    out = run(["data_check", "--version"])
-    assert out.startswith("data_check, version")
+    res = run(["--version"])
+    assert res.exit_code == 0
+    assert ", version" in res.output
 
 
 def test_g():
@@ -226,11 +223,12 @@ def test_g():
     if gen_sql.exists():
         os.unlink(gen_sql)
     shutil.copy(gen_sql_org, gen_sql)
-    out = run(["data_check", "-g", str(gen_sql)])
+    res = run(["-g", str(gen_sql)])
+    assert res.exit_code == 0
     assert gen_csv.exists()
     os.unlink(gen_csv)
     os.unlink(gen_sql)
-    assert out.startswith(
+    assert res.output.startswith(
         f"expectation written to checks{sep}generated{sep}generate_before_running_g.csv"
     )
 
@@ -239,12 +237,11 @@ def test_generate():
     gen_csv = Path("checks/generated/generate_before_running.csv")
     if gen_csv.exists():
         os.unlink(gen_csv)
-    out = run(
-        ["data_check", "--generate", "checks/generated/generate_before_running.sql"]
-    )
+    res = run(["--generate", "checks/generated/generate_before_running.sql"])
+    assert res.exit_code == 0
     assert gen_csv.exists()
     os.unlink(gen_csv)
-    assert out.startswith(
+    assert res.output.startswith(
         f"expectation written to checks{sep}generated{sep}generate_before_running.csv"
     )
 
@@ -254,13 +251,12 @@ def test_generate_no_overwrite_without_force():
     if gen_csv.exists():
         os.unlink(gen_csv)
     gen_csv.write_text("")
-    out = run(
-        ["data_check", "--generate", "checks/generated/generate_before_running.sql"]
-    )
+    res = run(["--generate", "checks/generated/generate_before_running.sql"])
+    assert res.exit_code == 0
     assert gen_csv.exists()
     assert gen_csv.read_text() == ""
     os.unlink(gen_csv)
-    assert out.startswith(
+    assert res.output.startswith(
         f"expectation skipped for checks{sep}generated{sep}generate_before_running.csv"
     )
 
@@ -270,71 +266,79 @@ def test_generate_force():
     if gen_csv.exists():
         os.unlink(gen_csv)
     gen_csv.write_text("")
-    out = run(
+    res = run(
         [
-            "data_check",
             "--generate",
             "--force",
             "checks/generated/generate_before_running.sql",
         ]
     )
+    assert res.exit_code == 0
     assert gen_csv.exists()
     assert gen_csv.read_text() != ""
     os.unlink(gen_csv)
-    assert out.startswith(
+    assert res.output.startswith(
         f"expectation written to checks{sep}generated{sep}generate_before_running.csv"
     )
 
 
 def test_sql_file():
-    out = run(["data_check", "--sql-file", "run_sql/run_test.sql"])
-    print(out)
-    assert "executing:" in out
-    assert "select 1 as a" in out
+    res = run(["--sql-file", "run_sql/run_test.sql"])
+    assert res.exit_code == 0
+    assert "executing:" in res.output
+    assert "select 1 as a" in res.output
 
 
 def test_sql_files():
-    out = run(["data_check", "--sql-files", "run_sql"])
-    print(out)
-    assert "executing:" in out
-    assert "select 1 as a" in out
+    res = run(["--sql-files", "run_sql"])
+    assert res.exit_code == 0
+    print(res.output)
+    assert "executing:" in res.output
+    assert "select 1 as a" in res.output
 
 
 def test_sql_file_failing_sql():
-    with pytest.raises(CalledProcessError):
-        run(["data_check", "--sql-file", "failing/run_sql/invalid.sql"])
+    res = run(["--sql-file", "failing/run_sql/invalid.sql"])
+    assert res.exit_code == 1
 
 
 def test_sql_file_no_file():
-    with pytest.raises(CalledProcessError):
-        run(["data_check", "--sql-file", "failing/run_sql/no_such_file.sql"])
+    res = run(["--sql-file", "failing/run_sql/no_such_file.sql"])
+    assert res.exit_code == 1
 
 
 def test_load_tables():
-    out = run(["data_check", "--load-tables", "load_data/test.csv"])
-    assert out.strip() == "table test loaded from load_data/test.csv"
+    res = run(["--load-tables", "load_data/test.csv"])
+    assert res.exit_code == 0
+    assert res.output.strip() == f"table test loaded from load_data{sep}test.csv"
 
 
-def test_load_tables_folder():
-    out = run(["data_check", "--load-tables", "load_data/tables"])
-    assert "table test1 loaded from load_data/tables/test1.csv" in out
-    assert "table test3 loaded from load_data/tables/test3.xlsx" in out
-    assert "table main.test2 loaded from load_data/tables/main.test2.csv" in out
+def test_load_tables_folder(caplog):
+    res = run(["--load-tables", "load_data/tables"])
+    assert res.exit_code == 0
+    assert f"table test1 loaded from load_data{sep}tables{sep}test1.csv" in res.output
+    assert f"table test3 loaded from load_data{sep}tables{sep}test3.xlsx" in res.output
+    assert (
+        f"table main.test2 loaded from load_data{sep}tables{sep}main.test2.csv"
+        in res.output
+    )
 
 
 def test_sql():
-    out = run(["data_check", "--sql", "select 1 as a"])
-    assert out.strip() == "a\n1"
+    res = run(["--sql", "select 1 as a"])
+    assert res.exit_code == 0
+    assert res.output.strip() == f"a{linesep}1"
 
 
 def test_sql_output():
     test_output = Path("test_sql_output_1.csv")
     if test_output.exists():
         test_output.unlink()
-    out = run(["data_check", "--sql", "select 1 as a", "--output", str(test_output)])
+    res = run(["--sql", "select 1 as a", "--output", str(test_output)])
+    assert res.exit_code == 0
     exists = test_output.exists()
     test_output.unlink()
-    assert out.strip() == "a\n1"
+    assert res.output.strip() == f"a{linesep}1"
     assert exists
 
 
@@ -342,42 +346,47 @@ def test_sql_output_o():
     test_output = Path("test_sql_output_2.csv")
     if test_output.exists():
         test_output.unlink()
-    out = run(["data_check", "--sql", "select 1 as a", "-o", str(test_output)])
+    res = run(["--sql", "select 1 as a", "-o", str(test_output)])
+    assert res.exit_code == 0
     exists = test_output.exists()
     test_output.unlink()
-    assert out.strip() == "a\n1"
+    assert res.output.strip() == f"a{linesep}1"
     assert exists
 
 
 def test_sql_invalid_query():
-    with pytest.raises(CalledProcessError) as e:
-        run(["data_check", "--sql", "selct 1 as a"])
+    res = run(["--sql", "selct 1 as a"])
+    assert res.exit_code == 1
 
 
 def test_load_table():
-    out = run(
-        ["data_check", "--load", "load_data/test.csv", "--table", "test_load_table"]
+    res = run(["--load", "load_data/test.csv", "--table", "test_load_table"])
+    assert res.exit_code == 0
+    assert (
+        res.output.strip()
+        == f"table test_load_table loaded from load_data{sep}test.csv"
     )
-    assert out.strip() == "table test_load_table loaded from load_data/test.csv"
 
 
 def test_load_table_excel():
-    out = run(
+    res = run(
         [
-            "data_check",
             "--load",
             "load_data/test.xlsx",
             "--table",
             "test_load_table_excel",
         ]
     )
-    assert out.strip() == "table test_load_table_excel loaded from load_data/test.xlsx"
+    assert res.exit_code == 0
+    assert (
+        res.output.strip()
+        == f"table test_load_table_excel loaded from load_data{sep}test.xlsx"
+    )
 
 
 def test_load_mode_truncate():
-    out = run(
+    res = run(
         [
-            "data_check",
             "--load",
             "load_data/test.csv",
             "--table",
@@ -386,15 +395,16 @@ def test_load_mode_truncate():
             "truncate",
         ]
     )
+    assert res.exit_code == 0
     assert (
-        out.strip() == "table test_load_table_truncate loaded from load_data/test.csv"
+        res.output.strip()
+        == f"table test_load_table_truncate loaded from load_data{sep}test.csv"
     )
 
 
 def test_load_mode_append():
-    out = run(
+    res = run(
         [
-            "data_check",
             "--load",
             "load_data/test.csv",
             "--table",
@@ -403,13 +413,16 @@ def test_load_mode_append():
             "append",
         ]
     )
-    assert out.strip() == "table test_load_table_append loaded from load_data/test.csv"
+    assert res.exit_code == 0
+    assert (
+        res.output.strip()
+        == f"table test_load_table_append loaded from load_data{sep}test.csv"
+    )
 
 
 def test_load_mode_replace():
-    out = run(
+    res = run(
         [
-            "data_check",
             "--load",
             "load_data/test.csv",
             "--table",
@@ -418,41 +431,45 @@ def test_load_mode_replace():
             "replace",
         ]
     )
-    assert out.strip() == "table test_load_table_replace loaded from load_data/test.csv"
+    assert res.exit_code == 0
+    assert (
+        res.output.strip()
+        == f"table test_load_table_replace loaded from load_data{sep}test.csv"
+    )
 
 
 def test_load_mode_invalid():
-    with pytest.raises(CalledProcessError) as e:
-        run(
-            [
-                "data_check",
-                "--load",
-                "load_data/test.csv",
-                "--table",
-                "test_load_table_invalid",
-                "--load-mode",
-                "invalid",
-            ]
-        )
+    res = run(
+        [
+            "--load",
+            "load_data/test.csv",
+            "--table",
+            "test_load_table_invalid",
+            "--load-mode",
+            "invalid",
+        ]
+    )
+    assert res.exit_code == 1
 
 
 def test_load_mode_with_load_tables():
-    out = run(
-        ["data_check", "--load-tables", "load_data/test.csv", "--load-mode", "append"]
-    )
-    assert out.strip() == "table test loaded from load_data/test.csv"
+    res = run(["--load-tables", "load_data/test.csv", "--load-mode", "append"])
+    assert res.exit_code == 0
+    assert res.output.strip() == f"table test loaded from load_data{sep}test.csv"
 
 
 def test_quiet():
-    out = run(["data_check", "--ping", "--quiet"])
-    assert out.strip() == ""
+    res = run(["--ping", "--quiet"])
+    assert res.exit_code == 0
+    assert res.output.strip() == ""
 
 
 def test_log():
     log = Path("test_log.txt")
     if log.exists():
         log.unlink()
-    run(["data_check", "checks/basic/simple_string.sql", "--log", str(log)])
+    res = run(["checks/basic/simple_string.sql", "--log", str(log)])
+    assert res.exit_code == 0
     log_text = log.read_text()
     log_exists = log.exists()
     log.unlink()
@@ -464,7 +481,8 @@ def test_log_quiet():
     log = Path("test_log_quiet.txt")
     if log.exists():
         log.unlink()
-    run(["data_check", "checks/basic/simple_string.sql", "--log", str(log), "--quiet"])
+    res = run(["checks/basic/simple_string.sql", "--log", str(log), "--quiet"])
+    assert res.exit_code == 0
     log_text = log.read_text()
     log_exists = log.exists()
     log.unlink()
