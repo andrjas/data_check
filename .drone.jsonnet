@@ -1,37 +1,35 @@
 # run "drone jsonnet  --format --stream" whenever you change this file
 # to generate .drone.yml
 
-local python_test(version) = 
-{
-    "kind": "pipeline",
-    "type": "docker",
-    "name": "python_"+version,
-    "steps": [
-        {
-            "name": "python",
-            "image": "local/poetry:"+version,
-            "commands": [
-                "poetry install",
-                "poetry run pytest test int_test/cli",
-                "cd checks/basic",
-                "poetry run data_check",
-            ]
-        }
-    ]
-};
+local positive_int_tests = [
+    "checks/basic",
+    "checks/generated",
+    "checks/empty_sets/basic",
+    "checks/excel/basic",
+    "checks/pipelines/simple_pipeline",
+    "checks/pipelines/date_test",
+    "checks/pipelines/leading_zeros",
+];
 
+local failing_int_tests = [
+    "checks/failing/duplicates.sql",
+    "checks/failing/expected_to_fail.sql",
+    "checks/failing/invalid_csv.sql",
+    "checks/failing/invalid.sql",
+    "checks/empty_sets/failing/not_empty_query.sql",
+    "checks/excel/failing/failing_empty.sql",
+    "checks/excel/failing/failing_excel.sql",
+];
 
 local generic_int_test = [
     "bash -c 'while ! poetry run data_check --ping --quiet; do sleep 1; done'",
     "poetry run data_check --sql-files prepare",
-    "poetry run pytest ../../test/database",
+    "poetry run pytest ../../../test/database",
     "poetry run data_check --generate checks/generated",
-    "poetry run data_check checks/basic checks/generated checks/empty_sets/basic checks/excel/basic --traceback",
-    "bash -c 'if ! poetry run data_check checks/failing; then exit 0; else exit 1; fi'",
-    "bash -c 'if ! poetry run data_check checks/empty_sets/failing; then exit 0; else exit 1; fi'",
-    "poetry run data_check checks/pipelines/simple_pipeline --traceback",
-    "poetry run data_check checks/pipelines/date_test --traceback --print",
-    "poetry run data_check checks/pipelines/leading_zeros --traceback --print",
+] + [
+    "poetry run data_check %s --traceback --print" % [p] for p in positive_int_tests
+] + [
+    "bash -c 'if ! poetry run data_check %s; then exit 0; else exit 1; fi'" % [f] for f in failing_int_tests
 ];
 
 
@@ -61,23 +59,23 @@ local int_pipeline(db, image, prepare_commands, environment={}, db_image="", ser
 
 local sqlite_test() = int_pipeline("sqlite", "local/poetry:3.8",
 [
-    "cp -rn checks int_test/sqlite",
-    "cp -rn load_data int_test/sqlite",
-    "cp -rn run_sql int_test/sqlite",
-    "cp -rn lookups int_test/sqlite",
+    "cp -rn example/checks test/int_test/sqlite",
+    "cp -rn example/load_data test/int_test/sqlite",
+    "cp -rn example/run_sql test/int_test/sqlite",
+    "cp -rn example/lookups test/int_test/sqlite",
     "poetry install",
-    "cd int_test/sqlite"
+    "cd test/int_test/sqlite"
 ]);
 
 
 local postgres_test() = int_pipeline("postgres", "local/poetry:3.8",
 [
-    "cp -rn checks int_test/postgres",
-    "cp -rn load_data int_test/postgres",
-    "cp -rn run_sql int_test/postgres",
-    "cp -rn lookups int_test/postgres",
+    "cp -rn example/checks test/int_test/postgres",
+    "cp -rn example/load_data test/int_test/postgres",
+    "cp -rn example/run_sql test/int_test/postgres",
+    "cp -rn example/lookups test/int_test/postgres",
     "poetry install -E postgres",
-    "cd int_test/postgres"
+    "cd test/int_test/postgres"
 ],
 {
     POSTGRES_PASSWORD: "data_check"
@@ -86,12 +84,12 @@ local postgres_test() = int_pipeline("postgres", "local/poetry:3.8",
 
 local mysql_test() = int_pipeline("mysql", "local/poetry:3.8",
 [
-    "cp -rn checks int_test/mysql",
-    "cp -rn load_data int_test/mysql",
-    "cp -rn run_sql int_test/mysql",
-    "cp -rn lookups int_test/mysql",
+    "cp -rn example/checks test/int_test/mysql",
+    "cp -rn example/load_data test/int_test/mysql",
+    "cp -rn example/run_sql test/int_test/mysql",
+    "cp -rn example/lookups test/int_test/mysql",
     "poetry install -E mysql",
-    "cd int_test/mysql"
+    "cd test/int_test/mysql"
 ],
 {
     MYSQL_ROOT_PASSWORD: "data_check"
@@ -100,12 +98,12 @@ local mysql_test() = int_pipeline("mysql", "local/poetry:3.8",
 
 local mssql_test() = int_pipeline("mssql", "local/poetry_mssql",
 [
-    "cp -rn checks int_test/mssql",
-    "cp -rn load_data int_test/mssql",
-    "cp -rn run_sql int_test/mssql",
-    "cp -rn lookups int_test/mssql",
+    "cp -rn example/checks test/int_test/mssql",
+    "cp -rn example/load_data test/int_test/mssql",
+    "cp -rn example/run_sql test/int_test/mssql",
+    "cp -rn example/lookups test/int_test/mssql",
     "poetry install -E mssql",
-    "cd int_test/mssql"
+    "cd test/int_test/mssql"
 ],
 {
     ACCEPT_EULA: "Y",
@@ -116,12 +114,12 @@ local mssql_test() = int_pipeline("mssql", "local/poetry_mssql",
 
 local oracle_test() = int_pipeline("oracle", "local/poetry_oracle",
 [
-    "cp -rn checks int_test/oracle",
-    "cp -rn load_data int_test/oracle",
-    "cp -rn run_sql int_test/oracle",
-    "cp -rn lookups int_test/oracle",
+    "cp -rn example/checks test/int_test/oracle",
+    "cp -rn example/load_data test/int_test/oracle",
+    "cp -rn example/run_sql test/int_test/oracle",
+    "cp -rn example/lookups test/int_test/oracle",
     "poetry install -E oracle",
-    "cd int_test/oracle"
+    "cd test/int_test/oracle"
 ],
 {
     ORACLE_PWD: "data_check",

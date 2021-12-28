@@ -5,19 +5,11 @@ from pathlib import Path
 
 
 from data_check.sql import DataCheckSql, LoadMode  # noqa E402
-from data_check.config import DataCheckConfig  # noqa E402
 
 
 @pytest.fixture(scope="module", params=["csv", "xlsx"])
 def file_type(request):
     return request.param
-
-
-@pytest.fixture
-def sql() -> DataCheckSql:
-    dc_config = DataCheckConfig().load_config().set_connection("test")
-    _sql = DataCheckSql(dc_config.connection)
-    return _sql
 
 
 def test_load_from_dataframe_append(sql: DataCheckSql):

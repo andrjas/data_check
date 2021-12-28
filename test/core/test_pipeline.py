@@ -3,31 +3,19 @@ from pathlib import Path
 
 
 from data_check import DataCheck  # noqa E402
-from data_check.config import DataCheckConfig  # noqa E402
 from data_check.result import DataCheckResult  # noqa E402
 from data_check.checks.pipeline_check import PipelineCheck  # noqa E402
 
 
 @pytest.fixture
-def dc() -> DataCheck:
-    config = DataCheckConfig().load_config().set_connection("test")
-    config.parallel_workers = (
-        1  # since we do not persist anything in SQLite, we must use a single connection
-    )
-    _dc = DataCheck(config)
-    _dc.load_template()
-    return _dc
-
-
-@pytest.fixture
-def pc(dc: DataCheck) -> PipelineCheck:
-    _pc = PipelineCheck(dc, Path("."))
+def pc(dc_serial: DataCheck) -> PipelineCheck:
+    _pc = PipelineCheck(dc_serial, Path("."))
     return _pc
 
 
-def check_table_exists(table_name: str, dc: DataCheck) -> bool:
+def check_table_exists(table_name: str, dc_serial: DataCheck) -> bool:
     try:
-        dc.sql.run_query(f"select * from {table_name}")
+        dc_serial.sql.run_query(f"select * from {table_name}")
         return True
     except Exception:
         return False
@@ -44,8 +32,8 @@ def test_simple_pipeline(pc: PipelineCheck):
     assert result
 
 
-def test_pipeline_sqls_are_not_in_simple_tests(dc: DataCheck):
-    checks = dc.collect_checks([Path("checks")])
+def test_pipeline_sqls_are_not_in_simple_tests(dc_serial: DataCheck):
+    checks = dc_serial.collect_checks([Path("checks")])
     pipeline_test_sql = Path(
         "checks/pipelines/simple_pipeline/pipeline_checks/test_simple_pipeline.sql"
     )

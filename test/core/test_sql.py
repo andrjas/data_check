@@ -3,14 +3,6 @@ from sqlalchemy.exc import OperationalError
 
 
 from data_check.sql import DataCheckSql  # noqa E402
-from data_check.config import DataCheckConfig  # noqa E402
-
-
-@pytest.fixture
-def sql() -> DataCheckSql:
-    dc_config = DataCheckConfig().load_config().set_connection("test")
-    _sql = DataCheckSql(dc_config.connection)
-    return _sql
 
 
 def test_run_query(sql: DataCheckSql):

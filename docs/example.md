@@ -6,7 +6,7 @@ This Git repository is also a sample data_check project. Clone the repository, s
 
 ```
 git clone git@github.com:andrjas/data_check.git
-cd data_check
+cd data_check/example
 data_check
 ```
 
