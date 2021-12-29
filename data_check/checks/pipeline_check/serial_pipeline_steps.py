@@ -32,14 +32,10 @@ class SerialPipelineSteps:
                 result = self.run_pipeline_step(self.path, step, idx)
                 if not result:
                     self.process_always_run()
-                    result_msg = (
-                        f"pipeline {self.pipeline_name}: "
-                        f"{self.data_check.output.failed_message}"
-                    )
                     return DataCheckResult(
                         passed=False,
                         result=result,
-                        message=result_msg,
+                        source=f"pipeline {self.pipeline_name}",
                     )
             except Exception as e:
                 self.process_always_run()
@@ -51,10 +47,7 @@ class SerialPipelineSteps:
 
         return DataCheckResult(
             passed=True,
-            result=(
-                f"pipeline {self.pipeline_name}: "
-                f"{self.data_check.output.passed_message}"
-            ),
+            source=f"pipeline {self.pipeline_name}",
         )
 
     def process_always_run(self):

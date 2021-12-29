@@ -46,6 +46,8 @@ You can also set the log file in data_check.yml:
 log: logfile.txt
 ```
 
+Failed results and tracebacks are always written to the log file, even when the parameters `--print` and `--traceback` are not used.
+
 
 ## Loading data into tables
 

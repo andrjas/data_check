@@ -44,7 +44,7 @@ class DataCheckRunner:
         for future in concurrent.futures.as_completed(result_futures):
             dc_result = future.result()
             results.append(dc_result)
-            self.output.print(dc_result.message)
+            self.output.print(dc_result)
         return results
 
     def run_checks_serial(
@@ -60,7 +60,7 @@ class DataCheckRunner:
         for f in all_checks:
             dc_result = run_method(f)
             results.append(dc_result)
-            self.output.print(dc_result.message)
+            self.output.print(dc_result)
         return results
 
     def run_any(

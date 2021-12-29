@@ -1,5 +1,4 @@
-import multiprocessing
-from typing import IO, Any, Optional
+from typing import IO, Any, Callable, Optional
 import os
 import locale
 from pathlib import Path
@@ -15,10 +14,7 @@ class OutputHandler:
         self.quiet = quiet
         self.encoding = locale.getpreferredencoding(False)
         self.log_path: Optional[Path] = None
-
-    @property
-    def is_main(self):
-        return multiprocessing.current_process().name == "MainProcess"
+        self.printer: Callable[[Optional[Any]], None] = print
 
     def write_log(self, msg: str):
         if self.log_path:
@@ -26,19 +22,11 @@ class OutputHandler:
                 s_log = f"{datetime.datetime.now()}: {msg}{os.linesep}"
                 log.write(s_log)
 
-    def print(self, msg: Any, prefix: str = "", _print: bool = True):
-        if prefix:
-            msg = f"{prefix}: {str(msg)}"
-        else:
-            msg = str(msg)
+    def print(self, msg: Any, _print: bool = True, log_msg: str = ""):
+        msg = str(msg)
         if not self.quiet and _print:
-            print(msg)
-        self.write_log(msg)
-
-    def log(self, msg: Any, prefix: str = "", level: str = "INFO"):
-        if not self.is_main:
-            prefix = f"{prefix}@{multiprocessing.current_process().name}"
-        self.print(f"{level}: {str(msg)}", prefix=prefix)
+            self.printer(msg)
+        self.write_log(log_msg if log_msg else msg)
 
     def handle_subprocess_output(self, pipe: IO[bytes], print: bool = True):
         for line in iter(pipe.readline, b""):

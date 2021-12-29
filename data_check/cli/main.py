@@ -170,6 +170,7 @@ def main(
         quiet=quiet,
         # set log_path from config, so we can also use it from the config file
         log_path=dc_config.log_path,
+        printer=click.echo,
     )
     res = RunParams(
         data_check=dc,

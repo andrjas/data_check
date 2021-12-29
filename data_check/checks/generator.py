@@ -28,7 +28,7 @@ class DataCheckGenerator(BaseCheck):
             output = f"expectation written to {_rel_path}"
         else:
             output = f"expectation skipped for {_rel_path}"
-        return DataCheckResult(True, output, output)
+        return DataCheckResult(passed=True, source=sql_file, result=output)
 
     def run_test(self) -> DataCheckResult:
         return self.gen_expectation(

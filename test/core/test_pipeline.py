@@ -120,6 +120,7 @@ def test_pipeline_fails_load_invalid_load_mode(pc: PipelineCheck):
     pc.check_path = Path("checks/pipelines/failing/load_invalid_load_mode")
     result = pc.run_test()
     assert not result
+    result.prepare_message(pc.data_check.output.prepare_data_check_result)
     assert "with exception" in result.message
 
 
@@ -127,6 +128,7 @@ def test_pipeline_fails_load_tables_no_csv_file(pc: PipelineCheck):
     pc.check_path = Path("checks/pipelines/failing/load_tables_no_csv_file")
     result = pc.run_test()
     assert not result
+    result.prepare_message(pc.data_check.output.prepare_data_check_result)
     assert "with exception" in result.message
 
 
@@ -134,6 +136,7 @@ def test_pipeline_fails_load_tables_invalid_load_mode(pc: PipelineCheck):
     pc.check_path = Path("checks/pipelines/failing/load_tables_invalid_load_mode")
     result = pc.run_test()
     assert not result
+    result.prepare_message(pc.data_check.output.prepare_data_check_result)
     assert "with exception" in result.message
 
 
@@ -147,6 +150,7 @@ def test_pipeline_fails_run_sql_no_file(pc: PipelineCheck):
     pc.check_path = Path("checks/pipelines/failing/run_sql_no_file")
     result = pc.run_test()
     assert not result
+    result.prepare_message(pc.data_check.output.prepare_data_check_result)
     assert "with exception" in result.message
 
 
@@ -154,6 +158,7 @@ def test_pipeline_fails_run_sql_invalid_query(pc: PipelineCheck):
     pc.check_path = Path("checks/pipelines/failing/run_sql_invalid_query")
     result = pc.run_test()
     assert not result
+    result.prepare_message(pc.data_check.output.prepare_data_check_result)
     assert "with exception" in result.message
 
 
@@ -161,6 +166,7 @@ def test_pipeline_fails_always_run_failing(pc: PipelineCheck):
     pc.check_path = Path("checks/pipelines/failing/always_run")
     result = pc.run_test()
     assert not result
+    result.prepare_message(pc.data_check.output.prepare_data_check_result)
     assert "with exception" in result.message
     assert not check_table_exists("always_run_1", pc.data_check)
     assert check_table_exists("always_run_2", pc.data_check)
