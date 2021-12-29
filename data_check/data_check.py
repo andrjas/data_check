@@ -99,7 +99,7 @@ class DataCheck:
         sql_text = read_sql_file(sql_file=file, template_data=self.template_data)
         self.output.print("executing:")
         self.output.print(sql_text)
-        return self.sql.run_sql(query=sql_text)
+        return self.sql.run_sql(query=sql_text, params=self.sql_params)
 
     def run_sql_files(self, files: List[Path], base_path: Path = Path(".")):
         parameters = [{"file": f} for f in expand_files(files, base_path=base_path)]
@@ -117,7 +117,7 @@ class DataCheck:
         sql_query = parse_template(query, template_data=self.template_data)
         if print_query:
             self.output.print(f"-- {sql_query}")
-        return self.sql.run_sql(sql_query, output, base_path)
+        return self.sql.run_sql(sql_query, output, self.sql_params, base_path)
 
     def load_lookups(self):
         self.lookup_data.update(load_lookups_from_path(self))

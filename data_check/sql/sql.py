@@ -5,6 +5,7 @@ from sqlalchemy.engine import Engine, Connection
 from sqlalchemy.engine.row import Row
 from sqlalchemy.engine.cursor import CursorResult
 from sqlalchemy.sql import text
+from sqlalchemy.sql.elements import TextClause
 from sqlalchemy.sql.expression import bindparam
 import pandas as pd
 from pathlib import Path
@@ -93,14 +94,19 @@ class DataCheckSql:
         """
         return self.run_query_with_result(query, params=params).df
 
+    @staticmethod
+    def _bindparams(query: str) -> TextClause:
+        sql = text(query)
+        for bp in sql._bindparams.keys():
+            sql = sql.bindparams(bindparam(bp, expanding=True))
+        return sql
+
     def run_query_with_result(
         self, query: str, params: Dict[str, Any] = {}
     ) -> QueryResult:
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
-        sql = text(query)
-        for bp in sql._bindparams.keys():
-            sql = sql.bindparams(bindparam(bp, expanding=True))
+        sql = self._bindparams(query)
 
         result = QueryResult(query, self.get_connection().execute(sql, **params))
         return result
@@ -121,11 +127,15 @@ class DataCheckSql:
             return False
 
     def run_sql(
-        self, query: str, output: Union[str, Path] = "", base_path: Path = Path(".")
+        self,
+        query: str,
+        output: Union[str, Path] = "",
+        params: Dict[str, Any] = {},
+        base_path: Path = Path("."),
     ):
-        sq_text = text(query)
+        sq_text = self._bindparams(query)
         result: CursorResult = self.get_connection().execute(
-            sq_text.execution_options(autocommit=True)
+            sq_text.execution_options(autocommit=True), **params
         )
         try:
             res: List[Row] = result.fetchall()

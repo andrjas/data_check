@@ -116,3 +116,5 @@ You can also run a SQL statement directly from the command line:
 This will execute the query and, if it is a query, print the result as CSV. You can also write the result into a file:
 
 `data_check --sql "select * from tableX" --output some_file.csv`
+
+You can use both [templates](csv_checks.md#templates) and [lookups](csv_checks.md#lookups) with `--sql` and `--sql-files`.
