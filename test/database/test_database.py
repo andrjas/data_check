@@ -29,7 +29,7 @@ def dc() -> DataCheck:
 
 @pytest.fixture
 def data_types_check(dc: DataCheck):
-    res = dc.get_check(Path("checks/basic/data_types.sql")).run_test(return_all=True)
+    res = dc.get_check(Path("checks/basic/data_types.sql")).run_test()
     assert isinstance(res.result, DataFrame)
     assert not res.result.empty
     return res.result.iloc[0]
