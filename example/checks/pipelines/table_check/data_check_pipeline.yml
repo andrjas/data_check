@@ -1,0 +1,3 @@
+steps:
+  - load_tables: data
+  - check: check

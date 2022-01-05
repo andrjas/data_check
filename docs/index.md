@@ -11,7 +11,7 @@ data_check is a simple data validation tool. In its most basic form, it will exe
 * [execute any SQL files on a database](usage.md#executing-arbitrary-sql-code)
 * more complex [pipelines](pipelines.md)
 * run any script/command (via pipelines)
-* simplified checks for [empty datasets](csv_checks.md#empty-dataset-checks)
+* simplified checks for [empty datasets](csv_checks.md#empty-dataset-checks) and [full table comparison](csv_checks.md#full-table-checks)
 * [lookups](csv_checks.md#lookups) to reuse the same data in multiple queries
 
 ## Database support

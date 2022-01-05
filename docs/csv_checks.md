@@ -70,6 +70,21 @@ empty_query.empty
 ```
 
 
+## Full table checks
+
+To compare the content of a whole table, you can also put a CSV or Excel file without the SQL file. The file must be named after the table name. data_check will only compare the columns in the file. If the table does not have a column from the CSV/Excel header, the test will fail.
+
+Example:
+
+_schema.table\_name.csv_:
+```csv
+column1,column2
+data1,data2
+...
+```
+
+This will run this SQL query: `select column1, column2 from schema.table_name` and compare the result against the CSV file.
+
 ## Generating expectation files
 
 If you run `data_check --generate` in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add `--force` to overwrite existing CSV files.

@@ -16,6 +16,7 @@ from .checks import (
     EmptySetCheck,
     ExcelCheck,
     PathNotExists,
+    TableCheck,
 )
 from .utils.lookup_loader import load_lookups_from_path
 
@@ -64,6 +65,8 @@ class DataCheck:
                 return DataCheckGenerator(self, check_path)
             else:
                 return CSVCheck(self, check_path)
+        elif TableCheck.is_check_path(check_path):
+            return TableCheck(self, check_path)
         else:
             return None
 

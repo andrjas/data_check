@@ -9,6 +9,7 @@ from data_check.checks import (
     EmptySetCheck,
     DataCheckGenerator,
     ExcelCheck,
+    TableCheck,
 )  # noqa E402
 from data_check.config import DataCheckConfig
 from data_check.sql.sql import DataCheckSql
@@ -73,6 +74,11 @@ def test_get_check_empty_set_check(dc: DataCheck):
 def test_get_check_excel_check(dc: DataCheck):
     check = dc.get_check(Path("checks/excel/basic/simple_excel.sql"))
     assert isinstance(check, ExcelCheck)
+
+
+def test_get_check_table_check(dc: DataCheck):
+    check = dc.get_check(Path("checks/table_check/basic/sqlite_master.csv"))
+    assert isinstance(check, TableCheck)
 
 
 def test_run_fail_if_path_doesnt_exist(dc: DataCheck):

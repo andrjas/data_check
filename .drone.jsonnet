@@ -9,6 +9,7 @@ local positive_int_tests = [
     "checks/pipelines/simple_pipeline",
     "checks/pipelines/date_test",
     "checks/pipelines/leading_zeros",
+    "checks/pipelines/table_check",
 ];
 
 local failing_int_tests = [
