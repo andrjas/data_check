@@ -48,6 +48,12 @@ from .commands import (
     help="shortcut for --print --print-format json",
 )
 @click.option(
+    "--diff",
+    "print_diffed",
+    is_flag=True,
+    help="print only the different columns for failed results",
+)
+@click.option(
     "--generate",
     "-g",
     "generate_expectations",
@@ -128,6 +134,7 @@ def main(
     print_failed: bool = False,
     print_format: str = DataCheckConfig.default_print_format,
     print_json: bool = False,
+    print_diffed: bool = False,
     generate_expectations: bool = False,
     force: bool = False,
     config: Union[str, Path] = DataCheckConfig.config_path,
@@ -167,6 +174,7 @@ def main(
         traceback=traceback,
         print_failed=print_failed,
         print_format=print_format,
+        print_diffed=print_diffed,
         quiet=quiet,
         # set log_path from config, so we can also use it from the config file
         log_path=dc_config.log_path,

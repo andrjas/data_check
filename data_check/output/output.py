@@ -11,6 +11,7 @@ from ..result import DataCheckResult, ResultType
 from ..io import rel_path
 from .handler import OutputHandler
 from .result_formatter import format_data_check_result
+from .diffed_df import get_diffed_df
 
 
 class DataCheckOutput:
@@ -97,6 +98,8 @@ class DataCheckOutput:
         self, result: Union[DataCheckResult, pd.DataFrame]
     ) -> pd.DataFrame:
         df = self._get_df(result)
+        if self.print_diffed and isinstance(result, DataCheckResult):
+            df = get_diffed_df(df, result)
         if "_merge" in df.columns:
             df["_diff"] = ""
             df.loc[df._merge == "left_only", ["_diff"]] = "db"

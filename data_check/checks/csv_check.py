@@ -1,10 +1,18 @@
 from pathlib import Path
 import pandas as pd
-from typing import Tuple, Union, List, cast
+from typing import Union, List, cast
+from dataclasses import dataclass
 
 from .sql_base_check import SQLBaseCheck
 from ..result import DataCheckResult, ResultType
 from ..io import get_expect_file, read_csv
+
+
+@dataclass
+class CSVCheckResult:
+    result_type: ResultType
+    diff: pd.DataFrame
+    merged: pd.DataFrame
 
 
 class CSVCheck(SQLBaseCheck):
@@ -14,7 +22,7 @@ class CSVCheck(SQLBaseCheck):
 
     def get_result(
         self, sql_result: pd.DataFrame, expect_result: pd.DataFrame
-    ) -> Tuple[ResultType, pd.DataFrame]:
+    ) -> CSVCheckResult:
         # replace missing values and None with pd.NA
         sql_result.fillna(value=pd.NA, inplace=True)
         # using "" instead of r'^$' doesn't work somehow, so we need to use regex
@@ -28,13 +36,16 @@ class CSVCheck(SQLBaseCheck):
 
         df_merged = SQLBaseCheck.merge_results(sql_result, expect_result)
         df_diff = cast(pd.DataFrame, df_merged[df_merged._merge != "both"])
-        df_result = df_merged if self.data_check.output.verbose else df_diff
 
         # empty diff means there are no differences and the test has passed
         passed = len(df_diff) == 0
         if passed and len(sql_result) != len(expect_result):
-            return (ResultType.FAILED_DIFFERENT_LENGTH, df_result)
-        return (DataCheckResult.passed_to_result_type(passed), df_result)
+            return CSVCheckResult(
+                ResultType.FAILED_DIFFERENT_LENGTH, df_diff, df_merged
+            )
+        return CSVCheckResult(
+            DataCheckResult.passed_to_result_type(passed), df_diff, df_merged
+        )
 
     def read_expect_file(
         self, expect_file: Path, string_columns: List[str]
@@ -73,7 +84,10 @@ class CSVCheck(SQLBaseCheck):
         if isinstance(expect_result, DataCheckResult):
             return expect_result
 
-        result_type, df_result = self.get_result(sql_result.df, expect_result)
+        result = self.get_result(sql_result.df, expect_result)
         return self.data_check.output.prepare_result(
-            result_type, source=sql_file, result=df_result
+            result.result_type,
+            source=sql_file,
+            result=result.diff,
+            full_result=result.merged,
         )

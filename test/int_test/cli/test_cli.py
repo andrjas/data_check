@@ -173,6 +173,12 @@ def test_print_format_unknown():
     assert res.exit_code == 1
 
 
+def test_print_diff():
+    res = run(["--print", "--diff", "checks/failing/diff.sql"])
+    assert_failed(res)
+    assert "id,x,_diff" in res.output
+
+
 def test_config():
     out = run_check(["--config", "data_check.yml"])
     assert_passed(out)

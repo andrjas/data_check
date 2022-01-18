@@ -6,6 +6,7 @@ import pytest
 
 from data_check.output import DataCheckOutput  # noqa E402
 from data_check.result import DataCheckResult
+from data_check.output.diffed_df import get_diffed_df
 
 
 def test_pprint_failed_output_is_sorted():
@@ -45,3 +46,35 @@ def test_print_writes_always_failed_to_log(dc_out: DataCheckOutput):
     )
     dc_out.print(result)
     assert "test_data" in cast(Path, dc_out.log_path).read_text()
+
+
+def test_diffed():
+    diff = pd.DataFrame.from_dict(
+        {
+            "id": [2, 2],
+            "t": ["c", "c"],
+            "x": ["y", "z"],
+            "h": [2, 2],
+            "_merge": ["left_only", "right_only"],
+        }
+    )
+    full = pd.DataFrame.from_dict(
+        {
+            "id": [1, 2, 2],
+            "t": ["a", "c", "c"],
+            "x": ["x", "y", "z"],
+            "h": [2, 2, 2],
+            "_merge": ["both", "left_only", "right_only"],
+        }
+    )
+    result = DataCheckResult(
+        passed=False,
+        source="test",
+        result=diff,
+        full_result=full,
+    )
+    diffed = get_diffed_df(diff, result)
+    expected = diff = pd.DataFrame.from_dict(
+        {"id": [2, 2], "x": ["y", "z"], "_merge": ["left_only", "right_only"]}
+    )
+    assert_frame_equal(diffed, expected)

@@ -31,8 +31,8 @@ def dc() -> DataCheck:
 def data_types_check(dc: DataCheck):
     res = dc.get_check(Path("checks/basic/data_types.sql")).run_test()
     assert isinstance(res.result, DataFrame)
-    assert not res.result.empty
-    return res.result.iloc[0]
+    assert not res.full_result.empty
+    return res.full_result.iloc[0]
 
 
 def test_data_types_string(data_types_check):
