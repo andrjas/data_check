@@ -494,3 +494,25 @@ def test_log_quiet():
     log.unlink()
     assert log_exists
     assert log_text.strip() != ""
+
+
+def test_write_check(tmp_path: Path):
+    check_sql = tmp_path / "write_check.sql"
+    check_csv = tmp_path / "write_check.csv"
+    res = run(["--sql", "select 1 as a", "--write-check", str(check_sql)])
+    assert res.exit_code == 0
+    assert check_sql.exists()
+    assert check_csv.exists()
+    assert check_sql.read_text() != ""
+    assert check_csv.read_text() != ""
+
+
+def test_write_check_W(tmp_path: Path):
+    check_sql = tmp_path / "write_check.sql"
+    check_csv = tmp_path / "write_check.csv"
+    res = run(["--sql", "select 1 as a", "-W", str(check_sql)])
+    assert res.exit_code == 0
+    assert check_sql.exists()
+    assert check_csv.exists()
+    assert check_sql.read_text() != ""
+    assert check_csv.read_text() != ""

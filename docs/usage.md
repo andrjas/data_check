@@ -21,6 +21,7 @@
 * `data_check --sql-file some_folder/or/some_file.sql` - alias for --sql-files.
 * `data_check --sql "SQL statement"` - run any SQL statement. Print result as CSV if it is a query.
 * `data_check -o/--output PATH` - output path for --sql.
+* `data_check -W/--write-check PATH` - create a check from the --sql statement (SQL and CSV file).
 * `data_check --ping` - tries to connect to the database.
 * `data_check --quiet` - do not print any output.
 * `data_check --verbose` - print verbose output.
@@ -119,3 +120,11 @@ This will execute the query and, if it is a query, print the result as CSV. You 
 `data_check --sql "select * from tableX" --output some_file.csv`
 
 You can use both [templates](csv_checks.md#templates) and [lookups](csv_checks.md#lookups) with `--sql` and `--sql-files`.
+
+### Generating a CSV check from a SQL statement
+
+You can use `--sql` to create a CSV check:
+
+`data_check --sql "select * from tableX" --write-check some_check.sql`
+
+This writes the SQL statement into `some_check.sql` and the result as CSV into `some_check.csv`.

@@ -114,6 +114,12 @@ from .commands import (
 )
 @click.option("--output", "-o", type=click.Path(), help="output path for --sql")
 @click.option(
+    "--write-check",
+    "-W",
+    type=click.Path(),
+    help="create a check from the --sql statement (SQL and CSV file)",
+)
+@click.option(
     "--ping",
     is_flag=True,
     help="tries to connect to the database",
@@ -141,6 +147,7 @@ def main(
     table: Optional[str] = None,
     load_mode: str = "truncate",
     output: Union[str, Path] = "",
+    write_check: Union[str, Path] = "",
     verbose: bool = False,
     traceback: bool = False,
     quiet: bool = False,
@@ -186,6 +193,7 @@ def main(
         table=table,
         load_mode=load_mode,
         files=files,
+        write_check=write_check,
         output=output,
     )
     if ctx.obj:

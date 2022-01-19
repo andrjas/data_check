@@ -124,3 +124,21 @@ class DataCheck:
 
     def load_lookups(self):
         self.lookup_data.update(load_lookups_from_path(self))
+
+    def write_check(self, query: str, check_path: Path, base_path: Path = Path(".")):
+        output_sql = base_path / check_path
+        output_csv = output_sql.with_suffix(".csv")
+        exists_failed = False
+        if output_csv.exists() and not self.config.force:
+            self.output.print(f"{output_csv} already exists")
+            exists_failed = True
+        if output_sql.exists() and not self.config.force:
+            self.output.print(f"{output_sql} already exists")
+            exists_failed = True
+        if exists_failed:
+            return False
+        query_result = self.run_sql_query(
+            query=query, output=output_csv, base_path=base_path
+        )
+        output_sql.write_text(query)
+        return query_result

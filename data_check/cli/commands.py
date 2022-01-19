@@ -46,7 +46,10 @@ def sql_files_cmd(res: RunParams):
 def sql_cmd(res: RunParams, sql: str):
     res.data_check.load_template()
     res.data_check.load_lookups()
-    result = res.data_check.run_sql_query(sql, output=res.output)
+    if res.write_check:
+        result = res.data_check.write_check(sql, Path(res.write_check))
+    else:
+        result = res.data_check.run_sql_query(sql, output=res.output)
     if result:
         res.ctx.exit(0)
     else:

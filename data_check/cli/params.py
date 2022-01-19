@@ -14,3 +14,4 @@ class RunParams:
     table: Optional[str] = None
     files: List[Union[str, Path]] = field(default_factory=list)
     output: Union[str, Path] = ""
+    write_check: Union[str, Path] = ""
