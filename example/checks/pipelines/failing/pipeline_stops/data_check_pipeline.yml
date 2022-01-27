@@ -1,0 +1,4 @@
+steps:
+  - sql: create table pipeline_stop_b1 (i {{decimal_type}})
+  - sql: slct 1 {{from_dual}}
+  - sql: create table pipeline_stop_b2 (i {{decimal_type}})

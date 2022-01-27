@@ -285,3 +285,11 @@ def test_pipeline_template_connection_string(pc: PipelineCheck):
     tp = pc.template_parameters(pipeline_path=Path("checks/pipelines/simple_pipeline"))
     connection_string = tp["CONNECTION_STRING"]
     assert connection_string == "sqlite+pysqlite://"
+
+
+def test_pipeline_stops_after_failing_step(pc: PipelineCheck, tmp_path: Path):
+    pc.check_path = Path("checks/pipelines/failing/pipeline_stops")
+    result = pc.run_test()
+    assert not result
+    assert check_table_exists("pipeline_stop_b1", pc.data_check)
+    assert not check_table_exists("pipeline_stop_b2", pc.data_check)
