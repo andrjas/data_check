@@ -1,5 +1,4 @@
 from pathlib import Path
-from os import linesep
 
 from data_check import DataCheck
 
@@ -13,7 +12,7 @@ def test_write_check(dc: DataCheck, tmp_path: Path):
     assert sql_file.exists()
     assert csv_file.exists()
     assert sql_file.read_text() == sql
-    assert csv_file.read_text().strip() == f"a{linesep}1{linesep}2"
+    assert csv_file.read_text().strip() == "a\n1\n2"
 
 
 def test_write_check_existing_csv(dc: DataCheck, tmp_path: Path):
@@ -39,7 +38,7 @@ def test_write_check_existing_csv_force(dc: DataCheck, tmp_path: Path):
     assert sql_file.exists()
     assert csv_file.exists()
     assert sql_file.read_text() == sql
-    assert csv_file.read_text().strip() == f"a{linesep}1{linesep}2"
+    assert csv_file.read_text().strip() == "a\n1\n2"
 
 
 def test_write_check_existing_sql(dc: DataCheck, tmp_path: Path):
@@ -65,7 +64,7 @@ def test_write_check_existing_sql_force(dc: DataCheck, tmp_path: Path):
     assert sql_file.exists()
     assert csv_file.exists()
     assert sql_file.read_text() == sql
-    assert csv_file.read_text().strip() == f"a{linesep}1{linesep}2"
+    assert csv_file.read_text().strip() == "a\n1\n2"
 
 
 def test_write_check_existing_csv_and_sql(dc: DataCheck, tmp_path: Path):
@@ -94,4 +93,4 @@ def test_write_check_existing_csv_and_sql_force(dc: DataCheck, tmp_path: Path):
     assert sql_file.exists()
     assert csv_file.exists()
     assert sql_file.read_text() == sql
-    assert csv_file.read_text().strip() == f"a{linesep}1{linesep}2"
+    assert csv_file.read_text().strip() == "a\n1\n2"
