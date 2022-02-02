@@ -516,3 +516,30 @@ def test_write_check_W(tmp_path: Path):
     assert check_csv.exists()
     assert check_sql.read_text() != ""
     assert check_csv.read_text() != ""
+
+
+def test_log_is_written_in_project_path(tmp_path: Path):
+    """This test runs data_check in a subfolder of the project path.
+    The log file must still be written in the project path.
+    """
+    checks_path = tmp_path / "checks"
+    checks_path.mkdir()
+
+    Path(tmp_path / "data_check.yml").write_text(
+        """
+connections:
+    test: sqlite+pysqlite://
+
+log: dc.log
+"""
+    )
+
+    runner = CliRunner()
+    workers_cmd = ["-n", str(1)]
+    command = ["-c", "test"]
+
+    with runner.isolated_filesystem(checks_path):
+        runner.invoke(main, command + workers_cmd)
+
+    log_file = tmp_path / "dc.log"
+    assert log_file.exists()

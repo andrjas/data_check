@@ -173,3 +173,10 @@ def test_base_path_subdir(tmp_path: Path):
 def test_base_path_default():
     config = DataCheckConfig().load_config()
     assert config.base_path == Path(".").absolute()
+
+
+def test_log_path_is_absolute(tmp_path: Path):
+    cfg = tmp_path / "data_check.yml"
+    cfg.write_text(T_CONFIG + "log: dc.log")
+    config = DataCheckConfig().load_config(tmp_path)
+    assert str(config.log_path) == str(tmp_path / "dc.log")

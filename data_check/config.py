@@ -83,6 +83,8 @@ class DataCheckConfig:
         self.config = read_yaml(config_path)
         _log_path = self.config.get("log", None)
         self.log_path = Path(_log_path) if _log_path else None
+        if self.log_path and not self.log_path.is_absolute():
+            self.log_path = self.project_path / self.log_path
         return self
 
     def set_connection(self, connection: str):
