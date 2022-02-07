@@ -172,7 +172,6 @@ def test_load_file_truncate_with_table(dc: DataCheck, file_type: str):
 
 
 def test_load_file_append(dc: DataCheck, file_type: str):
-    data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     dc.sql.table_loader.load_table_from_file(
         f"main.test_append_{file_type}",
         Path(f"load_data/test.{file_type}"),
