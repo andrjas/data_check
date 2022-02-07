@@ -88,7 +88,7 @@ class DataCheck:
     def run(self, files: List[Path], base_path: Path = Path(".")) -> bool:
         """
         Runs a data_check test for all element in the list.
-        Returns True, if all calls returned True, otherweise False.
+        Returns True, if all calls returned True, otherwise False.
         """
         all_checks = self.collect_checks(files, base_path=base_path)
         results = self.runner.run_checks(self.delegate_test, all_checks)
