@@ -343,8 +343,9 @@ def test_sql_output():
     res = run(["--sql", "select 1 as a", "--output", str(test_output)])
     assert res.exit_code == 0
     exists = test_output.exists()
+    test_output_data = test_output.read_text()
     test_output.unlink()
-    assert res.output.strip() == f"a{linesep}1"
+    assert test_output_data.strip() == f"a{linesep}1"
     assert exists
 
 
@@ -355,8 +356,9 @@ def test_sql_output_o():
     res = run(["--sql", "select 1 as a", "-o", str(test_output)])
     assert res.exit_code == 0
     exists = test_output.exists()
+    test_output_data = test_output.read_text()
     test_output.unlink()
-    assert res.output.strip() == f"a{linesep}1"
+    assert test_output_data.strip() == f"a{linesep}1"
     assert exists
 
 

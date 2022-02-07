@@ -141,8 +141,10 @@ class DataCheckSql:
             res: List[Row] = result.fetchall()
             columns: List[str] = result.keys()
             df = pd.DataFrame(data=res, columns=columns)
-            print_csv(df, self.output.print)
-            write_csv(df, output=output, base_path=base_path)
+            if output:
+                write_csv(df, output=output, base_path=base_path)
+            else:
+                print_csv(df, self.output.print)
             return res
         except Exception:
             return bool(result)

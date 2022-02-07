@@ -1,3 +1,4 @@
+from pathlib import Path
 from click.testing import CliRunner, Result
 from os import linesep
 from typing import List, Optional
@@ -31,3 +32,12 @@ def test_sql_files_uses_lookups():
     assert res.exit_code == 0
     assert "executing:" in res.output
     assert f"a{linesep}1{linesep}2" in res.output
+
+
+def test_sql_with_output_does_not_print_on_console(tmp_path: Path):
+    out_file = tmp_path / "a.sql"
+    res = run(
+        ["--sql", "select 1 as output_test {{from_dual}}", "--output", str(out_file)]
+    )
+    assert res.exit_code == 0
+    assert "output_test" not in res.output
