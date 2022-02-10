@@ -23,8 +23,11 @@ class EmptySetCheck(BaseCheck):
                     ResultType.PASSED, source=self.check_path, result=sql_result.df
                 )
             else:
+                result = sql_result.df
+                # add "merge" information for same output as CSVCheck
+                result["_merge"] = "left_only"
                 return self.data_check.output.prepare_result(
-                    ResultType.FAILED_DIFFERENT_LENGTH, source=self.check_path
+                    ResultType.FAILED, source=self.check_path, result=result
                 )
         except Exception as exc:
             return self.data_check.output.prepare_result(
