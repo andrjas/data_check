@@ -133,6 +133,7 @@
 <li><code>data_check --print</code> - print failed results data.</li>
 <li><code>data_check --print-format FORMAT</code> - format for printing failed results (csv (default), pandas, json).</li>
 <li><code>data_check --print-json</code> - shortcut for "--print --print-format json".</li>
+<li><code>data_check --diff</code> - print only the different columns for failed results. Use with --print.</li>
 <li><code>data_check -g/--generate</code> - generate expectation files if they don't exist.</li>
 <li><code>data_check --force</code> - when set, --generate will overwrite files.</li>
 <li><code>data_check --config CONFIG</code> - config file to use (default: data_check.yml).</li>
@@ -143,6 +144,7 @@
 <li><code>data_check --sql-file some_folder/or/some_file.sql</code> - alias for --sql-files.</li>
 <li><code>data_check --sql "SQL statement"</code> - run any SQL statement. Print result as CSV if it is a query.</li>
 <li><code>data_check -o/--output PATH</code> - output path for --sql.</li>
+<li><code>data_check -W/--write-check PATH</code> - create a check from the --sql statement (SQL and CSV file).</li>
 <li><code>data_check --ping</code> - tries to connect to the database.</li>
 <li><code>data_check --quiet</code> - do not print any output.</li>
 <li><code>data_check --verbose</code> - print verbose output.</li>
@@ -160,6 +162,7 @@
 <p>You can also set the log file in data_check.yml:</p>
 <pre><code class="language-yaml">log: logfile.txt
 </code></pre>
+<p>Failed results and tracebacks are always written to the log file, even when the parameters <code>--print</code> and <code>--traceback</code> are not used.</p>
 <h2 id="loading-data-into-tables">Loading data into tables</h2>
 <p>Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV or Excel files to load data into tables. The <a href="./#csv-format">CSV format</a> is the same as used for testing. The header in the CSV file or the first row in the Excel file must match the columns in the table. Additionally, Excel cells can use its native date/datetime format.</p>
 <p>If the table doesn't exist, it will be created. The schema and table names are always case-insensitive, as long as the database supports it. Otherwise, they are lowercased.</p>
@@ -201,7 +204,12 @@ This doesn't work when using <code>--load-mode replace</code> since the table wi
 <p>You can also run a SQL statement directly from the command line:</p>
 <p><code>data_check --sql "select * from tableX"</code></p>
 <p>This will execute the query and, if it is a query, print the result as CSV. You can also write the result into a file:</p>
-<p><code>data_check --sql "select * from tableX" --output some_file.csv</code></p></div>
+<p><code>data_check --sql "select * from tableX" --output some_file.csv</code></p>
+<p>You can use both <a href="../csv_checks/#templates">templates</a> and <a href="../csv_checks/#lookups">lookups</a> with <code>--sql</code> and <code>--sql-files</code>.</p>
+<h3 id="generating-a-csv-check-from-a-sql-statement">Generating a CSV check from a SQL statement</h3>
+<p>You can use <code>--sql</code> to create a CSV check:</p>
+<p><code>data_check --sql "select * from tableX" --write-check some_check.sql</code></p>
+<p>This writes the SQL statement into <code>some_check.sql</code> and the result as CSV into <code>some_check.csv</code>.</p></div>
             </div>
         </div>
 

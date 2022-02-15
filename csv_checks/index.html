@@ -107,6 +107,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#full-table-checks" class="nav-link">Full table checks</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#generating-expectation-files" class="nav-link">Generating expectation files</a>
               <ul class="nav flex-column">
               </ul>
@@ -163,6 +167,15 @@ Since the column names do not matter, the check will pass, if the SQL query does
 <pre><code>empty_query.sql
 empty_query.empty
 </code></pre>
+<h2 id="full-table-checks">Full table checks</h2>
+<p>To compare the content of a whole table, you can also put a CSV or Excel file without the SQL file. The file must be named after the table name. data_check will only compare the columns in the file. If the table does not have a column from the CSV/Excel header, the test will fail.</p>
+<p>Example:</p>
+<p><em>schema.table_name.csv</em>:</p>
+<pre><code class="language-csv">column1,column2
+data1,data2
+...
+</code></pre>
+<p>This will run this SQL query: <code>select column1, column2 from schema.table_name</code> and compare the result against the CSV file.</p>
 <h2 id="generating-expectation-files">Generating expectation files</h2>
 <p>If you run <code>data_check --generate</code> in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add <code>--force</code> to overwrite existing CSV files.</p>
 <p>You can also generate expectation files for <a href="../pipelines/#generating-pipeline.checks">pipelines</a>. If you run <code>--generate</code> on a project with pipelines, beware though that the pipelines will be executed!</p>
