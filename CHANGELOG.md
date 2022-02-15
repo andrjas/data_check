@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Added
+- `--sql` and `--sql-files` use lookups
+- full table checks
+- `--print --diff` to print only changed columns
+- `--write-check` to generate a CSV check
+
+### Changed
+- example project moved into subfolder
+- split main into cli module
+- rewrote cli testing using click.testing.CliRunner
+- `--sql` with `--output` doesn't print on console
+
+### Fixed
+- recursive process spawning
+- pipeline does not stop on error
+- log file is written into project path
+- `--print` with empty set prints result when failing
+
 ## [0.10.0] - 2021-12-27
 
 ### Added
