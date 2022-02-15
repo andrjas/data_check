@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.11.0] - 2022-02-15
+
 ### Added
 - `--sql` and `--sql-files` use lookups
 - full table checks
