@@ -4,6 +4,7 @@ from pathlib import Path
 import shutil
 from os import linesep, sep
 from typing import List, Optional
+import warnings
 
 from data_check.cli.main import main
 
@@ -545,3 +546,11 @@ log: dc.log
 
     log_file = tmp_path / "dc.log"
     assert log_file.exists()
+
+
+def test_failing_prints_no_setting_with_copy_warning():
+    with warnings.catch_warnings(record=True) as record:
+        run(["checks/failing/diff.sql"])
+        for i in record:
+            print(i)
+        assert not record

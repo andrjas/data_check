@@ -101,6 +101,7 @@ class DataCheckOutput:
         if self.print_diffed and isinstance(result, DataCheckResult):
             df = get_diffed_df(df, result)
         if "_merge" in df.columns:
+            df = df.copy()
             df["_diff"] = ""
             df.loc[df._merge == "left_only", ["_diff"]] = "db"
             df.loc[df._merge == "right_only", ["_diff"]] = "expected"
