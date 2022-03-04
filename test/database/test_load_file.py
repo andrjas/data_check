@@ -323,4 +323,4 @@ def test_drop_table_if_exists_with_existing_table(dc: DataCheck):
 def test_drop_table_if_exists_with_non_existing_table(dc: DataCheck):
     dc.sql.table_loader.drop_table_if_exists("test_drop_non_existing", "main")
     with pytest.raises(Exception):
-        dc.sql.run_query("select * from temp.test_drop_non_existing")
+        dc.sql.run_query("select * from main.test_drop_non_existing")

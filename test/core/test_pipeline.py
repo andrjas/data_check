@@ -138,6 +138,7 @@ def test_pipeline_fails_load_tables_invalid_load_mode(pc: PipelineCheck):
     assert not result
     result.prepare_message(pc.data_check.output.prepare_data_check_result)
     assert "with exception" in result.message
+    assert "unexpected keyword argument 'table'" in str(result.exception)
 
 
 def test_pipeline_fails_invalid_cmd(pc: PipelineCheck):
