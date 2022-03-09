@@ -28,7 +28,6 @@ def test_is_pipeline_check():
 def test_simple_pipeline(pc: PipelineCheck):
     pc.check_path = Path("checks/pipelines/simple_pipeline")
     result = pc.run_test()
-    print(result)
     assert result
 
 

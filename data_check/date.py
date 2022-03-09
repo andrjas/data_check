@@ -1,3 +1,4 @@
+from datetime import datetime, date
 from typing import List, Tuple, Union
 import pandas as pd
 from dateutil.parser import isoparse as _isoparse
@@ -35,3 +36,36 @@ def isoparse(column: Union[int, float, str, None]):
         raise ValueError(("VE", column, type(column)))
     res = _isoparse(str(column))
     return res
+
+
+def column_has_empty_values(column: pd.Series):
+    empty_vals = column.where(column == "")
+    return not empty_vals.empty
+
+
+def is_date_column(column_name: str, column: pd.Series, dtype) -> bool:
+    col_type = dtype.get(column_name)
+    if col_type:
+        return col_type.python_type in (datetime, date)
+
+    # mixed date/datetime and str columns are assumed to be a date column too
+    exp_val_types = set(
+        [datetime, date, str]
+    )  # numpy.datetime64 is not of interest here, since if it's already used, we assume that the frame is loaded correctly
+    val_types = set(type(v) for v in column.values)
+    return exp_val_types.issuperset(val_types)
+
+
+def fix_date_dtype(df: pd.DataFrame, dtype):
+    """Fixes isoparse parsed DataFrames inplace so they can be used in other pandas functions like to_sql.
+    - converts None to NaT in date columns
+    """
+    if not dtype:
+        dtype = {}
+    for column_name, column in df.items():
+        if is_date_column(column_name, column, dtype):
+            if column_has_empty_values(column):
+                # reverse the operations from CSVCheck.get_result:
+                column.replace({pd.NA: pd.NaT}, inplace=True)
+                column.fillna(value=pd.NaT, inplace=True)
+                column.replace(r"^$", pd.NaT, regex=True, inplace=True)

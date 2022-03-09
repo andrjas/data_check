@@ -1,25 +1,9 @@
-import pytest
 from pathlib import Path
 
 
 from data_check import DataCheck  # noqa E402
-from data_check.config import DataCheckConfig  # noqa E402
 
 # Basic data_check unit tests
-
-
-@pytest.fixture
-def dc() -> DataCheck:
-    config = DataCheckConfig().load_config().set_connection("test")
-    _dc = DataCheck(config)
-    _dc.load_template()
-    _dc.output.configure_output(
-        verbose=True,
-        traceback=True,
-        print_failed=True,
-        print_format="json",
-    )
-    return _dc
 
 
 def test_run_test(dc: DataCheck):

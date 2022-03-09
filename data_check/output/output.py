@@ -91,8 +91,10 @@ class DataCheckOutput:
         else:
             if self.verbose and result.full_result is not None:
                 return result.full_result
+            elif isinstance(result.result, pd.DataFrame):
+                return result.result
             else:
-                return cast(pd.DataFrame, result.result)
+                return pd.DataFrame()
 
     def prepare_pprint_df(
         self, result: Union[DataCheckResult, pd.DataFrame]

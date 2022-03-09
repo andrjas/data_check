@@ -1,8 +1,9 @@
 from __future__ import annotations
-from typing import Optional, Tuple, List, Union, Any, Dict, TYPE_CHECKING
+from typing import Optional, Tuple, List, Union, Any, Dict, TYPE_CHECKING, cast
 from sqlalchemy import inspect
+from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.sql import text
-from sqlalchemy.exc import NoSuchTableError, OperationalError
+from sqlalchemy.exc import NoSuchTableError
 import pandas as pd
 import warnings
 from pathlib import Path
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
 
 from ..io import expand_files, read_csv
 from .load_mode import LoadMode
+from ..date import fix_date_dtype
 
 
 # some data types that need special handling
@@ -36,9 +38,12 @@ class TableLoader:
         self.sql = sql
         self.output = output
 
-    def table_exists(self, table_name: str, schema: Optional[str]):
-        inspector = inspect(self.sql.get_connection())
-        return inspector.has_table(table_name=table_name, schema=schema)
+    @property
+    def inspector(self) -> Inspector:
+        return cast(Inspector, inspect(self.sql.get_engine()))
+
+    def table_exists(self, table_name: str, schema: Optional[str]) -> bool:
+        return self.inspector.has_table(table_name=table_name, schema=schema)
 
     def drop_table_if_exists(self, table_name: str, schema: Optional[str]):
         if self.table_exists(table_name, schema):
@@ -59,8 +64,7 @@ class TableLoader:
     def _prepare_table_for_load(self, table_name: str, load_mode: LoadMode):
         if load_mode == LoadMode.TRUNCATE:
             schema, name = self._parse_table_name(table_name)
-            inspector = inspect(self.sql.get_connection())
-            if inspector.has_table(table_name=name, schema=schema):
+            if self.table_exists(table_name=name, schema=schema):
                 self.sql.get_connection().execute(
                     text(self._truncate_statement(table_name)).execution_options(
                         autocommit=True
@@ -96,6 +100,10 @@ class TableLoader:
         schema, name = self._parse_table_name(table_name)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")  # ignore SADeprecationWarning
+            fix_date_dtype(data, dtype)
+            if not dtype:
+                # dtype can be {}, but for to_sql it's best to use None then
+                dtype = None
             data.to_sql(
                 name=name,
                 schema=schema,
@@ -109,8 +117,7 @@ class TableLoader:
     def get_column_types(self, table_name: str):
         schema, name = self._parse_table_name(table_name)
         try:
-            inspector = inspect(self.sql.get_connection())
-            columns = inspector.get_columns(name, schema=schema)
+            columns = self.inspector.get_columns(name, schema=schema)
             return {c["name"]: c["type"] for c in columns}
         except NoSuchTableError:
             return {}
