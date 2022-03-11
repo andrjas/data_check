@@ -24,7 +24,7 @@ local failing_int_tests = [
 
 local generic_int_test = [
     "bash -c 'while ! poetry run data_check --ping --quiet; do sleep 1; done'",
-    "poetry run data_check --sql-files prepare",
+    "poetry run data_check --workers 1 --sql-files prepare",
     "poetry run pytest ../../../test/database",
     "poetry run data_check --generate checks/generated",
 ] + [
@@ -34,7 +34,7 @@ local generic_int_test = [
 ];
 
 
-local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, pipeline_extra={}, int_test=generic_int_test) = 
+local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, extra_volumes=[], image_extra_volumes=[]) = 
 {
     kind: "pipeline",
     type: "docker",
@@ -44,8 +44,14 @@ local int_pipeline(db, image, prepare_commands, environment={}, db_image="", ser
             name: "data_check",
             image: image,
             pull: "if-not-exists",
-            commands: prepare_commands + int_test,
-            environment: environment
+            commands: prepare_commands + generic_int_test,
+            environment: environment,
+            volumes: [
+                {
+                    name: "cache",
+                    path: "/root/.cache"
+                }
+            ] + image_extra_volumes
         }
     ],
     [if db_image != "" then "services"]: [
@@ -55,7 +61,15 @@ local int_pipeline(db, image, prepare_commands, environment={}, db_image="", ser
             "environment": environment
         } + service_extra
     ],
-} + pipeline_extra;
+    volumes: [
+        {
+            name: "cache",
+            host: {
+                path: "/tmp/data_check_cache"
+            }
+        }
+    ] + extra_volumes
+};
 
 
 local sqlite_test() = int_pipeline("sqlite", "local/poetry:3.8",
@@ -79,8 +93,10 @@ local postgres_test() = int_pipeline("postgres", "local/poetry:3.8",
     "cd test/int_test/postgres"
 ],
 {
-    POSTGRES_PASSWORD: "data_check"
-}, "postgres:13");
+    DB_USER: {from_secret: "POSTGRES_USER"},
+    DB_PASSWORD: {from_secret: "POSTGRES_PASSWORD"},
+    DB_CONNECTION: {from_secret: "POSTGRES_CONNECTION"},
+});
 
 
 local mysql_test() = int_pipeline("mysql", "local/poetry:3.8",
@@ -93,8 +109,10 @@ local mysql_test() = int_pipeline("mysql", "local/poetry:3.8",
     "cd test/int_test/mysql"
 ],
 {
-    MYSQL_ROOT_PASSWORD: "data_check"
-}, "mysql:8");
+    DB_USER: {from_secret: "MYSQL_USER"},
+    DB_PASSWORD: {from_secret: "MYSQL_PASSWORD"},
+    DB_CONNECTION: {from_secret: "MYSQL_CONNECTION"},
+});
 
 
 local mssql_test() = int_pipeline("mssql", "local/poetry_mssql",
@@ -107,10 +125,10 @@ local mssql_test() = int_pipeline("mssql", "local/poetry_mssql",
     "cd test/int_test/mssql"
 ],
 {
-    ACCEPT_EULA: "Y",
-    MSSQL_PID: "Express",
-    SA_PASSWORD: "data_CHECK",
-}, "mcr.microsoft.com/mssql/server:2019-latest");
+    DB_USER: {from_secret: "MSSQL_USER"},
+    DB_PASSWORD: {from_secret: "MSSQL_PASSWORD"},
+    DB_CONNECTION: {from_secret: "MSSQL_CONNECTION"},
+});
 
 
 local oracle_test() = int_pipeline("oracle", "local/poetry_oracle",
@@ -123,29 +141,26 @@ local oracle_test() = int_pipeline("oracle", "local/poetry_oracle",
     "cd test/int_test/oracle"
 ],
 {
-    ORACLE_PWD: "data_check",
+    DB_USER: {from_secret: "ORACLE_USER"},
+    DB_PASSWORD: {from_secret: "ORACLE_PASSWORD"},
+    DB_CONNECTION: {from_secret: "ORACLE_CONNECTION"},
     NLS_LANG: ".utf8",
     LC_ALL: "en_US.utf-8",
-    LANG: "en_US.utf-8"
-
-}, "oracle/database:18.4.0-xe", 
-service_extra={
-    settings: {
-        shm_size: '1gb',
-    },
-    volumes: [{
-        name: "oradata",
-        path: "/opt/oracle/oradata"  
-    }]
-},
-pipeline_extra={
-    volumes: [{
-        name: "oradata",
+    LANG: "en_US.utf-8",
+    TNS_ADMIN: "/app/network/admin"
+}, "", {}, [
+    {
+        name: "wallet",
         host: {
-            path: "/var/lib/oradata"
-        } 
-    }]
-});
+            path: "/home/data_check/wallet"
+        }
+    }
+], [
+    {
+        name: "wallet",
+        path: "/app/network/admin"
+    }
+]);
 
 
 [

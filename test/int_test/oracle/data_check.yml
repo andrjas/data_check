@@ -1,5 +1,5 @@
 default_connection: test
 
 connections:
-    test: oracle://system:${ORACLE_PWD}@db:1521/?service_name=XEPDB1
-    test2: oracle+cx_oracle://system:${ORACLE_PWD}@db:1521/?service_name=some_other_pdb
+    test: oracle://${DB_USER}:${DB_PASSWORD}@${DB_CONNECTION}
+    test2: oracle+cx_oracle://${DB_USER}:${DB_PASSWORD}@some_other_server

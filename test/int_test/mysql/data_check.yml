@@ -1,5 +1,5 @@
 default_connection: test
 
 connections:
-    test: mysql+pymysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/mysql
-    test2: mysql+pymysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/mysql
+    test: mysql+pymysql://${DB_USER}:${DB_PASSWORD}@${DB_CONNECTION}
+    test2: mysql+pymysql://${DB_USER}:${DB_PASSWORD}@${DB_CONNECTION}
