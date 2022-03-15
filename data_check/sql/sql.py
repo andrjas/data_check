@@ -55,7 +55,7 @@ class DataCheckSql:
         """
         return {}  # no special parameters needed for now
 
-    def _keep_connection(self):
+    def keep_connection(self):
         # Do not keep the connection if runner has more than 1 workers.
         # Cannot pickle otherwise.
         return self.runner.workers == 1
@@ -69,7 +69,7 @@ class DataCheckSql:
                 path.expandvars(self.connection),
                 **{**self.get_db_params(), **extra_params},
             )
-            if self._keep_connection():
+            if self.keep_connection():
                 self.__engine = _engine
             else:
                 return _engine
@@ -78,11 +78,24 @@ class DataCheckSql:
     def get_connection(self) -> Connection:
         if self.__connection is None:
             _connection = self.get_engine().connect()
-            if self._keep_connection():
+            if self.keep_connection():
                 self.__connection = _connection
             else:
                 return _connection
         return self.__connection
+
+    def disconnect(self):
+        if self.__connection:
+            self.__connection.close()
+            self.__connection = None
+        if self.__engine:
+            self.__engine.dispose()
+            self.__engine = None
+
+    def __del__(self):
+        # __del__ is not always called when the object gets deleted,
+        # but when it does, we should disconnect cleanly.
+        self.disconnect()
 
     @property
     def dialect(self) -> str:

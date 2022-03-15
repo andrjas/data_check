@@ -37,10 +37,19 @@ class TableLoader:
     def __init__(self, sql: DataCheckSql, output: DataCheckOutput):
         self.sql = sql
         self.output = output
+        self._inspector: Optional[Inspector] = None
+
+    def __del__(self):
+        self.sql.disconnect()
 
     @property
     def inspector(self) -> Inspector:
-        return cast(Inspector, inspect(self.sql.get_engine()))
+        if self.sql.keep_connection():
+            if self._inspector is None:
+                self._inspector = cast(Inspector, inspect(self.sql.get_engine()))
+            return self._inspector
+        else:
+            return cast(Inspector, inspect(self.sql.get_engine()))
 
     def table_exists(self, table_name: str, schema: Optional[str]) -> bool:
         return self.inspector.has_table(table_name=table_name, schema=schema)

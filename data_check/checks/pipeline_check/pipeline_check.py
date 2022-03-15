@@ -35,8 +35,11 @@ class PipelineCheck(BaseCheck):
             convert_to_path=["file"],
         )
         self.register_pipeline_step("cmd", self.run_cmd)
+
+        # pipeline checks should run with the same connection, so we do not clean them up
+        pipeline_check = partial(self.data_check.run, do_cleanup=False)
         self.register_pipeline_step(
-            "check", self.data_check.run, convert_to_path_list=["files"]
+            "check", pipeline_check, convert_to_path_list=["files"]
         )
         self.register_pipeline_step(
             "sql_files", self.data_check.run_sql_files, convert_to_path_list=["files"]

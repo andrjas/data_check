@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import List, Dict, Any, Union, Optional
+from functools import partial
 
 from data_check.checks.base_check import BaseCheck
 
@@ -40,6 +41,9 @@ class DataCheck:
         self.template_data: Dict[str, Any] = {}
         self.lookup_data: Dict[str, Any] = {}
 
+    def __del__(self):
+        self.sql.disconnect()
+
     @property
     def sql_params(self) -> Dict[str, Any]:
         return self.lookup_data
@@ -48,8 +52,14 @@ class DataCheck:
         if self.config.template_path.exists():
             self.template_data = read_yaml(self.config.template_path)
 
-    def delegate_test(self, check: BaseCheck) -> DataCheckResult:
-        return check.run_test()
+    def delegate_test(
+        self, check: BaseCheck, do_cleanup: bool = True
+    ) -> DataCheckResult:
+        result = check.run_test()
+        if do_cleanup:
+            check.cleanup()
+            del check
+        return result
 
     def get_check(self, check_path: Path) -> Optional[BaseCheck]:
         if PathNotExists.is_check_path(check_path):
@@ -85,13 +95,16 @@ class DataCheck:
                 checks.extend(self.collect_checks(dir_files, base_path=base_path))
         return checks
 
-    def run(self, files: List[Path], base_path: Path = Path(".")) -> bool:
+    def run(
+        self, files: List[Path], base_path: Path = Path("."), do_cleanup: bool = True
+    ) -> bool:
         """
         Runs a data_check test for all element in the list.
         Returns True, if all calls returned True, otherwise False.
         """
         all_checks = self.collect_checks(files, base_path=base_path)
-        results = self.runner.run_checks(self.delegate_test, all_checks)
+        delegate = partial(self.delegate_test, do_cleanup=do_cleanup)
+        results = self.runner.run_checks(delegate, all_checks)
 
         overall_result = all(results)
         if self.config.print_overall_result:

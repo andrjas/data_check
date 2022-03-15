@@ -25,3 +25,7 @@ class BaseCheck:
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} ({self.check_path})>"
+
+    def cleanup(self):
+        """Run cleanup tasks after the check is done."""
+        pass

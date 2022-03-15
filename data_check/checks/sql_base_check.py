@@ -46,3 +46,6 @@ class SQLBaseCheck(BaseCheck):
                         sql_result[sc] = sql_result[sc].astype("str")
             df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
         return df_merged
+
+    def cleanup(self):
+        self.data_check.sql.disconnect()
