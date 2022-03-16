@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Union, Optional, cast
+from typing import List, Dict, Any, Union, Optional
 from pathlib import Path
 from jinja2 import Template
 import pandas as pd
@@ -15,7 +15,7 @@ def expand_files(
 ) -> List[Path]:
     """
     Expands the list of files or folders,
-    with all SQL files in a folder as seperate files.
+    with all SQL files in a folder as separate files.
     """
     if isinstance(extension, str):
         extensions = [extension]
@@ -31,7 +31,7 @@ def expand_files(
                 result.extend(rel_file.glob(f"**/*{ext}"))
         else:
             raise Exception(f"unexpected path: {rel_file}")
-    return result
+    return sorted(result)
 
 
 def parse_template(data: str, template_data: Dict[str, Any]) -> str:
