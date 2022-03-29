@@ -18,25 +18,25 @@ steps:
   - cp -rn example/lookups test/int_test/oracle
   - poetry install -E oracle
   - cd test/int_test/oracle
-  - bash -c 'while ! poetry run data_check --ping --quiet; do sleep 1; done'
-  - poetry run data_check --workers 1 --sql-files prepare
+  - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
+  - poetry run data_check sql --workers 1 --files prepare
   - poetry run pytest ../../../test/database
-  - poetry run data_check --generate checks/generated
-  - poetry run data_check checks/basic --traceback --print
-  - poetry run data_check checks/generated --traceback --print
-  - poetry run data_check checks/empty_sets/basic --traceback --print
-  - poetry run data_check checks/excel/basic --traceback --print
-  - poetry run data_check checks/pipelines/simple_pipeline --traceback --print
-  - poetry run data_check checks/pipelines/date_test --traceback --print
-  - poetry run data_check checks/pipelines/leading_zeros --traceback --print
-  - poetry run data_check checks/pipelines/table_check --traceback --print
-  - bash -c 'if ! poetry run data_check checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/invalid.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
+  - poetry run data_check gen checks/generated
+  - poetry run data_check run checks/basic --traceback --print
+  - poetry run data_check run checks/generated --traceback --print
+  - poetry run data_check run checks/empty_sets/basic --traceback --print
+  - poetry run data_check run checks/excel/basic --traceback --print
+  - poetry run data_check run checks/pipelines/simple_pipeline --traceback --print
+  - poetry run data_check run checks/pipelines/date_test --traceback --print
+  - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
+  - poetry run data_check run checks/pipelines/table_check --traceback --print
+  - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/invalid.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
   environment:
     DB_CONNECTION:
       from_secret: ORACLE_CONNECTION
@@ -82,25 +82,25 @@ steps:
   - cp -rn example/lookups test/int_test/sqlite
   - poetry install
   - cd test/int_test/sqlite
-  - bash -c 'while ! poetry run data_check --ping --quiet; do sleep 1; done'
-  - poetry run data_check --workers 1 --sql-files prepare
+  - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
+  - poetry run data_check sql --workers 1 --files prepare
   - poetry run pytest ../../../test/database
-  - poetry run data_check --generate checks/generated
-  - poetry run data_check checks/basic --traceback --print
-  - poetry run data_check checks/generated --traceback --print
-  - poetry run data_check checks/empty_sets/basic --traceback --print
-  - poetry run data_check checks/excel/basic --traceback --print
-  - poetry run data_check checks/pipelines/simple_pipeline --traceback --print
-  - poetry run data_check checks/pipelines/date_test --traceback --print
-  - poetry run data_check checks/pipelines/leading_zeros --traceback --print
-  - poetry run data_check checks/pipelines/table_check --traceback --print
-  - bash -c 'if ! poetry run data_check checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/invalid.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
+  - poetry run data_check gen checks/generated
+  - poetry run data_check run checks/basic --traceback --print
+  - poetry run data_check run checks/generated --traceback --print
+  - poetry run data_check run checks/empty_sets/basic --traceback --print
+  - poetry run data_check run checks/excel/basic --traceback --print
+  - poetry run data_check run checks/pipelines/simple_pipeline --traceback --print
+  - poetry run data_check run checks/pipelines/date_test --traceback --print
+  - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
+  - poetry run data_check run checks/pipelines/table_check --traceback --print
+  - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/invalid.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
   volumes:
   - name: cache
     path: /root/.cache
@@ -130,25 +130,25 @@ steps:
   - cp -rn example/lookups test/int_test/mysql
   - poetry install -E mysql
   - cd test/int_test/mysql
-  - bash -c 'while ! poetry run data_check --ping --quiet; do sleep 1; done'
-  - poetry run data_check --workers 1 --sql-files prepare
+  - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
+  - poetry run data_check sql --workers 1 --files prepare
   - poetry run pytest ../../../test/database
-  - poetry run data_check --generate checks/generated
-  - poetry run data_check checks/basic --traceback --print
-  - poetry run data_check checks/generated --traceback --print
-  - poetry run data_check checks/empty_sets/basic --traceback --print
-  - poetry run data_check checks/excel/basic --traceback --print
-  - poetry run data_check checks/pipelines/simple_pipeline --traceback --print
-  - poetry run data_check checks/pipelines/date_test --traceback --print
-  - poetry run data_check checks/pipelines/leading_zeros --traceback --print
-  - poetry run data_check checks/pipelines/table_check --traceback --print
-  - bash -c 'if ! poetry run data_check checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/invalid.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
+  - poetry run data_check gen checks/generated
+  - poetry run data_check run checks/basic --traceback --print
+  - poetry run data_check run checks/generated --traceback --print
+  - poetry run data_check run checks/empty_sets/basic --traceback --print
+  - poetry run data_check run checks/excel/basic --traceback --print
+  - poetry run data_check run checks/pipelines/simple_pipeline --traceback --print
+  - poetry run data_check run checks/pipelines/date_test --traceback --print
+  - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
+  - poetry run data_check run checks/pipelines/table_check --traceback --print
+  - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/invalid.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
   environment:
     DB_CONNECTION:
       from_secret: MYSQL_CONNECTION
@@ -185,25 +185,25 @@ steps:
   - cp -rn example/lookups test/int_test/postgres
   - poetry install -E postgres
   - cd test/int_test/postgres
-  - bash -c 'while ! poetry run data_check --ping --quiet; do sleep 1; done'
-  - poetry run data_check --workers 1 --sql-files prepare
+  - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
+  - poetry run data_check sql --workers 1 --files prepare
   - poetry run pytest ../../../test/database
-  - poetry run data_check --generate checks/generated
-  - poetry run data_check checks/basic --traceback --print
-  - poetry run data_check checks/generated --traceback --print
-  - poetry run data_check checks/empty_sets/basic --traceback --print
-  - poetry run data_check checks/excel/basic --traceback --print
-  - poetry run data_check checks/pipelines/simple_pipeline --traceback --print
-  - poetry run data_check checks/pipelines/date_test --traceback --print
-  - poetry run data_check checks/pipelines/leading_zeros --traceback --print
-  - poetry run data_check checks/pipelines/table_check --traceback --print
-  - bash -c 'if ! poetry run data_check checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/invalid.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
+  - poetry run data_check gen checks/generated
+  - poetry run data_check run checks/basic --traceback --print
+  - poetry run data_check run checks/generated --traceback --print
+  - poetry run data_check run checks/empty_sets/basic --traceback --print
+  - poetry run data_check run checks/excel/basic --traceback --print
+  - poetry run data_check run checks/pipelines/simple_pipeline --traceback --print
+  - poetry run data_check run checks/pipelines/date_test --traceback --print
+  - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
+  - poetry run data_check run checks/pipelines/table_check --traceback --print
+  - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/invalid.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
   environment:
     DB_CONNECTION:
       from_secret: POSTGRES_CONNECTION
@@ -240,25 +240,25 @@ steps:
   - cp -rn example/lookups test/int_test/mssql
   - poetry install -E mssql
   - cd test/int_test/mssql
-  - bash -c 'while ! poetry run data_check --ping --quiet; do sleep 1; done'
-  - poetry run data_check --workers 1 --sql-files prepare
+  - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
+  - poetry run data_check sql --workers 1 --files prepare
   - poetry run pytest ../../../test/database
-  - poetry run data_check --generate checks/generated
-  - poetry run data_check checks/basic --traceback --print
-  - poetry run data_check checks/generated --traceback --print
-  - poetry run data_check checks/empty_sets/basic --traceback --print
-  - poetry run data_check checks/excel/basic --traceback --print
-  - poetry run data_check checks/pipelines/simple_pipeline --traceback --print
-  - poetry run data_check checks/pipelines/date_test --traceback --print
-  - poetry run data_check checks/pipelines/leading_zeros --traceback --print
-  - poetry run data_check checks/pipelines/table_check --traceback --print
-  - bash -c 'if ! poetry run data_check checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/failing/invalid.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
+  - poetry run data_check gen checks/generated
+  - poetry run data_check run checks/basic --traceback --print
+  - poetry run data_check run checks/generated --traceback --print
+  - poetry run data_check run checks/empty_sets/basic --traceback --print
+  - poetry run data_check run checks/excel/basic --traceback --print
+  - poetry run data_check run checks/pipelines/simple_pipeline --traceback --print
+  - poetry run data_check run checks/pipelines/date_test --traceback --print
+  - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
+  - poetry run data_check run checks/pipelines/table_check --traceback --print
+  - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/failing/invalid.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
+  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
   environment:
     DB_CONNECTION:
       from_secret: MSSQL_CONNECTION

@@ -87,9 +87,9 @@ This will run this SQL query: `select column1, column2 from schema.table_name` a
 
 ## Generating expectation files
 
-If you run `data_check --generate` in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add `--force` to overwrite existing CSV files.
+If you run `data_check gen` in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add `--force` to overwrite existing CSV files.
 
-You can also generate expectation files for [pipelines](pipelines.md#generating-pipeline.checks). If you run `--generate` on a project with pipelines, beware though that the pipelines will be executed!
+You can also generate expectation files for [pipelines](pipelines.md#generating-pipeline.checks). If you run `data_check gen` on a project with pipelines, beware though that the pipelines will be executed!
 
 ## Lookups
 

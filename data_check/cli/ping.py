@@ -1,23 +1,18 @@
 import click
-from click_default_group import DefaultGroup
 from pathlib import Path
-from colorama import init
 from typing import Union, Optional
 
+from data_check.data_check import DataCheck
 from data_check.config import DataCheckConfig
 
-from .run import run
-from .sql import sql
-from .generate import gen
-from .ping import ping
-from .load import load
-from .common import common_options, init_common
+
+from .common import common_options, get_data_check
 
 
-@click.group(cls=DefaultGroup, default="run", default_if_no_args=True)
+@click.command()
 @common_options
 @click.pass_context
-def cli(
+def ping(
     ctx: click.Context,
     connection: str = "",
     workers: int = DataCheckConfig.parallel_workers,
@@ -27,8 +22,8 @@ def cli(
     quiet: bool = False,
     log: Optional[Union[str, Path]] = None,
 ):
-    init()  # init colorama
-    init_common(
+    """Tries to connect to the database."""
+    dc = get_data_check(
         ctx=ctx,
         connection=connection,
         workers=workers,
@@ -39,9 +34,8 @@ def cli(
         log=log,
     )
 
-
-cli.add_command(run)
-cli.add_command(sql)
-cli.add_command(gen)
-cli.add_command(ping)
-cli.add_command(load)
+    test = dc.sql.test_connection()
+    if test:
+        ctx.exit(0)
+    else:
+        ctx.exit(1)

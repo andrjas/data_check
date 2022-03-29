@@ -87,7 +87,7 @@ You can also omit _files_:
 
 ### load
 
-_load_ is like calling `data_check --load ...`. This will load a CSV file into a table.
+_load_ is like calling `data_check load --table ...`. This will load a CSV file into a table.
 
 ```yaml
 - load:
@@ -100,9 +100,9 @@ You can omit _load\_mode_. Then the default mode _truncate_ will be used.
 
 ### load_tables
 
-_load\_tables_ is like calling `data_check --load-tables ...`. This will load one or more tables from CSV files and infer the table name from the file name.
+_load\_tables_ is like calling `data_check load ...` without `--table`. This will load one or more tables from CSV files and infer the table name from the file name.
 
-Like with `--load-tables` the path before the filename has no impact on the inferred table name, only the file name itself.
+Like with `data_check load` the path before the filename has no impact on the inferred table name, only the file name itself.
 
 Short form:
 ```yaml
@@ -129,7 +129,7 @@ You can also omit _files_:
 
 ### sql_files
 
-_sql\_files_ is like calling `data_check --sql-files ...`. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call _sql\_files_ twice. _sql\_file_ is an alias for _sql\_files_.
+_sql\_files_ is like calling `data_check sql --files ...`. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call _sql\_files_ twice. _sql\_file_ is an alias for _sql\_files_.
 
 Short form:
 ```yaml
@@ -158,7 +158,7 @@ You can also omit _files_:
 
 ### sql
 
-_sql_ is like calling `data_check --sql ...`. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV.
+_sql_ is like calling `data_check sql ...`. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV.
 
 Short form:
 ```yaml
@@ -249,4 +249,4 @@ You can use some predefined parameters in a pipeline definition:
 
 ## Generating pipeline checks
 
-Like [generating expectation files](csv_checks.md#generating-expectation-files) you can also run `data_check --generate` for a pipeline. In this mode the pipeline is executed, but each _check_ step will generate the CSV files instead of running the actual checks. Adding `--force` will overwrite existing CSV files.
+Like [generating expectation files](csv_checks.md#generating-expectation-files) you can also run `data_check gen` for a pipeline. In this mode the pipeline is executed, but each _check_ step will generate the CSV files instead of running the actual checks. Adding `--force` will overwrite existing CSV files.

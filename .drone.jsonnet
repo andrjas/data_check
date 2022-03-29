@@ -23,14 +23,14 @@ local failing_int_tests = [
 ];
 
 local generic_int_test = [
-    "bash -c 'while ! poetry run data_check --ping --quiet; do sleep 1; done'",
-    "poetry run data_check --workers 1 --sql-files prepare",
+    "bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'",
+    "poetry run data_check sql --workers 1 --files prepare",
     "poetry run pytest ../../../test/database",
-    "poetry run data_check --generate checks/generated",
+    "poetry run data_check gen checks/generated",
 ] + [
-    "poetry run data_check %s --traceback --print" % [p] for p in positive_int_tests
+    "poetry run data_check run %s --traceback --print" % [p] for p in positive_int_tests
 ] + [
-    "bash -c 'if ! poetry run data_check %s; then exit 0; else exit 1; fi'" % [f] for f in failing_int_tests
+    "bash -c 'if ! poetry run data_check run %s; then exit 0; else exit 1; fi'" % [f] for f in failing_int_tests
 ];
 
 

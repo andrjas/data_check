@@ -29,8 +29,8 @@ class DataCheckOutput:
         self,
         verbose: bool,
         traceback: bool,
-        print_failed: bool,
-        print_format: str,
+        print_failed: bool = False,
+        print_format: str = "pandas",
         print_diffed: bool = False,
         quiet: bool = False,
         log_path: Optional[Path] = None,
@@ -48,6 +48,19 @@ class DataCheckOutput:
         self.handler.log_path = log_path
         if printer:
             self.handler.printer = printer
+
+    def configure_print(
+        self,
+        print_failed: Optional[bool] = None,
+        print_format: Optional[str] = None,
+        print_diffed: Optional[bool] = None,
+    ):
+        if print_failed is not None:
+            self.print_failed = print_failed
+        if print_format is not None:
+            self.print_format = print_format
+        if print_diffed is not None:
+            self.print_diffed = print_diffed
 
     @staticmethod
     def format_exception(exc: Exception):
