@@ -155,3 +155,26 @@ class DataCheck:
         )
         output_sql.write_text(query)
         return query_result
+
+    def fake_data(
+        self,
+        configs: List[Path],
+        output: Path = Path(),
+        base_path: Path = Path("."),
+        force: bool = False,
+    ):
+        from .fake.fake_data import fake_from_config
+
+        parameters = [
+            {
+                "config": c,
+                "sql": self.sql,
+                "output": output,
+                "force": force,
+                "base_path": base_path,
+            }
+            for c in expand_files(configs, base_path=base_path, extension=".yml")
+        ]
+        return all(
+            self.runner.run_any(run_method=fake_from_config, parameters=parameters)
+        )

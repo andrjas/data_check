@@ -38,6 +38,7 @@ pyodbc = {version = "4.0.32", optional = true}
 python-dateutil = "2.8.2"
 openpyxl = "3.0.9"
 click-default-group = "1.2.2"
+Faker = "13.3.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7"

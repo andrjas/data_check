@@ -11,6 +11,7 @@ from .sql import sql
 from .generate import gen
 from .ping import ping
 from .load import load
+from .fake import fake
 from .common import common_options, init_common
 
 
@@ -45,3 +46,4 @@ cli.add_command(sql)
 cli.add_command(gen)
 cli.add_command(ping)
 cli.add_command(load)
+cli.add_command(fake)

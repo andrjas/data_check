@@ -1,0 +1,88 @@
+from dataclasses import dataclass, field
+import random
+from typing import Any, Callable, Dict, List, Optional
+import decimal
+import datetime
+from faker import Faker
+
+from data_check.sql import DataCheckSql
+
+
+@dataclass
+class ColumnConfig:
+    faker: Faker
+    name: str
+    next: str = ""
+    faker_name: str = ""
+    faker_args: Dict[str, Any] = field(default_factory=dict)
+    from_query: str = ""
+    values: List[Any] = field(default_factory=list)
+    sql_type: Any = None
+    python_type: Any = None
+    fake_method: Optional[Callable[..., Any]] = None
+    is_unique: bool = False
+    unique_data: List = field(default_factory=list)
+
+    def python_type_to_faker(self, python_type) -> Callable[..., Any]:
+        TYPE_MAPPING = {
+            decimal.Decimal: "pydecimal",
+            str: "pystr",
+            datetime.date: "date_between",
+            datetime.datetime: "date_time_between",
+        }
+        fake_provider = TYPE_MAPPING.get(python_type, "pyint")
+        return getattr(self.faker, fake_provider)
+
+    def fake_from_values(self) -> Any:
+        return random.choice(self.values)
+
+    def prepare_fake_method(self, sql: DataCheckSql):
+        if self.values:
+            self.fake_method = self.fake_from_values
+            self.faker_args = {}
+            return
+
+        if self.from_query:
+            res = sql.run_query(self.from_query)
+            self.values = [v[0] for v in res.values.tolist()]
+            self.fake_method = self.fake_from_values
+            self.faker_args = {}
+            return
+
+        if self.faker_name:
+            self.fake_method = getattr(self.faker, self.faker_name)
+            self.faker_args = self.get_default_args()
+        else:
+            self.fake_method = self.python_type_to_faker(self.python_type)
+            self.faker_args = self.get_default_args()
+
+    def get_default_args(self) -> Dict[str, Any]:
+        if self.python_type == decimal.Decimal:
+            precision = self.sql_type.precision if self.sql_type.precision else 5
+            scale = self.sql_type.scale if self.sql_type.scale else 0
+            if not self.faker_args.get("left_digits", None):
+                # In SQL precision is the whole "length" of the decimal including the scale.
+                self.faker_args["left_digits"] = precision - scale
+            if not self.faker_args.get("right_digits", None):
+                self.faker_args["right_digits"] = scale
+        elif self.python_type == str:
+            length = self.sql_type.length if self.sql_type.length else 10
+            if self.fake_method == self.faker.pystr:
+                self.faker_args["max_chars"] = length
+        return self.faker_args
+
+    def init(self, sql_type: Any, sql: DataCheckSql):
+        self.sql_type = sql_type
+        self.python_type = sql_type.python_type
+        self.prepare_fake_method(sql)
+
+    def generate(self) -> Any:
+        if self.fake_method:
+            data = self.fake_method(**self.faker_args)
+            if self.is_unique:
+                while data in self.unique_data:
+                    data = self.fake_method(**self.faker_args)
+                self.unique_data.append(data)
+            return data
+        else:
+            return None
