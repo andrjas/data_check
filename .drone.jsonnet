@@ -10,6 +10,7 @@ local positive_int_tests = [
     "checks/pipelines/date_test",
     "checks/pipelines/leading_zeros",
     "checks/pipelines/table_check",
+    "checks/pipelines/fake_data",
 ];
 
 local failing_int_tests = [
@@ -78,6 +79,7 @@ local sqlite_test() = int_pipeline("sqlite", "local/poetry:3.8",
     "cp -rn example/load_data test/int_test/sqlite",
     "cp -rn example/run_sql test/int_test/sqlite",
     "cp -rn example/lookups test/int_test/sqlite",
+    "cp -rn example/fake test/int_test/sqlite",
     "poetry install",
     "cd test/int_test/sqlite"
 ]);
@@ -89,6 +91,7 @@ local postgres_test() = int_pipeline("postgres", "local/poetry:3.8",
     "cp -rn example/load_data test/int_test/postgres",
     "cp -rn example/run_sql test/int_test/postgres",
     "cp -rn example/lookups test/int_test/postgres",
+    "cp -rn example/fake test/int_test/postgres",
     "poetry install -E postgres",
     "cd test/int_test/postgres"
 ],
@@ -105,6 +108,7 @@ local mysql_test() = int_pipeline("mysql", "local/poetry:3.8",
     "cp -rn example/load_data test/int_test/mysql",
     "cp -rn example/run_sql test/int_test/mysql",
     "cp -rn example/lookups test/int_test/mysql",
+    "cp -rn example/fake test/int_test/mysql",
     "poetry install -E mysql",
     "cd test/int_test/mysql"
 ],
@@ -121,6 +125,7 @@ local mssql_test() = int_pipeline("mssql", "local/poetry_mssql",
     "cp -rn example/load_data test/int_test/mssql",
     "cp -rn example/run_sql test/int_test/mssql",
     "cp -rn example/lookups test/int_test/mssql",
+    "cp -rn example/fake test/int_test/mssql",
     "poetry install -E mssql",
     "cd test/int_test/mssql"
 ],
@@ -137,6 +142,7 @@ local oracle_test() = int_pipeline("oracle", "local/poetry_oracle",
     "cp -rn example/load_data test/int_test/oracle",
     "cp -rn example/run_sql test/int_test/oracle",
     "cp -rn example/lookups test/int_test/oracle",
+    "cp -rn example/fake test/int_test/oracle",
     "poetry install -E oracle",
     "cd test/int_test/oracle"
 ],
