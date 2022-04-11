@@ -54,6 +54,10 @@ def test_run_fake_simple_table(tmp_path: Path):
         assert f"fake from fake{sep}simple_table.yml" in res.output
         assert "fake written to main.simple_table.csv" in res.output
         assert Path("main.simple_table.csv").exists()
+        assert Path("main.simple_table_2.csv").exists()
+        assert Path("main.simple_table_3.csv").exists()
+        assert Path("main.simple_table_4.csv").exists()
+        assert Path("main.simple_table_5.csv").exists()
 
 
 def test_run_fake_simple_table_without_table(tmp_path: Path):

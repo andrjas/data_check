@@ -1,4 +1,5 @@
 from pathlib import Path
+import pandas as pd
 import pytest
 from sqlalchemy import Table, Column, String, Integer, MetaData
 
@@ -67,9 +68,45 @@ def test_fake_config_with_more_columns_fails(dc_serial: DataCheck):
         fake_config.init(dc_serial.sql)
 
 
+def test_fake_config_iterations(tmp_path: Path, dc_serial: DataCheck):
+    create_test_table_db("test_fake_config_iterations", "main", dc_serial)
+    csv = tmp_path / "main.test_fake_config_iterations.csv"
+    fake_config = FakeConfig(Path("."))
+    config = {"table": "main.test_fake_config_iterations", "iterations": {"count": 3}}
+    fake_config.load_config(config)
+    fake_config.init(dc_serial.sql)
+    fake_config.run_faker(csv)
+    assert csv.exists()
+    csv2 = tmp_path / "main.test_fake_config_iterations_2.csv"
+    assert csv2.exists()
+    csv3 = tmp_path / "main.test_fake_config_iterations_3.csv"
+    assert csv3.exists()
+
+
 def test_fake_config_non_existing_table(dc_serial: DataCheck):
     fake_config = FakeConfig(Path("."))
     config = {"table": "main.test_fake_config_non_existing"}
     fake_config.load_config(config)
     with pytest.raises(Exception):
         fake_config.init(dc_serial.sql)
+
+
+def test_fake_config_iterations_wrong_next_strategy(
+    tmp_path: Path, dc_serial: DataCheck
+):
+    create_test_table_db(
+        "test_fake_config_iterations_wrong_next_strategy", "main", dc_serial
+    )
+    csv = tmp_path / "main.test_fake_config_iterations_wrong_next_strategy.csv"
+    fake_config = FakeConfig(Path("."))
+    config = {
+        "table": "main.test_fake_config_iterations_wrong_next_strategy",
+        "iterations": {"count": 3},
+        "columns": {
+            "data": {"next": "unknown_strategy"},
+        },
+    }
+    fake_config.load_config(config)
+    fake_config.init(dc_serial.sql)
+    with pytest.raises(Exception):
+        fake_config.run_faker(csv)

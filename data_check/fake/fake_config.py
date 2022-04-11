@@ -7,6 +7,7 @@ import pandas as pd
 from data_check.sql import DataCheckSql
 from data_check.io import write_csv
 from .column_config import ColumnConfig
+from .fake_iterator import FakeIterator
 
 
 class FakeConfig:
@@ -18,6 +19,7 @@ class FakeConfig:
         self.rows: int
         self.columns: Dict[str, ColumnConfig] = {}
         self.faker = Faker()
+        self.iterator = FakeIterator(fake_config=self)
 
     def parse(self):
         config = yaml.safe_load(self.config_file.read_text())
@@ -28,6 +30,7 @@ class FakeConfig:
         self.table_name = self.config.get("table", "")
         self.business_key = self.config.get("business_key", [])
         self.rows = self.config.get("rows", 100)
+        self.iterator.parse(self.config.get("iterations", {}))
 
         columns = self.config.get("columns", {})
         for name, val in columns.items():
@@ -98,4 +101,5 @@ class FakeConfig:
             print(f"{abs_output} already exists")
             return False
         self.generate_file(abs_output)
+        self.iterator.iterate(abs_output)
         return True
