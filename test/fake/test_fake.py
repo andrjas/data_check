@@ -110,3 +110,28 @@ def test_fake_config_iterations_wrong_next_strategy(
     fake_config.init(dc_serial.sql)
     with pytest.raises(Exception):
         fake_config.run_faker(csv)
+
+
+def test_fake_pipeline(dc_serial: DataCheck):
+    check = dc_serial.get_check(Path("checks/pipelines/fake_data"))
+    assert check
+
+    csv1 = Path("checks/pipelines/fake_data/main.simple_fake_table.csv")
+    csv2 = Path("checks/pipelines/fake_data/main.simple_fake_table_2.csv")
+    if csv1.exists():
+        csv1.unlink()
+    if csv2.exists():
+        csv2.unlink()
+
+    result = check.run_test()
+
+    csv1_exists = csv1.exists()
+    csv2_exists = csv2.exists()
+    if csv1.exists():
+        csv1.unlink()
+    if csv2.exists():
+        csv2.unlink()
+
+    assert result
+    assert csv1_exists
+    assert csv2_exists

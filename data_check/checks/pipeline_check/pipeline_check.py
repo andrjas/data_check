@@ -52,6 +52,12 @@ class PipelineCheck(BaseCheck):
         )
         self.register_pipeline_step("sql", pipeline_run_sql_query)
         self.register_pipeline_step("always_run", self.always_run)
+        self.register_pipeline_step(
+            "fake",
+            self.data_check.fake_data,
+            convert_to_path_list=["configs"],
+            convert_to_path=["output"],
+        )
 
     @staticmethod
     def is_check_path(path: Path) -> bool:
