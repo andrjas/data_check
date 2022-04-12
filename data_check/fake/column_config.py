@@ -24,6 +24,14 @@ class ColumnConfig:
     unique_data: List = field(default_factory=list)
     add_values: List[Any] = field(default_factory=list)
 
+    def load_config(self, config: Dict[str, Any]):
+        self.next = config.get("next", "")
+        self.faker_name = config.get("faker", "")
+        self.faker_args = config.get("faker_args", {})
+        self.from_query = config.get("from_query", "")
+        self.values = config.get("values", [])
+        self.add_values = config.get("add_values", [])
+
     def python_type_to_faker(self, python_type) -> Callable[..., Any]:
         TYPE_MAPPING = {
             decimal.Decimal: "pydecimal",

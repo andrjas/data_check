@@ -13,7 +13,6 @@ columns:  #
     faker: iban
 
   date_col:
-    # next: inc  # "algorithm" for next iteration
     # faker_args:
     #   start_date: 1900-01-01
     #   end_date: 9999-12-31
@@ -25,7 +24,7 @@ columns:  #
     faker: name # faker provider method, if not correctly inferred
   col3:
     from_query: select colx from main.other_table  # use values from the query
-    next: dec
+    next: inc  # "algorithm" for next iteration
   col4:
     next: random
     values:  # use these values randomly

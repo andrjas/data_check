@@ -30,27 +30,14 @@ class FakeConfig:
         self.table_name = self.config.get("table", "")
         self.business_key = self.config.get("business_key", [])
         self.rows = self.config.get("rows", 100)
-        self.iterator.parse(self.config.get("iterations", {}))
+        self.iterator.load_config(self.config.get("iterations", {}))
 
         columns = self.config.get("columns", {})
         for name, val in columns.items():
             is_unique = name == self.business_key
+            col_conf = ColumnConfig(faker=self.faker, name=name, is_unique=is_unique)
             if val:
-                col_conf = ColumnConfig(
-                    faker=self.faker,
-                    name=name,
-                    next=val.get("next", ""),
-                    faker_name=val.get("faker", ""),
-                    faker_args=val.get("faker_args", {}),
-                    from_query=val.get("from_query", ""),
-                    values=val.get("values", []),
-                    is_unique=is_unique,
-                    add_values=val.get("add_values", []),
-                )
-            else:
-                col_conf = ColumnConfig(
-                    faker=self.faker, name=name, is_unique=is_unique
-                )
+                col_conf.load_config(val)
             self.columns[name] = col_conf
 
     def get_column_types(self, sql: DataCheckSql):

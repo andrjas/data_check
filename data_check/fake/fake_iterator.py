@@ -18,7 +18,7 @@ class FakeIterator:
     count: int = 1
     data: pd.DataFrame = pd.DataFrame()
 
-    def parse(self, config: Dict[str, Any]):
+    def load_config(self, config: Dict[str, Any]):
         self.count = config.get("count", 1)
 
     def get_iter_path(self, base_file: Path, i: int) -> Path:
