@@ -81,11 +81,11 @@ The file _sample\_pipeline/data\_check\_pipeline.yml_ can look like this:
 ```yaml
 steps:
     # this will truncate the table my_schema.some_table and load it with the data from data/my_schema.some_table.csv
-    - load_tables: data
+    - load: data
     # this will execute the SQL statement in run_this.sql
     - sql_file: run_this.sql
     # this will append the data from data2/some_data.csv to my_schema.other_table
-    - load:
+    - load_table:
         file: data2/some_data.csv
         table: my_schema.other_table
         load_mode: append

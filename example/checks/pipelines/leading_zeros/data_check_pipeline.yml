@@ -1,7 +1,7 @@
 steps:
   - sql: create table {{test_schema}}.leading_zeros (id {{decimal_type}}, dat {{varchar_type}})
-  - load_tables: leading_zeros.csv
-  - load:
+  - load: leading_zeros.csv
+  - load_table:
       file: leading_zeros.csv
       table: {{test_schema}}.leading_zeros
   - check: leading_zeros.sql

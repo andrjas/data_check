@@ -31,11 +31,11 @@ The file _sample\_pipeline/data\_check\_pipeline.yml_ can look like this:
 ```yaml
 steps:
     # this will truncate the table my_schema.some_table and load it with the data from data/my_schema.some_table.csv
-    - load_tables: data
+    - load: data
     # this will execute the SQL statement in run_this.sql
     - sql_file: run_this.sql
     # this will append the data from data2/some_data.csv to my_schema.other_table
-    - load:
+    - load_table:
         file: data2/some_data.csv
         table: my_schema.other_table
         load_mode: append
@@ -85,12 +85,12 @@ You can also omit _files_:
 ```
 
 
-### load
+### load_table
 
-_load_ is like calling `data_check load --table ...`. This will load a CSV file into a table.
+_load\_table_ is like calling `data_check load --table ...`. This will load a CSV file into a table.
 
 ```yaml
-- load:
+- load_table:
     file: check/date_test.csv
     table: temp.date_test
     load_mode: append
@@ -98,20 +98,20 @@ _load_ is like calling `data_check load --table ...`. This will load a CSV file 
 
 You can omit _load\_mode_. Then the default mode _truncate_ will be used.
 
-### load_tables
+### load
 
-_load\_tables_ is like calling `data_check load ...` without `--table`. This will load one or more tables from CSV files and infer the table name from the file name.
+_load_ is like calling `data_check load ...` without `--table`. This will load one or more tables from CSV files and infer the table name from the file name.
 
 Like with `data_check load` the path before the filename has no impact on the inferred table name, only the file name itself.
 
 Short form:
 ```yaml
-- load_tables: some_path/schema.table_name.csv
+- load: some_path/schema.table_name.csv
 ```
 
 Long form:
 ```yaml
-- load_tables:
+- load:
     files: 
       - some_path
       - some/other/path/schema.other_table.csv
@@ -122,7 +122,7 @@ You can omit _load\_mode_. Then the default mode _truncate_ will be used.
 
 You can also omit _files_:
 ```yaml
-- load_tables:
+- load:
     - some_path
     - some/other/path/schema.other_table.csv
 ```

@@ -1,6 +1,6 @@
 steps:
   - sql_file: create_table.sql
-  - load:
+  - load_table:
       file: check/date_test.csv
       table: main.date_test
   - check: check

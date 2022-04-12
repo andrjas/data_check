@@ -25,12 +25,12 @@ class PipelineCheck(BaseCheck):
 
     def register_pipelines(self):
         self.register_pipeline_step(
-            "load_tables",
+            "load",
             self.data_check.sql.table_loader.load_tables_from_files,
             convert_to_path_list=["files"],
         )
         self.register_pipeline_step(
-            "load",
+            "load_table",
             self.data_check.sql.table_loader.load_table_from_file,
             convert_to_path=["file"],
         )
