@@ -45,6 +45,7 @@ class FakeConfig:
                     from_query=val.get("from_query", ""),
                     values=val.get("values", []),
                     is_unique=is_unique,
+                    add_values=val.get("add_values", []),
                 )
             else:
                 col_conf = ColumnConfig(

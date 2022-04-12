@@ -22,6 +22,7 @@ class ColumnConfig:
     fake_method: Optional[Callable[..., Any]] = None
     is_unique: bool = False
     unique_data: List = field(default_factory=list)
+    add_values: List[Any] = field(default_factory=list)
 
     def python_type_to_faker(self, python_type) -> Callable[..., Any]:
         TYPE_MAPPING = {
@@ -79,6 +80,9 @@ class ColumnConfig:
     def generate(self) -> Any:
         if self.fake_method:
             data = self.fake_method(**self.faker_args)
+            if self.add_values:
+                values = [data] + self.add_values
+                data = random.choice(values)
             if self.is_unique:
                 while data in self.unique_data:
                     data = self.fake_method(**self.faker_args)

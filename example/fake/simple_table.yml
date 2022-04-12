@@ -13,10 +13,14 @@ columns:  #
     faker: iban
 
   date_col:
-    next: inc  # "algorithm" for next iteration
-    faker_args:
-      start_date: 1900-01-01
-      #end_date: 9999-12-31
+    # next: inc  # "algorithm" for next iteration
+    # faker_args:
+    #   start_date: 1900-01-01
+    #   end_date: 9999-12-31
+      
+    add_values:  # use 
+      - 1900-01-01
+      - 9999-12-31
   col2:
     faker: name # faker provider method, if not correctly inferred
   col3:
