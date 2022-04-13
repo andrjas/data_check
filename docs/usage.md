@@ -2,11 +2,12 @@
 
 ## Commands
 
-* `data_check run` - Run checks (default command).
-* `data_check gen` -  Generate CSV files from query files.
-* `data_check load` - Load data from files into tables.
-* `data_check ping` - Tries to connect to the database.
-* `data_check sql` - Run SQL statements.
+* `data_check run` - [Run checks (default command)](#run).
+* `data_check fake` - [Generate test data](#fake).
+* `data_check gen` -  [Generate CSV files from query files](#gen).
+* `data_check load` - [Load data from files into tables](#load).
+* `data_check ping` - [Tries to connect to the database](#ping).
+* `data_check sql` - [Run SQL statements](#sql).
 
 ## Common options
 
@@ -42,6 +43,24 @@ Common options can be used with any command.
 * `data_check run some_folder/some_file.sql` - Run data_check against the default connection for a single test.
 * `data_check run --print` - Run data_check against the default connection in the  _checks_ folder and prints all failed result data.
 * `data_check run --print --diff some_folder` - Run data_check against the default connection in the _some\_folder_ folder and prints only the different columns for failed results.
+
+## fake
+
+`fake` generates test data for existing tables and writes it into CSV files. The configuration file is described in [Test data](test_data.md).
+
+### Options
+
+* `-o/--output PATH` - Output path for the CSV file.
+* `--force` - Overwrite existing files.
+
+
+### Examples
+
+* `data_check fake fake_config.yml` - Generates test data as defined in _fake\_config.yml_ and writes it into a CSV file with the same name as the table name.
+* `data_check fake fake_config.yml --output fake.csv` - Generates test data as defined in _fake\_config.yml_ and writes it into _fake.csv_.
+* `data_check fake fake_config.yml --force` - Generates test data as defined in _fake\_config.yml_, overwrites existing CSV files.
+* `data_check fake fake_config.yml fake_config2.yml` - Generates test data for both config files.
+
 
 ## gen
 

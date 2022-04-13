@@ -5,6 +5,7 @@ nav:
     - Usage: usage.md
     - CSV checks: csv_checks.md
     - Pipelines: pipelines.md
+    - Test data: test_data.md
     - HowTos: howtos.md
     - Examples: example.md
     - Development: development.md
