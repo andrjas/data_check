@@ -49,6 +49,9 @@
                                 <a href="../pipelines/" class="nav-link">Pipelines</a>
                             </li>
                             <li class="navitem">
+                                <a href="../test_data/" class="nav-link">Test data</a>
+                            </li>
+                            <li class="navitem">
                                 <a href="../howtos/" class="nav-link">HowTos</a>
                             </li>
                             <li class="navitem">
@@ -99,6 +102,34 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#common-options" class="nav-link">Common options</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#run" class="nav-link">run</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#fake" class="nav-link">fake</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#gen" class="nav-link">gen</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#load" class="nav-link">load</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#ping" class="nav-link">ping</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#sql" class="nav-link">sql</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#exit-codes" class="nav-link">Exit codes</a>
               <ul class="nav flex-column">
               </ul>
@@ -125,33 +156,110 @@
 <h1 id="usage">Usage</h1>
 <h2 id="commands">Commands</h2>
 <ul>
-<li><code>data_check</code> - Run data_check against the default connection in the <em>checks</em> folder.</li>
-<li><code>data_check some_folder</code> - Run data_check against the default connection in the <em>some_folder</em> folder.</li>
-<li><code>data_check some_folder/some_file.sql</code> - Run data_check against the default connection for a single test.</li>
-<li><code>data_check -c/--connection CONNECTION</code> - use another connection than the default.</li>
-<li><code>data_check -n/--workers WORKERS</code> - use WORKERS threads to run the queries (default: 4).</li>
-<li><code>data_check --print</code> - print failed results data.</li>
-<li><code>data_check --print-format FORMAT</code> - format for printing failed results (csv (default), pandas, json).</li>
-<li><code>data_check --print-json</code> - shortcut for "--print --print-format json".</li>
-<li><code>data_check --diff</code> - print only the different columns for failed results. Use with --print.</li>
-<li><code>data_check -g/--generate</code> - generate expectation files if they don't exist.</li>
-<li><code>data_check --force</code> - when set, --generate will overwrite files.</li>
-<li><code>data_check --config CONFIG</code> - config file to use (default: data_check.yml).</li>
-<li><code>data_check --load PATH --table</code>-  load table data from a csv into the table</li>
-<li><code>data_check --load-mode MODE</code> -  how to load the table: truncate (default), append or replace. Use with --load or --load-tables.</li>
-<li><code>data_check --load-tables some_folder/or/some_file.csv</code>-  load tables from a list of csv files.</li>
-<li><code>data_check --sql-files some_folder/or/some_file.sql</code> - run any SQL script in a list of SQL files.</li>
-<li><code>data_check --sql-file some_folder/or/some_file.sql</code> - alias for --sql-files.</li>
-<li><code>data_check --sql "SQL statement"</code> - run any SQL statement. Print result as CSV if it is a query.</li>
-<li><code>data_check -o/--output PATH</code> - output path for --sql.</li>
-<li><code>data_check -W/--write-check PATH</code> - create a check from the --sql statement (SQL and CSV file).</li>
-<li><code>data_check --ping</code> - tries to connect to the database.</li>
-<li><code>data_check --quiet</code> - do not print any output.</li>
-<li><code>data_check --verbose</code> - print verbose output.</li>
-<li><code>data_check --traceback</code> - print traceback output for debugging.</li>
-<li><code>data_check --log LOGFILE</code> - write output to a log file.</li>
-<li><code>data_check --version</code> - Show the version and exit.</li>
-<li><code>data_check --help</code> - show this help message and exit.</li>
+<li><code>data_check run</code> - <a href="#run">Run checks (default command)</a>.</li>
+<li><code>data_check fake</code> - <a href="#fake">Generate test data</a>.</li>
+<li><code>data_check gen</code> -  <a href="#gen">Generate CSV files from query files</a>.</li>
+<li><code>data_check load</code> - <a href="#load">Load data from files into tables</a>.</li>
+<li><code>data_check ping</code> - <a href="#ping">Tries to connect to the database</a>.</li>
+<li><code>data_check sql</code> - <a href="#sql">Run SQL statements</a>.</li>
+</ul>
+<h2 id="common-options">Common options</h2>
+<p>Common options can be used with any command.</p>
+<ul>
+<li><code>-c/--connection CONNECTION</code> - Use another connection than the default.</li>
+<li><code>-n/--workers WORKERS</code> - Use WORKERS threads to run the queries (default: 4).</li>
+<li><code>--config CONFIG</code> - Config file to use (default: data_check.yml).</li>
+<li><code>--quiet</code> - Do not print any output.</li>
+<li><code>--verbose</code> - Print verbose output.</li>
+<li><code>--traceback</code> - Print traceback output for debugging.</li>
+<li><code>--log LOGFILE</code> - Write output to a log file.</li>
+<li><code>--version</code> - Show the version and exit.</li>
+<li><code>--help</code> - Show this message and exit.</li>
+</ul>
+<h2 id="run">run</h2>
+<p><code>run</code> executes checks against a database. It is the default command and can be omitted.</p>
+<h3 id="options">Options</h3>
+<ul>
+<li><code>--print</code> - Print failed results data.</li>
+<li><code>--print-format FORMAT</code> - Format for printing failed results (csv (default), pandas, json).</li>
+<li><code>--print-json</code> - Shortcut for "--print --print-format json".</li>
+<li><code>--diff</code> - Print only the different columns for failed results. Use with --print.</li>
+</ul>
+<h3 id="examples">Examples</h3>
+<ul>
+<li><code>data_check run</code> - Run data_check against the default connection in the <em>checks</em> folder.</li>
+<li><code>data_check</code> - Same as <code>data_check run</code></li>
+<li><code>data_check run some_folder</code> - Run data_check against the default connection in the <em>some_folder</em> folder.</li>
+<li><code>data_check run some_folder/some_file.sql</code> - Run data_check against the default connection for a single test.</li>
+<li><code>data_check run --print</code> - Run data_check against the default connection in the  <em>checks</em> folder and prints all failed result data.</li>
+<li><code>data_check run --print --diff some_folder</code> - Run data_check against the default connection in the <em>some_folder</em> folder and prints only the different columns for failed results.</li>
+</ul>
+<h2 id="fake">fake</h2>
+<p><code>fake</code> generates test data for existing tables and writes it into CSV files. The configuration file is described in <a href="../test_data/">Test data</a>.</p>
+<h3 id="options_1">Options</h3>
+<ul>
+<li><code>-o/--output PATH</code> - Output path for the CSV file.</li>
+<li><code>--force</code> - Overwrite existing files.</li>
+</ul>
+<h3 id="examples_1">Examples</h3>
+<ul>
+<li><code>data_check fake fake_config.yml</code> - Generates test data as defined in <em>fake_config.yml</em> and writes it into a CSV file with the same name as the table name.</li>
+<li><code>data_check fake fake_config.yml --output fake.csv</code> - Generates test data as defined in <em>fake_config.yml</em> and writes it into <em>fake.csv</em>.</li>
+<li><code>data_check fake fake_config.yml --force</code> - Generates test data as defined in <em>fake_config.yml</em>, overwrites existing CSV files.</li>
+<li><code>data_check fake fake_config.yml fake_config2.yml</code> - Generates test data for both config files.</li>
+</ul>
+<h2 id="gen">gen</h2>
+<p><code>gen</code> generates the expectation files (CSV).</p>
+<h3 id="options_2">Options</h3>
+<ul>
+<li><code>--force</code> - Overwrite existing files.</li>
+</ul>
+<h3 id="examples_2">Examples</h3>
+<ul>
+<li><code>data_check gen</code> - Generates all missing expectation files in the <em>checks</em> folder.</li>
+<li><code>data_check gen --force some_folder</code> - Generates and overwrites all expectation files in the <em>some_folder</em> folder.</li>
+</ul>
+<h2 id="load">load</h2>
+<p><code>load</code> is used to load data from files (CSV or Excel) into database tables. By default it will load into a table with the same name as the file and truncate the table before loading. If the table does not exists, it will create the table with a column definition guessed from the file content.</p>
+<h3 id="options_3">Options</h3>
+<ul>
+<li><code>--table</code>-  Table name to load data into</li>
+<li><code>--mode</code> -  How to load the table: truncate (default), append or replace.</li>
+</ul>
+<h3 id="examples_3">Examples</h3>
+<ul>
+<li><code>data_check load some_path/schema.table.csv</code> - Truncates the table schema.table and loads the csv from <em>some_path/schema.table.csv</em> into the table.</li>
+<li><code>data_check load --table schema.other_table some_path/schema.table.csv</code> - Same as above but uses the table schema.other_table. Only works for a single CSV/Excel file.</li>
+<li><code>data_check load --mode append some_path/schema.table.csv</code> - Loads the csv from <em>some_path/schema.table.csv</em> into the table, appends only without touching the existing data in the table.</li>
+<li><code>data_check load --mode replace some_path/schema.table.csv</code> - Drops and recreates the table schema.table and loads the csv from <em>some_path/schema.table.csv</em> into the table.</li>
+<li><code>data_check load some_path/schema.table.csv other_path/schema2.other_table.csv</code> - Loads multiple tables from multiple files.</li>
+<li><code>data_check load some_path</code> - Loads all CSV/Excel files from <em>some_path</em> each into the same table as the file name.</li>
+</ul>
+<h2 id="ping">ping</h2>
+<p><code>ping</code> tries to connect to the database. The exit code is 0 if it successful, otherwise it is 1.
+<code>ping</code> doesn't have any special options, except the common ones.</p>
+<h3 id="examples_4">Examples</h3>
+<ul>
+<li><code>data_check ping</code> - Tries to connect to the default database.</li>
+<li><code>data_check ping --connection test2</code> - Tries to connect to the database with the connection <em>test2</em>.</li>
+<li><code>data_check ping --quiet</code> - Tries to connect to the default database. Doesn't print anything.</li>
+</ul>
+<h2 id="sql">sql</h2>
+<p><code>sql</code> runs any SQL query/command against the database. The query can be passed as an argument or from a file. The result of the query can be written into a CSV file.</p>
+<h3 id="options_4">Options</h3>
+<ul>
+<li><code>--file, --file</code> - Run any SQL script in a list of SQL files.</li>
+<li><code>-o/--output PATH</code> - Output path for the result.</li>
+<li><code>-W/--write-check PATH</code> - Create a check from the sql statement (SQL and CSV
+                          file).</li>
+</ul>
+<h3 id="examples_5">Examples</h3>
+<ul>
+<li><code>data_check sql "select * from some.table"</code> - Runs the given query against the default database connection.</li>
+<li><code>data_check sql --connection test2 "select * from some.table"</code> - Runs the given query against the database connection for <em>test2</em>.</li>
+<li><code>data_check sql --file some/file.sql</code> - Runs the query in the file against the default database connection.</li>
+<li><code>data_check sql --files some/path</code> - Runs the queries from all SQL files in <em>some/path</em> against the default database connection. The queries are run in parallel, the order is random.</li>
+<li><code>data_check sql --workers 1 --files some/path</code> - Runs the queries from all SQL files in <em>some/path</em> against the default database connection. The queries are run sequentially ordered by the path/file name.</li>
 </ul>
 <h2 id="exit-codes">Exit codes</h2>
 <p>Possible exit codes:</p>
@@ -167,13 +275,13 @@
 <p>Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV or Excel files to load data into tables. The <a href="./#csv-format">CSV format</a> is the same as used for testing. The header in the CSV file or the first row in the Excel file must match the columns in the table. Additionally, Excel cells can use its native date/datetime format.</p>
 <p>If the table doesn't exist, it will be created. The schema and table names are always case-insensitive, as long as the database supports it. Otherwise, they are lowercased.</p>
 <h3 id="loading-data-into-a-single-table">Loading data into a single table</h3>
-<p>To load data from some CSV or Excel file into a table, you can use <code>data_check --load path/to/some_file.[csv/xlsx] --table schema.table_name</code>. This will truncate the table and load the content of the file into the table. You can specify different <a href="./#load-modes">load modes</a> if you do not want to truncate the table.</p>
+<p>To load data from some CSV or Excel file into a table, you can use <code>data_check load path/to/some_file.[csv/xlsx] --table schema.table_name</code>. This will truncate the table and load the content of the file into the table. You can specify different <a href="./#load-modes">load modes</a> if you do not want to truncate the table.</p>
 <h3 id="loading-data-into-multiple-tables">Loading data into multiple tables</h3>
 <p>You can use multiple CSV and Excel files or a whole folder to load the data into tables. The table name will be derived from the file name.</p>
 <ul>
-<li><code>data_check --load-tables path/schema.table_1.csv</code> - this will load the data from the CSV file into the table schema.table_1</li>
-<li><code>data_check --load-tables path/schema.table_2.xlsx</code> - this will load the data from the Excel file into the table schema.table_2</li>
-<li><code>data_check --load-tables path/to/some_folder</code> - this will load the data from all CSV and Excel files in this folder into tables matching the file names.</li>
+<li><code>data_check load path/schema.table_1.csv</code> - this will load the data from the CSV file into the table schema.table_1</li>
+<li><code>data_check load path/schema.table_2.xlsx</code> - this will load the data from the Excel file into the table schema.table_2</li>
+<li><code>data_check load path/to/some_folder</code> - this will load the data from all CSV and Excel files in this folder into tables matching the file names.</li>
 </ul>
 <p>The path will be searched recursively for CSV and Excel files. The folder structure doesn't matter when matching the table names, only the file name matters.</p>
 <h3 id="load-modes">Load modes</h3>
@@ -184,8 +292,8 @@
 <li>append - do not touch the table before loading the data.</li>
 </ul>
 <p>By default, the tables will be truncated before loading the data. You can use the other modes with <code>--load-mode</code>:</p>
-<p><code>data_check --load file.csv --table table_name --load-mode replace</code>
-<code>data_check --load-tables path/to/tables_folder --load-mode append</code></p>
+<p><code>data_check load file.csv --table table_name --mode replace</code>
+<code>data_check load path/to/tables_folder --mode append</code></p>
 <h3 id="csv-and-data-types">CSV and data types</h3>
 <p>When loading data from CSV files, data_check (or more precisely: <a href="https://pandas.pydata.org/">pandas</a>) will infer the data types from the file.
 When loading the data into the table, the database will usually implicitly convert the data types.
@@ -195,20 +303,20 @@ This doesn't work when using <code>--load-mode replace</code> since the table wi
 <p>Use <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> for dates, like for [CSV checks]((csv_checks.md#csv-format)</p>
 <h2 id="executing-arbitrary-sql-code">Executing arbitrary SQL code</h2>
 <p>You can run any SQL file against the database by using the <code>--sql-files</code> command:</p>
-<p><code>data_check --sql-files sql_file.sql other_file.sql</code></p>
+<p><code>data_check sql --files sql_file.sql other_file.sql</code></p>
 <p>or a whole folder recursively:</p>
-<p><code>data_check --sql-files some/folder/with/sql_files</code></p>
+<p><code>data_check sql --files some/folder/with/sql_files</code></p>
 <p>All files are run in parallel. If you have dependencies between the files, data_check must be called sequentially for each file.</p>
 <p>Multiple statements in a SQL file usually must be inside an anonymous block. MySQL doesn't support this however.</p>
-<p><code>--sql-file</code> is an alias for <code>--sql-files</code>. Use it to indicate, that you only want to run a single file.</p>
+<p><code>--file</code> is an alias for <code>--files</code>. Use it to indicate, that you only want to run a single file.</p>
 <p>You can also run a SQL statement directly from the command line:</p>
-<p><code>data_check --sql "select * from tableX"</code></p>
+<p><code>data_check sql "select * from tableX"</code></p>
 <p>This will execute the query and, if it is a query, print the result as CSV. You can also write the result into a file:</p>
-<p><code>data_check --sql "select * from tableX" --output some_file.csv</code></p>
-<p>You can use both <a href="../csv_checks/#templates">templates</a> and <a href="../csv_checks/#lookups">lookups</a> with <code>--sql</code> and <code>--sql-files</code>.</p>
+<p><code>data_check sql "select * from tableX" --output some_file.csv</code></p>
+<p>You can use both <a href="../csv_checks/#templates">templates</a> and <a href="../csv_checks/#lookups">lookups</a> with <code>sql</code>.</p>
 <h3 id="generating-a-csv-check-from-a-sql-statement">Generating a CSV check from a SQL statement</h3>
-<p>You can use <code>--sql</code> to create a CSV check:</p>
-<p><code>data_check --sql "select * from tableX" --write-check some_check.sql</code></p>
+<p>You can use <code>sql</code> to create a CSV check:</p>
+<p><code>data_check sql "select * from tableX" --write-check some_check.sql</code></p>
 <p>This writes the SQL statement into <code>some_check.sql</code> and the result as CSV into <code>some_check.csv</code>.</p></div>
             </div>
         </div>

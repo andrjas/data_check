@@ -49,6 +49,9 @@
                                 <a href="./" class="nav-link">Pipelines</a>
                             </li>
                             <li class="navitem">
+                                <a href="../test_data/" class="nav-link">Test data</a>
+                            </li>
+                            <li class="navitem">
                                 <a href="../howtos/" class="nav-link">HowTos</a>
                             </li>
                             <li class="navitem">
@@ -71,7 +74,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../howtos/" class="nav-link">
+                                <a rel="next" href="../test_data/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -153,11 +156,11 @@ checks/
 <p>The file <em>sample_pipeline/data_check_pipeline.yml</em> can look like this:</p>
 <pre><code class="language-yaml">steps:
     # this will truncate the table my_schema.some_table and load it with the data from data/my_schema.some_table.csv
-    - load_tables: data
+    - load: data
     # this will execute the SQL statement in run_this.sql
     - sql_file: run_this.sql
     # this will append the data from data2/some_data.csv to my_schema.other_table
-    - load:
+    - load_table:
         file: data2/some_data.csv
         table: my_schema.other_table
         load_mode: append
@@ -190,22 +193,22 @@ checks/
     - some_checks
     - some/other/checks.sql
 </code></pre>
-<h3 id="load">load</h3>
-<p><em>load</em> is like calling <code>data_check --load ...</code>. This will load a CSV file into a table.</p>
-<pre><code class="language-yaml">- load:
+<h3 id="load_table">load_table</h3>
+<p><em>load_table</em> is like calling <code>data_check load --table ...</code>. This will load a CSV file into a table.</p>
+<pre><code class="language-yaml">- load_table:
     file: check/date_test.csv
     table: temp.date_test
     load_mode: append
 </code></pre>
 <p>You can omit <em>load_mode</em>. Then the default mode <em>truncate</em> will be used.</p>
-<h3 id="load_tables">load_tables</h3>
-<p><em>load_tables</em> is like calling <code>data_check --load-tables ...</code>. This will load one or more tables from CSV files and infer the table name from the file name.</p>
-<p>Like with <code>--load-tables</code> the path before the filename has no impact on the inferred table name, only the file name itself.</p>
+<h3 id="load">load</h3>
+<p><em>load</em> is like calling <code>data_check load ...</code> without <code>--table</code>. This will load one or more tables from CSV files and infer the table name from the file name.</p>
+<p>Like with <code>data_check load</code> the path before the filename has no impact on the inferred table name, only the file name itself.</p>
 <p>Short form:</p>
-<pre><code class="language-yaml">- load_tables: some_path/schema.table_name.csv
+<pre><code class="language-yaml">- load: some_path/schema.table_name.csv
 </code></pre>
 <p>Long form:</p>
-<pre><code class="language-yaml">- load_tables:
+<pre><code class="language-yaml">- load:
     files: 
       - some_path
       - some/other/path/schema.other_table.csv
@@ -213,12 +216,12 @@ checks/
 </code></pre>
 <p>You can omit <em>load_mode</em>. Then the default mode <em>truncate</em> will be used.</p>
 <p>You can also omit <em>files</em>:</p>
-<pre><code class="language-yaml">- load_tables:
+<pre><code class="language-yaml">- load:
     - some_path
     - some/other/path/schema.other_table.csv
 </code></pre>
 <h3 id="sql_files">sql_files</h3>
-<p><em>sql_files</em> is like calling <code>data_check --sql-files ...</code>. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call <em>sql_files</em> twice. <em>sql_file</em> is an alias for <em>sql_files</em>.</p>
+<p><em>sql_files</em> is like calling <code>data_check sql --files ...</code>. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call <em>sql_files</em> twice. <em>sql_file</em> is an alias for <em>sql_files</em>.</p>
 <p>Short form:</p>
 <pre><code class="language-yaml">- sql_files: some_file.sql
 </code></pre>
@@ -237,7 +240,7 @@ checks/
     - some_path
 </code></pre>
 <h3 id="sql">sql</h3>
-<p><em>sql</em> is like calling <code>data_check --sql ...</code>. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV.</p>
+<p><em>sql</em> is like calling <code>data_check sql ...</code>. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV.</p>
 <p>Short form:</p>
 <pre><code class="language-yaml">- sql: select 1 as a, 'b' as t
 </code></pre>
@@ -298,7 +301,7 @@ checks/
 <li>PIPELINE_NAME: The name of the folder containing <em>data_check_pipeline.yml</em>.</li>
 </ul>
 <h2 id="generating-pipeline-checks">Generating pipeline checks</h2>
-<p>Like <a href="../csv_checks/#generating-expectation-files">generating expectation files</a> you can also run <code>data_check --generate</code> for a pipeline. In this mode the pipeline is executed, but each <em>check</em> step will generate the CSV files instead of running the actual checks. Adding <code>--force</code> will overwrite existing CSV files.</p></div>
+<p>Like <a href="../csv_checks/#generating-expectation-files">generating expectation files</a> you can also run <code>data_check gen</code> for a pipeline. In this mode the pipeline is executed, but each <em>check</em> step will generate the CSV files instead of running the actual checks. Adding <code>--force</code> will overwrite existing CSV files.</p></div>
             </div>
         </div>
 

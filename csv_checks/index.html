@@ -49,6 +49,9 @@
                                 <a href="../pipelines/" class="nav-link">Pipelines</a>
                             </li>
                             <li class="navitem">
+                                <a href="../test_data/" class="nav-link">Test data</a>
+                            </li>
+                            <li class="navitem">
                                 <a href="../howtos/" class="nav-link">HowTos</a>
                             </li>
                             <li class="navitem">
@@ -177,8 +180,8 @@ data1,data2
 </code></pre>
 <p>This will run this SQL query: <code>select column1, column2 from schema.table_name</code> and compare the result against the CSV file.</p>
 <h2 id="generating-expectation-files">Generating expectation files</h2>
-<p>If you run <code>data_check --generate</code> in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add <code>--force</code> to overwrite existing CSV files.</p>
-<p>You can also generate expectation files for <a href="../pipelines/#generating-pipeline.checks">pipelines</a>. If you run <code>--generate</code> on a project with pipelines, beware though that the pipelines will be executed!</p>
+<p>If you run <code>data_check gen</code> in a project folder, data_check will execute the query for each SQL file where the CSV file is missing and write the results into the CSV file. You can add <code>--force</code> to overwrite existing CSV files.</p>
+<p>You can also generate expectation files for <a href="../pipelines/#generating-pipeline.checks">pipelines</a>. If you run <code>data_check gen</code> on a project with pipelines, beware though that the pipelines will be executed!</p>
 <h2 id="lookups">Lookups</h2>
 <p>Lookups are a way to reuse the result of a query in multiple other queries. You can use lookups for example to return all table names that you want to exclude from your tests and use the table names to filter them from your queries.</p>
 <p>To create a lookup, put a SQL file in the <em>lookups</em> folder. To use the lookup in a query, use the lookup name like a subquery or list. The lookup name is the SQL filename prefixed with a colon (':') and without the file ending. If a lookup file is in subfolders, each subfolder is part of the lookup name with a double underscore ('__') as the separator between folders and the SQL filename.</p>

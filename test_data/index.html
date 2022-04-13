@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>HowTos - data_check</title>
+        <title>Test data - data_check</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
@@ -48,11 +48,11 @@
                             <li class="navitem">
                                 <a href="../pipelines/" class="nav-link">Pipelines</a>
                             </li>
-                            <li class="navitem">
-                                <a href="../test_data/" class="nav-link">Test data</a>
-                            </li>
                             <li class="navitem active">
-                                <a href="./" class="nav-link">HowTos</a>
+                                <a href="./" class="nav-link">Test data</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../howtos/" class="nav-link">HowTos</a>
                             </li>
                             <li class="navitem">
                                 <a href="../example/" class="nav-link">Examples</a>
@@ -69,12 +69,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../test_data/" class="nav-link">
+                                <a rel="prev" href="../pipelines/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../example/" class="nav-link">
+                                <a rel="next" href="../howtos/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -96,13 +96,13 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#howtos" class="nav-link">HowTos</a>
+            <li class="nav-item" data-level="1"><a href="#test-data" class="nav-link">Test data</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#use-another-configuration-file" class="nav-link">Use another configuration file</a>
+            <li class="nav-item" data-level="2"><a href="#example" class="nav-link">Example</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#run-checks-in-multiple-folders" class="nav-link">Run checks in multiple folders</a>
+            <li class="nav-item" data-level="2"><a href="#test-data-configuration" class="nav-link">Test data configuration</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -113,13 +113,143 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="howtos">HowTos</h1>
-<p>This is a collection of various things you can do with data_check.</p>
-<h2 id="use-another-configuration-file">Use another configuration file</h2>
-<p><code>data_check --config other_config_file.yml</code></p>
-<h2 id="run-checks-in-multiple-folders">Run checks in multiple folders</h2>
-<p>Run all test in the folders <em>check_folder_1</em> and <em>check_folder_2</em>:</p>
-<p><code>data_check check_folder_1 check_folder_2</code></p></div>
+<h1 id="test-data">Test data</h1>
+<p><code>data_check fake fake_config.yml</code> is used to generate test data for a table from a configuration file.
+The data type for each column is deferred from the table and can be changed in the configuration.</p>
+<p>See <a href="../usage/#fake">Usage</a> for command line options.</p>
+<p>Test data generation is done using <a href="https://github.com/joke2k/faker">Faker</a>.</p>
+<h2 id="example">Example</h2>
+<p>The minimal configuration only names the table for test data generation:</p>
+<pre><code class="language-yaml">table: main.simple_table
+</code></pre>
+<p>When running <code>data_check fake fake_config.yml</code> the column definition from the table is read from the database and a CSV file <em>main.simple_table.csv</em> is generated with some data for the table (100 rows by default). The CSV file can be used to <a href="../usage/#load">load</a> the data back into the table.</p>
+<p>A more complete configuration looks like this and is described in the following:</p>
+<pre><code class="language-yaml">table: main.simple_table
+business_key: # the key that should not change between iterations; must not be null
+  - bkey
+rows: 200  # how many rows to generate
+
+iterations:  # generate data with same business_key with some variation
+  count: 5  # how many iterations to generate
+
+columns:
+  bkey:
+    faker: iban
+
+  date_col:
+    add_values:  # also use these value
+      - 1900-01-01
+      - 9999-12-31
+  col2:
+    faker: name # faker provider method, if not correctly inferred
+  col3:
+    from_query: select colx from main.other_table  # use values from the query
+    next: inc  # &quot;algorithm&quot; for next iteration
+  col4:
+    next: random
+    values:  # use these values randomly
+      - 1
+      - 2
+      - null
+</code></pre>
+<h2 id="test-data-configuration">Test data configuration</h2>
+<p>The configuration is a YAML file for a single table. The top level elements are:</p>
+<h3 id="table">table</h3>
+<p><em>table</em> tells data_check for which table to generate the data.</p>
+<p>Example:</p>
+<pre><code class="language-yaml">table: main.simple_table
+</code></pre>
+<h3 id="business_key">business_key</h3>
+<p><em>business_key</em> is a list of columns that are unique and do not change between iterations.</p>
+<p>Example:</p>
+<pre><code class="language-yaml">business_key:
+  - column_1
+  - column_2
+</code></pre>
+<h3 id="iterations">iterations</h3>
+<p><em>iterations</em> configures how many iterations will be generated. Each iteration is a single CSV file with the same business keys. Each column can define a <a href="#next">next</a> algorithm how the data should change between iterations.</p>
+<p>Example:</p>
+<pre><code class="language-yaml">iterations:
+  count: 5
+</code></pre>
+<h3 id="columns">columns</h3>
+<p><em>columns</em> defines a <a href="#column-configuration">configuration</a> for each column. If a column is not listed here, a default configuration will be used based on the data type.</p>
+<p>Example:</p>
+<pre><code class="language-yaml">columns:
+  column_1:
+    faker: iban
+  column_2:
+    from_query: select colx from main.other_table
+</code></pre>
+<h3 id="column-configuration">column configuration</h3>
+<p>Each column can have multiple configurations:</p>
+<h4 id="faker">faker</h4>
+<p><em>faker</em> defines the <a href="https://faker.readthedocs.io/en/master/providers.html">provider</a> used to generate the data. If not given, a default provider is used based on the data type of the column.</p>
+<pre><code class="language-yaml">faker: name
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>data type</th>
+<th>default provider</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>decimal</td>
+<td><a href="https://faker.readthedocs.io/en/master/providers/faker.providers.python.html#faker.providers.python.Provider.pydecimal">pydecimal</a></td>
+</tr>
+<tr>
+<td>varchar</td>
+<td><a href="https://faker.readthedocs.io/en/master/providers/faker.providers.python.html#faker.providers.python.Provider.pystr">pystr</a></td>
+</tr>
+<tr>
+<td>date</td>
+<td><a href="https://faker.readthedocs.io/en/master/providers/faker.providers.date_time.html#faker.providers.date_time.Provider.date_between">date_between</a></td>
+</tr>
+<tr>
+<td>datetime</td>
+<td><a href="https://faker.readthedocs.io/en/master/providers/faker.providers.date_time.html#faker.providers.date_time.Provider.date_time_between">date_time_between</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="faker_args">faker_args:</h4>
+<p><em>faker_args</em> defines a map or arguments that are passed to the <a href="https://faker.readthedocs.io/en/master/providers.html">provider</a>. Each provider can define different arguments.</p>
+<p>Example:</p>
+<pre><code class="language-yaml">faker: date_between
+faker_args:
+  start_date: 1900-01-01
+  end_date: 2030-12-31
+</code></pre>
+<h4 id="from_query">from_query</h4>
+<p><em>from_query</em> defines a SQL query. The values of the query are used randomly to generate the data.
+If <em>from_query</em> is given, <em>faker</em> is ignored.</p>
+<pre><code class="language-yaml">from_query: select column from other_table
+</code></pre>
+<h4 id="values">values</h4>
+<p><em>value</em> defines a list of values that are used randomly to generate the data.
+If <em>values</em> is given, <em>from_query</em> and <em>faker</em> are ignored.</p>
+<pre><code class="language-yaml">values:
+  - 1
+  - 2
+  - null
+</code></pre>
+<h4 id="add_values">add_values</h4>
+<p><em>add_values</em> is used to add some specific values that are additionally used to generate the data. <em>add_values</em> can be used with <em>faker</em>, <em>from_query</em> and <em>values</em>. Each value in <em>add_values</em> has the same probability to occur as all the other generated values combined.</p>
+<pre><code class="language-yaml">add_values:
+  - 9999-12-31
+  - 1900-01-01
+</code></pre>
+<h4 id="next">next</h4>
+<p><em>next</em> defines an algorithm for the iterator. If <em>next</em> is not given then the column is not changed between iterations.</p>
+<pre><code class="language-yaml">next: inc
+</code></pre>
+<p>Possible values for <em>next</em>:</p>
+<ul>
+<li><em>inc</em>: increment by 1 (day for date)</li>
+<li><em>dec</em>: decrement by 1 (day for date)</li>
+<li><em>random</em>: generate a random value from the configured faker/values</li>
+</ul></div>
             </div>
         </div>
 
