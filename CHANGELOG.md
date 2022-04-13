@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [0.12.0] - 2022-04-13
+
+### Added
+- test data generator with Faker
+
+### Changed
+- CLI uses subcommands
+- load and load_table in pipeline YAML
+- CI uses DB connections via secrets
+
+### Fixed
+- loading mixed date/null values
+
 ## [0.11.1] - 2022-02-16
 
 ### Fixed
