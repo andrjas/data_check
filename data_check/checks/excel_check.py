@@ -15,7 +15,7 @@ class ExcelCheck(CSVCheck):
         return sql_file.with_suffix(".xlsx")
 
     def clean_string_column(self, col: str):
-        return col.replace(u"\u00A0", " ")
+        return col.replace("\u00A0", " ")
 
     def clean_excel_df(self, df: pd.DataFrame) -> pd.DataFrame:
         for column_name, column in df.items():

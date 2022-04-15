@@ -2,7 +2,7 @@ import click
 import sys
 from pathlib import Path
 from typing import Callable, Union, Any, Optional, cast, Dict
-from importlib_metadata import version
+from importlib.metadata import version
 
 from data_check.config import DataCheckConfig
 from data_check.data_check import DataCheck
