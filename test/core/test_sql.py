@@ -99,3 +99,9 @@ def test_get_column_types_mixed_dates(sql: DataCheckSql):
     )
     assert sq.date_columns == []
     assert sq.string_columns == ["a", "c"]
+
+
+def test_table_loaded_is_lazy_loaded(sql: DataCheckSql):
+    tl1 = sql.table_loader
+    tl2 = sql.table_loader
+    assert tl1 == tl2

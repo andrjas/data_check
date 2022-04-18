@@ -9,6 +9,7 @@ from sqlalchemy.sql.elements import TextClause
 from sqlalchemy.sql.expression import bindparam
 import pandas as pd
 from pathlib import Path
+from functools import cached_property
 
 
 from ..exceptions import DataCheckException
@@ -38,16 +39,12 @@ class DataCheckSql:
             runner = DataCheckRunner(workers=1, output=self.output)
         self.runner = runner
 
-        self._table_loader: Optional[TableLoader] = None
-
-    @property
+    @cached_property
     def table_loader(self) -> TableLoader:
         """
         Lazy-load a TableLoader.
         """
-        if self._table_loader is None:
-            self._table_loader = TableLoader(self, self.output)
-        return self._table_loader
+        return TableLoader(self, self.output)
 
     def get_db_params(self) -> Dict[str, Any]:
         """
