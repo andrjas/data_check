@@ -9,6 +9,7 @@ import warnings
 from pathlib import Path
 import datetime
 from dataclasses import dataclass
+from functools import cached_property
 
 if TYPE_CHECKING:
     from data_check.sql import DataCheckSql
@@ -37,7 +38,6 @@ class TableLoader:
     def __init__(self, sql: DataCheckSql, output: DataCheckOutput):
         self.sql = sql
         self.output = output
-        self._inspector: Optional[Inspector] = None
 
     def __del__(self):
         self.sql.disconnect()
@@ -45,11 +45,13 @@ class TableLoader:
     @property
     def inspector(self) -> Inspector:
         if self.sql.keep_connection():
-            if self._inspector is None:
-                self._inspector = cast(Inspector, inspect(self.sql.get_engine()))
-            return self._inspector
+            return self.cached_inspector
         else:
             return cast(Inspector, inspect(self.sql.get_engine()))
+
+    @cached_property
+    def cached_inspector(self) -> Inspector:
+        return cast(Inspector, inspect(self.sql.get_engine()))
 
     def table_exists(self, table_name: str, schema: Optional[str]) -> bool:
         return self.inspector.has_table(table_name=table_name, schema=schema)
