@@ -42,7 +42,7 @@ class DataCheckRunner:
         # Makes no sense to create a single worker
         # if we can process the work in this process:
         if max_new_workers > 1:
-            return ProcessPoolExecutor(max_workers=self.workers)
+            return ProcessPoolExecutor(max_workers=max_new_workers)
         else:
             return NoPoolExecutor()
 
