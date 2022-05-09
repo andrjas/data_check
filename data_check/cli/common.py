@@ -20,9 +20,13 @@ DEFAULT_VALUES: Dict[str, Any] = {
 
 
 def common_options(function: Callable[..., Any]) -> Callable[..., Any]:
-    function = click.option("--connection", "-c", type=str, help="connection to use")(
-        function
-    )
+    function = click.option(
+        "--connection",
+        "-c",
+        type=str,
+        help="connection to use",
+        envvar="DATA_CHECK_CONNECTION",
+    )(function)
     function = click.option("--verbose", is_flag=True, help="print verbose output")(
         function
     )
