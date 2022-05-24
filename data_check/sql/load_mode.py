@@ -10,11 +10,13 @@ class LoadMode(Enum):
 
     @staticmethod
     def from_string(mode_name: str):
-        if mode_name == "truncate":
-            return LoadMode.TRUNCATE
-        elif mode_name == "append":
-            return LoadMode.APPEND
-        elif mode_name == "replace":
-            return LoadMode.REPLACE
-        else:
+        mode = {
+            "truncate": LoadMode.TRUNCATE,
+            "append": LoadMode.APPEND,
+            "replace": LoadMode.REPLACE,
+        }.get(mode_name.lower(), None)
+
+        if not mode:
             raise DataCheckException(f"unknown load mode: {mode_name}")
+        else:
+            return mode

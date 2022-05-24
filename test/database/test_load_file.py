@@ -338,11 +338,11 @@ def test_load_file_more_columns_in_file(dc_serial: DataCheck, file_type: str):
 
 def test_table_exists(dc_serial: DataCheck):
     create_test_table("test_table_exists", "main", dc_serial)
-    assert dc_serial.sql.table_loader.table_exists("test_table_exists", "main")
+    assert dc_serial.sql.table_info.table_exists("test_table_exists", "main")
 
 
 def test_table_exists_non_existing(dc_serial: DataCheck):
-    assert not dc_serial.sql.table_loader.table_exists(
+    assert not dc_serial.sql.table_info.table_exists(
         "test_table_exists_non_existing", "main"
     )
 
@@ -367,7 +367,7 @@ def test_load_file_with_null_dates(dc_serial: DataCheck):
         Path("load_data/sample/test_date_with_null_dates.csv"),
         LoadMode.TRUNCATE,
     )
-    assert dc_serial.sql.table_loader.table_exists("test_with_null_dates", "main")
+    assert dc_serial.sql.table_info.table_exists("test_with_null_dates", "main")
 
 
 def test_load_file_with_null_dates_with_existing_table(dc_serial: DataCheck):
@@ -377,7 +377,7 @@ def test_load_file_with_null_dates_with_existing_table(dc_serial: DataCheck):
         Path("load_data/sample/test_date_with_null_dates.csv"),
         LoadMode.TRUNCATE,
     )
-    assert dc_serial.sql.table_loader.table_exists(
+    assert dc_serial.sql.table_info.table_exists(
         "test_with_null_dates_existing_table", "main"
     )
     data = dc_serial.sql.run_query(

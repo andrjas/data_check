@@ -218,35 +218,6 @@ def test_load_from_dataframe_schema(sql: DataCheckSql):
     assert_frame_equal(data, df)
 
 
-def test_parse_table_name_with_schema(sql: DataCheckSql):
-    tn = "a.b"
-    schema, name = sql.table_loader._parse_table_name(tn)
-    assert schema == "a"
-    assert name == "b"
-
-
-def test_parse_table_name(sql: DataCheckSql):
-    tn = "b"
-    schema, name = sql.table_loader._parse_table_name(tn)
-    assert schema is None
-    assert name == "b"
-
-
-def test_parse_table_name_dot(sql: DataCheckSql):
-    tn = "."
-    schema, name = sql.table_loader._parse_table_name(tn)
-    assert schema == ""
-    assert name == ""
-
-
-def test_parse_table_name_with_schema_with_db(sql: DataCheckSql):
-    tn = "db.a.b"
-    schema, name = sql.table_loader._parse_table_name(tn)
-    # this looks wrong, but multiple databases are currently not supported
-    assert schema == "db"
-    assert name == "a.b"
-
-
 def test_load_leading_zeros_string(sql: DataCheckSql):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["123", "012", "000"]})
     sql.get_connection().execute(

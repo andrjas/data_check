@@ -17,6 +17,7 @@ from ..output import DataCheckOutput
 from ..io import print_csv, write_csv
 from ..runner import DataCheckRunner
 from .table_loader import TableLoader
+from .table_info import TableInfo
 from .query_result import QueryResult
 
 
@@ -45,6 +46,10 @@ class DataCheckSql:
         Lazy-load a TableLoader.
         """
         return TableLoader(self, self.output)
+
+    @cached_property
+    def table_info(self) -> TableInfo:
+        return TableInfo(self)
 
     def get_db_params(self) -> Dict[str, Any]:
         """

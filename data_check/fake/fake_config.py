@@ -41,7 +41,7 @@ class FakeConfig:
             self.columns[name] = col_conf
 
     def get_column_types(self, sql: DataCheckSql):
-        return sql.table_loader.get_column_types(self.table_name)
+        return sql.table_info.get_column_types(self.table_name)
 
     def add_columns_not_in_config(self, column_types: Dict[str, Any]):
         for column in column_types:
@@ -53,8 +53,8 @@ class FakeConfig:
                 self.columns[column] = col_conf
 
     def init(self, sql: DataCheckSql):
-        schema, table = sql.table_loader._parse_table_name(self.table_name)
-        if not sql.table_loader.table_exists(table_name=table, schema=schema):
+        schema, table = sql.table_info.parse_table_name(self.table_name)
+        if not sql.table_info.table_exists(table_name=table, schema=schema):
             raise Exception(f"table {self.table_name} does not exist")
         Faker.seed()
         column_types = self.get_column_types(sql)

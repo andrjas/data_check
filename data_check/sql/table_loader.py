@@ -1,15 +1,10 @@
 from __future__ import annotations
-from typing import Optional, Tuple, List, Union, Any, Dict, TYPE_CHECKING, cast
-from sqlalchemy import inspect
-from sqlalchemy.engine.reflection import Inspector
+from typing import Optional, List, Union, TYPE_CHECKING
+
 from sqlalchemy.sql import text
-from sqlalchemy.exc import NoSuchTableError
 import pandas as pd
 import warnings
 from pathlib import Path
-import datetime
-from dataclasses import dataclass
-from functools import cached_property
 
 if TYPE_CHECKING:
     from data_check.sql import DataCheckSql
@@ -18,16 +13,6 @@ if TYPE_CHECKING:
 from ..io import expand_files, read_csv
 from .load_mode import LoadMode
 from ..date import fix_date_dtype
-
-
-# some data types that need special handling
-@dataclass
-class ColumnInfo:
-    dtypes: Dict[Any, Any]
-    date_columns: Dict[Any, Any]
-    date_column_names: List[str]
-    string_columns: Dict[Any, Any]
-    string_column_names: List[str]
 
 
 class TableLoader:
@@ -42,22 +27,8 @@ class TableLoader:
     def __del__(self):
         self.sql.disconnect()
 
-    @property
-    def inspector(self) -> Inspector:
-        if self.sql.keep_connection():
-            return self.cached_inspector
-        else:
-            return cast(Inspector, inspect(self.sql.get_engine()))
-
-    @cached_property
-    def cached_inspector(self) -> Inspector:
-        return cast(Inspector, inspect(self.sql.get_engine()))
-
-    def table_exists(self, table_name: str, schema: Optional[str]) -> bool:
-        return self.inspector.has_table(table_name=table_name, schema=schema)
-
     def drop_table_if_exists(self, table_name: str, schema: Optional[str]):
-        if self.table_exists(table_name, schema):
+        if self.sql.table_info.table_exists(table_name, schema):
             if schema:
                 drop_stmt = f"DROP TABLE {schema}.{table_name}"
             else:
@@ -74,8 +45,8 @@ class TableLoader:
 
     def _prepare_table_for_load(self, table_name: str, load_mode: LoadMode):
         if load_mode == LoadMode.TRUNCATE:
-            schema, name = self._parse_table_name(table_name)
-            if self.table_exists(table_name=name, schema=schema):
+            schema, name = self.sql.table_info.parse_table_name(table_name)
+            if self.sql.table_info.table_exists(table_name=name, schema=schema):
                 self.sql.get_connection().execute(
                     text(self._truncate_statement(table_name)).execution_options(
                         autocommit=True
@@ -84,19 +55,8 @@ class TableLoader:
         elif load_mode == LoadMode.REPLACE:
             # Pandas and SQLAlchemy seem to have problems using if_exists="replace"
             # at least in SQLite. That's why we drop the tables here.
-            schema, name = self._parse_table_name(table_name)
+            schema, name = self.sql.table_info.parse_table_name(table_name)
             self.drop_table_if_exists(name, schema)
-
-    def _parse_table_name(self, table_name: str) -> Tuple[Optional[str], str]:
-        """Parses the table_name and returns the schema and table_name.
-        Returns None for schema if table_name is a simple table without schema.
-        The schema and table name will always be upper cased.
-        """
-        if "." in table_name:
-            schema, name = table_name.lower().split(".", maxsplit=1)
-            return (schema, name)
-        else:
-            return (None, table_name.lower())
 
     @staticmethod
     def _load_mode_to_pandas_if_exists(load_mode: LoadMode) -> str:
@@ -105,10 +65,10 @@ class TableLoader:
 
     def load_table(
         self, table_name: str, data: pd.DataFrame, load_mode: LoadMode, dtype=None
-    ):
+    ) -> bool:
         self._prepare_table_for_load(table_name, load_mode)
         if_exists = self._load_mode_to_pandas_if_exists(load_mode=load_mode)
-        schema, name = self._parse_table_name(table_name)
+        schema, name = self.sql.table_info.parse_table_name(table_name)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")  # ignore SADeprecationWarning
             fix_date_dtype(data, dtype)
@@ -125,48 +85,6 @@ class TableLoader:
             )
             return True
 
-    def get_column_types(self, table_name: str):
-        schema, name = self._parse_table_name(table_name)
-        try:
-            columns = self.inspector.get_columns(name, schema=schema)
-            return {c["name"]: c["type"] for c in columns}
-        except NoSuchTableError:
-            return {}
-
-    def get_date_columns(self, table_name: str):
-        date_column_types = (
-            datetime.datetime,
-            datetime.date,
-            datetime.time,
-        )
-        col_types = self.get_column_types(table_name)
-        return {
-            k: col_types[k]
-            for k in col_types.keys()
-            if col_types[k].python_type in date_column_types
-        }
-
-    def get_string_columns(self, table_name: str):
-        col_types = self.get_column_types(table_name)
-        return {
-            k: col_types[k] for k in col_types.keys() if col_types[k].python_type == str
-        }
-
-    def get_column_info(self, table_name: str) -> ColumnInfo:
-        date_columns = self.get_date_columns(table_name)
-        date_column_names = list(date_columns.keys())
-        string_columns = self.get_string_columns(table_name)
-        string_column_names = list(string_columns.keys())
-        dtypes = dict(date_columns, **string_columns)
-        column_info = ColumnInfo(
-            dtypes=dtypes,
-            date_columns=date_columns,
-            date_column_names=date_column_names,
-            string_columns=string_columns,
-            string_column_names=string_column_names,
-        )
-        return column_info
-
     def load_table_from_file(
         self,
         table: str,
@@ -177,7 +95,7 @@ class TableLoader:
         if isinstance(load_mode, str):
             load_mode = self.load_mode_from_string(load_mode)
         rel_file = base_path / file
-        column_info = self.get_column_info(table)
+        column_info = self.sql.table_info.get_column_info(table)
         data = self.load_df_from_file(rel_file, column_info)
 
         result = self.load_table(
