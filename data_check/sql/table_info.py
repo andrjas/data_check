@@ -1,5 +1,5 @@
 from __future__ import annotations
-from sqlalchemy import inspect
+from sqlalchemy import inspect, Table, MetaData
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.exc import NoSuchTableError
 from dataclasses import dataclass
@@ -92,3 +92,20 @@ class TableInfo:
             return (schema, name)
         else:
             return (None, table_name.lower())
+
+    def get_primary_keys(self, table_name: str, schema: Optional[str]) -> List[str]:
+        pk_constraint = self.inspector.get_pk_constraint(
+            table_name=table_name, schema=schema
+        )
+        return pk_constraint["constrained_columns"]
+
+    def get_table(self, table_name: str, schema: Optional[str]) -> Table:
+        engine = self.sql.get_engine()
+        metadata = MetaData(engine)
+        table = Table(
+            table_name,
+            metadata,
+            autoload_with=engine,
+            schema=schema,
+        )
+        return table

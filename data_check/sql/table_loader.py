@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import Optional, List, Union, TYPE_CHECKING
 
 from sqlalchemy.sql import text
+from sqlalchemy.sql.expression import bindparam
+from sqlalchemy.engine import Connection
 import pandas as pd
 import warnings
 from pathlib import Path
@@ -9,6 +11,7 @@ from pathlib import Path
 if TYPE_CHECKING:
     from data_check.sql import DataCheckSql
     from data_check.output import DataCheckOutput
+    from data_check.sql.table_info import ColumnInfo
 
 from ..io import expand_files, read_csv
 from .load_mode import LoadMode
@@ -63,6 +66,29 @@ class TableLoader:
         # always use "append" since we prepare the tables before loading
         return "append"
 
+    def upsert_data(self, data: pd.DataFrame, name: str, schema: Optional[str]) -> bool:
+        pk = self.sql.table_info.get_primary_keys(name, schema)
+        other_columns = [c for c in data.columns.to_list() if c not in pk]
+
+        table = self.sql.table_info.get_table(name, schema)
+        update_stmt = table.update()
+        insert_stmt = table.insert()
+
+        for p in pk:
+            update_stmt = update_stmt.where(table.c[p] == bindparam(f"_{p}"))
+
+        update_stmt = update_stmt.values(**{oc: bindparam(oc) for oc in other_columns})
+        connection = self.sql.get_connection()
+
+        for _, row in data.iterrows():
+            row_as_dict = row.to_dict()
+            for p in pk:
+                row_as_dict[f"_{p}"] = row_as_dict.pop(p)
+            rows = connection.execute(update_stmt, **row_as_dict)
+            if rows.rowcount == 0:
+                connection.execute(insert_stmt, **row.to_dict())
+        return False
+
     def load_table(
         self, table_name: str, data: pd.DataFrame, load_mode: LoadMode, dtype=None
     ) -> bool:
@@ -75,15 +101,18 @@ class TableLoader:
             if not dtype:
                 # dtype can be {}, but for to_sql it's best to use None then
                 dtype = None
-            data.to_sql(
-                name=name,
-                schema=schema,
-                con=self.sql.get_connection(),
-                if_exists=if_exists,
-                index=False,
-                dtype=dtype,
-            )
-            return True
+            if load_mode == LoadMode.UPSERT:
+                return self.upsert_data(data, name, schema)
+            else:
+                data.to_sql(
+                    name=name,
+                    schema=schema,
+                    con=self.sql.get_connection(),
+                    if_exists=if_exists,
+                    index=False,
+                    dtype=dtype,
+                )
+                return True
 
     def load_table_from_file(
         self,
