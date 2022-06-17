@@ -66,6 +66,16 @@ class TableLoader:
         # always use "append" since we prepare the tables before loading
         return "append"
 
+    def pre_insert(self, connection: Connection, name: str, schema: Optional[str]):
+        if self.sql.dialect == "mssql":
+            # When appending/upserting data into a table with identity columns,
+            # we need to enable IDENTITY_INSERT to allow inserting explicit values
+            # into these columns.
+            if self.sql.table_info.table_exists(name, schema):
+                table = self.sql.table_info.get_table(name, schema)
+                if table.primary_key:
+                    connection.execute(f"SET IDENTITY_INSERT {table} ON")
+
     def upsert_data(self, data: pd.DataFrame, name: str, schema: Optional[str]) -> bool:
         pk = self.sql.table_info.get_primary_keys(name, schema)
         other_columns = [c for c in data.columns.to_list() if c not in pk]
@@ -79,6 +89,7 @@ class TableLoader:
 
         update_stmt = update_stmt.values(**{oc: bindparam(oc) for oc in other_columns})
         connection = self.sql.get_connection()
+        self.pre_insert(connection, name, schema)
 
         for _, row in data.iterrows():
             row_as_dict = row.to_dict()
@@ -104,10 +115,12 @@ class TableLoader:
             if load_mode == LoadMode.UPSERT:
                 return self.upsert_data(data, name, schema)
             else:
+                connection = self.sql.get_connection()
+                self.pre_insert(connection, name, schema)
                 data.to_sql(
                     name=name,
                     schema=schema,
-                    con=self.sql.get_connection(),
+                    con=connection,
                     if_exists=if_exists,
                     index=False,
                     dtype=dtype,
