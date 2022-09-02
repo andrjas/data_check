@@ -55,16 +55,13 @@ class TableLoader:
                         autocommit=True
                     )
                 )
-        elif load_mode == LoadMode.REPLACE:
-            # Pandas and SQLAlchemy seem to have problems using if_exists="replace"
-            # at least in SQLite. That's why we drop the tables here.
-            schema, name = self.sql.table_info.parse_table_name(table_name)
-            self.drop_table_if_exists(name, schema)
 
     @staticmethod
     def _load_mode_to_pandas_if_exists(load_mode: LoadMode) -> str:
-        # always use "append" since we prepare the tables before loading
-        return "append"
+        if load_mode == LoadMode.REPLACE:
+            return "replace"
+        else:
+            return "append"
 
     def pre_insert(self, connection: Connection, name: str, schema: Optional[str]):
         if self.sql.dialect == "mssql":
