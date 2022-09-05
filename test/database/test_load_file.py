@@ -22,11 +22,7 @@ def create_test_table(table_name: str, schema: str, dc: DataCheck):
     dc.sql.table_loader.drop_table_if_exists(table_name, schema)
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(
-            f"create table {schema}.{table_name} (id number(10), data varchar2(10))"
-        )
-    elif dc.sql.dialect == "sqlite":
-        dc.sql.run_sql(
-            f"create table {schema}.{table_name} (id decimal, data varchar(10))"
+            f"create table {schema}.{table_name} (id decimal, data varchar2(10))"
         )
     else:
         metadata = MetaData(dc.sql.get_engine())
@@ -91,13 +87,6 @@ def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
             (
                 f"create table {schema}.{table_name} "
                 "(id number(10), data varchar2(10), decim decimal(10, 4))"
-            )
-        )
-    elif dc.sql.dialect == "sqlite":
-        dc.sql.run_sql(
-            (
-                f"create table {schema}.{table_name} "
-                "(id decimal, data varchar(10), decim decimal)"
             )
         )
     else:
