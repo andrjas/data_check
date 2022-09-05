@@ -38,3 +38,19 @@ There are currently four databases used for integration tests:
 The integration tests are run via [Drone CI](https://www.drone.io/). The file _.drone.yml_ is generated from _.drone.jsonnet_ and checked in into the Git repository. To update _.drone.yml_ run `drone jsonnet  --format --stream`.
 
 To speed up integration tests the CI pipeline uses local, pre-build docker images. These images are maintained in a separate [repository](https://github.com/andrjas/data_check_images).
+
+## Python support
+
+[tox](https://github.com/tox-dev/tox) is used to test data_check against multiple python versions.
+
+Multiple python versions can be intalled with [pyenv](https://github.com/pyenv/pyenv):
+
+```
+pyenv install 3.8.1
+pyenv install 3.9.1
+pyenv install 3.10.1
+
+pyenv local 3.8.1 3.9.1 3.10.1
+```
+
+Install all versions mentioned in _tox.ini_. Then run the tests with tox: `tox`.
