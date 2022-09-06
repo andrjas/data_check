@@ -11,3 +11,4 @@ huge_date: CONVERT(DATETIME, '9999-12-31', 120)
 # so we threat the empty string as null for this check
 empty_string_date: 'null'
 unicode_column_name: '[testcol_äöü]'
+large_decimal_type: decimal(38,0)

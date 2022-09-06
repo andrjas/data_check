@@ -9,3 +9,4 @@ huge_date: TIMESTAMP('9999-12-31')
 empty_string_date: >
                     ''
 unicode_column_name: '"testcol_äöü"'
+large_decimal_type: decimal(38,0)

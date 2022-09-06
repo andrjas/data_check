@@ -32,6 +32,7 @@ steps:
   - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
   - poetry run data_check run checks/pipelines/table_check --traceback --print
   - poetry run data_check run checks/pipelines/fake_data --traceback --print
+  - poetry run data_check run checks/pipelines/large_number --traceback --print
   - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
   - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
   - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
@@ -98,6 +99,7 @@ steps:
   - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
   - poetry run data_check run checks/pipelines/table_check --traceback --print
   - poetry run data_check run checks/pipelines/fake_data --traceback --print
+  - poetry run data_check run checks/pipelines/large_number --traceback --print
   - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
   - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
   - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
@@ -148,6 +150,7 @@ steps:
   - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
   - poetry run data_check run checks/pipelines/table_check --traceback --print
   - poetry run data_check run checks/pipelines/fake_data --traceback --print
+  - poetry run data_check run checks/pipelines/large_number --traceback --print
   - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
   - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
   - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
@@ -205,6 +208,7 @@ steps:
   - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
   - poetry run data_check run checks/pipelines/table_check --traceback --print
   - poetry run data_check run checks/pipelines/fake_data --traceback --print
+  - poetry run data_check run checks/pipelines/large_number --traceback --print
   - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
   - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
   - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
@@ -262,6 +266,7 @@ steps:
   - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
   - poetry run data_check run checks/pipelines/table_check --traceback --print
   - poetry run data_check run checks/pipelines/fake_data --traceback --print
+  - poetry run data_check run checks/pipelines/large_number --traceback --print
   - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
   - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
   - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'

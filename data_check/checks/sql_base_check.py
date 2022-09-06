@@ -1,6 +1,7 @@
 from pathlib import Path
-from typing import Union, List, cast
+from typing import Union, List, cast, Tuple
 import pandas as pd
+import numpy as np
 
 from .base_check import BaseCheck
 from data_check.sql.query_result import QueryResult
@@ -42,10 +43,30 @@ class SQLBaseCheck(BaseCheck):
             for sc in cast(List[str], sql_result.columns):
                 if sc in expect_result.columns:
                     if sql_result[sc].dtype != expect_result[sc].dtype:
-                        expect_result[sc] = expect_result[sc].astype("str")
-                        sql_result[sc] = sql_result[sc].astype("str")
+                        sql_result[sc], expect_result[sc] = SQLBaseCheck.convert_dtypes(
+                            sql_result[sc], expect_result[sc]
+                        )
             df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
         return df_merged
 
     def cleanup(self):
         self.data_check.sql.disconnect()
+
+    @staticmethod
+    def convert_dtypes(
+        col_1: pd.Series, col_2: pd.Series
+    ) -> Tuple[pd.Series, pd.Series]:
+        # float64 can be in scientific notation, so it cannot be compared against a str
+        if col_1.dtype == np.float64 or col_2.dtype == np.float64:
+            try:
+                col_1 = col_1.astype(np.float64)
+            except:
+                pass
+            try:
+                col_2 = col_2.astype(np.float64)
+            except:
+                pass
+        else:
+            col_1 = col_1.astype("str")
+            col_2 = col_2.astype("str")
+        return col_1, col_2

@@ -102,6 +102,23 @@ def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
         metadata.create_all()
 
 
+def create_test_table_with_large_decimal(table_name: str, schema: str, dc: DataCheck):
+    dc.sql.table_loader.drop_table_if_exists(table_name, schema)
+    if dc.sql.dialect == "oracle":
+        dc.sql.run_sql(
+            (f"create table {schema}.{table_name} " "(d_col decimal(38, 0))")
+        )
+    else:
+        metadata = MetaData(dc.sql.get_engine())
+        Table(
+            table_name,
+            metadata,
+            Column("d_col", Numeric(38, 0)),
+            schema=schema,
+        )
+        metadata.create_all()
+
+
 def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
     dc.sql.table_loader.drop_table_if_exists(table_name, schema)
     if dc.sql.dialect == "oracle":
@@ -373,3 +390,21 @@ def test_load_file_with_null_dates_with_existing_table(dc_serial: DataCheck):
         "select * from main.test_with_null_dates_existing_table"
     )
     assert not data.empty
+
+
+def test_load_large_number(dc_serial: DataCheck):
+    create_test_table_with_large_decimal("test_load_large_number", "main", dc_serial)
+    csv = Path("load_data/sample/large_number_test.csv")
+    dc_serial.sql.table_loader.load_table_from_file(
+        "main.test_load_large_number",
+        csv,
+        LoadMode.TRUNCATE,
+    )
+
+    check = dc_serial.collect_checks([csv])
+    assert check
+    table_check = check[0]
+    table_check.check_path = Path("main.test_load_large_number.csv")
+    result = table_check.run_test()
+
+    assert result

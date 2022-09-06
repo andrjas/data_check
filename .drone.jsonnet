@@ -11,6 +11,7 @@ local positive_int_tests = [
     "checks/pipelines/leading_zeros",
     "checks/pipelines/table_check",
     "checks/pipelines/fake_data",
+    "checks/pipelines/large_number",
 ];
 
 local failing_int_tests = [
