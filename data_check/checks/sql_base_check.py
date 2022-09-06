@@ -36,6 +36,8 @@ class SQLBaseCheck(BaseCheck):
         Merges the results of a SQL query and the expected results.
         Returns the merged DataFrame.
         """
+        SQLBaseCheck.convert_mixed_object_columns(sql_result, expect_result)
+
         try:
             df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
         except ValueError:
@@ -48,6 +50,27 @@ class SQLBaseCheck(BaseCheck):
                         )
             df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
         return df_merged
+
+    @staticmethod
+    def convert_mixed_object_columns(df_1: pd.DataFrame, df_2: pd.DataFrame):
+        # If we have object columns, convert them to string
+        # if they contain mixed int/float and string values.
+        object_columns = set(df_1.columns[df_1.dtypes == "object"])
+        object_columns.update(set(df_2.columns[df_2.dtypes == "object"]))
+        for o_col in object_columns:
+            if o_col in df_1.columns and o_col in df_2.columns:
+                df_1_types = set(type(el) for el in df_1[o_col].array)
+                df_2_types = set(type(el) for el in df_2[o_col].array)
+                both_types = df_1_types.union(df_2_types)
+                if both_types in (
+                    set([str, int]),
+                    set([str, float]),
+                    set([str, int, float]),
+                ):
+                    # convert only if str is mixed with a numeric type
+                    df_1[o_col], df_2[o_col] = SQLBaseCheck.convert_dtypes(
+                        df_1[o_col], df_2[o_col]
+                    )
 
     def cleanup(self):
         self.data_check.sql.disconnect()

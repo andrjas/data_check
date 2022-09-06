@@ -1,6 +1,6 @@
 from typing import Dict, Any, Optional, Union, List
 from os import path
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine, Connection
 from sqlalchemy.engine.row import Row
 from sqlalchemy.engine.cursor import CursorResult
@@ -71,11 +71,31 @@ class DataCheckSql:
                 path.expandvars(self.connection),
                 **{**self.get_db_params(), **extra_params},
             )
+            self.register_setinputsizes_event(_engine)
             if self.keep_connection():
                 self.__engine = _engine
             else:
                 return _engine
         return self.__engine
+
+    def register_setinputsizes_event(self, engine: Engine):
+        if engine.dialect.name == "oracle":
+            # do not use CLOB for loading strings (and large decimals)
+            # https://docs.sqlalchemy.org/en/14/dialects/oracle.html#example-2-remove-all-bindings-to-clob
+            try:
+                from cx_Oracle import CLOB
+            except ImportError:
+                CLOB = None
+
+            @event.listens_for(engine, "do_setinputsizes")
+            def _remove_clob(inputsizes, cursor, statement, parameters, context):
+                _ = cursor
+                _ = statement
+                _ = parameters
+                _ = context
+                for bindparam, dbapitype in list(inputsizes.items()):
+                    if dbapitype is CLOB:
+                        del inputsizes[bindparam]
 
     def get_connection(self) -> Connection:
         if self.__connection is None:
@@ -101,7 +121,7 @@ class DataCheckSql:
 
     @property
     def dialect(self) -> str:
-        return self.get_connection().dialect.name
+        return self.get_engine().dialect.name
 
     def run_query(self, query: str, params: Dict[str, Any] = {}) -> pd.DataFrame:
         """
