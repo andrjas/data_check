@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 from ..io import expand_files, read_csv
 from .load_mode import LoadMode
 from ..date import fix_date_dtype
+from ..utils.deprecation import deprecated_method_argument
 
 
 class TableLoader:
@@ -46,8 +47,8 @@ class TableLoader:
         else:
             return f"TRUNCATE TABLE {table_name}"
 
-    def _prepare_table_for_load(self, table_name: str, load_mode: LoadMode):
-        if load_mode == LoadMode.TRUNCATE:
+    def _prepare_table_for_load(self, table_name: str, mode: LoadMode):
+        if mode == LoadMode.TRUNCATE:
             schema, name = self.sql.table_info.parse_table_name(table_name)
             if self.sql.table_info.table_exists(table_name=name, schema=schema):
                 self.sql.get_connection().execute(
@@ -57,8 +58,8 @@ class TableLoader:
                 )
 
     @staticmethod
-    def _load_mode_to_pandas_if_exists(load_mode: LoadMode) -> str:
-        if load_mode == LoadMode.REPLACE:
+    def _load_mode_to_pandas_if_exists(mode: LoadMode) -> str:
+        if mode == LoadMode.REPLACE:
             return "replace"
         else:
             return "append"
@@ -98,10 +99,10 @@ class TableLoader:
         return False
 
     def load_table(
-        self, table_name: str, data: pd.DataFrame, load_mode: LoadMode, dtype=None
+        self, table_name: str, data: pd.DataFrame, mode: LoadMode, dtype=None
     ) -> bool:
-        self._prepare_table_for_load(table_name, load_mode)
-        if_exists = self._load_mode_to_pandas_if_exists(load_mode=load_mode)
+        self._prepare_table_for_load(table_name, mode)
+        if_exists = self._load_mode_to_pandas_if_exists(mode=mode)
         schema, name = self.sql.table_info.parse_table_name(table_name)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")  # ignore SADeprecationWarning
@@ -109,7 +110,7 @@ class TableLoader:
             if not dtype:
                 # dtype can be {}, but for to_sql it's best to use None then
                 dtype = None
-            if load_mode == LoadMode.UPSERT:
+            if mode == LoadMode.UPSERT:
                 return self.upsert_data(data, name, schema)
             else:
                 connection = self.sql.get_connection()
@@ -124,15 +125,27 @@ class TableLoader:
                 )
                 return True
 
+    @staticmethod
+    def get_load_mode(deprecated_load_mode, mode) -> LoadMode:
+        if deprecated_load_mode is not None:
+            if isinstance(deprecated_load_mode, str):
+                mode = TableLoader.load_mode_from_string(deprecated_load_mode)
+            else:
+                mode = deprecated_load_mode
+        if isinstance(mode, str):
+            mode = TableLoader.load_mode_from_string(mode)
+        return mode
+
     def load_table_from_file(
         self,
         table: str,
         file: Path,
-        load_mode: Union[str, LoadMode] = LoadMode.TRUNCATE,
+        mode: Union[str, LoadMode] = LoadMode.TRUNCATE,
         base_path: Path = Path("."),
+        load_mode: Union[str, LoadMode, None] = None,
     ):
-        if isinstance(load_mode, str):
-            load_mode = self.load_mode_from_string(load_mode)
+        deprecated_method_argument(load_mode, mode, LoadMode.TRUNCATE)
+        mode = TableLoader.get_load_mode(load_mode, mode)
         rel_file = base_path / file
         column_info = self.sql.table_info.get_column_info(table)
         data = self.load_df_from_file(rel_file, column_info)
@@ -140,7 +153,7 @@ class TableLoader:
         result = self.load_table(
             table_name=table,
             data=data,
-            load_mode=load_mode,
+            mode=load_mode,
             dtype=column_info.dtypes,
         )
         if result:
@@ -167,17 +180,16 @@ class TableLoader:
     def load_tables_from_files(
         self,
         files: List[Path],
-        load_mode: Union[str, LoadMode] = LoadMode.TRUNCATE,
+        mode: Union[str, LoadMode] = LoadMode.TRUNCATE,
         base_path: Path = Path("."),
+        load_mode: Union[str, LoadMode, None] = None,
     ):
-        if isinstance(load_mode, str):
-            load_mode = self.load_mode_from_string(load_mode)
+        deprecated_method_argument(load_mode, mode, LoadMode.TRUNCATE)
+        mode = TableLoader.get_load_mode(load_mode, mode)
         flat_files = expand_files(
             files, extension=[".csv", ".xlsx"], base_path=base_path
         )
-        parameters = [
-            {"table": f.stem, "file": f, "load_mode": load_mode} for f in flat_files
-        ]
+        parameters = [{"table": f.stem, "file": f, "mode": mode} for f in flat_files]
         results = self.sql.runner.run_any(
             run_method=self.load_table_from_file, parameters=parameters
         )

@@ -1,4 +1,4 @@
 steps:
   - load:
       files: no_such_file.csv
-      load_mode: invalid
+      mode: invalid

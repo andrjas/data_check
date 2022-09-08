@@ -57,7 +57,7 @@ def load(
         dc.sql.table_loader.load_table_from_file(
             table=table,
             file=load_file,
-            load_mode=mode,
+            mode=mode,
         )
         ctx.exit(0)
     else:
@@ -65,5 +65,5 @@ def load(
             click.echo(load.get_help(ctx))
             ctx.exit(0)
         path_list = [Path(f) for f in files]
-        dc.sql.table_loader.load_tables_from_files(path_list, load_mode=mode)
+        dc.sql.table_loader.load_tables_from_files(path_list, mode=mode)
         ctx.exit(0)

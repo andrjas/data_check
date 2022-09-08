@@ -228,3 +228,35 @@ def test_load_leading_zeros_string(sql: DataCheckSql):
     )
     df = sql.run_query("select id, data from temp.test_load_leading_zeros_string")
     assert_frame_equal(data, df)
+
+
+def test_load_table_from_file_load_mode_is_deprecated(sql: DataCheckSql):
+    with pytest.warns(UserWarning):
+        sql.table_loader.load_table_from_file(
+            "test_load_table_from_file_load_mode_is_deprecated",
+            Path(f"load_data/test.csv"),
+            load_mode=LoadMode.TRUNCATE,
+        )
+
+
+def test_load_table_from_file_load_mode_is_deprecated_as_str(sql: DataCheckSql):
+    with pytest.warns(UserWarning):
+        sql.table_loader.load_table_from_file(
+            "test_load_table_from_file_load_mode_is_deprecated_as_str",
+            Path(f"load_data/test.csv"),
+            load_mode="truncate",
+        )
+
+
+def test_load_tables_from_files_load_mode_is_deprecated(sql: DataCheckSql):
+    with pytest.warns(UserWarning):
+        sql.table_loader.load_tables_from_files(
+            [Path(f"load_data/test.csv")], load_mode=LoadMode.TRUNCATE
+        )
+
+
+def test_load_tables_from_files_load_mode_is_deprecated_as_str(sql: DataCheckSql):
+    with pytest.warns(UserWarning):
+        sql.table_loader.load_tables_from_files(
+            [Path(f"load_data/test.csv")], load_mode="truncate"
+        )

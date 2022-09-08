@@ -93,10 +93,10 @@ _load\_table_ is like calling `data_check load --table ...`. This will load a CS
 - load_table:
     file: check/date_test.csv
     table: temp.date_test
-    load_mode: append
+    mode: append
 ```
 
-You can omit _load\_mode_. Then the default mode _truncate_ will be used.
+You can omit _mode_. Then the default mode _truncate_ will be used. _load\_mode_ can be used instead of _mode_, but it is deprecated.
 
 ### load
 
@@ -115,10 +115,10 @@ Long form:
     files: 
       - some_path
       - some/other/path/schema.other_table.csv
-    load_mode: append
+    mode: append
 ```
 
-You can omit _load\_mode_. Then the default mode _truncate_ will be used.
+You can omit _mode_. Then the default mode _truncate_ will be used. _load\_mode_ can be used instead of _mode_, but it is deprecated.
 
 You can also omit _files_:
 ```yaml
