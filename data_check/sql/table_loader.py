@@ -153,7 +153,7 @@ class TableLoader:
         result = self.load_table(
             table_name=table,
             data=data,
-            mode=load_mode,
+            mode=mode,
             dtype=column_info.dtypes,
         )
         if result:

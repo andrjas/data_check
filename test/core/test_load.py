@@ -197,6 +197,23 @@ def test_load_from_file_load_modes(sql: DataCheckSql, file_type):
     assert len(df) == 6
 
 
+def test_load_from_file_truncate_twice(sql: DataCheckSql, file_type):
+    sql.table_loader.load_table_from_file(
+        f"test_load_from_file_truncate_twice_{file_type}",
+        Path(f"load_data/test.{file_type}"),
+        LoadMode.TRUNCATE,
+    )
+    sql.table_loader.load_table_from_file(
+        f"test_load_from_file_truncate_twice_{file_type}",
+        Path(f"load_data/test.{file_type}"),
+        LoadMode.TRUNCATE,
+    )
+    df = sql.run_query(
+        f"select id, data from test_load_from_file_truncate_twice_{file_type}"
+    )
+    assert len(df) == 3
+
+
 def test_load_from_file_non_existing_file(sql: DataCheckSql, file_type):
     with pytest.raises(FileNotFoundError):
         sql.table_loader.load_table_from_file(
