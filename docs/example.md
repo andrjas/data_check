@@ -10,7 +10,7 @@ cd data_check/example
 data_check
 ```
 
-This will run the tests in the _checks_ folder using the default connection as defined in data_check.yml.
+This will run the tests in the _checks_ folder using the default connection as defined in _data\_check.yml_.
 
 The result will tell you which tests passed and which failed:
 

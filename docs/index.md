@@ -27,7 +27,7 @@ data_check tries to solve a simple problem in data domains: during development y
 
 First [install](install.md) data_check. You can then try data_check with the [sample project](example.md#data_check-sample-project).
 
-To create a new project folder write a data_check.yml for the [configuration](index.md#configuration) and put your [test files](index.md#test-files) in the _checks_ folder.
+To create a new project folder write a _data\_check.yml_ for the [configuration](index.md#configuration) and put your [test files](index.md#test-files) in the _checks_ folder.
 
 ## Project layout
 
@@ -45,7 +45,7 @@ data_check has a simple layout for projects: a single configuration file and a f
 
 ## Configuration
 
-data_check uses the data_check.yml file in the current folder for configuration.
+data_check uses the _data\_check.yml_ file in the current folder for configuration.
 This is a simple YAML file:
 
 ```yaml
@@ -55,7 +55,7 @@ connections:
     con: connection-string
 ```
 
-Under _connections_ you can put multiple [connection strings](https://docs.sqlalchemy.org/en/14/core/engines.html) with names. _default_connection_ is the connection name that data_check uses when no additional arguments are given. You can also use environment variables in the connection string to store the credentials outside data_check.yml (e.g. `postgresql://postgres:${POSTGRES_PWD}@db:5432`).
+Under _connections_ you can put multiple [connection strings](https://docs.sqlalchemy.org/en/14/core/engines.html) with names. _default_connection_ is the connection name that data_check uses when no additional arguments are given. You can also use environment variables in the connection string to store the credentials outside _data\_check.yml_ (e.g. `postgresql://postgres:${POSTGRES_PWD}@db:5432`).
 
 ## Test files
 

@@ -15,7 +15,7 @@ Common options can be used with any command.
 
 * `-c/--connection CONNECTION` - Use another connection than the default.
 * `-n/--workers WORKERS` - Use WORKERS threads to run the queries (default: 4).
-* `--config CONFIG` - Config file to use (default: data_check.yml).
+* `--config CONFIG` - Config file to use (default: _data\_check.yml_).
 * `--quiet` - Do not print any output.
 * `--verbose` - Print verbose output.
 * `--traceback` - Print traceback output for debugging.
@@ -137,7 +137,7 @@ __Exit code 1:__ At least one test failed.
 
 `--log` will write the output to a log file and to the console. With `--quiet` the output will only be printed to the log file. If the file exists, the output will be appended.
 
-You can also set the log file in data_check.yml:
+You can also set the log file in _data\_check.yml_:
 
 ```yaml
 log: logfile.txt
