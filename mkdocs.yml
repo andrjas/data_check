@@ -4,8 +4,13 @@ nav:
     - Installation: install.md
     - Usage: usage.md
     - CSV checks: csv_checks.md
+    - Loading data: loading_data.md
+    - Running SQL: running_sql.md
     - Pipelines: pipelines.md
     - Test data: test_data.md
     - HowTos: howtos.md
     - Examples: example.md
     - Development: development.md
+
+theme:
+    name: readthedocs
