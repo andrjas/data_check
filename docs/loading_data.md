@@ -26,7 +26,7 @@ There are multiple modes that control the data loading:
 * replace - drop the table and recreate it based on the columns in the CSV or Excel file.
 * append - do not touch the table before loading the data.
 
-By default, the tables will be truncated before loading the data. You can use the other modes with `--load-mode`:
+By default, the tables will be truncated before loading the data. You can use the other modes with `--mode`:
 
 `data_check load file.csv --table table_name --mode replace`
 `data_check load path/to/tables_folder --mode append`
@@ -38,6 +38,6 @@ When loading the data into the table, the database will usually implicitly conve
 This works good for simple data types like strings and numbers.
 
 If you need to load date types (or timestamps) and the table has a date column, data_check will try to convert these columns in the CSV file into a datetime.
-This doesn't work when using `--load-mode replace` since the table will be dropped before it can be analyzed. This will probably result in a varchar column instead of date.
+This doesn't work when using `--mode replace` since the table will be dropped before it can be analyzed. This will probably result in a varchar column instead of date.
 
 Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) for dates, like for [CSV checks]((csv_checks.md#csv-format)
