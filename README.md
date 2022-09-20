@@ -4,16 +4,16 @@ data_check is a simple data validation tool. In its most basic form it will exec
 
 ## Features
 
-* [CSV checks](#csv-checks): compare SQL queries against CSV files
+* [CSV checks](https://andrjas.github.io/data_check/csv_checks/): compare SQL queries against CSV files
 * Excel support: Use Excel (xlsx) instead of CSV
 * multiple environments (databases) in the configuration file
-* populate tables from CSV files
-* execute any SQL files on a database
-* more complex [pipelines](#pipelines)
+* [populate tables](https://andrjas.github.io/data_check/loading_data/) from CSV or Excel files
+* [execute any SQL files on a database](https://andrjas.github.io/data_check/sql/)
+* more complex [pipelines](https://andrjas.github.io/data_check/pipelines/)
 * run any script/command (via pipelines)
-* simplified checks for empty datasets and full table comparison
-* lookups to reuse the same data in multiple queries
-* test data generation
+* simplified checks for [empty datasets](https://andrjas.github.io/data_check/csv_checks/#empty-dataset-checks) and [full table comparison](https://andrjas.github.io/data_check/csv_checks/#full-table-checks)
+* [lookups](https://andrjas.github.io/data_check/csv_checks/#lookups) to reuse the same data in multiple queries
+* [test data generation](https://andrjas.github.io/data_check/test_data/)
 
 ## Database support
 
@@ -101,3 +101,7 @@ Pipeline checks and simple CSV checks can coexist in a project.
 ## Documentation
 
 See the [documentation](https://andrjas.github.io/data_check) how to setup data_check, how to create a new project and more options.
+
+## License
+
+[MIT](LICENSE)

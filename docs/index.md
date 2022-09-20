@@ -8,7 +8,7 @@ data_check is a simple data validation tool. In its most basic form, it will exe
 * Excel support: Use Excel (xlsx) instead of CSV
 * multiple environments (databases) in the configuration file
 * [populate tables](loading_data.md) from CSV or Excel files
-* [execute any SQL files on a database](running_sql.md)
+* [execute any SQL files on a database](sql.md)
 * more complex [pipelines](pipelines.md)
 * run any script/command (via pipelines)
 * simplified checks for [empty datasets](csv_checks.md#empty-dataset-checks) and [full table comparison](csv_checks.md#full-table-checks)
@@ -66,3 +66,7 @@ Instead of writing the CSV files manually, you can also [generate](usage.md#gene
 ## How it works
 
 data_check uses [pandas](https://pandas.pydata.org/) and [SQLAlchemy](https://www.sqlalchemy.org/) internally. The SQL files are executed and converted to DataFrames. The CSV files are also parsed to DataFrames. Both DataFrames are then merged with a full outer join. If some rows differ, the test is considered as failed.
+
+## License
+
+[MIT](https://github.com/andrjas/data_check/blob/main/LICENSE)
