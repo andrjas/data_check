@@ -1,6 +1,6 @@
 # Executing arbitrary SQL code
 
-You can run any SQL file against the database by using the `--sql-files` command:
+You can run any SQL file against the database by using the `sql --files` command:
 
 `data_check sql --files sql_file.sql other_file.sql`
 

@@ -1,12 +1,12 @@
 # Loading data into tables
 
-Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV or Excel files to load data into tables. The [CSV format](usage.md#csv-format) is the same as used for testing. The header in the CSV file or the first row in the Excel file must match the columns in the table. Additionally, Excel cells can use its native date/datetime format.
+Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV or Excel files to load data into tables. The [CSV format](csv_checks.md#csv-format) is the same as used for testing. The header in the CSV file or the first row in the Excel file must match the columns in the table. Additionally, Excel cells can use its native date/datetime format.
 
 If the table doesn't exist, it will be created. The schema and table names are always case-insensitive, as long as the database supports it. Otherwise, they are lowercased.
 
 ## Loading data into a single table
 
-To load data from some CSV or Excel file into a table, you can use `data_check load path/to/some_file.[csv/xlsx] --table schema.table_name`. This will truncate the table and load the content of the file into the table. You can specify different [load modes](usage.md#load-modes) if you do not want to truncate the table.
+To load data from some CSV or Excel file into a table, you can use `data_check load path/to/some_file.[csv/xlsx] --table schema.table_name`. This will truncate the table and load the content of the file into the table. You can specify different [load modes](#load-modes) if you do not want to truncate the table.
 
 ## Loading data into multiple tables
 
@@ -40,4 +40,4 @@ This works good for simple data types like strings and numbers.
 If you need to load date types (or timestamps) and the table has a date column, data_check will try to convert these columns in the CSV file into a datetime.
 This doesn't work when using `--mode replace` since the table will be dropped before it can be analyzed. This will probably result in a varchar column instead of date.
 
-Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) for dates, like for [CSV checks]((csv_checks.md#csv-format)
+Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) for dates, like for [CSV checks](csv_checks.md#csv-format)
