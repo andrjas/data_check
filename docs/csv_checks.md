@@ -125,3 +125,17 @@ select 2 as b
 ```
 
 In this example `:b1` is loaded from the file _lookups/b1.sql_ and `:sub_lkp__b2` from _lookups/sub\_lkp/b2.sql_.
+
+## Data types
+
+data_check tries its best to match the data types from the SQL result with the data types from the CSV file.
+There are, however, some egde cases where data_check has to convert the data types based on a heuristic:
+
+If the SQL result or the CSV file have float64 values in a column, the column of the other part will also be converted to float64,
+since float64 might be represented in scientific notation. If the conversion fails, the check will fail anyways.
+
+If the SQL result or the CSV file have mixed string/numeric values in a column, data_check will convert the column to float64 if the other column has only loat64 values. Otherwise it will convert both columns to string values.
+
+In all other cases, if the matching columns have different data types, data_check will convert them to the string representation.
+
+For date types, data_check is using internally the python datetime type. pandas Timestamp cannot be used here, since it has a lower [limit](https://pandas.pydata.org/docs/reference/api/pandas.Timestamp.max.html) for dates than all the supported databases.
