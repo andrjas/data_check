@@ -25,6 +25,7 @@ There are multiple modes that control the data loading:
 * truncate - truncate the table before loading the data.
 * replace - drop the table and recreate it based on the columns in the CSV or Excel file.
 * append - do not touch the table before loading the data.
+* upsert - tries to update the table based on its primary keys. If nothing is updated, the data is inserted.
 
 By default, the tables will be truncated before loading the data. You can use the other modes with `--mode`:
 
