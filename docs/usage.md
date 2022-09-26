@@ -144,3 +144,12 @@ log: logfile.txt
 ```
 
 Failed results and tracebacks are always written to the log file, even when the parameters `--print` and `--traceback` are not used.
+
+## Environment variables
+
+The environment variable `DATA_CHECK_CONNECTION` can be used to override the default connection.
+
+The precedence is:
+1. Value from CLI
+2. Value from environment variables
+3. Default values (from the config file)
