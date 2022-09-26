@@ -43,7 +43,7 @@ To speed up integration tests the CI pipeline uses local, pre-build docker image
 
 [tox](https://github.com/tox-dev/tox) is used to test data_check against multiple python versions.
 
-Multiple python versions can be intalled with [pyenv](https://github.com/pyenv/pyenv):
+Multiple python versions can be installed with [pyenv](https://github.com/pyenv/pyenv):
 
 ```
 pyenv install 3.8.1

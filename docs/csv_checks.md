@@ -129,12 +129,12 @@ In this example `:b1` is loaded from the file _lookups/b1.sql_ and `:sub_lkp__b2
 ## Data types
 
 data_check tries its best to match the data types from the SQL result with the data types from the CSV file.
-There are, however, some egde cases where data_check has to convert the data types based on a heuristic:
+There are, however, some edge cases where data_check has to convert the data types based on a heuristic:
 
 If the SQL result or the CSV file have float64 values in a column, the column of the other part will also be converted to float64,
 since float64 might be represented in scientific notation. If the conversion fails, the check will fail anyways.
 
-If the SQL result or the CSV file have mixed string/numeric values in a column, data_check will convert the column to float64 if the other column has only loat64 values. Otherwise it will convert both columns to string values.
+If the SQL result or the CSV file have mixed string/numeric values in a column, data_check will convert the column to float64 if the other column has only float64 values. Otherwise it will convert both columns to string values.
 
 In all other cases, if the matching columns have different data types, data_check will convert them to the string representation.
 
