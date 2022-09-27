@@ -81,12 +81,13 @@ class SQLBaseCheck(BaseCheck):
     ) -> Tuple[pd.Series, pd.Series]:
         # float64 can be in scientific notation, so it cannot be compared against a str
         if col_1.dtype == np.float64 or col_2.dtype == np.float64:
+            # use Float64 instead of np.float64 since it is nullable
             try:
-                col_1 = col_1.astype(np.float64)
+                col_1 = col_1.astype("Float64")
             except:
                 pass
             try:
-                col_2 = col_2.astype(np.float64)
+                col_2 = col_2.astype("Float64")
             except:
                 pass
         else:
