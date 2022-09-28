@@ -74,7 +74,7 @@ class DataCheckOutput:
     def print_exception(self, exc: Exception):
         if self.traceback:
             self.print("".join(self.format_exception(exc)))
-        elif self.verbose:
+        else:
             self.print(str(exc))
 
     def print(self, msg: Any):

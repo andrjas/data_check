@@ -28,10 +28,10 @@ def _set_exception_message(output: DataCheckOutput, result: DataCheckResult):
         + linesep
         + "".join(output.format_exception(cast(Exception, result.exception)))
     )
-    if output.verbose:
-        result.message += linesep + str(result.exception)
     if output.traceback:
         result.message = result.log_message
+    else:
+        result.message += linesep + output.str_warn(str(result.exception))
 
 
 def _set_passed_message(output: DataCheckOutput, result: DataCheckResult):
