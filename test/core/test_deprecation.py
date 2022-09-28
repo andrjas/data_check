@@ -19,7 +19,7 @@ def test_retrieve_name_nested():
 
 
 def test_deprecated_method_argument():
-    with pytest.warns(UserWarning, match=r"arg is deprecated$"):
+    with pytest.warns(FutureWarning, match=r"arg is deprecated$"):
         arg = "test"
         deprecation.deprecated_method_argument(arg)
 
@@ -30,7 +30,7 @@ def test_deprecated_method_argument_no_warning():
 
 
 def test_deprecated_method_argument_instead_argument():
-    with pytest.warns(UserWarning, match=r"arg is deprecated, use arg2 instead$"):
+    with pytest.warns(FutureWarning, match=r"arg is deprecated, use arg2 instead$"):
         arg = "test"
         arg2 = None
         deprecation.deprecated_method_argument(arg, arg2)
@@ -46,14 +46,14 @@ def test_deprecated_method_argument_instead_argument():
 
 
 def test_deprecated_method_argument_instead_argument_default_value():
-    with pytest.warns(UserWarning, match=r"arg is deprecated, use arg2 instead$"):
+    with pytest.warns(FutureWarning, match=r"arg is deprecated, use arg2 instead$"):
         arg = "test"
         arg2 = "test2"
         deprecation.deprecated_method_argument(arg, arg2, "test2")
 
 
 def test_deprecated_method_argument_instead_argument_default_value_none():
-    with pytest.warns(UserWarning, match=r"arg is deprecated, use arg2 instead$"):
+    with pytest.warns(FutureWarning, match=r"arg is deprecated, use arg2 instead$"):
         arg = "test"
         arg2 = None
         deprecation.deprecated_method_argument(arg, arg2, None)

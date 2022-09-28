@@ -33,7 +33,7 @@ def deprecated_method_argument(
         warn_msg = f"{argument_name} is deprecated"
         if use_instead_argument:
             warn_msg += f", use {use_instead_argument} instead"
-        warnings.warn(warn_msg, UserWarning)
+        warnings.warn(warn_msg, FutureWarning)
         if instead_argument != instead_default_value:
             raise ValueError(
                 f"{argument_name} and {use_instead_argument} cannot be used at the same time"
