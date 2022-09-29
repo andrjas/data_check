@@ -1,6 +1,28 @@
 # Changelog
 
-## [Unreleased]
+## [0.13.0] - 2022-09-29
+
+### Added
+- upsert mode for loading data into tables
+- pipelines: added 'mode' to deprecate 'load_mode'
+- env variable DATA_CHECK_CONNECTION can override default connection
+
+### Changed
+- printing exception on failure without --traceback
+- upgraded dependencies
+- documentation theme
+
+### Fixed
+- Oracle: using VARCHAR2 instead of CLOB to load strings and large decimals
+- bug in runner.executor when calculating max_workers
+
+### Deprecated
+- pipelines: 'load_mode' is deprecated, use 'mode' instead
+
+### Removed
+- workaround for replace mode
+- support for python 3.7
+- importlib-metadata dependency
 
 ## [0.12.0] - 2022-04-13
 
