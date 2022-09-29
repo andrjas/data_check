@@ -1,151 +1,141 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="None">
-        
-        
-        <link rel="shortcut icon" href="img/favicon.ico">
-        <title>data_check</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
-
-        <script src="js/jquery-1.10.2.min.js" defer></script>
-        <script src="js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script> 
-    </head>
-
-    <body class="homepage">
-        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
-            <div class="container">
-                <a class="navbar-brand" href=".">data_check</a>
-                <!-- Expander button -->
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Expanded navigation -->
-                <div id="navbar-collapse" class="navbar-collapse collapse">
-                        <!-- Main navigation -->
-                        <ul class="nav navbar-nav">
-                            <li class="navitem active">
-                                <a href="." class="nav-link">Home</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="install/" class="nav-link">Installation</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="usage/" class="nav-link">Usage</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="csv_checks/" class="nav-link">CSV checks</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="pipelines/" class="nav-link">Pipelines</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="test_data/" class="nav-link">Test data</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="howtos/" class="nav-link">HowTos</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="example/" class="nav-link">Examples</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="development/" class="nav-link">Development</a>
-                            </li>
-                        </ul>
-
-                    <ul class="nav navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
-                                <i class="fa fa-search"></i> Search
-                            </a>
-                        </li>
-                            <li class="nav-item">
-                                <a rel="prev" class="nav-link disabled">
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a rel="next" href="install/" class="nav-link">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row">
-                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
-            <span class="fa fa-angle-down"></span>
-        </button>
-    </div>
-
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>data_check</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
     
-    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
-        <ul class="nav flex-column">
-            
-            <li class="nav-item" data-level="1"><a href="#welcome-to-data_check" class="nav-link">Welcome to data_check</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#features" class="nav-link">Features</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#database-support" class="nav-link">Database support</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#why" class="nav-link">Why?</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#how-to-get-started" class="nav-link">How to get started</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#project-layout" class="nav-link">Project layout</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#configuration" class="nav-link">Configuration</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#test-files" class="nav-link">Test files</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#how-it-works" class="nav-link">How it works</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-              </ul>
-            </li>
-        </ul>
-    </div>
-</div></div>
-                    <div class="col-md-9" role="main">
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
 
-<h1 id="welcome-to-data_check">Welcome to data_check</h1>
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> data_check
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#features">Features</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#database-support">Database support</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#why">Why?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#how-to-get-started">How to get started</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#project-layout">Project layout</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#test-files">Test files</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#how-it-works">How it works</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="install/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="usage/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="csv_checks/">CSV checks</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="loading_data/">Loading data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="sql/">Running SQL</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="pipelines/">Pipelines</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="test_data/">Test data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="howtos/">HowTos</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="example/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="development/">Development</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">data_check</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+      <li>Home</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="welcome-to-data_check">Welcome to data_check</h1>
 <p>data_check is a simple data validation tool. In its most basic form, it will execute SQL queries and compare the results against CSV or Excel files. But there are more advanced features:</p>
 <h2 id="features">Features</h2>
 <ul>
 <li><a href="csv_checks/">CSV checks</a>: compare SQL queries against CSV files</li>
 <li>Excel support: Use Excel (xlsx) instead of CSV</li>
 <li>multiple environments (databases) in the configuration file</li>
-<li><a href="usage/#loading-data-into-tables">populate tables</a> from CSV or Excel files</li>
-<li><a href="usage/#executing-arbitrary-sql-code">execute any SQL files on a database</a></li>
+<li><a href="loading_data/">populate tables</a> from CSV or Excel files</li>
+<li><a href="sql/">execute any SQL files on a database</a></li>
 <li>more complex <a href="pipelines/">pipelines</a></li>
 <li>run any script/command (via pipelines)</li>
 <li>simplified checks for <a href="csv_checks/#empty-dataset-checks">empty datasets</a> and <a href="csv_checks/#full-table-checks">full table comparison</a></li>
@@ -158,7 +148,7 @@
 <p>data_check tries to solve a simple problem in data domains: during development you create multiple SQL queries to validate your data and compare the result manually. With data_check you can organize your data tests and run them automatically, for example in a CI pipeline.</p>
 <h2 id="how-to-get-started">How to get started</h2>
 <p>First <a href="install/">install</a> data_check. You can then try data_check with the <a href="example/#data_check-sample-project">sample project</a>.</p>
-<p>To create a new project folder write a data_check.yml for the <a href=".#configuration">configuration</a> and put your <a href=".#test-files">test files</a> in the <em>checks</em> folder.</p>
+<p>To create a new project folder write a <em>data_check.yml</em> for the <a href=".#configuration">configuration</a> and put your <a href=".#test-files">test files</a> in the <em>checks</em> folder.</p>
 <h2 id="project-layout">Project layout</h2>
 <p>data_check has a simple layout for projects: a single configuration file and a folder with the test files. You can also organize the test files in subfolders.</p>
 <pre><code>data_check.yml          # The configuration file
@@ -172,98 +162,67 @@ checks/                 # Default folder for data tests
     subfolder/          # Tests can be nested in subfolders
 </code></pre>
 <h2 id="configuration">Configuration</h2>
-<p>data_check uses the data_check.yml file in the current folder for configuration.
+<p>data_check uses the <em>data_check.yml</em> file in the current folder for configuration.
 This is a simple YAML file:</p>
 <pre><code class="language-yaml">default_connection: con
 
 connections:
     con: connection-string
 </code></pre>
-<p>Under <em>connections</em> you can put multiple <a href="https://docs.sqlalchemy.org/en/14/core/engines.html">connection strings</a> with names. <em>default_connection</em> is the connection name that data_check uses when no additional arguments are given. You can also use environment variables in the connection string to store the credentials outside data_check.yml (e.g. <code>postgresql://postgres:${POSTGRES_PWD}@db:5432</code>).</p>
+<p>Under <em>connections</em> you can put multiple <a href="https://docs.sqlalchemy.org/en/14/core/engines.html">connection strings</a> with names. <em>default_connection</em> is the connection name that data_check uses when no additional arguments are given. You can also use environment variables in the connection string to store the credentials outside <em>data_check.yml</em> (e.g. <code>postgresql://postgres:${POSTGRES_PWD}@db:5432</code>).</p>
 <h2 id="test-files">Test files</h2>
 <p>The test files are organized in the <em>checks</em> folder and its subfolders. data_check will run the queries for each SQL file in these folders and compare the results with the corresponding CSV files. The CSV file must be named exactly like the SQL file, only with different file endings.</p>
 <p>Instead of writing the CSV files manually, you can also <a href="usage/#generating-expectation-files">generate</a> them from the SQL files.</p>
 <h2 id="how-it-works">How it works</h2>
-<p>data_check uses <a href="https://pandas.pydata.org/">pandas</a> and <a href="https://www.sqlalchemy.org/">SQLAlchemy</a> internally. The SQL files are executed and converted to DataFrames. The CSV files are also parsed to DataFrames. Both DataFrames are then merged with a full outer join. If some rows differ, the test is considered as failed.</p></div>
+<p>data_check uses <a href="https://pandas.pydata.org/">pandas</a> and <a href="https://www.sqlalchemy.org/">SQLAlchemy</a> internally. The SQL files are executed and converted to DataFrames. The CSV files are also parsed to DataFrames. Both DataFrames are then merged with a full outer join. If some rows differ, the test is considered as failed.</p>
+<h2 id="license">License</h2>
+<p><a href="https://github.com/andrjas/data_check/blob/main/LICENSE">MIT</a></p>
+              
             </div>
-        </div>
-
-        <footer class="col-md-12">
-            <hr>
-            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
-        </footer>
-        <script>
-            var base_url = ".",
-                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
-        </script>
-        <script src="js/base.js" defer></script>
-        <script src="search/main.js" defer></script>
-
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="searchModalLabel">Search</h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            </div>
-            <div class="modal-body">
-                <p>From here you can search these documents. Enter your search terms below.</p>
-                <form>
-                    <div class="form-group">
-                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
-                    </div>
-                </form>
-                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="install/" class="btn btn-neutral float-right" title="Installation">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            </div>
-            <div class="modal-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 20%;">Keys</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="help shortcut"><kbd>?</kbd></td>
-                    <td>Open this help</td>
-                  </tr>
-                  <tr>
-                    <td class="next shortcut"><kbd>n</kbd></td>
-                    <td>Next page</td>
-                  </tr>
-                  <tr>
-                    <td class="prev shortcut"><kbd>p</kbd></td>
-                    <td>Previous page</td>
-                  </tr>
-                  <tr>
-                    <td class="search shortcut"><kbd>s</kbd></td>
-                    <td>Search</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="modal-footer">
-            </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
         </div>
-    </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="install/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
 </div>
+    <script>var base_url = '.';</script>
+    <script src="js/theme_extra.js" defer></script>
+    <script src="js/theme.js" defer></script>
+      <script src="search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
 
-    </body>
+</body>
 </html>
 
 <!--
-MkDocs version : 1.2.3
-Build Date UTC : 2022-04-13 16:22:51.966034+00:00
+MkDocs version : 1.3.1
+Build Date UTC : 2022-09-29 04:38:54.002874+00:00
 -->

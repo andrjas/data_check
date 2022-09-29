@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>HowTos - data_check</title>
+    <title>Running SQL - data_check</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "HowTos";
-        var mkdocs_page_input_path = "howtos.md";
+        var mkdocs_page_name = "Running SQL";
+        var mkdocs_page_input_path = "sql.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -60,8 +60,12 @@
                 <li class="toctree-l1"><a class="reference internal" href="../loading_data/">Loading data</a>
                 </li>
               </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../sql/">Running SQL</a>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Running SQL</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#generating-a-csv-check-from-a-sql-statement">Generating a CSV check from a SQL statement</a>
+    </li>
+    </ul>
                 </li>
               </ul>
               <ul>
@@ -72,14 +76,8 @@
                 <li class="toctree-l1"><a class="reference internal" href="../test_data/">Test data</a>
                 </li>
               </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="./">HowTos</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#use-another-configuration-file">Use another configuration file</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#run-checks-in-multiple-folders">Run checks in multiple folders</a>
-    </li>
-    </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../howtos/">HowTos</a>
                 </li>
               </ul>
               <ul>
@@ -104,7 +102,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-      <li>HowTos</li>
+      <li>Running SQL</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -113,19 +111,29 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="howtos">HowTos</h1>
-<p>This is a collection of various things you can do with data_check.</p>
-<h2 id="use-another-configuration-file">Use another configuration file</h2>
-<p><code>data_check --config other_config_file.yml</code></p>
-<h2 id="run-checks-in-multiple-folders">Run checks in multiple folders</h2>
-<p>Run all test in the folders <em>check_folder_1</em> and <em>check_folder_2</em>:</p>
-<p><code>data_check check_folder_1 check_folder_2</code></p>
+                <h1 id="executing-arbitrary-sql-code">Executing arbitrary SQL code</h1>
+<p>You can run any SQL file against the database by using the <code>sql --files</code> command:</p>
+<p><code>data_check sql --files sql_file.sql other_file.sql</code></p>
+<p>or a whole folder recursively:</p>
+<p><code>data_check sql --files some/folder/with/sql_files</code></p>
+<p>All files are run in parallel. If you have dependencies between the files, data_check must be called sequentially for each file.</p>
+<p>Multiple statements in a SQL file usually must be inside an anonymous block. MySQL doesn't support this however.</p>
+<p><code>--file</code> is an alias for <code>--files</code>. Use it to indicate, that you only want to run a single file.</p>
+<p>You can also run a SQL statement directly from the command line:</p>
+<p><code>data_check sql "select * from tableX"</code></p>
+<p>This will execute the query and, if it is a query, print the result as CSV. You can also write the result into a file:</p>
+<p><code>data_check sql "select * from tableX" --output some_file.csv</code></p>
+<p>You can use both <a href="../csv_checks/#templates">templates</a> and <a href="../csv_checks/#lookups">lookups</a> with <code>sql</code>.</p>
+<h2 id="generating-a-csv-check-from-a-sql-statement">Generating a CSV check from a SQL statement</h2>
+<p>You can use <code>sql</code> to create a CSV check:</p>
+<p><code>data_check sql "select * from tableX" --write-check some_check.sql</code></p>
+<p>This writes the SQL statement into <code>some_check.sql</code> and the result as CSV into <code>some_check.csv</code>.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../test_data/" class="btn btn-neutral float-left" title="Test data"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../example/" class="btn btn-neutral float-right" title="Examples">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../loading_data/" class="btn btn-neutral float-left" title="Loading data"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../pipelines/" class="btn btn-neutral float-right" title="Pipelines">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -148,10 +156,10 @@
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../test_data/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../loading_data/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../example/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../pipelines/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

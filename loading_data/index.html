@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Loading data - data_check</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Loading data";
+        var mkdocs_page_input_path = "loading_data.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> data_check
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../csv_checks/">CSV checks</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Loading data</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#loading-data-into-a-single-table">Loading data into a single table</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#loading-data-into-multiple-tables">Loading data into multiple tables</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#load-modes">Load modes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#csv-and-data-types">CSV and data types</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../sql/">Running SQL</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../pipelines/">Pipelines</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../test_data/">Test data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../howtos/">HowTos</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../example/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../development/">Development</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">data_check</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+      <li>Loading data</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="loading-data-into-tables">Loading data into tables</h1>
+<p>Sometimes you need to populate tables with some data before running pipeline tests. With data_check you can use CSV or Excel files to load data into tables. The <a href="../csv_checks/#csv-format">CSV format</a> is the same as used for testing. The header in the CSV file or the first row in the Excel file must match the columns in the table. Additionally, Excel cells can use its native date/datetime format.</p>
+<p>If the table doesn't exist, it will be created. The schema and table names are always case-insensitive, as long as the database supports it. Otherwise, they are lowercased.</p>
+<h2 id="loading-data-into-a-single-table">Loading data into a single table</h2>
+<p>To load data from some CSV or Excel file into a table, you can use <code>data_check load path/to/some_file.[csv/xlsx] --table schema.table_name</code>. This will truncate the table and load the content of the file into the table. You can specify different <a href="#load-modes">load modes</a> if you do not want to truncate the table.</p>
+<h2 id="loading-data-into-multiple-tables">Loading data into multiple tables</h2>
+<p>You can use multiple CSV and Excel files or a whole folder to load the data into tables. The table name will be derived from the file name.</p>
+<ul>
+<li><code>data_check load path/schema.table_1.csv</code> - this will load the data from the CSV file into the table schema.table_1</li>
+<li><code>data_check load path/schema.table_2.xlsx</code> - this will load the data from the Excel file into the table schema.table_2</li>
+<li><code>data_check load path/to/some_folder</code> - this will load the data from all CSV and Excel files in this folder into tables matching the file names.</li>
+</ul>
+<p>The path will be searched recursively for CSV and Excel files. The folder structure doesn't matter when matching the table names, only the file name matters.</p>
+<h2 id="load-modes">Load modes</h2>
+<p>There are multiple modes that control the data loading:</p>
+<ul>
+<li>truncate - truncate the table before loading the data.</li>
+<li>replace - drop the table and recreate it based on the columns in the CSV or Excel file.</li>
+<li>append - do not touch the table before loading the data.</li>
+<li>upsert - tries to update the table based on its primary keys. If nothing is updated, the data is inserted.</li>
+</ul>
+<p>By default, the tables will be truncated before loading the data. You can use the other modes with <code>--mode</code>:</p>
+<p><code>data_check load file.csv --table table_name --mode replace</code>
+<code>data_check load path/to/tables_folder --mode append</code></p>
+<h2 id="csv-and-data-types">CSV and data types</h2>
+<p>When loading data from CSV files, data_check (or more precisely: <a href="https://pandas.pydata.org/">pandas</a>) will infer the data types from the file.
+When loading the data into the table, the database will usually implicitly convert the data types.
+This works good for simple data types like strings and numbers.</p>
+<p>If you need to load date types (or timestamps) and the table has a date column, data_check will try to convert these columns in the CSV file into a datetime.
+This doesn't work when using <code>--mode replace</code> since the table will be dropped before it can be analyzed. This will probably result in a varchar column instead of date.</p>
+<p>Use <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> for dates, like for <a href="../csv_checks/#csv-format">CSV checks</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../csv_checks/" class="btn btn-neutral float-left" title="CSV checks"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../sql/" class="btn btn-neutral float-right" title="Running SQL">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../csv_checks/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../sql/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
