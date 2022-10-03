@@ -1,17 +1,8 @@
 ---
 kind: pipeline
-type: docker
 name: oracle
-
-platform:
-  os: linux
-  arch: amd64
-
 steps:
-- name: data_check
-  pull: if-not-exists
-  image: local/poetry_oracle
-  commands:
+- commands:
   - cp -rn example/checks test/int_test/oracle
   - cp -rn example/load_data test/int_test/oracle
   - cp -rn example/run_sql test/int_test/oracle
@@ -20,26 +11,8 @@ steps:
   - poetry install -E oracle
   - cd test/int_test/oracle
   - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
-  - poetry run data_check sql --workers 1 --files prepare
+  - poetry run pytest ../test_int_tests.py
   - poetry run pytest ../../../test/database
-  - poetry run data_check gen checks/generated
-  - poetry run data_check run checks/basic --traceback --print
-  - poetry run data_check run checks/generated --traceback --print
-  - poetry run data_check run checks/empty_sets/basic --traceback --print
-  - poetry run data_check run checks/excel/basic --traceback --print
-  - poetry run data_check run checks/pipelines/simple_pipeline --traceback --print
-  - poetry run data_check run checks/pipelines/date_test --traceback --print
-  - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
-  - poetry run data_check run checks/pipelines/table_check --traceback --print
-  - poetry run data_check run checks/pipelines/fake_data --traceback --print
-  - poetry run data_check run checks/pipelines/large_number --traceback --print
-  - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/invalid.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
   environment:
     DB_CONNECTION:
       from_secret: ORACLE_CONNECTION
@@ -51,34 +24,27 @@ steps:
     LC_ALL: en_US.utf-8
     NLS_LANG: .utf8
     TNS_ADMIN: /app/network/admin
+  image: local/poetry_oracle
+  name: data_check
+  pull: if-not-exists
   volumes:
   - name: cache
     path: /root/.cache
   - name: wallet
     path: /app/network/admin
-
+type: docker
 volumes:
-- name: cache
-  host:
+- host:
     path: /tmp/data_check_cache
-- name: wallet
-  host:
+  name: cache
+- host:
     path: /home/data_check/wallet
-
+  name: wallet
 ---
 kind: pipeline
-type: docker
 name: sqlite
-
-platform:
-  os: linux
-  arch: amd64
-
 steps:
-- name: data_check
-  pull: if-not-exists
-  image: local/poetry:3.8
-  commands:
+- commands:
   - cp -rn example/checks test/int_test/sqlite
   - cp -rn example/load_data test/int_test/sqlite
   - cp -rn example/run_sql test/int_test/sqlite
@@ -87,49 +53,25 @@ steps:
   - poetry install
   - cd test/int_test/sqlite
   - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
-  - poetry run data_check sql --workers 1 --files prepare
+  - poetry run pytest ../test_int_tests.py
   - poetry run pytest ../../../test/database
-  - poetry run data_check gen checks/generated
-  - poetry run data_check run checks/basic --traceback --print
-  - poetry run data_check run checks/generated --traceback --print
-  - poetry run data_check run checks/empty_sets/basic --traceback --print
-  - poetry run data_check run checks/excel/basic --traceback --print
-  - poetry run data_check run checks/pipelines/simple_pipeline --traceback --print
-  - poetry run data_check run checks/pipelines/date_test --traceback --print
-  - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
-  - poetry run data_check run checks/pipelines/table_check --traceback --print
-  - poetry run data_check run checks/pipelines/fake_data --traceback --print
-  - poetry run data_check run checks/pipelines/large_number --traceback --print
-  - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/invalid.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
+  environment: {}
+  image: local/poetry:3.8
+  name: data_check
+  pull: if-not-exists
   volumes:
   - name: cache
     path: /root/.cache
-
+type: docker
 volumes:
-- name: cache
-  host:
+- host:
     path: /tmp/data_check_cache
-
+  name: cache
 ---
 kind: pipeline
-type: docker
 name: mysql
-
-platform:
-  os: linux
-  arch: amd64
-
 steps:
-- name: data_check
-  pull: if-not-exists
-  image: local/poetry:3.8
-  commands:
+- commands:
   - cp -rn example/checks test/int_test/mysql
   - cp -rn example/load_data test/int_test/mysql
   - cp -rn example/run_sql test/int_test/mysql
@@ -138,26 +80,8 @@ steps:
   - poetry install -E mysql
   - cd test/int_test/mysql
   - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
-  - poetry run data_check sql --workers 1 --files prepare
+  - poetry run pytest ../test_int_tests.py
   - poetry run pytest ../../../test/database
-  - poetry run data_check gen checks/generated
-  - poetry run data_check run checks/basic --traceback --print
-  - poetry run data_check run checks/generated --traceback --print
-  - poetry run data_check run checks/empty_sets/basic --traceback --print
-  - poetry run data_check run checks/excel/basic --traceback --print
-  - poetry run data_check run checks/pipelines/simple_pipeline --traceback --print
-  - poetry run data_check run checks/pipelines/date_test --traceback --print
-  - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
-  - poetry run data_check run checks/pipelines/table_check --traceback --print
-  - poetry run data_check run checks/pipelines/fake_data --traceback --print
-  - poetry run data_check run checks/pipelines/large_number --traceback --print
-  - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/invalid.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
   environment:
     DB_CONNECTION:
       from_secret: MYSQL_CONNECTION
@@ -165,29 +89,22 @@ steps:
       from_secret: MYSQL_PASSWORD
     DB_USER:
       from_secret: MYSQL_USER
+  image: local/poetry:3.8
+  name: data_check
+  pull: if-not-exists
   volumes:
   - name: cache
     path: /root/.cache
-
+type: docker
 volumes:
-- name: cache
-  host:
+- host:
     path: /tmp/data_check_cache
-
+  name: cache
 ---
 kind: pipeline
-type: docker
 name: postgres
-
-platform:
-  os: linux
-  arch: amd64
-
 steps:
-- name: data_check
-  pull: if-not-exists
-  image: local/poetry:3.8
-  commands:
+- commands:
   - cp -rn example/checks test/int_test/postgres
   - cp -rn example/load_data test/int_test/postgres
   - cp -rn example/run_sql test/int_test/postgres
@@ -196,26 +113,8 @@ steps:
   - poetry install -E postgres
   - cd test/int_test/postgres
   - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
-  - poetry run data_check sql --workers 1 --files prepare
+  - poetry run pytest ../test_int_tests.py
   - poetry run pytest ../../../test/database
-  - poetry run data_check gen checks/generated
-  - poetry run data_check run checks/basic --traceback --print
-  - poetry run data_check run checks/generated --traceback --print
-  - poetry run data_check run checks/empty_sets/basic --traceback --print
-  - poetry run data_check run checks/excel/basic --traceback --print
-  - poetry run data_check run checks/pipelines/simple_pipeline --traceback --print
-  - poetry run data_check run checks/pipelines/date_test --traceback --print
-  - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
-  - poetry run data_check run checks/pipelines/table_check --traceback --print
-  - poetry run data_check run checks/pipelines/fake_data --traceback --print
-  - poetry run data_check run checks/pipelines/large_number --traceback --print
-  - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/invalid.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
   environment:
     DB_CONNECTION:
       from_secret: POSTGRES_CONNECTION
@@ -223,29 +122,22 @@ steps:
       from_secret: POSTGRES_PASSWORD
     DB_USER:
       from_secret: POSTGRES_USER
+  image: local/poetry:3.8
+  name: data_check
+  pull: if-not-exists
   volumes:
   - name: cache
     path: /root/.cache
-
+type: docker
 volumes:
-- name: cache
-  host:
+- host:
     path: /tmp/data_check_cache
-
+  name: cache
 ---
 kind: pipeline
-type: docker
 name: mssql
-
-platform:
-  os: linux
-  arch: amd64
-
 steps:
-- name: data_check
-  pull: if-not-exists
-  image: local/poetry_mssql
-  commands:
+- commands:
   - cp -rn example/checks test/int_test/mssql
   - cp -rn example/load_data test/int_test/mssql
   - cp -rn example/run_sql test/int_test/mssql
@@ -254,26 +146,8 @@ steps:
   - poetry install -E mssql
   - cd test/int_test/mssql
   - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
-  - poetry run data_check sql --workers 1 --files prepare
+  - poetry run pytest ../test_int_tests.py
   - poetry run pytest ../../../test/database
-  - poetry run data_check gen checks/generated
-  - poetry run data_check run checks/basic --traceback --print
-  - poetry run data_check run checks/generated --traceback --print
-  - poetry run data_check run checks/empty_sets/basic --traceback --print
-  - poetry run data_check run checks/excel/basic --traceback --print
-  - poetry run data_check run checks/pipelines/simple_pipeline --traceback --print
-  - poetry run data_check run checks/pipelines/date_test --traceback --print
-  - poetry run data_check run checks/pipelines/leading_zeros --traceback --print
-  - poetry run data_check run checks/pipelines/table_check --traceback --print
-  - poetry run data_check run checks/pipelines/fake_data --traceback --print
-  - poetry run data_check run checks/pipelines/large_number --traceback --print
-  - bash -c 'if ! poetry run data_check run checks/failing/duplicates.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/expected_to_fail.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/invalid_csv.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/failing/invalid.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/empty_sets/failing/not_empty_query.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_empty.sql; then exit 0; else exit 1; fi'
-  - bash -c 'if ! poetry run data_check run checks/excel/failing/failing_excel.sql; then exit 0; else exit 1; fi'
   environment:
     DB_CONNECTION:
       from_secret: MSSQL_CONNECTION
@@ -281,13 +155,14 @@ steps:
       from_secret: MSSQL_PASSWORD
     DB_USER:
       from_secret: MSSQL_USER
+  image: local/poetry_mssql
+  name: data_check
+  pull: if-not-exists
   volumes:
   - name: cache
     path: /root/.cache
-
+type: docker
 volumes:
-- name: cache
-  host:
+- host:
     path: /tmp/data_check_cache
-
-...
+  name: cache

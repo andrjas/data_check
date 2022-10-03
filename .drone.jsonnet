@@ -1,38 +1,10 @@
 # run "drone jsonnet  --format --stream" whenever you change this file
 # to generate .drone.yml
 
-local positive_int_tests = [
-    "checks/basic",
-    "checks/generated",
-    "checks/empty_sets/basic",
-    "checks/excel/basic",
-    "checks/pipelines/simple_pipeline",
-    "checks/pipelines/date_test",
-    "checks/pipelines/leading_zeros",
-    "checks/pipelines/table_check",
-    "checks/pipelines/fake_data",
-    "checks/pipelines/large_number",
-];
-
-local failing_int_tests = [
-    "checks/failing/duplicates.sql",
-    "checks/failing/expected_to_fail.sql",
-    "checks/failing/invalid_csv.sql",
-    "checks/failing/invalid.sql",
-    "checks/empty_sets/failing/not_empty_query.sql",
-    "checks/excel/failing/failing_empty.sql",
-    "checks/excel/failing/failing_excel.sql",
-];
-
 local generic_int_test = [
     "bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'",
-    "poetry run data_check sql --workers 1 --files prepare",
+    "poetry run pytest ../test_int_tests.py",
     "poetry run pytest ../../../test/database",
-    "poetry run data_check gen checks/generated",
-] + [
-    "poetry run data_check run %s --traceback --print" % [p] for p in positive_int_tests
-] + [
-    "bash -c 'if ! poetry run data_check run %s; then exit 0; else exit 1; fi'" % [f] for f in failing_int_tests
 ];
 
 
