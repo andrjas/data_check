@@ -16,12 +16,10 @@ def cleanup():
         "checks/generated/data_with_hash.csv",
         "test.db",
     ):
-        with suppress(FileNotFoundError):
+        with suppress(FileNotFoundError, PermissionError):
             Path(f).unlink()
-        with suppress(FileNotFoundError):
+        with suppress(FileNotFoundError, PermissionError):
             (Path("example") / f).unlink()
-    with suppress(FileNotFoundError):
-        Path("checks/pipelines/fake_data/main.simple_fake_table_2.csv").unlink()
 
 
 def prepare_sql():
