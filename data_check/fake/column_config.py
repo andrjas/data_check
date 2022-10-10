@@ -67,15 +67,15 @@ class ColumnConfig:
 
     def get_default_args(self) -> Dict[str, Any]:
         if self.python_type == decimal.Decimal:
-            precision = self.sql_type.precision if self.sql_type.precision else 5
-            scale = self.sql_type.scale if self.sql_type.scale else 0
+            precision = self.sql_type.precision or 5
+            scale = self.sql_type.scale or 0
             if not self.faker_args.get("left_digits", None):
                 # In SQL precision is the whole "length" of the decimal including the scale.
                 self.faker_args["left_digits"] = precision - scale
             if not self.faker_args.get("right_digits", None):
                 self.faker_args["right_digits"] = scale
         elif self.python_type == str:
-            length = self.sql_type.length if self.sql_type.length else 10
+            length = self.sql_type.length or 10
             if self.fake_method == self.faker.pystr:
                 self.faker_args["max_chars"] = length
         return self.faker_args
@@ -96,5 +96,4 @@ class ColumnConfig:
                     data = self.fake_method(**self.faker_args)
                 self.unique_data.append(data)
             return data
-        else:
-            return None
+        return None

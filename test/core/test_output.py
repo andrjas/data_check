@@ -24,7 +24,6 @@ def dc_out(tmp_path: Path):
     out.configure_output(
         verbose=False,
         traceback=False,
-        print_failed=False,
         log_path=log_file,
         print_format=out.print_format,
     )

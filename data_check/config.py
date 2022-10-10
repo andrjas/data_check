@@ -46,8 +46,7 @@ class DataCheckConfig:
         """
         if self.project_path == self.base_path:
             return self.project_path / CHECKS_PATH
-        else:
-            return self.base_path
+        return self.base_path
 
     @property
     def template_path(self) -> Path:

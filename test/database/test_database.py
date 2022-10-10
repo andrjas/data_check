@@ -107,7 +107,7 @@ def test_sorted_set(dc: DataCheck):
 
 
 def test_dialect(dc: DataCheck):
-    assert dc.sql.dialect in ["sqlite", "postgresql", "mysql", "mssql", "oracle"]
+    assert dc.sql.dialect in ("sqlite", "postgresql", "mysql", "mssql", "oracle")
 
 
 def test_leading_zeros_string(dc: DataCheck):

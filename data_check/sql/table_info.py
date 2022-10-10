@@ -30,8 +30,7 @@ class TableInfo:
     def inspector(self) -> Inspector:
         if self.sql.keep_connection():
             return self.cached_inspector
-        else:
-            return cast(Inspector, inspect(self.sql.get_engine()))
+        return cast(Inspector, inspect(self.sql.get_engine()))
 
     @cached_property
     def cached_inspector(self) -> Inspector:
@@ -90,8 +89,7 @@ class TableInfo:
         if "." in table_name:
             schema, name = table_name.lower().split(".", maxsplit=1)
             return (schema, name)
-        else:
-            return (None, table_name.lower())
+        return (None, table_name.lower())
 
     def get_primary_keys(self, table_name: str, schema: Optional[str]) -> List[str]:
         pk_constraint = self.inspector.get_pk_constraint(

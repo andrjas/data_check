@@ -66,10 +66,9 @@ class DataCheckOutput:
     def format_exception(exc: Exception):
         if sys.version_info >= (3, 10):
             return traceback.format_exception(exc)
-        else:
-            return traceback.format_exception(
-                value=exc, tb=exc.__traceback__, etype=Exception
-            )
+        return traceback.format_exception(
+            value=exc, tb=exc.__traceback__, etype=Exception
+        )
 
     def print_exception(self, exc: Exception):
         if self.traceback:
@@ -106,8 +105,7 @@ class DataCheckOutput:
                 return result.full_result
             elif isinstance(result.result, pd.DataFrame):
                 return result.result
-            else:
-                return pd.DataFrame()
+            return pd.DataFrame()
 
     def prepare_pprint_df(
         self, result: Union[DataCheckResult, pd.DataFrame]

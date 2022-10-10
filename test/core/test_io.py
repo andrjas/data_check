@@ -21,7 +21,7 @@ def test_expand_files_csv():
 
 
 def test_expand_files_empty():
-    files = expand_files([Path("load_data")], extension=".sql")
+    files = expand_files([Path("load_data")])
     assert len(files) == 0
 
 

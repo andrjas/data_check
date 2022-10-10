@@ -74,8 +74,7 @@ class DataCheckResult:
         Uses DataCheckResult.message if not explicitly set."""
         if self._log_message:
             return self._log_message
-        else:
-            return self.message
+        return self.message
 
     @log_message.setter
     def log_message(self, msg: str):
@@ -94,5 +93,4 @@ class DataCheckResult:
     def passed_to_result_type(passed: bool) -> ResultType:
         if passed:
             return ResultType.PASSED
-        else:
-            return ResultType.FAILED
+        return ResultType.FAILED

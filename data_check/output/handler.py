@@ -26,7 +26,7 @@ class OutputHandler:
         msg = str(msg)
         if not self.quiet and _print:
             self.printer(msg)
-        self.write_log(log_msg if log_msg else msg)
+        self.write_log(log_msg or msg)
 
     def handle_subprocess_output(self, pipe: IO[bytes], print: bool = True):
         for line in iter(pipe.readline, b""):

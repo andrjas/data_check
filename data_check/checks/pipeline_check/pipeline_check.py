@@ -88,16 +88,13 @@ class PipelineCheck(BaseCheck):
                     **self.data_check.template_data,
                 ),
             )
-            return (
-                yaml if yaml else {}
-            )  # yaml can return None, so convert it to an empty dict
-        else:
-            return {}
+            return yaml or {}  # yaml can return None, so convert it to an empty dict
+        return {}
 
     def _get_steps(self, path: Path) -> List[Any]:
         pipeline_config = self._parse_pipeline_file(path / DATA_CHECK_PIPELINE_FILE)
         steps = pipeline_config.get("steps", [])
-        return steps if steps else []
+        return steps or []
 
     def run_test(self) -> DataCheckResult:
         steps = self._get_steps(self.check_path)
@@ -141,7 +138,7 @@ class PipelineCheck(BaseCheck):
     def get_prepared_parameters(
         self, method: str, params: Union[str, List[str], Dict[str, Any]]
     ):
-        prepared_params = dict()
+        prepared_params = {}
         if isinstance(params, str):
             # If only a string is given, convert it to a list of the first
             # convert_to_path_list argument

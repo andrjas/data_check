@@ -44,8 +44,7 @@ class TableLoader:
     def _truncate_statement(self, table_name: str) -> str:
         if self.sql.dialect == "sqlite":
             return f"DELETE FROM {table_name}"
-        else:
-            return f"TRUNCATE TABLE {table_name}"
+        return f"TRUNCATE TABLE {table_name}"
 
     def _prepare_table_for_load(self, table_name: str, mode: LoadMode):
         if mode == LoadMode.TRUNCATE:
@@ -61,8 +60,7 @@ class TableLoader:
     def _load_mode_to_pandas_if_exists(mode: LoadMode) -> str:
         if mode == LoadMode.REPLACE:
             return "replace"
-        else:
-            return "append"
+        return "append"
 
     def pre_insert(self, connection: Connection, name: str, schema: Optional[str]):
         if self.sql.dialect == "mssql":

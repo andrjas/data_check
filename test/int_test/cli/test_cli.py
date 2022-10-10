@@ -48,7 +48,7 @@ def test_help():
 def all_options():
     options: List[str] = []
 
-    for subcommand in ["", "run", "gen", "load", "ping", "sql"]:
+    for subcommand in ("", "run", "gen", "load", "ping", "sql"):
         res = run([subcommand, "--help"])
         lines = res.output.split("Options:", maxsplit=1)[1].strip().splitlines()
 

@@ -1,3 +1,4 @@
+from contextlib import suppress
 from pathlib import Path
 from typing import Union, List, cast, Tuple
 import pandas as pd
@@ -82,14 +83,10 @@ class SQLBaseCheck(BaseCheck):
         # float64 can be in scientific notation, so it cannot be compared against a str
         if col_1.dtype == np.float64 or col_2.dtype == np.float64:
             # use Float64 instead of np.float64 since it is nullable
-            try:
+            with suppress(Exception):
                 col_1 = col_1.astype("Float64")
-            except:
-                pass
-            try:
+            with suppress(Exception):
                 col_2 = col_2.astype("Float64")
-            except:
-                pass
         else:
             col_1 = col_1.astype("str")
             col_2 = col_2.astype("str")

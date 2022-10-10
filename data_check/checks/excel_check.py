@@ -1,3 +1,4 @@
+from contextlib import suppress
 from pathlib import Path
 import pandas as pd
 from typing import Union, List, cast
@@ -19,12 +20,10 @@ class ExcelCheck(CSVCheck):
 
     def clean_excel_df(self, df: pd.DataFrame) -> pd.DataFrame:
         for column_name, column in df.items():
-            try:
+            with suppress(Exception):
                 if column.dtype == "object":
                     _col = column.apply(self.clean_string_column)
                     df[column_name] = _col
-            except Exception:
-                pass
         return df
 
     def read_expect_file(
