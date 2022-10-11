@@ -138,7 +138,7 @@ class PipelineCheck(BaseCheck):
     def get_prepared_parameters(
         self, method: str, params: Union[str, List[str], Dict[str, Any]]
     ):
-        prepared_params = {}
+        prepared_params: Dict[str, Any] = {}
         if isinstance(params, str):
             # If only a string is given, convert it to a list of the first
             # convert_to_path_list argument

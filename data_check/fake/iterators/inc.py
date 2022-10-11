@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Callable, Union, Optional, Any
 import datetime
 import numbers
 import pandas as pd
@@ -17,7 +17,7 @@ def number_inc(x: Union[int, float]):
 
 
 def inc(column: ColumnConfig, data: pd.DataFrame):
-    apply_func = None
+    apply_func: Optional[Callable[[Any], Any]] = None
     if column.python_type in (datetime.date, datetime.datetime):
         apply_func = date_inc
     elif issubclass(column.python_type, numbers.Number):

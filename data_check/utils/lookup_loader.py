@@ -12,17 +12,17 @@ def load_lookup(
 ) -> Tuple[str, List[Any]]:
     lf_path = lf.relative_to(lookups_path)  # remove "lookups"
     if lf_path.parent.parts:
-        lf_path = "__".join(lf_path.parent.parts) + "__" + lf_path.stem
+        lf_path_str = "__".join(lf_path.parent.parts) + "__" + lf_path.stem
     else:
-        lf_path = lf_path.stem
+        lf_path_str = lf_path.stem
     if data_check.output.verbose:
         data_check.output.print(f"load lookup: {lf_path}")
     res = data_check.sql.run_query(
         read_sql_file(lf, template_data=data_check.template_data)
     )
     first_column = res.iloc[:, 0]
-    lkp_value: List[Any] = first_column.values.tolist()
-    return (lf_path, lkp_value)
+    lkp_value: List[Any] = first_column.values.tolist()  # type: ignore
+    return (lf_path_str, lkp_value)
 
 
 def load_lookups_from_path(data_check: DataCheck) -> Dict[str, Any]:

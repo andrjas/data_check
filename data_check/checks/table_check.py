@@ -17,7 +17,7 @@ class TableCheck(SQLBaseCheck):
         super().__init__(data_check, check_path)
         self.check_path_sql = self.check_path.with_suffix(".sql")
         self.check_instance = self.get_check_instance()
-        self.check_instance.get_sql_result = self.get_sql_result
+        self.check_instance.get_sql_result = self.get_sql_result  # type: ignore
 
     @staticmethod
     def is_check_path(path: Path):
@@ -38,6 +38,8 @@ class TableCheck(SQLBaseCheck):
         expect_result = self.check_instance.read_expect_file(
             self.check_instance.get_expect_file(self.check_path_sql), string_columns=[]
         )
+        if isinstance(expect_result, DataCheckResult):
+            return expect_result
         column_list: List[str] = cast(List[str], expect_result.columns.tolist())
         table_name = self.check_path.stem
         query = f"select {','.join(column_list)} from {table_name}"

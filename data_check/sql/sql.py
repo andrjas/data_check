@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional, Union, List
+from typing import Dict, Any, Optional, Union, List, cast
 from os import path
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine, Connection
@@ -83,7 +83,7 @@ class DataCheckSql:
             # do not use CLOB for loading strings (and large decimals)
             # https://docs.sqlalchemy.org/en/14/dialects/oracle.html#example-2-remove-all-bindings-to-clob
             try:
-                from cx_Oracle import CLOB
+                from cx_Oracle import CLOB  # type: ignore
             except ImportError:
                 CLOB = None
 
@@ -131,8 +131,8 @@ class DataCheckSql:
 
     @staticmethod
     def _bindparams(query: str) -> TextClause:
-        sql = text(query)
-        for bp in sql._bindparams.keys():
+        sql = cast(TextClause, text(query))
+        for bp in sql._bindparams.keys():  # type: ignore
             sql = sql.bindparams(bindparam(bp, expanding=True))
         return sql
 
@@ -174,7 +174,7 @@ class DataCheckSql:
         )
         try:
             res: List[Row] = result.fetchall()
-            columns: List[str] = result.keys()
+            columns: List[str] = list(result.keys())
             df = pd.DataFrame(data=res, columns=columns)
             if output:
                 write_csv(df, output=output, base_path=base_path)

@@ -3,6 +3,7 @@ from pathlib import Path
 from jinja2 import Template
 import pandas as pd
 from pandas.core.frame import DataFrame
+from pandas._typing import DtypeArg
 import yaml
 
 from .date import isoparse, parse_date_columns
@@ -75,7 +76,7 @@ def read_csv(
     """
     if not parse_dates:
         parse_dates = False
-    dtypes = {s: "object" for s in string_columns}
+    dtypes: DtypeArg = {s: "object" for s in string_columns}
     df = pd.read_csv(
         csv_file,
         na_values=[""],  # use empty string as nan

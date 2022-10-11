@@ -81,7 +81,7 @@ class FakeConfig:
             write_csv(df, output)
             print(f"fake written to {output}")
 
-    def run_faker(self, output: Path, force=False, base_path: Path = Path(".")):
+    def run_faker(self, output: Path, force=False, base_path: Path = Path(".")) -> bool:
         if output == Path():
             output = Path(f"{self.table_name}.csv")
         abs_output = output if output.is_absolute() else base_path / output

@@ -15,7 +15,7 @@ else:
 
 
 class NoPoolExecutor(Executor):
-    def submit(
+    def submit(  # type: ignore
         self, fn: Callable[..., Any], *args: Tuple[Any], **kwargs: Dict[str, Any]
     ) -> SubmitResult:
         f: SubmitResult = Future()

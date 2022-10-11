@@ -1,6 +1,6 @@
 from contextlib import suppress
 from datetime import datetime, date
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, cast
 import pandas as pd
 from dateutil.parser import isoparse as _isoparse
 import math
@@ -62,9 +62,9 @@ def fix_date_dtype(df: pd.DataFrame, dtype):
     if not dtype:
         dtype = {}
     for column_name, column in df.items():
-        if is_date_column(column_name, column, dtype):
+        if is_date_column(cast(str, column_name), column, dtype):
             if column_has_empty_values(column):
                 # reverse the operations from CSVCheck.get_result:
                 column.replace({pd.NA: pd.NaT}, inplace=True)
-                column.fillna(value=pd.NaT, inplace=True)
-                column.replace(r"^$", pd.NaT, regex=True, inplace=True)
+                column.fillna(value=pd.NaT, inplace=True)  # type: ignore
+                column.replace(r"^$", pd.NaT, regex=True, inplace=True)  # type: ignore

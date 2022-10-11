@@ -10,7 +10,7 @@ def fake_from_config(
     output: Path = Path(),
     force=False,
     base_path: Path = Path("."),
-):
+) -> bool:
     print("fake from", config)
     fake_config = FakeConfig(config)
     fake_config.parse()

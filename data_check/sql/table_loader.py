@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, List, Union, TYPE_CHECKING
+from typing import Optional, List, Union, TYPE_CHECKING, Literal, Dict, cast, Any
 
 from sqlalchemy.sql import text
 from sqlalchemy.sql.expression import bindparam
@@ -57,7 +57,9 @@ class TableLoader:
                 )
 
     @staticmethod
-    def _load_mode_to_pandas_if_exists(mode: LoadMode) -> str:
+    def _load_mode_to_pandas_if_exists(
+        mode: LoadMode,
+    ) -> Literal["fail", "replace", "append"]:
         if mode == LoadMode.REPLACE:
             return "replace"
         return "append"
@@ -88,12 +90,12 @@ class TableLoader:
         self.pre_insert(connection, name, schema)
 
         for _, row in data.iterrows():
-            row_as_dict = row.to_dict()
+            row_as_dict = cast(Dict[str, Any], row.to_dict())
             for p in pk:
                 row_as_dict[f"_{p}"] = row_as_dict.pop(p)
             rows = connection.execute(update_stmt, **row_as_dict)
             if rows.rowcount == 0:
-                connection.execute(insert_stmt, **row.to_dict())
+                connection.execute(insert_stmt, **cast(Dict[str, Any], row.to_dict()))
         return False
 
     def load_table(
