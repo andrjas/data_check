@@ -36,7 +36,7 @@ def test_deprecated_method_argument_instead_argument():
         deprecation.deprecated_method_argument(arg, arg2)
 
 
-def test_deprecated_method_argument_instead_argument():
+def test_deprecated_method_argument_instead_argument_not_none():
     with pytest.raises(
         ValueError, match=r"arg and arg2 cannot be used at the same time$"
     ):

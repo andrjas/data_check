@@ -532,7 +532,7 @@ log: dc.log
     workers_cmd = ["-n", str(1)]
     command = ["run", "-c", "test"]
 
-    with runner.isolated_filesystem(checks_path):
+    with runner.isolated_filesystem(checks_path):  # type: ignore
         runner.invoke(cli, command + workers_cmd)
 
     log_file = tmp_path / "dc.log"

@@ -17,7 +17,7 @@ def number_inc(x: Union[int, float]):
 
 
 def inc(column: ColumnConfig, data: pd.DataFrame):
-    apply_func: Optional[Callable[[Any], Any]] = None
+    apply_func: Optional[Callable[..., Any]] = None
     if column.python_type in (datetime.date, datetime.datetime):
         apply_func = date_inc
     elif issubclass(column.python_type, numbers.Number):

@@ -6,16 +6,12 @@ from data_check.config import DataCheckConfig
 from data_check.sql import DataCheckSql
 
 
-@pytest.fixture(scope="session", autouse=True)
-def auto_resource(request: pytest.FixtureRequest):
+@pytest.fixture(autouse=True)
+def change_test_dir(monkeypatch: pytest.MonkeyPatch):
     """Switch to example folder when running test.
     If we are in int_test, the folder might not exists, since we are in the right project folder already."""
     if os.path.exists("example"):
-        os.chdir("example")
-        yield
-        os.chdir(request.config.invocation_dir)
-    else:
-        yield
+        monkeypatch.chdir("example")
 
 
 @pytest.fixture

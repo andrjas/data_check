@@ -14,8 +14,11 @@ from data_check import DataCheck  # noqa E402
 
 @pytest.fixture
 def data_types_check(dc: DataCheck):
-    res = dc.get_check(Path("checks/basic/data_types.sql")).run_test()
+    check = dc.get_check(Path("checks/basic/data_types.sql"))
+    assert check
+    res = check.run_test()
     assert isinstance(res.result, DataFrame)
+    assert isinstance(res.full_result, DataFrame)
     assert not res.full_result.empty
     return res.full_result.iloc[0]
 
@@ -84,12 +87,16 @@ def test_data_types_whitespace(data_types_check):
 
 
 def test_float_decimal_conversion(dc: DataCheck):
-    res = dc.get_check(Path("checks/basic/float.sql")).run_test()
+    check = dc.get_check(Path("checks/basic/float.sql"))
+    assert check
+    res = check.run_test()
     assert res
 
 
 def test_unicode(dc: DataCheck):
-    res = dc.get_check(Path("checks/basic/unicode_string.sql")).run_test()
+    check = dc.get_check(Path("checks/basic/unicode_string.sql"))
+    assert check
+    res = check.run_test()
     assert res
 
 
@@ -97,12 +104,16 @@ def test_decimal_varchar(dc: DataCheck):
     """
     Test a varchar column, that has only decimals in the csv file
     """
-    res = dc.get_check(Path("checks/basic/decimal_varchar.sql")).run_test()
+    check = dc.get_check(Path("checks/basic/decimal_varchar.sql"))
+    assert check
+    res = check.run_test()
     assert res
 
 
 def test_sorted_set(dc: DataCheck):
-    res = dc.get_check(Path("checks/basic/sorted_set.sql")).run_test()
+    check = dc.get_check(Path("checks/basic/sorted_set.sql"))
+    assert check
+    res = check.run_test()
     assert res
 
 
@@ -111,12 +122,16 @@ def test_dialect(dc: DataCheck):
 
 
 def test_leading_zeros_string(dc: DataCheck):
-    res = dc.get_check(Path("checks/basic/leading_zeros.sql")).run_test()
+    check = dc.get_check(Path("checks/basic/leading_zeros.sql"))
+    assert check
+    res = check.run_test()
     assert res
 
 
 def test_lookup_bindings(dc: DataCheck):
     dc.load_lookups()
-    res = dc.get_check(Path("checks/templates/binding.sql")).run_test()
+    check = dc.get_check(Path("checks/templates/binding.sql"))
+    assert check
+    res = check.run_test()
     print(res)
     assert res

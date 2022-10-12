@@ -42,7 +42,7 @@ def test_run_fake_simple_table(tmp_path: Path):
     fake_path = Path("fake").absolute()
     runner = CliRunner()
 
-    with runner.isolated_filesystem(tmp_path) as td:
+    with runner.isolated_filesystem(tmp_path) as td:  # type: ignore
         tdp = Path(td)
         write_dc_config(tdp)
         shutil.copytree(fake_path, tdp / "fake")
@@ -64,7 +64,7 @@ def test_run_fake_simple_table_without_table(tmp_path: Path):
     fake_path = Path("fake").absolute()
     runner = CliRunner()
 
-    with runner.isolated_filesystem(tmp_path) as td:
+    with runner.isolated_filesystem(tmp_path) as td:  # type: ignore
         tdp = Path(td)
         write_dc_config(tdp)
         shutil.copytree(fake_path, tdp / "fake")
@@ -77,7 +77,7 @@ def test_run_fake_minimal_config(tmp_path: Path):
     fake_path = Path("fake").absolute()
     runner = CliRunner()
 
-    with runner.isolated_filesystem(tmp_path) as td:
+    with runner.isolated_filesystem(tmp_path) as td:  # type: ignore
         tdp = Path(td)
         write_dc_config(tdp)
         shutil.copytree(fake_path, tdp / "fake")
@@ -93,7 +93,7 @@ def test_run_fake_does_not_overwrite(tmp_path: Path):
     fake_path = Path("fake").absolute()
     runner = CliRunner()
 
-    with runner.isolated_filesystem(tmp_path) as td:
+    with runner.isolated_filesystem(tmp_path) as td:  # type: ignore
         tdp = Path(td)
         write_dc_config(tdp)
         shutil.copytree(fake_path, tdp / "fake")
@@ -111,7 +111,7 @@ def test_run_fake_force_overwrites(tmp_path: Path):
     fake_path = Path("fake").absolute()
     runner = CliRunner()
 
-    with runner.isolated_filesystem(tmp_path) as td:
+    with runner.isolated_filesystem(tmp_path) as td:  # type: ignore
         tdp = Path(td)
         write_dc_config(tdp)
         shutil.copytree(fake_path, tdp / "fake")
