@@ -1,15 +1,17 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
 from pathlib import Path
-import pandas as pd
-from typing import TYPE_CHECKING, Dict, Any
+from typing import TYPE_CHECKING, Any, Dict
 
+import pandas as pd
 
 if TYPE_CHECKING:
     from .fake_config import FakeConfig
 
 from data_check.io import read_csv, write_csv
-from .iterators import inc, random, dec
+
+from .iterators import dec, inc, random
 
 
 @dataclass

@@ -1,10 +1,10 @@
-from pathlib import Path
-from pandas.core.frame import DataFrame
-import pytest
-import pandas as pd
 import datetime
-from sqlalchemy import Table, Column, String, Integer, MetaData
+from pathlib import Path
 
+import pandas as pd
+import pytest
+from pandas.core.frame import DataFrame
+from sqlalchemy import Column, Integer, MetaData, String, Table
 
 from data_check import DataCheck  # noqa E402
 

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from data_check.sql import DataCheckSql
+
 from .fake_config import FakeConfig
 
 

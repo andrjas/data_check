@@ -1,13 +1,11 @@
 from pathlib import Path
+
 import pandas as pd
 import pytest
-from sqlalchemy import Table, Column, String, Integer, MetaData
-
+from sqlalchemy import Column, Integer, MetaData, String, Table
 
 from data_check import DataCheck  # noqa E402
-
 from data_check.fake.fake_config import FakeConfig
-from data_check import DataCheck  # noqa E402
 from data_check.io import read_csv
 
 

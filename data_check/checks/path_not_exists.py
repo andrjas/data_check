@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from .base_check import BaseCheck
 from ..result import DataCheckResult, ResultType
+from .base_check import BaseCheck
 
 
 class PathNotExists(BaseCheck):

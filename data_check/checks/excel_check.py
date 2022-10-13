@@ -1,10 +1,11 @@
 from contextlib import suppress
 from pathlib import Path
-import pandas as pd
-from typing import Union, List, cast
+from typing import List, Union, cast
 
-from .csv_check import CSVCheck
+import pandas as pd
+
 from ..result import DataCheckResult, ResultType
+from .csv_check import CSVCheck
 
 
 class ExcelCheck(CSVCheck):

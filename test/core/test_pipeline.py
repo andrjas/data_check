@@ -1,10 +1,10 @@
-import pytest
 from pathlib import Path
 
+import pytest
 
 from data_check import DataCheck  # noqa E402
-from data_check.result import DataCheckResult  # noqa E402
 from data_check.checks.pipeline_check import PipelineCheck  # noqa E402
+from data_check.result import DataCheckResult  # noqa E402
 
 
 @pytest.fixture

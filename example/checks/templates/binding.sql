@@ -3,7 +3,7 @@ with dat as (
     union all
     select 2 as a, 'b' as b {{from_dual}}
 )
-select a 
+select a
 from dat
 where b in :b1
  or a in :sub_lkp__b2

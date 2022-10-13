@@ -1,7 +1,8 @@
-from pathlib import Path
-from click.testing import CliRunner, Result
 from os import linesep
+from pathlib import Path
 from typing import List, Optional
+
+from click.testing import CliRunner, Result
 
 from data_check.cli.main import cli
 

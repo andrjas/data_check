@@ -1,24 +1,24 @@
-from pathlib import Path
-from typing import List, Dict, Any, Union, Optional
 from functools import partial
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 from data_check.checks.base_check import BaseCheck
 
-from .config import DataCheckConfig
-from .result import DataCheckResult
-from .output import DataCheckOutput
-from .io import expand_files, read_sql_file, read_yaml, parse_template
-from .sql import DataCheckSql
-from .runner import DataCheckRunner
 from .checks import (
-    DataCheckGenerator,
     CSVCheck,
-    PipelineCheck,
+    DataCheckGenerator,
     EmptySetCheck,
     ExcelCheck,
     PathNotExists,
+    PipelineCheck,
     TableCheck,
 )
+from .config import DataCheckConfig
+from .io import expand_files, parse_template, read_sql_file, read_yaml
+from .output import DataCheckOutput
+from .result import DataCheckResult
+from .runner import DataCheckRunner
+from .sql import DataCheckSql
 from .utils.lookup_loader import load_lookups_from_path
 
 

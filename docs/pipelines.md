@@ -112,7 +112,7 @@ Short form:
 Long form:
 ```yaml
 - load:
-    files: 
+    files:
       - some_path
       - some/other/path/schema.other_table.csv
     mode: append

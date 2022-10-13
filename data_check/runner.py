@@ -1,12 +1,11 @@
-from concurrent.futures import Executor, ProcessPoolExecutor, Future, as_completed
-from typing import Callable, List, Any, Dict, Optional, Tuple
 import multiprocessing as mp
 import sys
+from concurrent.futures import Executor, Future, ProcessPoolExecutor, as_completed
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from .checks.base_check import BaseCheck
-from .result import DataCheckResult
 from .output import DataCheckOutput
-
+from .result import DataCheckResult
 
 if sys.version_info >= (3, 9):
     SubmitResult = Future[Any]

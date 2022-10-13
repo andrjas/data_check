@@ -3,4 +3,3 @@ default_connection: test
 connections:
     test: sqlite+pysqlite:///test.db
     test2: sqlite+pysqlite:///test2.db
-

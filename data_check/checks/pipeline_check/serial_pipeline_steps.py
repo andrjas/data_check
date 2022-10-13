@@ -1,7 +1,8 @@
 from __future__ import annotations
-from pathlib import Path
-from typing import List, Dict, Any, TYPE_CHECKING, Union
+
 import inspect
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Dict, List, Union
 
 from ...result import DataCheckResult, ResultType
 

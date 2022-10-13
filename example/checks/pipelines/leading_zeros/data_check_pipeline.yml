@@ -6,4 +6,3 @@ steps:
       table: {{test_schema}}.leading_zeros
   - check: leading_zeros.sql
   - sql: select * from {{test_schema}}.leading_zeros
-  

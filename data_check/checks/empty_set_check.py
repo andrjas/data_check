@@ -1,8 +1,8 @@
 from pathlib import Path
 
+from ..io import read_sql_file
 from ..result import DataCheckResult, ResultType
 from .base_check import BaseCheck
-from ..io import read_sql_file
 
 
 class EmptySetCheck(BaseCheck):

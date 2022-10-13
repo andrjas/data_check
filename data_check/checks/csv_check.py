@@ -1,11 +1,12 @@
-from pathlib import Path
-import pandas as pd
-from typing import Union, List, cast
 from dataclasses import dataclass
+from pathlib import Path
+from typing import List, Union, cast
 
-from .sql_base_check import SQLBaseCheck
-from ..result import DataCheckResult, ResultType
+import pandas as pd
+
 from ..io import get_expect_file, read_csv
+from ..result import DataCheckResult, ResultType
+from .sql_base_check import SQLBaseCheck
 
 
 @dataclass

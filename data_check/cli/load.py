@@ -1,10 +1,9 @@
-import click
 from pathlib import Path
-from typing import Union, List, Optional
+from typing import List, Optional, Union
 
-from data_check.data_check import DataCheck
+import click
+
 from data_check.config import DataCheckConfig
-
 
 from .common import common_options, get_data_check
 

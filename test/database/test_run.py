@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 from data_check import DataCheck  # noqa E402
 
 # Basic data_check unit tests

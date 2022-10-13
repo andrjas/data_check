@@ -1,9 +1,11 @@
 from __future__ import annotations
-from pathlib import Path
-import pandas as pd
-from typing import Callable, Optional, Union, List, Tuple
-from enum import Enum
+
 from dataclasses import dataclass
+from enum import Enum
+from pathlib import Path
+from typing import Callable, List, Optional, Tuple, Union
+
+import pandas as pd
 
 
 class ResultType(Enum):

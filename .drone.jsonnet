@@ -8,7 +8,7 @@ local generic_int_test = [
 ];
 
 
-local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, extra_volumes=[], image_extra_volumes=[]) = 
+local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, extra_volumes=[], image_extra_volumes=[]) =
 {
     kind: "pipeline",
     type: "docker",

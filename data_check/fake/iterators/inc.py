@@ -1,7 +1,9 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable, Union, Optional, Any
+
 import datetime
 import numbers
+from typing import TYPE_CHECKING, Any, Callable, Optional, Union
+
 import pandas as pd
 
 if TYPE_CHECKING:

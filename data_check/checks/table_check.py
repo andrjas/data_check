@@ -1,12 +1,14 @@
 from __future__ import annotations
-from pathlib import Path
-from typing import Union, List, cast, TYPE_CHECKING
 
-from .sql_base_check import SQLBaseCheck
-from ..result import DataCheckResult, ResultType
+from pathlib import Path
+from typing import TYPE_CHECKING, List, Union, cast
+
 from data_check.sql.query_result import QueryResult
+
+from ..result import DataCheckResult, ResultType
 from .csv_check import CSVCheck
 from .excel_check import ExcelCheck
+from .sql_base_check import SQLBaseCheck
 
 if TYPE_CHECKING:
     from data_check import DataCheck

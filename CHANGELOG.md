@@ -146,7 +146,7 @@
 - renamed --run-sql/run_sql to --sql-files/sql_files
 - marking tests as failed if result length differs
 - --print outputs CSV format
-- --print output is sorted 
+- --print output is sorted
 
 ### Removed
 

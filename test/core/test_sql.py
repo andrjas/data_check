@@ -1,7 +1,6 @@
 import pytest
 from sqlalchemy.exc import OperationalError
 
-
 from data_check.sql import DataCheckSql  # noqa E402
 
 

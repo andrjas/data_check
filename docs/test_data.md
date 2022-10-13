@@ -176,4 +176,3 @@ Possible values for _next_:
 * _inc_: increment by 1 (day for date)
 * _dec_: decrement by 1 (day for date)
 * _random_: generate a random value from the configured faker/values
-

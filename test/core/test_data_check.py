@@ -1,16 +1,15 @@
 from pathlib import Path
 from unittest.mock import create_autospec
 
-
 from data_check import DataCheck
+from data_check.checks import DataCheckGenerator  # noqa E402
 from data_check.checks import (
     CSVCheck,
-    PipelineCheck,
     EmptySetCheck,
-    DataCheckGenerator,
     ExcelCheck,
+    PipelineCheck,
     TableCheck,
-)  # noqa E402
+)
 from data_check.config import DataCheckConfig
 from data_check.sql.sql import DataCheckSql
 

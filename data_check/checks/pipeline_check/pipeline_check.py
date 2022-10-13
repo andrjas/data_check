@@ -1,15 +1,16 @@
 from __future__ import annotations
-from pathlib import Path
-from typing import Callable, List, Dict, Any, Union, Optional, TYPE_CHECKING, cast
-from copy import deepcopy
-import inspect
-from functools import partial
 
-from ..base_check import BaseCheck
-from ...result import DataCheckResult
+import inspect
+from copy import deepcopy
+from functools import partial
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union, cast
+
 from ...io import read_yaml
-from .serial_pipeline_steps import SerialPipelineSteps
+from ...result import DataCheckResult
+from ..base_check import BaseCheck
 from .cmd_step import CmdStep
+from .serial_pipeline_steps import SerialPipelineSteps
 
 if TYPE_CHECKING:
     from data_check import DataCheck

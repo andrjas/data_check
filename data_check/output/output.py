@@ -1,17 +1,17 @@
+import sys
+import traceback
 from pathlib import Path
+from typing import IO, Any, Callable, List, Optional, Tuple, Union, cast
+
 import pandas as pd
 from colorama import Fore, Style
-import traceback
-import sys
-from typing import IO, Callable, Optional, Any, Tuple, Union, List, cast
-
 
 from ..exceptions import DataCheckException
-from ..result import DataCheckResult, ResultType
 from ..io import rel_path
+from ..result import DataCheckResult, ResultType
+from .diffed_df import get_diffed_df
 from .handler import OutputHandler
 from .result_formatter import format_data_check_result
-from .diffed_df import get_diffed_df
 
 
 class DataCheckOutput:

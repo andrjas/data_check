@@ -1,5 +1,6 @@
-import pandas as pd
 from typing import List, Optional, cast
+
+import pandas as pd
 from pandas.api.types import is_string_dtype
 from sqlalchemy.engine.cursor import CursorResult
 from sqlalchemy.engine.row import Row

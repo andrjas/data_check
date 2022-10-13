@@ -1,11 +1,11 @@
 from pathlib import Path
 from unittest.mock import create_autospec
+
 import pandas as pd
 
-
+from data_check import DataCheck, DataCheckConfig  # noqa E402
 from data_check.checks.generator import DataCheckGenerator  # noqa E402
 from data_check.sql import DataCheckSql  # noqa E402
-from data_check import DataCheck, DataCheckConfig  # noqa E402
 
 
 def prepare_sql(tmp_path: Path):

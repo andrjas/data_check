@@ -1,5 +1,5 @@
 steps:
-  - cmd:    
+  - cmd:
     - echo "start data_check pipeline {{PIPELINE_PATH}}"
     - "echo 'connection: {{CONNECTION}}'"
     - "echo 'connection string {{CONNECTION_STRING}}'"

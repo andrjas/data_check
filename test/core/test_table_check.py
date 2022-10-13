@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 from data_check import DataCheck
 
 # Basic data_check unit tests

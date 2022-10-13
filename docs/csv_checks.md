@@ -31,7 +31,7 @@ ABC
 ## CSV format
 
 data_check uses a basic CSV format. Each column is separated by a comma without any space around them.
-The first line must contain a header. The columns must match the columns in the SQL file. 
+The first line must contain a header. The columns must match the columns in the SQL file.
 
 Any columns that do not match between the CSV and the SQL file will be ignored.
 

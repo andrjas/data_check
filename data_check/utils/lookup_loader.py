@@ -1,6 +1,8 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Tuple, List, Any, Dict
+
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, Dict, List, Tuple
+
 from data_check.io import expand_files, read_sql_file
 
 if TYPE_CHECKING:

@@ -1,8 +1,9 @@
-from dataclasses import dataclass, field
-import random
-from typing import Any, Callable, Dict, List, Optional
-import decimal
 import datetime
+import decimal
+import random
+from dataclasses import dataclass, field
+from typing import Any, Callable, Dict, List, Optional
+
 from faker import Faker
 
 from data_check.sql import DataCheckSql

@@ -1,7 +1,8 @@
 from __future__ import annotations
-import pandas as pd
+
 from typing import TYPE_CHECKING, Any
 
+import pandas as pd
 
 if TYPE_CHECKING:
     from ..column_config import ColumnConfig

@@ -1,12 +1,9 @@
 from datetime import datetime
+
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-
-from data_check.date import (
-    isoparse,
-    parse_date_columns,
-)
+from data_check.date import isoparse, parse_date_columns
 
 
 def test_isoparse_datetime():

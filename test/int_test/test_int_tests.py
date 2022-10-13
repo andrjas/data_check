@@ -1,10 +1,9 @@
-from click.testing import CliRunner, Result
-import pytest
-from pathlib import Path
 from contextlib import suppress
-
+from pathlib import Path
 from typing import List, Optional
 
+import pytest
+from click.testing import CliRunner, Result
 
 from data_check.cli.main import cli
 

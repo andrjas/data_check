@@ -1,13 +1,15 @@
 from contextlib import suppress
 from pathlib import Path
-from typing import Union, List, cast, Tuple
-import pandas as pd
-import numpy as np
+from typing import List, Tuple, Union, cast
 
-from .base_check import BaseCheck
+import numpy as np
+import pandas as pd
+
 from data_check.sql.query_result import QueryResult
-from ..result import DataCheckResult, ResultType
+
 from ..io import read_sql_file
+from ..result import DataCheckResult, ResultType
+from .base_check import BaseCheck
 
 
 class SQLBaseCheck(BaseCheck):

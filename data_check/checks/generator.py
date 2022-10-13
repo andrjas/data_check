@@ -1,10 +1,9 @@
 from pathlib import Path
-from typing import Dict, Any
-
-from .base_check import BaseCheck
+from typing import Any, Dict
 
 from ..io import get_expect_file, read_sql_file, rel_path, write_csv
 from ..result import DataCheckResult
+from .base_check import BaseCheck
 
 
 class DataCheckGenerator(BaseCheck):

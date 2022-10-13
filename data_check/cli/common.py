@@ -1,12 +1,12 @@
-import click
 import sys
-from pathlib import Path
-from typing import Callable, Union, Any, Optional, cast, Dict
 from importlib.metadata import version
+from pathlib import Path
+from typing import Any, Callable, Dict, Optional, Union, cast
+
+import click
 
 from data_check.config import DataCheckConfig
 from data_check.data_check import DataCheck
-
 
 DEFAULT_VALUES: Dict[str, Any] = {
     "connection": "",

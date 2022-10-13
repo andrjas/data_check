@@ -1,7 +1,7 @@
-from typing import Any
-import warnings
 import inspect
 import sys
+import warnings
+from typing import Any
 
 
 def showwarning(message, category, filename, lineno, file=None, line=None):

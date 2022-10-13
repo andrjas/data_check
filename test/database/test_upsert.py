@@ -1,6 +1,6 @@
-from sqlalchemy import MetaData, Table, Column, Integer, String
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from sqlalchemy import Column, Integer, MetaData, String, Table
 
 from data_check.sql import DataCheckSql
 from data_check.sql.load_mode import LoadMode

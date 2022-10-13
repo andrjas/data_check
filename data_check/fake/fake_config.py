@@ -1,11 +1,13 @@
 from pathlib import Path
 from typing import Any, Dict
+
+import pandas as pd
 import yaml
 from faker import Faker
-import pandas as pd
 
-from data_check.sql import DataCheckSql
 from data_check.io import write_csv
+from data_check.sql import DataCheckSql
+
 from .column_config import ColumnConfig
 from .fake_iterator import FakeIterator
 

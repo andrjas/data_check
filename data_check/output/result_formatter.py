@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 from os import linesep
+from typing import TYPE_CHECKING, cast
+
 import pandas as pd
-from typing import cast, TYPE_CHECKING
 
 from data_check.result import DataCheckResult
 

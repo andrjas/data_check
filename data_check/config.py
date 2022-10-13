@@ -1,7 +1,7 @@
 from pathlib import Path
-from .io import read_yaml
-from typing import Optional, Dict, Any, Tuple
+from typing import Any, Dict, Optional, Tuple
 
+from .io import read_yaml
 
 TEMPLATE_FILE = "template.yml"
 CHECKS_PATH = "checks"

@@ -1,5 +1,6 @@
-import pytest
 from concurrent.futures import ProcessPoolExecutor
+
+import pytest
 
 from data_check.runner import DataCheckRunner, NoPoolExecutor
 

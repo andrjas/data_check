@@ -1,24 +1,24 @@
-from typing import Dict, Any, Optional, Union, List, cast
+from functools import cached_property
 from os import path
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union, cast
+
+import pandas as pd
 from sqlalchemy import create_engine, event
-from sqlalchemy.engine import Engine, Connection
-from sqlalchemy.engine.row import Row
+from sqlalchemy.engine import Connection, Engine
 from sqlalchemy.engine.cursor import CursorResult
+from sqlalchemy.engine.row import Row
 from sqlalchemy.sql import text
 from sqlalchemy.sql.elements import TextClause
 from sqlalchemy.sql.expression import bindparam
-import pandas as pd
-from pathlib import Path
-from functools import cached_property
-
 
 from ..exceptions import DataCheckException
-from ..output import DataCheckOutput
 from ..io import print_csv, write_csv
+from ..output import DataCheckOutput
 from ..runner import DataCheckRunner
-from .table_loader import TableLoader
-from .table_info import TableInfo
 from .query_result import QueryResult
+from .table_info import TableInfo
+from .table_loader import TableLoader
 
 
 class DataCheckSql:

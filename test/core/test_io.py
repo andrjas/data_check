@@ -1,13 +1,9 @@
 import os
 from pathlib import Path
+
 import pytest
 
-
-from data_check.io import (
-    expand_files,
-    read_sql_file,
-    get_expect_file,
-)
+from data_check.io import expand_files, get_expect_file, read_sql_file
 
 
 def test_expand_files():

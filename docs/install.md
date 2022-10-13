@@ -73,7 +73,7 @@ Some drivers need additional dependencies. Here are the drivers used for [testin
 
 `psycopg2-binary` should work on most systems without any additional dependencies.
 
-You can use `data-check[postgres]` to install data_check directly with `psycopg2-binary`: 
+You can use `data-check[postgres]` to install data_check directly with `psycopg2-binary`:
 e.g. with pipx: `pipx install data-check[postgres]`
 
 ### MySQL/MariaDB

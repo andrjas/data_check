@@ -8,7 +8,7 @@ rows: 100  # how many rows to generate
 iterations:  # generate data with same business_key with some variation
   count: 5  # how many iterations to generate
 
-columns:  # 
+columns:  #
   bkey:
     faker: iban
 
@@ -16,8 +16,8 @@ columns:  #
     # faker_args:
     #   start_date: 1900-01-01
     #   end_date: 9999-12-31
-      
-    add_values:  # use 
+
+    add_values:  # use
       - 1900-01-01
       - 9999-12-31
   col2:

@@ -1,7 +1,8 @@
 from __future__ import annotations
-from pathlib import Path
-from typing import List, Union, TYPE_CHECKING
+
 import subprocess
+from pathlib import Path
+from typing import TYPE_CHECKING, List, Union
 
 if TYPE_CHECKING:
     from data_check.output import DataCheckOutput

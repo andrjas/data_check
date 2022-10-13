@@ -1,10 +1,10 @@
-from pathlib import Path
-import pytest
-import pandas as pd
-from pandas.testing import assert_frame_equal
-from sqlalchemy import Table, Column, String, Integer, MetaData, Date, Numeric, DateTime
 import datetime
+from pathlib import Path
 
+import pandas as pd
+import pytest
+from pandas.testing import assert_frame_equal
+from sqlalchemy import Column, Date, DateTime, Integer, MetaData, Numeric, String, Table
 
 from data_check import DataCheck  # noqa E402
 from data_check.sql import LoadMode  # noqa E402

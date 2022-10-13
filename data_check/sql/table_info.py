@@ -1,12 +1,13 @@
 from __future__ import annotations
-from sqlalchemy import inspect, Table, MetaData
+
+import datetime
+from dataclasses import dataclass
+from functools import cached_property
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, cast
+
+from sqlalchemy import MetaData, Table, inspect
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.exc import NoSuchTableError
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, cast, Dict, List, Tuple, Any, Optional
-import datetime
-
-from functools import cached_property
 
 if TYPE_CHECKING:
     from data_check.sql import DataCheckSql

@@ -1,6 +1,7 @@
-import pandas as pd
 import itertools
 from typing import List, Tuple
+
+import pandas as pd
 
 from data_check.result import DataCheckResult
 

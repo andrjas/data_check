@@ -1,22 +1,23 @@
 from __future__ import annotations
-from typing import Optional, List, Union, TYPE_CHECKING, Literal, Dict, cast, Any
 
-from sqlalchemy.sql import text
-from sqlalchemy.sql.expression import bindparam
-from sqlalchemy.engine import Connection
-import pandas as pd
 import warnings
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Union, cast
+
+import pandas as pd
+from sqlalchemy.engine import Connection
+from sqlalchemy.sql import text
+from sqlalchemy.sql.expression import bindparam
 
 if TYPE_CHECKING:
     from data_check.sql import DataCheckSql
     from data_check.output import DataCheckOutput
     from data_check.sql.table_info import ColumnInfo
 
-from ..io import expand_files, read_csv
-from .load_mode import LoadMode
 from ..date import fix_date_dtype
+from ..io import expand_files, read_csv
 from ..utils.deprecation import deprecated_method_argument
+from .load_mode import LoadMode
 
 
 class TableLoader:

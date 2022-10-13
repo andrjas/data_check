@@ -1,10 +1,11 @@
-from click.testing import CliRunner, Result
 import os
-from pathlib import Path
 import shutil
-from os import linesep, sep
-from typing import List, Optional
 import warnings
+from os import linesep, sep
+from pathlib import Path
+from typing import List, Optional
+
+from click.testing import CliRunner, Result
 
 from data_check.cli.main import cli
 

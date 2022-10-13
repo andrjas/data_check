@@ -1,8 +1,8 @@
-from typing import IO, Any, Callable, Optional
-import os
-import locale
-from pathlib import Path
 import datetime
+import locale
+import os
+from pathlib import Path
+from typing import IO, Any, Callable, Optional
 
 
 class OutputHandler:

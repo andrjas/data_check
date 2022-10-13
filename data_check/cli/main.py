@@ -1,18 +1,19 @@
+from pathlib import Path
+from typing import Optional, Union
+
 import click
 from click_default_group import DefaultGroup  # type: ignore
-from pathlib import Path
 from colorama import init
-from typing import Union, Optional
 
 from data_check.config import DataCheckConfig
 
+from .common import common_options, init_common
+from .fake import fake
+from .generate import gen
+from .load import load
+from .ping import ping
 from .run import run
 from .sql import sql
-from .generate import gen
-from .ping import ping
-from .load import load
-from .fake import fake
-from .common import common_options, init_common
 
 
 @click.group(cls=DefaultGroup, default="run", default_if_no_args=True)

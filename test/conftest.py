@@ -1,5 +1,6 @@
-import pytest
 import os
+
+import pytest
 
 from data_check import DataCheck
 from data_check.config import DataCheckConfig
