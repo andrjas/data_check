@@ -25,9 +25,12 @@ class TableLoader:
     Helper class that implements the methods to load a table from a CSV file.
     """
 
-    def __init__(self, sql: DataCheckSql, output: DataCheckOutput):
+    def __init__(
+        self, sql: DataCheckSql, output: DataCheckOutput, default_load_mode: LoadMode
+    ):
         self.sql = sql
         self.output = output
+        self.default_load_mode = default_load_mode
 
     def __del__(self):
         self.sql.disconnect()
@@ -126,8 +129,7 @@ class TableLoader:
                 )
                 return True
 
-    @staticmethod
-    def get_load_mode(deprecated_load_mode, mode) -> LoadMode:
+    def get_load_mode(self, deprecated_load_mode, mode) -> LoadMode:
         if deprecated_load_mode is not None:
             if isinstance(deprecated_load_mode, str):
                 mode = TableLoader.load_mode_from_string(deprecated_load_mode)
@@ -135,18 +137,20 @@ class TableLoader:
                 mode = deprecated_load_mode
         if isinstance(mode, str):
             mode = TableLoader.load_mode_from_string(mode)
+        if mode == LoadMode.DEFAULT:
+            mode = self.default_load_mode
         return mode
 
     def load_table_from_file(
         self,
         table: str,
         file: Path,
-        mode: Union[str, LoadMode] = LoadMode.TRUNCATE,
+        mode: Union[str, LoadMode] = LoadMode.DEFAULT,
         base_path: Path = Path("."),
         load_mode: Union[str, LoadMode, None] = None,
     ):
-        deprecated_method_argument(load_mode, mode, LoadMode.TRUNCATE)
-        mode = TableLoader.get_load_mode(load_mode, mode)
+        deprecated_method_argument(load_mode, mode, LoadMode.DEFAULT)
+        mode = self.get_load_mode(load_mode, mode)
         rel_file = base_path / file
         column_info = self.sql.table_info.get_column_info(table)
         data = self.load_df_from_file(rel_file, column_info)
@@ -181,12 +185,12 @@ class TableLoader:
     def load_tables_from_files(
         self,
         files: List[Path],
-        mode: Union[str, LoadMode] = LoadMode.TRUNCATE,
+        mode: Union[str, LoadMode] = LoadMode.DEFAULT,
         base_path: Path = Path("."),
         load_mode: Union[str, LoadMode, None] = None,
     ):
-        deprecated_method_argument(load_mode, mode, LoadMode.TRUNCATE)
-        mode = TableLoader.get_load_mode(load_mode, mode)
+        deprecated_method_argument(load_mode, mode, LoadMode.DEFAULT)
+        mode = self.get_load_mode(load_mode, mode)
         flat_files = expand_files(
             files, extension=[".csv", ".xlsx"], base_path=base_path
         )

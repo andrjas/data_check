@@ -32,6 +32,11 @@ By default, the tables will be truncated before loading the data. You can use th
 `data_check load file.csv --table table_name --mode replace`
 `data_check load path/to/tables_folder --mode append`
 
+The default load mode can also be set for the whole project in _data\_check.yml_:
+```yaml
+default_load_mode: append
+```
+
 ## CSV and data types
 
 When loading data from CSV files, data_check (or more precisely: [pandas](https://pandas.pydata.org/)) will infer the data types from the file.

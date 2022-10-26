@@ -36,7 +36,10 @@ class DataCheck:
         if not isinstance(config.connection, str):
             raise Exception("connection is not initialized")
         self.sql = DataCheckSql(
-            connection=config.connection, runner=self.runner, output=self.output
+            connection=config.connection,
+            runner=self.runner,
+            output=self.output,
+            config=self.config,
         )
         self.template_data: Dict[str, Any] = {}
         self.lookup_data: Dict[str, Any] = {}

@@ -1,5 +1,10 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
+
+if TYPE_CHECKING:
+    from data_check.sql.load_mode import LoadMode
 
 from .io import read_yaml
 
@@ -100,3 +105,9 @@ class DataCheckConfig:
                 connection = default_connection
 
         return self.config.get("connections", {}).get(connection, ""), connection
+
+    @property
+    def default_load_mode(self) -> LoadMode:
+        from data_check.sql.load_mode import LoadMode
+
+        return LoadMode.from_string(self.config.get("default_load_mode", "truncate"))

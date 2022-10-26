@@ -277,3 +277,25 @@ def test_load_tables_from_files_load_mode_is_deprecated_as_str(sql: DataCheckSql
         sql.table_loader.load_tables_from_files(
             [Path(f"load_data/test.csv")], load_mode="truncate"
         )
+
+
+def test_default_load_mode_is_truncate(sql: DataCheckSql):
+    table_loader = sql.table_loader
+    assert table_loader.default_load_mode == LoadMode.TRUNCATE
+
+
+def test_default_load_mode_set_append(sql: DataCheckSql):
+    sql.config.config["default_load_mode"] = "append"
+    table_loader = sql.table_loader
+    assert table_loader.default_load_mode == LoadMode.APPEND
+
+
+def test_get_load_mode_default(sql: DataCheckSql):
+    mode = sql.table_loader.get_load_mode(None, LoadMode.DEFAULT)
+    assert mode == LoadMode.TRUNCATE
+
+
+def test_get_load_mode_set_append(sql: DataCheckSql):
+    sql.config.config["default_load_mode"] = "append"
+    mode = sql.table_loader.get_load_mode(None, LoadMode.DEFAULT)
+    assert mode == LoadMode.APPEND

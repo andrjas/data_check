@@ -12,6 +12,8 @@ from sqlalchemy.sql import text
 from sqlalchemy.sql.elements import TextClause
 from sqlalchemy.sql.expression import bindparam
 
+from data_check.config import DataCheckConfig
+
 from ..exceptions import DataCheckException
 from ..io import print_csv, write_csv
 from ..output import DataCheckOutput
@@ -27,6 +29,7 @@ class DataCheckSql:
         connection: str,
         runner: Optional[DataCheckRunner] = None,
         output: Optional[DataCheckOutput] = None,
+        config: Optional[DataCheckConfig] = None,
     ) -> None:
         self.connection = connection
         self.__connection: Optional[Connection] = None
@@ -40,12 +43,16 @@ class DataCheckSql:
             runner = DataCheckRunner(workers=1, output=self.output)
         self.runner = runner
 
+        if config is None:
+            config = DataCheckConfig()
+        self.config = config
+
     @cached_property
     def table_loader(self) -> TableLoader:
         """
         Lazy-load a TableLoader.
         """
-        return TableLoader(self, self.output)
+        return TableLoader(self, self.output, self.config.default_load_mode)
 
     @cached_property
     def table_info(self) -> TableInfo:

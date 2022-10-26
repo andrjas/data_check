@@ -1,5 +1,6 @@
 default_connection: test
 # log: data_check.log
+# default_load_mode: truncate
 
 connections:
     test: sqlite+pysqlite://
