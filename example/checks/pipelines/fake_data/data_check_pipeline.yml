@@ -1,5 +1,6 @@
 steps:
-  - sql_files: sql
+  - sql:
+      files: sql
   - load: data
   - fake: fake_conf.yml
   - load: main.simple_fake_table.csv

@@ -1,2 +1,3 @@
 steps:
-  - sql_file: no_such_file.sql
+  - sql:
+      files: no_such_file.sql

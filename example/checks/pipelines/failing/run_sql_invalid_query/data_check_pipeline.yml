@@ -1,2 +1,3 @@
 steps:
-  - sql_file: invalid.sql
+  - sql:
+      file: invalid.sql

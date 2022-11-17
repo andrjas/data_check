@@ -6,6 +6,8 @@ from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union, cast
 
+from data_check.utils.deprecation import deprecated_method
+
 from ...io import read_yaml
 from ...result import DataCheckResult
 from ..base_check import BaseCheck
@@ -43,15 +45,12 @@ class PipelineCheck(BaseCheck):
             "check", pipeline_check, convert_to_path_list=["files"]
         )
         self.register_pipeline_step(
-            "sql_files", self.data_check.run_sql_files, convert_to_path_list=["files"]
+            "sql_files", self.deprecated_sql_files, convert_to_path_list=["files"]
         )
         self.register_pipeline_step(
-            "sql_file", self.data_check.run_sql_files, convert_to_path_list=["files"]
+            "sql_file", self.deprecated_sql_files, convert_to_path_list=["files"]
         )
-        pipeline_run_sql_query = partial(
-            self.data_check.run_sql_query, print_query=True
-        )
-        self.register_pipeline_step("sql", pipeline_run_sql_query)
+        self.register_pipeline_step("sql", self.sql_query_or_files)
         self.register_pipeline_step("always_run", self.always_run)
         self.register_pipeline_step(
             "fake",
@@ -59,6 +58,77 @@ class PipelineCheck(BaseCheck):
             convert_to_path_list=["configs"],
             convert_to_path=["output"],
         )
+
+    def deprecated_sql_files(self, files: List[Path], base_path: Path = Path(".")):
+        deprecated_method(
+            "sql_files",
+            """
+sql:
+    files:
+""",
+        )
+        return self.data_check.run_sql_files(files=files, base_path=base_path)
+
+    def sql_query_or_files(
+        self,
+        query_or_files: Union[str, List[str], Path, List[Path]] = "",
+        query: str = "",
+        output: Union[str, Path] = "",
+        print_query: bool = True,
+        files: List[Path] = [],
+        file: List[Path] = [],
+        base_path: Path = Path("."),
+    ):
+        if base_path == Path("."):
+            base_path = self.check_path
+
+        if query_or_files and not query:
+            if isinstance(query_or_files, str):
+                try_file = base_path / query_or_files
+                if try_file.exists():
+                    files = self.convert_to_path_list(query_or_files)
+                else:
+                    query = query_or_files
+            elif isinstance(query_or_files, List):
+                path_list = self.convert_to_path_list(query_or_files)
+                files = path_list
+
+        # file is an alias for files
+        if file:
+            if files:
+                raise Exception(f"cannot use files and file at the same time")
+            files = file
+
+        if files:
+            path_list = self.convert_to_path_list(files)
+            return self.data_check.run_sql_files(files=path_list, base_path=base_path)
+
+        if query:
+            return self.data_check.run_sql_query(
+                query=query, output=output, base_path=base_path, print_query=print_query
+            )
+
+        raise ValueError(
+            f"""unsupported parameter for sql:
+{query_or_files=}
+{query=}
+{output=}
+{files=}
+"""
+        )
+
+    @staticmethod
+    def convert_to_path_list(
+        params: Union[str, List[str], Path, List[Path]]
+    ) -> List[Path]:
+        if isinstance(params, str):
+            return [Path(params)]
+        elif isinstance(params, List):
+            return [Path(p) for p in params]
+        elif isinstance(params, Path):
+            return [Path(params)]
+        else:
+            raise ValueError(f"unsupported type {type(params)} for {params}")
 
     @staticmethod
     def is_check_path(path: Path) -> bool:
@@ -97,8 +167,7 @@ class PipelineCheck(BaseCheck):
         steps = pipeline_config.get("steps", [])
         return steps or []
 
-    def run_test(self) -> DataCheckResult:
-        steps = self._get_steps(self.check_path)
+    def run_steps_pipeline(self, steps: List[Any]) -> DataCheckResult:
         serial_steps = SerialPipelineSteps(
             self.data_check,
             self,
@@ -107,6 +176,10 @@ class PipelineCheck(BaseCheck):
             pipeline_name=str(self.check_path),
         )
         return serial_steps.run()
+
+    def run_test(self) -> DataCheckResult:
+        steps = self._get_steps(self.check_path)
+        return self.run_steps_pipeline(steps)
 
     def run_cmd(
         self, commands: List[str], print: bool = True, base_path: Path = Path(".")

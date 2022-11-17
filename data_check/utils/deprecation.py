@@ -1,7 +1,7 @@
 import inspect
 import sys
 import warnings
-from typing import Any
+from typing import Any, Optional
 
 
 def showwarning(message, category, filename, lineno, file=None, line=None):
@@ -24,6 +24,14 @@ def retrieve_name(var):
     )
 
 
+def retrieve_caller() -> str:
+    """Returns the name of the calling method from 2 frames back (i.e. the method calling the caller of retrieve_caller)."""
+    cur_frame = inspect.currentframe()
+    if cur_frame and cur_frame.f_back and cur_frame.f_back.f_back:
+        return cur_frame.f_back.f_back.f_code.co_name
+    return "UNKNOWN CALLER"
+
+
 def deprecated_method_argument(
     argument: Any, instead_argument: Any = None, instead_default_value: Any = None
 ):
@@ -38,3 +46,14 @@ def deprecated_method_argument(
             raise ValueError(
                 f"{argument_name} and {use_instead_argument} cannot be used at the same time"
             )
+
+
+def deprecated_method(
+    deprecated_method_name: Optional[str] = None, instead_method: Optional[str] = None
+):
+    if not deprecated_method_name:
+        deprecated_method_name = retrieve_caller()
+    warn_msg = f"{deprecated_method_name} is deprecated"
+    if instead_method:
+        warn_msg += f", use {instead_method} instead"
+    warnings.warn(warn_msg, FutureWarning)

@@ -33,7 +33,7 @@ steps:
     # this will truncate the table my_schema.some_table and load it with the data from data/my_schema.some_table.csv
     - load: data
     # this will execute the SQL statement in run_this.sql
-    - sql_file: run_this.sql
+    - sql: run_this.sql
     # this will append the data from data2/some_data.csv to my_schema.other_table
     - load_table:
         file: data2/some_data.csv
@@ -44,7 +44,7 @@ steps:
     # this will run the CSV checks in the some_checks folder
     - check: some_checks
     - always_run:
-        - sql_file: run_this_always.sql
+        - sql: run_this_always.sql
 ```
 
 Pipeline checks and simple CSV checks can coexist in a project.
@@ -127,38 +127,18 @@ You can also omit _files_:
     - some/other/path/schema.other_table.csv
 ```
 
-### sql_files
-
-_sql\_files_ is like calling `data_check sql --files ...`. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call _sql\_files_ twice. _sql\_file_ is an alias for _sql\_files_.
-
-Short form:
-```yaml
-- sql_files: some_file.sql
-```
-
-Using the alias:
-```yaml
-- sql_file: some_file.sql
-```
-
-Long form:
-```yaml
-- sql_files:
-    files:
-      - some_file.sql
-      - some_path
-```
-
-You can also omit _files_:
-```yaml
-- sql_files:
-    - some_file.sql
-    - some_path
-```
-
 ### sql
 
-_sql_ is like calling `data_check sql ...`. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV.
+_sql_ is like calling `data_check sql ...`.
+_sql_ has two modes: query mode and files mode.
+In the short form, _sql_ will check if the given parameter is a file and run the file in files mode.
+If the parameter is not a file, _sql_ will execute in query mode.
+
+Query mode and files mode can be explicitly specified by using the long form of _sql_.
+
+#### query mode
+
+The query mode is like calling `data_check sql ...` without `--files`. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV. If the parameter is a file path, the
 
 Short form:
 ```yaml
@@ -179,6 +159,31 @@ With _output_ to write a CSV file:
 ```
 
 _output_ is relative to the pipeline path, unless an absolute path is specified, for example '{{PROJECT_PATH}}/result.csv'.
+_output_ can only be used with a query, not with files.
+
+#### files mode
+
+The query mode is like calling `data_check sql --files ...`. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call _sql_ twice.
+
+Short form:
+```yaml
+- sql: some_file.sql
+```
+
+Long form:
+```yaml
+- sql:
+    files:
+      - some_file.sql
+      - some_path
+```
+
+You can also omit _files_:
+```yaml
+- sql:
+    - some_file.sql
+    - some_path
+```
 
 
 ### cmd
@@ -215,16 +220,48 @@ _always\_run_ is a container for other steps. These steps will always be execute
 Example:
 ```yaml
 steps:
-  - sql_file: might_fail.sql
+  - sql: might_fail.sql
   - always_run:
-    - sql_file: run_after_failing.sql
+    - sql: run_after_failing.sql
     - cmd: some_script.sh
   - cmd: other_script.sh
   - always_run:
-    - sql_file: finish.sql
+    - sql: finish.sql
 ```
 
 In this example, if _might\_fail.sql_ fails, _run\_after\_failing.sql_, _some\_script.sh_ and _finish.sql_ will be run in this order. If _might\_fail.sql_ does not fail, _other\_script.sh_ is executed after _run\_after\_failing.sql_ and _some\_script.sh_. _finish.sql_ will then run at the end (even when _other\_script.sh_ fails).
+
+
+### sql_files
+
+_sql\_files_ is deprecated. Use [sql](#sql) instead.
+
+_sql\_files_ is like calling `data_check sql --files ...`. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call _sql\_files_ twice. _sql\_file_ is an alias for _sql\_files_.
+
+Short form:
+```yaml
+- sql_files: some_file.sql
+```
+
+Using the alias:
+```yaml
+- sql_file: some_file.sql
+```
+
+Long form:
+```yaml
+- sql_files:
+    files:
+      - some_file.sql
+      - some_path
+```
+
+You can also omit _files_:
+```yaml
+- sql_files:
+    - some_file.sql
+    - some_path
+```
 
 ## nested pipelines
 

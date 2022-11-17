@@ -287,9 +287,27 @@ def test_pipeline_template_connection_string(pc: PipelineCheck):
     assert connection_string == "sqlite+pysqlite://"
 
 
-def test_pipeline_stops_after_failing_step(pc: PipelineCheck, tmp_path: Path):
+def test_pipeline_stops_after_failing_step(pc: PipelineCheck):
     pc.check_path = Path("checks/pipelines/failing/pipeline_stops")
     result = pc.run_test()
     assert not result
     assert check_table_exists("pipeline_stop_b1", pc.data_check)
     assert not check_table_exists("pipeline_stop_b2", pc.data_check)
+
+
+def test_sql_files_is_deprecated(pc: PipelineCheck):
+    steps = [{"sql_files": ["run_sql/run_test.sql"]}]
+    with pytest.warns(FutureWarning, match="sql_files is deprecated, use"):
+        pc.run_steps_pipeline(steps)
+
+
+def test_sql_file_alias(pc: PipelineCheck):
+    steps = [{"sql": {"file": "run_sql/run_test.sql"}}]
+    result = pc.run_steps_pipeline(steps)
+    assert result
+
+
+def test_sql_files_and_file_simultaneously_raise_exception(pc: PipelineCheck):
+    steps = [{"sql": {"file": "run_sql/run_test.sql", "files": "run_sql/run_test.sql"}}]
+    result = pc.run_steps_pipeline(steps)
+    assert result.exception
