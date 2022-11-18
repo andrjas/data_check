@@ -311,3 +311,9 @@ def test_sql_files_and_file_simultaneously_raise_exception(pc: PipelineCheck):
     steps = [{"sql": {"file": "run_sql/run_test.sql", "files": "run_sql/run_test.sql"}}]
     result = pc.run_steps_pipeline(steps)
     assert result.exception
+
+
+def test_run_is_alias_for_check(pc: PipelineCheck):
+    steps = [{"run": ["checks/basic"]}]
+    result = pc.run_steps_pipeline(steps)
+    assert result

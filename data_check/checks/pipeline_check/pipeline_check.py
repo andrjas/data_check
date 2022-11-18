@@ -44,6 +44,10 @@ class PipelineCheck(BaseCheck):
         self.register_pipeline_step(
             "check", pipeline_check, convert_to_path_list=["files"]
         )
+        # run is an alias for check
+        self.register_pipeline_step(
+            "run", pipeline_check, convert_to_path_list=["files"]
+        )
         self.register_pipeline_step(
             "sql_files", self.deprecated_sql_files, convert_to_path_list=["files"]
         )

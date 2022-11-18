@@ -84,6 +84,10 @@ You can also omit _files_:
     - some/other/checks.sql
 ```
 
+_run_ is an alias for check:
+```yaml
+- run: some_checks
+```
 
 ### load_table
 
