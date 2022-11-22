@@ -13,7 +13,7 @@ from .common import common_options, get_data_check
 @click.option(
     "--file",
     "--files",
-    "sql_files",
+    "files",
     type=click.Path(),
     multiple=True,
     help="run any SQL script in a list of SQL files",
@@ -38,7 +38,7 @@ def sql(
     log: Optional[Union[str, Path]] = None,
     output: Union[str, Path] = "",
     write_check: Union[str, Path] = "",
-    sql_files: List[Union[str, Path]] = [],
+    files: List[Union[str, Path]] = [],
     query: str = "",
 ):
     """Run SQL statements."""
@@ -56,8 +56,8 @@ def sql(
     dc.load_template()
     dc.load_lookups()
 
-    if sql_files:
-        path_list = [Path(f) for f in sql_files]
+    if files:
+        path_list = [Path(f) for f in files]
         dc.run_sql_files(path_list)
         ctx.exit(0)
     else:
