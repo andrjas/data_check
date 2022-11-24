@@ -317,3 +317,11 @@ def test_run_is_alias_for_check(pc: PipelineCheck):
     steps = [{"run": ["checks/basic"]}]
     result = pc.run_steps_pipeline(steps)
     assert result
+
+
+def test_write_check_in_pipeline(pc: PipelineCheck, tmp_path: Path):
+    pc.check_path = tmp_path
+    steps = [{"sql": {"query": "select 1 as a", "write_check": "a.sql"}}]
+    pc.run_steps_pipeline(steps)
+    assert (tmp_path / "a.sql").exists()
+    assert (tmp_path / "a.csv").exists()

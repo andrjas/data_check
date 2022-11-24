@@ -82,6 +82,7 @@ sql:
         files: List[Path] = [],
         file: List[Path] = [],
         base_path: Path = Path("."),
+        write_check: Union[str, Path] = "",
     ):
         if base_path == Path("."):
             base_path = self.check_path
@@ -108,6 +109,10 @@ sql:
             return self.data_check.run_sql_files(files=path_list, base_path=base_path)
 
         if query:
+            if write_check:
+                return self.data_check.write_check(
+                    query=query, check_path=Path(write_check), base_path=base_path
+                )
             return self.data_check.run_sql_query(
                 query=query, output=output, base_path=base_path, print_query=print_query
             )

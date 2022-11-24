@@ -165,6 +165,15 @@ With _output_ to write a CSV file:
 _output_ is relative to the pipeline path, unless an absolute path is specified, for example '{{PROJECT_PATH}}/result.csv'.
 _output_ can only be used with a query, not with files.
 
+_write\_check_ can be used to generate a CSV check from a SQL statement:
+```yaml
+- sql:
+    query: select 1 as a, 'b' as t
+    write_check: some_check.sql
+```
+
+See [here](sql.md#generating-a-csv-check-from-a-sql-statement) for more information.
+
 #### files mode
 
 The query mode is like calling `data_check sql --files ...`. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call _sql_ twice.
