@@ -325,3 +325,10 @@ def test_write_check_in_pipeline(pc: PipelineCheck, tmp_path: Path):
     pc.run_steps_pipeline(steps)
     assert (tmp_path / "a.sql").exists()
     assert (tmp_path / "a.csv").exists()
+
+
+def test_output_with_files(pc: PipelineCheck):
+    steps = [{"sql": {"files": "run_sql/run_test.sql", "output": "run_test.csv"}}]
+    result = pc.run_steps_pipeline(steps)
+    assert result
+    assert not Path("run_test.csv").exists()
