@@ -244,6 +244,30 @@ steps:
 
 In this example, if _might\_fail.sql_ fails, _run\_after\_failing.sql_, _some\_script.sh_ and _finish.sql_ will be run in this order. If _might\_fail.sql_ does not fail, _other\_script.sh_ is executed after _run\_after\_failing.sql_ and _some\_script.sh_. _finish.sql_ will then run at the end (even when _other\_script.sh_ fails).
 
+### fake
+
+_fake_ is used to generate test data. See [here](test_data.md) for more details and how to create the configuration.
+
+Short form:
+```yaml
+- fake: fake_conf.yml
+```
+
+Long form:
+```yaml
+- fake:
+    configs:
+        - fake_conf.yml
+        - fake_conf2.yml
+```
+
+With custom output path:
+```yaml
+- fake:
+    configs:
+        - fake_conf.yml
+    output: fake_table.csv
+```
 
 ### sql_files
 

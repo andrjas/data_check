@@ -31,7 +31,7 @@ def fake(
     force: bool = False,
     configs: str = "",
 ):
-    """Run SQL statements."""
+    """Generate test data."""
     dc = get_data_check(
         ctx=ctx,
         connection=connection,
