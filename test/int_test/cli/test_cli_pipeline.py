@@ -34,7 +34,7 @@ IGNORE_PARAMS = [
     ("run", "print_diffed"),
 ]
 
-IGNORE_COMMANDS = ["ping"]
+IGNORE_COMMANDS = ["ping", "gen"]
 
 
 def get_command_param_names() -> List[Tuple[str, str]]:
