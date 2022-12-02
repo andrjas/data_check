@@ -332,3 +332,47 @@ def test_output_with_files(pc: PipelineCheck):
     result = pc.run_steps_pipeline(steps)
     assert result
     assert not Path("run_test.csv").exists()
+
+
+def test_load_table_is_deprecated(pc: PipelineCheck):
+    steps = [
+        {
+            "load_table": {
+                "table": "test_load_table_is_deprecated",
+                "file": "load_data/test.csv",
+            }
+        }
+    ]
+    with pytest.warns(FutureWarning, match="load_table is deprecated, use"):
+        pc.run_steps_pipeline(steps)
+
+
+def test_load_files_and_file_simultaneously_raise_exception(pc: PipelineCheck):
+    steps = [{"load": {"file": "load_data/test.csv", "files": "load_data/test.csv"}}]
+    result = pc.run_steps_pipeline(steps)
+    assert result.exception
+
+
+def test_load_table_without_file_raise_exception(pc: PipelineCheck):
+    steps = [{"load": {"table": "test_load_table_without_file_raise_exception"}}]
+    result = pc.run_steps_pipeline(steps)
+    assert result.exception
+
+
+def test_load_table_with_files_raise_exception(pc: PipelineCheck):
+    steps = [
+        {
+            "load": {
+                "table": "test_load_table_without_file_raise_exception",
+                "files": "load_data/test.csv",
+            }
+        }
+    ]
+    result = pc.run_steps_pipeline(steps)
+    assert result.exception
+
+
+def test_load_file_is_alias_for_files(pc: PipelineCheck):
+    steps = [{"load": {"file": "load_data/test.csv"}}]
+    result = pc.run_steps_pipeline(steps)
+    assert result

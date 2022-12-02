@@ -1,7 +1,7 @@
 steps:
   - sql: create table {{test_schema}}.large_number_test (d_col {{large_decimal_type}})
 
-  - load_table:
+  - load:
       file: large_number_test.csv
       table: {{test_schema}}.large_number_test
 

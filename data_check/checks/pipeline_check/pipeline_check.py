@@ -6,6 +6,7 @@ from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union, cast
 
+from data_check.sql.load_mode import LoadMode
 from data_check.utils.deprecation import deprecated_method
 
 from ...io import read_yaml
@@ -19,6 +20,8 @@ if TYPE_CHECKING:
 
 DATA_CHECK_PIPELINE_FILE = "data_check_pipeline.yml"
 
+StrOrPathList = Union[str, List[str], Path, List[Path]]
+
 
 class PipelineCheck(BaseCheck):
     def __init__(self, data_check: DataCheck, check_path: Path) -> None:
@@ -29,12 +32,11 @@ class PipelineCheck(BaseCheck):
     def register_pipelines(self):
         self.register_pipeline_step(
             "load",
-            self.data_check.sql.table_loader.load_tables_from_files,
-            convert_to_path_list=["files"],
+            self.load_table_or_tables,
         )
         self.register_pipeline_step(
             "load_table",
-            self.data_check.sql.table_loader.load_table_from_file,
+            self.deprecated_load_table,
             convert_to_path=["file"],
         )
         self.register_pipeline_step("cmd", self.run_cmd)
@@ -63,6 +65,72 @@ class PipelineCheck(BaseCheck):
             convert_to_path=["output"],
         )
 
+    def load_table_or_tables(
+        self,
+        files: StrOrPathList = "",
+        table: str = "",
+        file: Union[str, Path] = "",
+        mode: Union[str, LoadMode] = LoadMode.DEFAULT,
+        base_path: Path = Path("."),
+        load_mode: Union[str, LoadMode, None] = None,
+    ):
+        if files:
+            if file:
+                raise Exception("load: cannot use files and file at the same time")
+            if table:
+                raise Exception("load: cannot use files and table at the same time")
+            path_list = self.convert_params_to_path_list(files)
+            return self.data_check.sql.table_loader.load_tables_from_files(
+                files=path_list, mode=mode, base_path=base_path, load_mode=load_mode
+            )
+
+        if table:
+            if not file:
+                raise ValueError("load: file is missing")
+            return self.data_check.sql.table_loader.load_table_from_file(
+                table=table,
+                file=Path(file),
+                mode=mode,
+                base_path=base_path,
+                load_mode=load_mode,
+            )
+
+        if file:
+            # use file as alias for files
+            files = self.convert_params_to_path_list(file)
+            return self.data_check.sql.table_loader.load_tables_from_files(
+                files=files, mode=mode, base_path=base_path, load_mode=load_mode
+            )
+
+        raise ValueError(
+            f"""unsupported parameter for load:
+{files=}
+{table=}
+{file=}
+{mode=}
+"""
+        )
+
+    def deprecated_load_table(
+        self,
+        table: str,
+        file: Path,
+        mode: Union[str, LoadMode] = LoadMode.DEFAULT,
+        base_path: Path = Path("."),
+        load_mode: Union[str, LoadMode, None] = None,
+    ):
+        deprecated_method(
+            "load_table",
+            """
+load:
+    table: ...
+    file: ...
+""",
+        )
+        return self.data_check.sql.table_loader.load_table_from_file(
+            table=table, file=file, mode=mode, base_path=base_path, load_mode=load_mode
+        )
+
     def deprecated_sql_files(self, files: List[Path], base_path: Path = Path(".")):
         deprecated_method(
             "sql_files",
@@ -75,7 +143,7 @@ sql:
 
     def sql_query_or_files(
         self,
-        query_or_files: Union[str, List[str], Path, List[Path]] = "",
+        query_or_files: StrOrPathList = "",
         query: str = "",
         output: Union[str, Path] = "",
         print_query: bool = True,
@@ -91,11 +159,11 @@ sql:
             if isinstance(query_or_files, str):
                 try_file = base_path / query_or_files
                 if try_file.exists():
-                    files = self.convert_to_path_list(query_or_files)
+                    files = self.convert_params_to_path_list(query_or_files)
                 else:
                     query = query_or_files
             elif isinstance(query_or_files, List):
-                path_list = self.convert_to_path_list(query_or_files)
+                path_list = self.convert_params_to_path_list(query_or_files)
                 files = path_list
 
         # file is an alias for files
@@ -105,7 +173,7 @@ sql:
             files = file
 
         if files:
-            path_list = self.convert_to_path_list(files)
+            path_list = self.convert_params_to_path_list(files)
             return self.data_check.run_sql_files(files=path_list, base_path=base_path)
 
         if query:
@@ -127,9 +195,7 @@ sql:
         )
 
     @staticmethod
-    def convert_to_path_list(
-        params: Union[str, List[str], Path, List[Path]]
-    ) -> List[Path]:
+    def convert_params_to_path_list(params: StrOrPathList) -> List[Path]:
         if isinstance(params, str):
             return [Path(params)]
         elif isinstance(params, List):

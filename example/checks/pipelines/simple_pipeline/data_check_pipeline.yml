@@ -10,7 +10,7 @@ steps:
   - check: pipeline_checks
   - sql:
       files: sql_files
-  - load_table:
+  - load:
       file: load_pipeline_data/test_simple_pipeline.csv
       table: other_table
   - cmd:

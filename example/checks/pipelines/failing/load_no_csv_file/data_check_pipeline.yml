@@ -1,4 +1,4 @@
 steps:
-  - load_table:
+  - load:
       file: no_such_file.csv
       table: other_table

@@ -1,5 +1,5 @@
 steps:
-  - load_table:
+  - load:
       file: some_table.csv
       table: some_table
       mode: invalid

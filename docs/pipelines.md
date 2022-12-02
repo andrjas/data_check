@@ -35,10 +35,10 @@ steps:
     # this will execute the SQL statement in run_this.sql
     - sql: run_this.sql
     # this will append the data from data2/some_data.csv to my_schema.other_table
-    - load_table:
+    - load:
         file: data2/some_data.csv
         table: my_schema.other_table
-        load_mode: append
+        mode: append
     # this will run a python script and pass the connection name
     - cmd: "python3 /path/to/my_pipeline.py --connection {{CONNECTION}}"
     # this will run the CSV checks in the some_checks folder
@@ -89,22 +89,12 @@ _run_ is an alias for check:
 - run: some_checks
 ```
 
-### load_table
-
-_load\_table_ is like calling `data_check load --table ...`. This will load a CSV file into a table.
-
-```yaml
-- load_table:
-    file: check/date_test.csv
-    table: temp.date_test
-    mode: append
-```
-
 You can omit _mode_. Then the default mode _truncate_ will be used. _load\_mode_ can be used instead of _mode_, but it is deprecated.
 
 ### load
 
-_load_ is like calling `data_check load ...` without `--table`. This will load one or more tables from CSV files and infer the table name from the file name.
+_load_ is like calling `data_check load ...`. This will load one or more tables from CSV files and infer the table name from the file name.
+You can also override the table name when using a single CSV file.
 
 Like with `data_check load` the path before the filename has no impact on the inferred table name, only the file name itself.
 
@@ -130,6 +120,21 @@ You can also omit _files_:
     - some_path
     - some/other/path/schema.other_table.csv
 ```
+
+Or use _file_ as an alias for _files:
+```yaml
+- load:
+    file: some_file.csv
+```
+
+Overriding the table name:
+```yaml
+- load:
+    table: some_table
+    file: some_file.csv
+```
+
+You can only use a single CSV file when overriding the table name. Using multiple files will fail.
 
 ### sql
 
@@ -298,6 +303,19 @@ You can also omit _files_:
 - sql_files:
     - some_file.sql
     - some_path
+```
+
+### load_table
+
+_load\_table_ is deprecated. Use [load](#load) instead.
+
+_load\_table_ is like calling `data_check load --table ...`. This will load a CSV file into a table.
+
+```yaml
+- load_table:
+    file: check/date_test.csv
+    table: temp.date_test
+    mode: append
 ```
 
 ## nested pipelines

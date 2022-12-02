@@ -86,10 +86,10 @@ steps:
     # this will execute the SQL statement in run_this.sql
     - sql: run_this.sql
     # this will append the data from data2/some_data.csv to my_schema.other_table
-    - load_table:
+    - load:
         file: data2/some_data.csv
         table: my_schema.other_table
-        load_mode: append
+        mode: append
     # this will run a python script and pass the connection name
     - cmd: "python3 /path/to/my_pipeline.py --connection {{CONNECTION}}"
     # this will run the CSV checks in the some_checks folder
