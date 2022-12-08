@@ -546,3 +546,14 @@ def test_failing_prints_no_setting_with_copy_warning():
         for i in record:
             print(i)
         assert not record
+
+
+def test_run_pipeline_yaml():
+    res_folder = run(["run", "checks/pipelines/simple_pipeline"])
+    res_file = run(["run", "checks/pipelines/simple_pipeline/data_check_pipeline.yml"])
+
+    assert res_file
+    assert res_folder
+    # Currently there is a bug with nested pipelines being run in parallel/non deterministically, even with a single worker.
+    # Hence, we can only compare the length of the output, not the output itself.
+    assert len(res_folder.output) == len(res_file.output)

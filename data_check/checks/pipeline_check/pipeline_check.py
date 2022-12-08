@@ -25,6 +25,8 @@ StrOrPathList = Union[str, List[str], Path, List[Path]]
 
 class PipelineCheck(BaseCheck):
     def __init__(self, data_check: DataCheck, check_path: Path) -> None:
+        if check_path.name == DATA_CHECK_PIPELINE_FILE:
+            check_path = check_path.parent
         super().__init__(data_check, check_path)
         self.pipeline_steps: Dict[str, Dict[str, Any]] = {}
         self.register_pipelines()
@@ -207,7 +209,9 @@ sql:
 
     @staticmethod
     def is_check_path(path: Path) -> bool:
-        return path.is_dir() and (path / DATA_CHECK_PIPELINE_FILE).exists()
+        return (path.is_dir() and (path / DATA_CHECK_PIPELINE_FILE).exists()) or (
+            path.name == DATA_CHECK_PIPELINE_FILE and path.exists()
+        )
 
     def register_pipeline_step(
         self,

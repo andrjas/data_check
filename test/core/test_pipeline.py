@@ -376,3 +376,16 @@ def test_load_file_is_alias_for_files(pc: PipelineCheck):
     steps = [{"load": {"file": "load_data/test.csv"}}]
     result = pc.run_steps_pipeline(steps)
     assert result
+
+
+def test_pipeline_yaml_is_check_path():
+    assert PipelineCheck.is_check_path(
+        Path("checks/pipelines/simple_pipeline/data_check_pipeline.yml")
+    )
+
+
+def test_check_path_is_folder_when_using_pipeline_yaml(dc_serial: DataCheck):
+    pc = PipelineCheck(
+        dc_serial, Path("checks/pipelines/simple_pipeline/data_check_pipeline.yml")
+    )
+    assert pc.check_path == Path("checks/pipelines/simple_pipeline")
