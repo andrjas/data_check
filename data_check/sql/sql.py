@@ -4,9 +4,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union, cast
 
 import pandas as pd
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, inspect
 from sqlalchemy.engine import Connection, Engine
 from sqlalchemy.engine.cursor import CursorResult
+from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.engine.row import Row
 from sqlalchemy.sql import text
 from sqlalchemy.sql.elements import TextClause
@@ -19,7 +20,6 @@ from ..io import print_csv, write_csv
 from ..output import DataCheckOutput
 from ..runner import DataCheckRunner
 from .query_result import QueryResult
-from .table_info import TableInfo
 from .table_loader import TableLoader
 
 
@@ -53,10 +53,6 @@ class DataCheckSql:
         Lazy-load a TableLoader.
         """
         return TableLoader(self, self.output, self.config.default_load_mode)
-
-    @cached_property
-    def table_info(self) -> TableInfo:
-        return TableInfo(self)
 
     def get_db_params(self) -> Dict[str, Any]:
         """
@@ -190,3 +186,13 @@ class DataCheckSql:
             return res
         except Exception:
             return bool(result)
+
+    @property
+    def inspector(self) -> Inspector:
+        if self.keep_connection():
+            return self.cached_inspector
+        return cast(Inspector, inspect(self.get_engine()))
+
+    @cached_property
+    def cached_inspector(self) -> Inspector:
+        return cast(Inspector, inspect(self.get_engine()))

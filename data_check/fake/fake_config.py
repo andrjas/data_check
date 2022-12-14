@@ -6,7 +6,7 @@ import yaml
 from faker import Faker
 
 from data_check.io import write_csv
-from data_check.sql import DataCheckSql
+from data_check.sql import DataCheckSql, Table
 
 from .column_config import ColumnConfig
 from .fake_iterator import FakeIterator
@@ -42,9 +42,6 @@ class FakeConfig:
                 col_conf.load_config(val)
             self.columns[name] = col_conf
 
-    def get_column_types(self, sql: DataCheckSql):
-        return sql.table_info.get_column_types(self.table_name)
-
     def add_columns_not_in_config(self, column_types: Dict[str, Any]):
         for column in column_types:
             if column not in self.columns.keys():
@@ -55,11 +52,11 @@ class FakeConfig:
                 self.columns[column] = col_conf
 
     def init(self, sql: DataCheckSql):
-        schema, table = sql.table_info.parse_table_name(self.table_name)
-        if not sql.table_info.table_exists(table_name=table, schema=schema):
+        table = Table.from_table_name(sql, self.table_name)
+        if not table.exists():
             raise Exception(f"table {self.table_name} does not exist")
         Faker.seed()
-        column_types = self.get_column_types(sql)
+        column_types = table.column_types
         self.add_columns_not_in_config(column_types)
         for column in self.columns.values():
             column.init(sql_type=column_types.get(column.name, None), sql=sql)

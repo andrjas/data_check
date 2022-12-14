@@ -23,24 +23,6 @@ def data_types_check(dc: DataCheck):
     return res.full_result.iloc[0]
 
 
-def create_test_table_db(table_name: str, schema: str, dc: DataCheck):
-    dc.sql.table_loader.drop_table_if_exists(table_name, schema)
-    if dc.sql.dialect == "oracle":
-        dc.sql.run_sql(
-            f"create table {schema}.{table_name} (id number(10), data varchar2(10))"
-        )
-    else:
-        metadata = MetaData(dc.sql.get_engine())
-        Table(
-            table_name,
-            metadata,
-            Column("id", Integer),
-            Column("data", String(10)),
-            schema=schema,
-        )
-        metadata.create_all()
-
-
 def test_data_types_string(data_types_check):
     assert data_types_check.string_test == "string"
 

@@ -2,27 +2,28 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-from sqlalchemy import Column, Integer, MetaData, String, Table
+from sqlalchemy import Column, Integer, MetaData, String
+from sqlalchemy import Table as SQLTable
 
 from data_check import DataCheck  # noqa E402
 from data_check.fake.fake_config import FakeConfig
 from data_check.io import read_csv
+from data_check.sql.table import Table
 
 
 def create_test_table_db(table_name: str, schema: str, dc: DataCheck):
-    dc.sql.table_loader.drop_table_if_exists(table_name, schema)
+    table = Table(dc.sql, table_name, schema)
+    table.drop_if_exists()
     if dc.sql.dialect == "oracle":
-        dc.sql.run_sql(
-            f"create table {schema}.{table_name} (id number(10), data varchar2(10))"
-        )
+        dc.sql.run_sql(f"create table {table} (id number(10), data varchar2(10))")
     else:
         metadata = MetaData(dc.sql.get_engine())
-        Table(
-            table_name,
+        SQLTable(
+            table.name,
             metadata,
             Column("id", Integer),
             Column("data", String(10)),
-            schema=schema,
+            schema=table.schema,
         )
         metadata.create_all()
 

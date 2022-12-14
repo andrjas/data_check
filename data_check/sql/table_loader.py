@@ -12,7 +12,8 @@ from sqlalchemy.sql.expression import bindparam
 if TYPE_CHECKING:
     from data_check.sql import DataCheckSql
     from data_check.output import DataCheckOutput
-    from data_check.sql.table_info import ColumnInfo
+    from data_check.sql import Table, ColumnInfo
+
 
 from ..date import fix_date_dtype
 from ..io import expand_files, read_csv
@@ -35,30 +36,9 @@ class TableLoader:
     def __del__(self):
         self.sql.disconnect()
 
-    def drop_table_if_exists(self, table_name: str, schema: Optional[str]):
-        if self.sql.table_info.table_exists(table_name, schema):
-            if schema:
-                drop_stmt = f"DROP TABLE {schema}.{table_name}"
-            else:
-                drop_stmt = f"DROP TABLE {table_name}"
-            self.sql.get_connection().execute(
-                text(drop_stmt).execution_options(autocommit=True)
-            )
-
-    def _truncate_statement(self, table_name: str) -> str:
-        if self.sql.dialect == "sqlite":
-            return f"DELETE FROM {table_name}"
-        return f"TRUNCATE TABLE {table_name}"
-
-    def _prepare_table_for_load(self, table_name: str, mode: LoadMode):
+    def _prepare_table_for_load(self, table: Table, mode: LoadMode):
         if mode == LoadMode.TRUNCATE:
-            schema, name = self.sql.table_info.parse_table_name(table_name)
-            if self.sql.table_info.table_exists(table_name=name, schema=schema):
-                self.sql.get_connection().execute(
-                    text(self._truncate_statement(table_name)).execution_options(
-                        autocommit=True
-                    )
-                )
+            table.truncate_if_exists()
 
     @staticmethod
     def _load_mode_to_pandas_if_exists(
@@ -68,34 +48,34 @@ class TableLoader:
             return "replace"
         return "append"
 
-    def pre_insert(self, connection: Connection, name: str, schema: Optional[str]):
+    def pre_insert(self, connection: Connection, table: Table):
         if self.sql.dialect == "mssql":
             # When appending/upserting data into a table with identity columns,
             # we need to enable IDENTITY_INSERT to allow inserting explicit values
             # into these columns.
-            if self.sql.table_info.table_exists(name, schema):
-                table = self.sql.table_info.get_table(name, schema)
-                if table.primary_key:
+            if table.exists():
+                if table.sql_table.primary_key:
                     connection.execute(f"SET IDENTITY_INSERT {table} ON")
 
-    def upsert_data(self, data: pd.DataFrame, name: str, schema: Optional[str]) -> bool:
-        pk = self.sql.table_info.get_primary_keys(name, schema)
-        other_columns = [c for c in data.columns.to_list() if c not in pk]
+    def upsert_data(self, data: pd.DataFrame, table: Table) -> bool:
+        other_columns = [
+            c for c in data.columns.to_list() if c not in table.primary_keys
+        ]
 
-        table = self.sql.table_info.get_table(name, schema)
-        update_stmt = table.update()
-        insert_stmt = table.insert()
+        sql_table = table.sql_table
+        update_stmt = sql_table.update()
+        insert_stmt = sql_table.insert()
 
-        for p in pk:
-            update_stmt = update_stmt.where(table.c[p] == bindparam(f"_{p}"))
+        for p in table.primary_keys:
+            update_stmt = update_stmt.where(sql_table.c[p] == bindparam(f"_{p}"))
 
         update_stmt = update_stmt.values(**{oc: bindparam(oc) for oc in other_columns})
         connection = self.sql.get_connection()
-        self.pre_insert(connection, name, schema)
+        self.pre_insert(connection, table)
 
         for _, row in data.iterrows():
             row_as_dict = cast(Dict[str, Any], row.to_dict())
-            for p in pk:
+            for p in table.primary_keys:
                 row_as_dict[f"_{p}"] = row_as_dict.pop(p)
             rows = connection.execute(update_stmt, **row_as_dict)
             if rows.rowcount == 0:
@@ -103,11 +83,10 @@ class TableLoader:
         return False
 
     def load_table(
-        self, table_name: str, data: pd.DataFrame, mode: LoadMode, dtype=None
+        self, table: Table, data: pd.DataFrame, mode: LoadMode, dtype=None
     ) -> bool:
-        self._prepare_table_for_load(table_name, mode)
+        self._prepare_table_for_load(table, mode)
         if_exists = self._load_mode_to_pandas_if_exists(mode=mode)
-        schema, name = self.sql.table_info.parse_table_name(table_name)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")  # ignore SADeprecationWarning
             fix_date_dtype(data, dtype)
@@ -115,13 +94,13 @@ class TableLoader:
                 # dtype can be {}, but for to_sql it's best to use None then
                 dtype = None
             if mode == LoadMode.UPSERT:
-                return self.upsert_data(data, name, schema)
+                return self.upsert_data(data, table)
             else:
                 connection = self.sql.get_connection()
-                self.pre_insert(connection, name, schema)
+                self.pre_insert(connection, table)
                 data.to_sql(
-                    name=name,
-                    schema=schema,
+                    name=table.name,
+                    schema=table.schema,
                     con=connection,
                     if_exists=if_exists,
                     index=False,
@@ -149,17 +128,19 @@ class TableLoader:
         base_path: Path = Path("."),
         load_mode: Union[str, LoadMode, None] = None,
     ):
+        from data_check.sql import Table
+
         deprecated_method_argument(load_mode, mode, LoadMode.DEFAULT)
         mode = self.get_load_mode(load_mode, mode)
         rel_file = base_path / file
-        column_info = self.sql.table_info.get_column_info(table)
-        data = self.load_df_from_file(rel_file, column_info)
+        _table = Table.from_table_name(self.sql, table)
+        data = self.load_df_from_file(rel_file, _table.column_info)
 
         result = self.load_table(
-            table_name=table,
+            table=_table,
             data=data,
             mode=mode,
-            dtype=column_info.dtypes,
+            dtype=_table.column_info.dtypes,
         )
         if result:
             self.output.print(f"table {table} loaded from {rel_file}")

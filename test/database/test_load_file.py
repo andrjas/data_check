@@ -4,10 +4,11 @@ from pathlib import Path
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
-from sqlalchemy import Column, Date, DateTime, Integer, MetaData, Numeric, String, Table
+from sqlalchemy import Column, Date, DateTime, Integer, MetaData, Numeric, String
+from sqlalchemy import Table as SQLTable
 
 from data_check import DataCheck  # noqa E402
-from data_check.sql import LoadMode  # noqa E402
+from data_check.sql import LoadMode, Table  # noqa E402
 
 # These tests should work on any database.
 # The tests are generic, but in integration tests each database uses specific SQL files.
@@ -19,119 +20,119 @@ def file_type(request) -> str:
 
 
 def create_test_table(table_name: str, schema: str, dc: DataCheck):
-    dc.sql.table_loader.drop_table_if_exists(table_name, schema)
+    table = Table(dc.sql, table_name, schema)
+    table.drop_if_exists()
     if dc.sql.dialect == "oracle":
-        dc.sql.run_sql(
-            f"create table {schema}.{table_name} (id decimal, data varchar2(10))"
-        )
+        dc.sql.run_sql(f"create table {table} (id decimal, data varchar2(10))")
     else:
         metadata = MetaData(dc.sql.get_engine())
-        Table(
-            table_name,
+        SQLTable(
+            table.name,
             metadata,
             Column("id", Integer),
             Column("data", String(10)),
-            schema=schema,
+            schema=table.schema,
         )
         metadata.create_all()
+    return table
 
 
 def create_test_table_with_date(table_name: str, schema: str, dc: DataCheck):
-    dc.sql.table_loader.drop_table_if_exists(table_name, schema)
+    table = Table(dc.sql, table_name, schema)
+    table.drop_if_exists()
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(
-            (
-                f"create table {schema}.{table_name} "
-                "(id number(10), data varchar2(10), dat date)"
-            )
+            (f"create table {table} (id number(10), data varchar2(10), dat date)")
         )
     else:
         metadata = MetaData(dc.sql.get_engine())
-        Table(
-            table_name,
+        SQLTable(
+            table.name,
             metadata,
             Column("id", Integer),
             Column("data", String(10)),
             Column("dat", Date),
-            schema=schema,
+            schema=table.schema,
         )
         metadata.create_all()
+    return table
 
 
 def create_test_table_with_datetime(table_name: str, schema: str, dc: DataCheck):
-    dc.sql.table_loader.drop_table_if_exists(table_name, schema)
+    table = Table(dc.sql, table_name, schema)
+    table.drop_if_exists()
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(
-            (
-                f"create table {schema}.{table_name} "
-                "(id number(10), data varchar2(10), dat date)"
-            )
+            (f"create table {table} " "(id number(10), data varchar2(10), dat date)")
         )
     else:
         metadata = MetaData(dc.sql.get_engine())
-        Table(
-            table_name,
+        SQLTable(
+            table.name,
             metadata,
             Column("id", Integer),
             Column("data", String(10)),
             Column("dat", DateTime),
-            schema=schema,
+            schema=table.schema,
         )
         metadata.create_all()
+    return table
 
 
 def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
-    dc.sql.table_loader.drop_table_if_exists(table_name, schema)
+    table = Table(dc.sql, table_name, schema)
+    table.drop_if_exists()
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(
             (
-                f"create table {schema}.{table_name} "
-                "(id number(10), data varchar2(10), decim decimal(10, 4))"
+                f"create table {table} (id number(10), data varchar2(10), decim decimal(10, 4))"
             )
         )
     else:
         metadata = MetaData(dc.sql.get_engine())
-        Table(
-            table_name,
+        SQLTable(
+            table.name,
             metadata,
             Column("id", Integer),
             Column("data", String(10)),
             Column("decim", Numeric(10, 4)),
-            schema=schema,
+            schema=table.schema,
         )
         metadata.create_all()
+    return table
 
 
 def create_test_table_with_large_decimal(table_name: str, schema: str, dc: DataCheck):
-    dc.sql.table_loader.drop_table_if_exists(table_name, schema)
+    table = Table(dc.sql, table_name, schema)
+    table.drop_if_exists()
     if dc.sql.dialect == "oracle":
-        dc.sql.run_sql(
-            (f"create table {schema}.{table_name} " "(d_col decimal(38, 0))")
-        )
+        dc.sql.run_sql((f"create table {table} (d_col decimal(38, 0))"))
     else:
         metadata = MetaData(dc.sql.get_engine())
-        Table(
-            table_name,
+        SQLTable(
+            table.name,
             metadata,
             Column("d_col", Numeric(38, 0)),
-            schema=schema,
+            schema=table.schema,
         )
         metadata.create_all()
+    return table
 
 
 def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
-    dc.sql.table_loader.drop_table_if_exists(table_name, schema)
+    table = Table(dc.sql, table_name, schema)
+    table.drop_if_exists()
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(
             (
-                f"create table {schema}.{table_name} "
+                f"create table {table} "
                 "(a number(10), b number(10), c varchar2(10), d number(10), e varchar2(10), f number(10), g number(10), h date, i date, j date, k varchar2(10), l number(10), m date)"
             )
         )
     else:
         metadata = MetaData(dc.sql.get_engine())
-        Table(
-            table_name,
+        SQLTable(
+            table.name,
             metadata,
             Column("a", Integer),
             Column("b", Integer),
@@ -146,9 +147,10 @@ def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
             Column("k", String(10)),
             Column("l", Integer),
             Column("m", DateTime),
-            schema=schema,
+            schema=table.schema,
         )
         metadata.create_all()
+    return table
 
 
 def test_load_file_replace(dc_serial: DataCheck, file_type: str):
@@ -343,49 +345,50 @@ def test_load_file_more_columns_in_file(dc_serial: DataCheck, file_type: str):
 
 
 def test_table_exists(dc_serial: DataCheck):
-    create_test_table("test_table_exists", "main", dc_serial)
-    assert dc_serial.sql.table_info.table_exists("test_table_exists", "main")
+    table = create_test_table("test_table_exists", "main", dc_serial)
+    assert table.exists()
 
 
 def test_table_exists_non_existing(dc_serial: DataCheck):
-    assert not dc_serial.sql.table_info.table_exists(
-        "test_table_exists_non_existing", "main"
-    )
+    table = Table(dc_serial.sql, "test_table_exists_non_existing", "main")
+    assert not table.exists()
 
 
 def test_drop_table_if_exists_with_existing_table(dc_serial: DataCheck):
-    create_test_table("test_drop_existing", "main", dc_serial)
-    dc_serial.sql.table_loader.drop_table_if_exists("test_drop_existing", "main")
+    table = create_test_table("test_drop_existing", "main", dc_serial)
+    table.drop_if_exists()
     with pytest.raises(Exception):
         dc_serial.sql.run_query("select * from main.test_drop_existing")
 
 
 def test_drop_table_if_exists_with_non_existing_table(dc_serial: DataCheck):
-    dc_serial.sql.table_loader.drop_table_if_exists("test_drop_non_existing", "main")
+    table = Table(dc_serial.sql, "test_drop_non_existing", "main")
+    table.drop_if_exists()
     with pytest.raises(Exception):
         dc_serial.sql.run_query("select * from main.test_drop_non_existing")
 
 
 def test_load_file_with_null_dates(dc_serial: DataCheck):
-    dc_serial.sql.table_loader.drop_table_if_exists("test_with_null_dates", "main")
+    table = Table(dc_serial.sql, "test_with_null_dates", "main")
+    table.drop_if_exists()
     dc_serial.sql.table_loader.load_table_from_file(
         "main.test_with_null_dates",
         Path("load_data/sample/test_date_with_null_dates.csv"),
         LoadMode.TRUNCATE,
     )
-    assert dc_serial.sql.table_info.table_exists("test_with_null_dates", "main")
+    assert table.exists()
 
 
 def test_load_file_with_null_dates_with_existing_table(dc_serial: DataCheck):
-    create_test_table_sample("test_with_null_dates_existing_table", "main", dc_serial)
+    table = create_test_table_sample(
+        "test_with_null_dates_existing_table", "main", dc_serial
+    )
     dc_serial.sql.table_loader.load_table_from_file(
         "main.test_with_null_dates_existing_table",
         Path("load_data/sample/test_date_with_null_dates.csv"),
         LoadMode.TRUNCATE,
     )
-    assert dc_serial.sql.table_info.table_exists(
-        "test_with_null_dates_existing_table", "main"
-    )
+    assert table.exists()
     data = dc_serial.sql.run_query(
         "select * from main.test_with_null_dates_existing_table"
     )
