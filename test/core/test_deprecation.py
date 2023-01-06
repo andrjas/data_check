@@ -58,3 +58,18 @@ def test_deprecated_method_argument_instead_argument_default_value_none():
         arg = "test"
         arg2 = None
         deprecation.deprecated_method_argument(arg, arg2, None)
+
+
+def test_deprecated_method_none():
+    with pytest.warns(
+        FutureWarning, match=r"test_deprecated_method_none is deprecated"
+    ):
+        deprecation.deprecated_method()
+
+
+def test_deprecated_method_none_instead():
+    with pytest.warns(
+        FutureWarning,
+        match=r"test_deprecated_method_none_instead is deprecated, use test_method instead",
+    ):
+        deprecation.deprecated_method(instead_method="test_method")
