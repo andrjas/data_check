@@ -64,6 +64,23 @@ def get_expect_file(sql_file: Path) -> Path:
     return sql_file.parent / (sql_file.stem + ".csv")
 
 
+DEFAULT_READ_CSV_PARAMS = {
+    "na_values": [""],  # use empty string as nan
+    "keep_default_na": False,
+    "comment": "#",
+    "escapechar": "\\",
+    "quotechar": '"',
+    "quoting": 0,
+    "engine": "c",
+}
+
+
+def read_csv_header(csv_file: Path) -> List[str]:
+    """Read only the header of a CSV file and returns the list of columns."""
+    df = pd.read_csv(csv_file, nrows=0, **DEFAULT_READ_CSV_PARAMS)
+    return df.columns.tolist()
+
+
 def read_csv(
     csv_file: Path,
     parse_dates: Union[bool, List[str]] = False,
@@ -78,18 +95,18 @@ def read_csv(
     if not parse_dates:
         parse_dates = False
     dtypes: DtypeArg = {s: "object" for s in string_columns}
+
+    # remove columns from parse_dates if they are not in the CSV file
+    if isinstance(parse_dates, List):
+        header = read_csv_header(csv_file)
+        parse_dates = [p for p in parse_dates if p in header]
+
     df = pd.read_csv(
         csv_file,
-        na_values=[""],  # use empty string as nan
-        keep_default_na=False,
-        comment="#",
-        escapechar="\\",
-        quotechar='"',
-        quoting=0,
-        engine="c",
         parse_dates=parse_dates,
         date_parser=isoparse,
         dtype=dtypes,
+        **DEFAULT_READ_CSV_PARAMS,
     )
     if not parse_dates:
         _, df = parse_date_columns(df)

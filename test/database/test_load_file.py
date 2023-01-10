@@ -395,6 +395,42 @@ def test_load_file_with_null_dates_with_existing_table(dc_serial: DataCheck):
     assert not data.empty
 
 
+def test_load_file_with_only_null_dates_with_existing_table(dc_serial: DataCheck):
+    table = create_test_table_sample(
+        "test_load_file_with_only_null_dates_with_existing_table", "main", dc_serial
+    )
+    dc_serial.sql.table_loader.load_table_from_file(
+        "main.test_load_file_with_only_null_dates_with_existing_table",
+        Path("load_data/sample/test_date_with_only_null_dates_and_missing_column.csv"),
+        LoadMode.TRUNCATE,
+    )
+    assert table.exists()
+    data = dc_serial.sql.run_query(
+        "select * from main.test_load_file_with_only_null_dates_with_existing_table"
+    )
+    assert not data.empty
+
+
+def test_load_file_with_only_null_dates_and_missing_column_with_existing_table(
+    dc_serial: DataCheck,
+):
+    table = create_test_table_sample(
+        "test_load_file_with_only_null_dates_and_miss_cols_with_ex_tab",
+        "main",
+        dc_serial,
+    )
+    dc_serial.sql.table_loader.load_table_from_file(
+        "main.test_load_file_with_only_null_dates_and_miss_cols_with_ex_tab",
+        Path("load_data/sample/test_date_with_only_null_dates_and_missing_column.csv"),
+        LoadMode.TRUNCATE,
+    )
+    assert table.exists()
+    data = dc_serial.sql.run_query(
+        "select * from main.test_load_file_with_only_null_dates_and_miss_cols_with_ex_tab"
+    )
+    assert not data.empty
+
+
 def test_load_large_number(dc_serial: DataCheck):
     create_test_table_with_large_decimal("test_load_large_number", "main", dc_serial)
     csv = Path("load_data/sample/large_number_test.csv")
