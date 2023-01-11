@@ -1,3 +1,4 @@
+import warnings
 from functools import cached_property
 from os import path
 from pathlib import Path
@@ -145,8 +146,9 @@ class DataCheckSql:
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
         sql = self._bindparams(query)
-
-        result = QueryResult(query, self.get_connection().execute(sql, **params))
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")  # ignore RemovedIn20Warning
+            result = QueryResult(query, self.get_connection().execute(sql, **params))
         return result
 
     def test_connection(self) -> bool:

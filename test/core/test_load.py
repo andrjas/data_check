@@ -1,3 +1,4 @@
+import warnings
 from pathlib import Path
 
 import pandas as pd
@@ -16,9 +17,11 @@ def file_type(request):
 def test_load_from_dataframe_append(sql: DataCheckSql):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     table = Table(sql, "test_load_from_dataframe_append")
-    sql.get_connection().execute(
-        f"create table {table} (id number(10), data varchar2(10))"
-    )
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")  # ignore RemovedIn20Warning
+        sql.get_connection().execute(
+            f"create table {table} (id number(10), data varchar2(10))"
+        )
     sql.table_loader.load_table(table, data, LoadMode.APPEND)
     df = sql.run_query(f"select id, data from {table}")
     assert_frame_equal(data, df)
