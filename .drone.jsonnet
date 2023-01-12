@@ -3,6 +3,11 @@
 
 local generic_int_test = [
     "bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'",
+    "rm -f checks/pipelines/fake_data/main.simple_fake_table.csv",
+    "rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv",
+    "rm -f checks/generated/data_with_hash.csv",
+    "rm -f test.db",
+    "poetry run data_check sql --workers 1 --files prepare",
     "poetry run pytest ../test_int_tests.py",
     "poetry run pytest ../../../test/database",
 ];

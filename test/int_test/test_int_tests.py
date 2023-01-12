@@ -8,31 +8,6 @@ from click.testing import CliRunner, Result
 from data_check.cli.main import cli
 
 
-def cleanup():
-    for f in (
-        "checks/pipelines/fake_data/main.simple_fake_table.csv",
-        "checks/pipelines/fake_data/main.simple_fake_table_2.csv",
-        "checks/generated/data_with_hash.csv",
-        "test.db",
-    ):
-        with suppress(FileNotFoundError, PermissionError):
-            Path(f).unlink()
-        with suppress(FileNotFoundError, PermissionError):
-            (Path("example") / f).unlink()
-
-
-def prepare_sql():
-    run(["sql", "--workers", "1", "--files", "prepare"])
-
-
-@pytest.fixture(scope="session", autouse=True)
-def prepare_int_tests():
-    cleanup()
-    prepare_sql()
-    yield
-    cleanup()
-
-
 def run(command: List[str], workers: Optional[int] = 1) -> Result:
     runner = CliRunner()
     if not workers:
