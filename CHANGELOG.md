@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.14.0] - 2023-01-13
+
+### Added
+- pre-commit hooks with various tools for code quality
+- project wide default_load_mode configuration
+- pipelines: added 'files' for 'sql' to deprecate 'sql_files'
+- pipelines: added 'run' as alias for 'check'
+- tests that pipeline steps matches cli
+- pipelines: 'write_check' for 'sql'
+- documentation for 'fake' pipeline step
+- pipelines: added 'table' and 'file' for 'load' to deprecate 'load_table'
+- running data_check_pipeline.yml directly to execute the pipeline
+
+
+### Changed
+- refactored TableInfo into Table
+- moved integration tests into pytest
+- upgraded dependencies
+
+### Fixed
+- load fails if csv doesn't have all columns
+
+### Deprecated
+- pipelines: 'sql_files' is deprecated, use 'sql' instead
+- pipelines: 'load_table' is deprecated, use 'load' instead
+
 ## [0.13.0] - 2022-09-29
 
 ### Added
