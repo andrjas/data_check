@@ -75,17 +75,25 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#check">check</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#load_table">load_table</a>
-    </li>
     <li class="toctree-l3"><a class="reference internal" href="#load">load</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#sql_files">sql_files</a>
-    </li>
     <li class="toctree-l3"><a class="reference internal" href="#sql">sql</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#query-mode">query mode</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#files-mode">files mode</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#cmd">cmd</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#always_run">always_run</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fake">fake</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sql_files">sql_files</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#load_table">load_table</a>
     </li>
         </ul>
     </li>
@@ -166,18 +174,18 @@ checks/
     # this will truncate the table my_schema.some_table and load it with the data from data/my_schema.some_table.csv
     - load: data
     # this will execute the SQL statement in run_this.sql
-    - sql_file: run_this.sql
+    - sql: run_this.sql
     # this will append the data from data2/some_data.csv to my_schema.other_table
-    - load_table:
+    - load:
         file: data2/some_data.csv
         table: my_schema.other_table
-        load_mode: append
+        mode: append
     # this will run a python script and pass the connection name
     - cmd: &quot;python3 /path/to/my_pipeline.py --connection {{CONNECTION}}&quot;
     # this will run the CSV checks in the some_checks folder
     - check: some_checks
     - always_run:
-        - sql_file: run_this_always.sql
+        - sql: run_this_always.sql
 </code></pre>
 <p>Pipeline checks and simple CSV checks can coexist in a project.</p>
 <h2 id="pipeline-configuration">Pipeline configuration</h2>
@@ -201,23 +209,20 @@ checks/
     - some_checks
     - some/other/checks.sql
 </code></pre>
-<h3 id="load_table">load_table</h3>
-<p><em>load_table</em> is like calling <code>data_check load --table ...</code>. This will load a CSV file into a table.</p>
-<pre><code class="language-yaml">- load_table:
-    file: check/date_test.csv
-    table: temp.date_test
-    mode: append
+<p><em>run</em> is an alias for check:</p>
+<pre><code class="language-yaml">- run: some_checks
 </code></pre>
 <p>You can omit <em>mode</em>. Then the default mode <em>truncate</em> will be used. <em>load_mode</em> can be used instead of <em>mode</em>, but it is deprecated.</p>
 <h3 id="load">load</h3>
-<p><em>load</em> is like calling <code>data_check load ...</code> without <code>--table</code>. This will load one or more tables from CSV files and infer the table name from the file name.</p>
+<p><em>load</em> is like calling <code>data_check load ...</code>. This will load one or more tables from CSV files and infer the table name from the file name.
+You can also override the table name when using a single CSV file.</p>
 <p>Like with <code>data_check load</code> the path before the filename has no impact on the inferred table name, only the file name itself.</p>
 <p>Short form:</p>
 <pre><code class="language-yaml">- load: some_path/schema.table_name.csv
 </code></pre>
 <p>Long form:</p>
 <pre><code class="language-yaml">- load:
-    files: 
+    files:
       - some_path
       - some/other/path/schema.other_table.csv
     mode: append
@@ -228,27 +233,24 @@ checks/
     - some_path
     - some/other/path/schema.other_table.csv
 </code></pre>
-<h3 id="sql_files">sql_files</h3>
-<p><em>sql_files</em> is like calling <code>data_check sql --files ...</code>. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call <em>sql_files</em> twice. <em>sql_file</em> is an alias for <em>sql_files</em>.</p>
-<p>Short form:</p>
-<pre><code class="language-yaml">- sql_files: some_file.sql
+<p>Or use <em>file</em> as an alias for _files:</p>
+<pre><code class="language-yaml">- load:
+    file: some_file.csv
 </code></pre>
-<p>Using the alias:</p>
-<pre><code class="language-yaml">- sql_file: some_file.sql
+<p>Overriding the table name:</p>
+<pre><code class="language-yaml">- load:
+    table: some_table
+    file: some_file.csv
 </code></pre>
-<p>Long form:</p>
-<pre><code class="language-yaml">- sql_files:
-    files:
-      - some_file.sql
-      - some_path
-</code></pre>
-<p>You can also omit <em>files</em>:</p>
-<pre><code class="language-yaml">- sql_files:
-    - some_file.sql
-    - some_path
-</code></pre>
+<p>You can only use a single CSV file when overriding the table name. Using multiple files will fail.</p>
 <h3 id="sql">sql</h3>
-<p><em>sql</em> is like calling <code>data_check sql ...</code>. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV.</p>
+<p><em>sql</em> is like calling <code>data_check sql ...</code>.
+<em>sql</em> has two modes: query mode and files mode.
+In the short form, <em>sql</em> will check if the given parameter is a file and run the file in files mode.
+If the parameter is not a file, <em>sql</em> will execute in query mode.</p>
+<p>Query mode and files mode can be explicitly specified by using the long form of <em>sql</em>.</p>
+<h4 id="query-mode">query mode</h4>
+<p>The query mode is like calling <code>data_check sql ...</code> without <code>--files</code>. This will execute a SQL statement given as the parameter. If the SQL is a query, the result will be printed as CSV. If the parameter is a file path, the</p>
 <p>Short form:</p>
 <pre><code class="language-yaml">- sql: select 1 as a, 'b' as t
 </code></pre>
@@ -261,7 +263,30 @@ checks/
     query: select 1 as a, 'b' as t
     output: result.csv
 </code></pre>
-<p><em>output</em> is relative to the pipeline path, unless an absolute path is specified, for example '{{PROJECT_PATH}}/result.csv'.</p>
+<p><em>output</em> is relative to the pipeline path, unless an absolute path is specified, for example '{{PROJECT_PATH}}/result.csv'.
+<em>output</em> can only be used with a query, not with files.</p>
+<p><em>write_check</em> can be used to generate a CSV check from a SQL statement:</p>
+<pre><code class="language-yaml">- sql:
+    query: select 1 as a, 'b' as t
+    write_check: some_check.sql
+</code></pre>
+<p>See <a href="../sql/#generating-a-csv-check-from-a-sql-statement">here</a> for more information.</p>
+<h4 id="files-mode">files mode</h4>
+<p>The query mode is like calling <code>data_check sql --files ...</code>. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call <em>sql</em> twice.</p>
+<p>Short form:</p>
+<pre><code class="language-yaml">- sql: some_file.sql
+</code></pre>
+<p>Long form:</p>
+<pre><code class="language-yaml">- sql:
+    files:
+      - some_file.sql
+      - some_path
+</code></pre>
+<p>You can also omit <em>files</em>:</p>
+<pre><code class="language-yaml">- sql:
+    - some_file.sql
+    - some_path
+</code></pre>
 <h3 id="cmd">cmd</h3>
 <p><em>cmd</em> will call any script or program. The commands will be executed sequentially. The optional <em>print</em> parameter can disable console output of the command.</p>
 <p>Short form:</p>
@@ -284,15 +309,60 @@ checks/
 <p><em>always_run</em> is a container for other steps. These steps will always be executed, even if any other step fail. If <em>always_run</em> is between other steps, it will be executed in order.</p>
 <p>Example:</p>
 <pre><code class="language-yaml">steps:
-  - sql_file: might_fail.sql
+  - sql: might_fail.sql
   - always_run:
-    - sql_file: run_after_failing.sql
+    - sql: run_after_failing.sql
     - cmd: some_script.sh
   - cmd: other_script.sh
   - always_run:
-    - sql_file: finish.sql
+    - sql: finish.sql
 </code></pre>
 <p>In this example, if <em>might_fail.sql</em> fails, <em>run_after_failing.sql</em>, <em>some_script.sh</em> and <em>finish.sql</em> will be run in this order. If <em>might_fail.sql</em> does not fail, <em>other_script.sh</em> is executed after <em>run_after_failing.sql</em> and <em>some_script.sh</em>. <em>finish.sql</em> will then run at the end (even when <em>other_script.sh</em> fails).</p>
+<h3 id="fake">fake</h3>
+<p><em>fake</em> is used to generate test data. See <a href="../test_data/">here</a> for more details and how to create the configuration.</p>
+<p>Short form:</p>
+<pre><code class="language-yaml">- fake: fake_conf.yml
+</code></pre>
+<p>Long form:</p>
+<pre><code class="language-yaml">- fake:
+    configs:
+        - fake_conf.yml
+        - fake_conf2.yml
+</code></pre>
+<p>With custom output path:</p>
+<pre><code class="language-yaml">- fake:
+    configs:
+        - fake_conf.yml
+    output: fake_table.csv
+</code></pre>
+<h3 id="sql_files">sql_files</h3>
+<p><em>sql_files</em> is deprecated. Use <a href="#sql">sql</a> instead.</p>
+<p><em>sql_files</em> is like calling <code>data_check sql --files ...</code>. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call <em>sql_files</em> twice. <em>sql_file</em> is an alias for <em>sql_files</em>.</p>
+<p>Short form:</p>
+<pre><code class="language-yaml">- sql_files: some_file.sql
+</code></pre>
+<p>Using the alias:</p>
+<pre><code class="language-yaml">- sql_file: some_file.sql
+</code></pre>
+<p>Long form:</p>
+<pre><code class="language-yaml">- sql_files:
+    files:
+      - some_file.sql
+      - some_path
+</code></pre>
+<p>You can also omit <em>files</em>:</p>
+<pre><code class="language-yaml">- sql_files:
+    - some_file.sql
+    - some_path
+</code></pre>
+<h3 id="load_table">load_table</h3>
+<p><em>load_table</em> is deprecated. Use <a href="#load">load</a> instead.</p>
+<p><em>load_table</em> is like calling <code>data_check load --table ...</code>. This will load a CSV file into a table.</p>
+<pre><code class="language-yaml">- load_table:
+    file: check/date_test.csv
+    table: temp.date_test
+    mode: append
+</code></pre>
 <h2 id="nested-pipelines">nested pipelines</h2>
 <p>Pipelines can be nested inside other pipelines. Passing a folder with a <em>data_check_pipeline.yml</em> to <em>check</em> will run the pipeline:</p>
 <pre><code class="language-yaml">- check:
