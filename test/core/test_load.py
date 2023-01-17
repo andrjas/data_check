@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
+from data_check.exceptions import DataCheckException
 from data_check.sql import DataCheckSql, LoadMode
 from data_check.sql.table import Table  # noqa E402
 
@@ -206,7 +207,7 @@ def test_load_from_file_truncate_twice(sql: DataCheckSql, file_type):
 
 
 def test_load_from_file_non_existing_file(sql: DataCheckSql, file_type):
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises((DataCheckException, FileNotFoundError)):
         sql.table_loader.load_table_from_file(
             f"test_{file_type}",
             Path(f"load_data/non_existing.{file_type}"),

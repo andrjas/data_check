@@ -3,7 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from data_check.io import expand_files, get_expect_file, read_sql_file
+from data_check.exceptions import DataCheckException
+from data_check.io import expand_files, get_expect_file, read_csv, read_sql_file
 
 
 def test_expand_files():
@@ -55,3 +56,13 @@ def test_get_expect_file_sql():
     print(f"stem: {p.stem}")
     print(f"suffix: '{p.suffix}'")
     assert ef == Path()
+
+
+def test_non_unicode_sql():
+    with pytest.raises(DataCheckException):
+        read_sql_file(Path("checks/failing/non_unicode.sql"), {})
+
+
+def test_non_unicode_csv():
+    with pytest.raises(DataCheckException):
+        read_csv(Path("checks/failing/non_unicode.csv"))

@@ -8,6 +8,7 @@ from pandas._typing import DtypeArg
 from pandas.core.frame import DataFrame
 
 from .date import isoparse, parse_date_columns
+from .exceptions import DataCheckException
 
 
 def expand_files(
@@ -47,7 +48,10 @@ def read_sql_file(
     Reads the SQL file and returns it as a string.
     Evaluates the templates when needed.
     """
-    return parse_template(sql_file.read_text(encoding=encoding), template_data)
+    try:
+        return parse_template(sql_file.read_text(encoding=encoding), template_data)
+    except Exception as e:
+        raise DataCheckException(f"Failed to read {sql_file}: {e}")
 
 
 def get_expect_file(sql_file: Path) -> Path:
@@ -77,7 +81,10 @@ DEFAULT_READ_CSV_PARAMS = {
 
 def read_csv_header(csv_file: Path) -> List[str]:
     """Read only the header of a CSV file and returns the list of columns."""
-    df = pd.read_csv(csv_file, nrows=0, **DEFAULT_READ_CSV_PARAMS)
+    try:
+        df = pd.read_csv(csv_file, nrows=0, **DEFAULT_READ_CSV_PARAMS)
+    except Exception as e:
+        raise DataCheckException(f"Failed to read {csv_file}: {e}")
     return df.columns.tolist()
 
 
@@ -101,13 +108,17 @@ def read_csv(
         header = read_csv_header(csv_file)
         parse_dates = [p for p in parse_dates if p in header]
 
-    df = pd.read_csv(
-        csv_file,
-        parse_dates=parse_dates,
-        date_parser=isoparse,
-        dtype=dtypes,
-        **DEFAULT_READ_CSV_PARAMS,
-    )
+    try:
+        df = pd.read_csv(
+            csv_file,
+            parse_dates=parse_dates,
+            date_parser=isoparse,
+            dtype=dtypes,
+            **DEFAULT_READ_CSV_PARAMS,
+        )
+    except Exception as e:
+        raise DataCheckException(f"Failed to read {csv_file}: {e}")
+
     if not parse_dates:
         _, df = parse_date_columns(df)
     return df
