@@ -250,6 +250,7 @@ select 1 as a
     pc.data_check.config.force = True
     pc.check_path = p1
     result = pc.run_test()
+    print(result.exception)
     assert result
     assert check_csv.exists()
     assert check_csv.read_text() == "a\n1\n"

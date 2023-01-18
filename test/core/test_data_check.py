@@ -31,6 +31,19 @@ def test_collect_checks(dc: DataCheck):
     assert len(checks) >= 41
 
 
+def test_collect_checks_sql_doesnt_return_table_check(dc: DataCheck):
+    checks = dc.collect_checks([Path("checks")])
+    paths = [c.check_path for c in checks]
+    assert Path("checks/basic/simple_string.csv").absolute() not in paths
+
+
+def test_collect_checks_files_unique(dc: DataCheck):
+    checks = dc.collect_checks([Path("checks")])
+    paths = [c.check_path for c in checks]
+    paths_set = set(paths)
+    assert len(paths) == len(paths_set)
+
+
 def test_collect_checks_returns_sorted_list(dc: DataCheck):
     checks = dc.collect_checks(
         [
@@ -78,6 +91,11 @@ def test_get_check_excel_check(dc: DataCheck):
 def test_get_check_table_check(dc: DataCheck):
     check = dc.get_check(Path("checks/table_check/basic/sqlite_master.csv"))
     assert isinstance(check, TableCheck)
+
+
+def test_get_check_csv_file_with_sql(dc: DataCheck):
+    check = dc.get_check(Path("checks/basic/simple_string.csv"))
+    assert isinstance(check, CSVCheck)
 
 
 def test_run_fail_if_path_doesnt_exist(dc: DataCheck):

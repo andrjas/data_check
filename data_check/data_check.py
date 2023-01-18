@@ -1,6 +1,6 @@
 from functools import partial
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 from data_check.checks.base_check import BaseCheck
 
@@ -88,11 +88,13 @@ class DataCheck:
     ) -> List[BaseCheck]:
         base_path = base_path.absolute()
         checks: List[BaseCheck] = []
+        check_paths: Set[Path] = set()
         for f in sorted(files):
             abs_file = f if f.is_absolute() else base_path / f
             check = self.get_check(abs_file)
-            if check is not None:
+            if check is not None and check.check_path not in check_paths:
                 checks.append(check)
+                check_paths.add(check.check_path)
             elif abs_file.is_dir():
                 dir_files = [d for d in abs_file.iterdir()]
                 checks.extend(self.collect_checks(dir_files, base_path=base_path))

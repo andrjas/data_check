@@ -1,13 +1,23 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Any, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
 from ..io import get_expect_file, read_sql_file, rel_path, write_csv
 from ..result import DataCheckResult
 from .base_check import BaseCheck
 
+if TYPE_CHECKING:
+    from data_check import DataCheck
+
 
 class DataCheckGenerator(BaseCheck):
     """Special type of a "check" to generate the expectation files."""
+
+    def __init__(self, data_check: DataCheck, check_path: Path) -> None:
+        if check_path.suffix.lower() in (".csv", ".xlsx"):
+            check_path = check_path.with_suffix(".sql")
+        super().__init__(data_check, check_path)
 
     def gen_expectation(
         self, sql_file: Path, force: bool = False, template_data: Dict[str, Any] = {}

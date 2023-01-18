@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Union, cast
+from typing import TYPE_CHECKING, List, Union, cast
 
 import pandas as pd
 
 from ..io import get_expect_file, read_csv
 from ..result import DataCheckResult, ResultType
 from .sql_base_check import SQLBaseCheck
+
+if TYPE_CHECKING:
+    from data_check import DataCheck
 
 
 @dataclass
@@ -17,9 +22,17 @@ class CSVCheckResult:
 
 
 class CSVCheck(SQLBaseCheck):
+    def __init__(self, data_check: DataCheck, check_path: Path) -> None:
+        if check_path.suffix.lower() in (".csv", ".xlsx"):
+            check_path = check_path.with_suffix(".sql")
+        super().__init__(data_check, check_path)
+
     @staticmethod
     def is_check_path(path: Path):
-        return path.suffix.lower() == ".sql"
+        return path.suffix.lower() == ".sql" or (
+            path.suffix.lower() in (".csv", ".xlsx")
+            and path.with_suffix(".sql").exists()
+        )
 
     def get_result(
         self, sql_result: pd.DataFrame, expect_result: pd.DataFrame
