@@ -7,7 +7,7 @@ from jinja2 import Template
 from pandas._typing import DtypeArg
 from pandas.core.frame import DataFrame
 
-from .date import isoparse, parse_date_columns
+from .date import fix_date_dtype, isoparse, parse_date_columns
 from .exceptions import DataCheckException
 
 
@@ -121,6 +121,7 @@ def read_csv(
 
     if not parse_dates:
         _, df = parse_date_columns(df)
+    fix_date_dtype(df, {})
     return df
 
 

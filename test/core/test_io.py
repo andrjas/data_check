@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+import pandas as pd
 import pytest
 
 from data_check.exceptions import DataCheckException
@@ -66,3 +67,8 @@ def test_non_unicode_sql():
 def test_non_unicode_csv():
     with pytest.raises(DataCheckException):
         read_csv(Path("checks/failing/non_unicode.csv"))
+
+
+def test_read_csv_date_columns_with_empty_values_return_nat():
+    df = read_csv(Path("load_data/sample/test_date_with_null_dates.csv"))
+    assert df["j"].iloc[1] is pd.NaT
