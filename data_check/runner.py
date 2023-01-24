@@ -53,24 +53,32 @@ class DataCheckRunner:
         Runs all tests.
         Returns a list of the results
         """
-        result_futures = [
-            self.executor(all_checks).submit(run_method, f) for f in all_checks
-        ]
+        executor = self.executor(all_checks)
         results: List[DataCheckResult] = []
-        for future in as_completed(result_futures):
-            dc_result = future.result()
-            results.append(dc_result)
-            self.output.print(dc_result)
+        try:
+            result_futures = [executor.submit(run_method, f) for f in all_checks]
+            for future in as_completed(result_futures):
+                dc_result = future.result()
+                results.append(dc_result)
+                self.output.print(dc_result)
+        except KeyboardInterrupt:
+            executor.shutdown(wait=False)
+            for f in result_futures:
+                f.cancel()
         return results
 
     def run_any(
         self, run_method: Callable[..., Any], parameters: List[Dict[str, Any]]
     ) -> List[Any]:
-        result_futures = [
-            self.executor(parameters).submit(run_method, **p) for p in parameters
-        ]
+        executor = self.executor(parameters)
         results: List[Any] = []
-        for future in as_completed(result_futures):
-            dc_result = future.result()
-            results.append(dc_result)
+        try:
+            result_futures = [executor.submit(run_method, **p) for p in parameters]
+            for future in as_completed(result_futures):
+                dc_result = future.result()
+                results.append(dc_result)
+        except KeyboardInterrupt:
+            executor.shutdown(wait=False)
+            for f in result_futures:
+                f.cancel()
         return results
