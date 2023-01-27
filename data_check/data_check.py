@@ -64,6 +64,11 @@ class DataCheck:
             del check
         return result
 
+    def _get_check_or_generator(self, check_path, check) -> BaseCheck:
+        if self.config.generate_mode:
+            return DataCheckGenerator(self, check_path, check)
+        return check
+
     def get_check(self, check_path: Path) -> Optional[BaseCheck]:
         if PathNotExists.is_check_path(check_path):
             return PathNotExists(self, check_path)
@@ -74,14 +79,12 @@ class DataCheck:
         elif ExcelCheck.is_check_path(check_path):
             return ExcelCheck(self, check_path)
         elif CSVCheck.is_check_path(check_path):
-            if self.config.generate_mode:
-                return DataCheckGenerator(self, check_path)
-            else:
-                return CSVCheck(self, check_path)
+            csv_check = CSVCheck(self, check_path)
+            return self._get_check_or_generator(check_path, csv_check)
         elif TableCheck.is_check_path(check_path):
-            return TableCheck(self, check_path)
-        else:
-            return None
+            table_check = TableCheck(self, check_path)
+            return self._get_check_or_generator(check_path, table_check)
+        return None
 
     def collect_checks(
         self, files: List[Path], base_path: Path = Path(".")

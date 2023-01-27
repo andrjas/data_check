@@ -20,6 +20,16 @@ def run(command: List[str], workers: Optional[int] = 1) -> Result:
     return result
 
 
+def write_dc_config(path: Path):
+    Path(path / "data_check.yml").write_text(
+        """
+    default_connection: test
+    connections:
+        test: sqlite+pysqlite:///d.db
+    """
+    )
+
+
 def run_check(command: List[str], workers: Optional[int] = 1):
     return run(command + ["checks/basic/simple_string.sql"], workers=workers)
 
@@ -279,6 +289,29 @@ def test_generate_force():
     assert res.output.startswith(
         f"expectation written to checks{sep}generated{sep}generate_before_running.csv"
     )
+
+
+def test_generate_full_table_check(tmp_path: Path):
+    csv_txt = "type,name,tbl_name,rootpage,sql"
+    runner = CliRunner()
+
+    with runner.isolated_filesystem(tmp_path) as td:  # type: ignore
+        tdp = Path(td)
+        write_dc_config(tdp)
+        runner.invoke(cli, ["sql", "create table a (i number)"])
+        csv = "sqlite_master.csv"
+        gen_csv = Path(csv)
+        if gen_csv.exists():
+            os.unlink(gen_csv)
+        gen_csv.write_text(csv_txt)
+
+        res = run(["gen", "--force", csv])
+
+        assert res.exit_code == 0
+        assert gen_csv.exists()
+        assert not gen_csv.with_suffix(".sql").exists()
+
+        assert gen_csv.read_text() != csv_txt
 
 
 def test_sql_file():
