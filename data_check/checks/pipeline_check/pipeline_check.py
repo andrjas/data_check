@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union, ca
 from data_check.sql.load_mode import LoadMode
 from data_check.utils.deprecation import deprecated_method
 
-from ...io import read_yaml
+from ...file_ops import read_yaml
 from ...result import DataCheckResult
 from ..base_check import BaseCheck
 from .cmd_step import CmdStep

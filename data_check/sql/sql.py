@@ -17,7 +17,7 @@ from sqlalchemy.sql.expression import bindparam
 from data_check.config import DataCheckConfig
 
 from ..exceptions import DataCheckException
-from ..io import print_csv, write_csv
+from ..file_ops import print_csv, write_csv
 from ..output import DataCheckOutput
 from ..runner import DataCheckRunner
 from .query_result import QueryResult

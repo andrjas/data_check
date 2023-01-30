@@ -9,7 +9,7 @@ import pandas as pd
 if TYPE_CHECKING:
     from .fake_config import FakeConfig
 
-from data_check.io import read_csv, write_csv
+from data_check.file_ops import read_csv, write_csv
 
 from .iterators import dec, inc, random
 

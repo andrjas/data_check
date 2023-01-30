@@ -7,7 +7,7 @@ import pandas as pd
 from colorama import Fore, Style
 
 from ..exceptions import DataCheckException
-from ..io import rel_path
+from ..file_ops import rel_path
 from ..result import DataCheckResult, ResultType
 from .diffed_df import get_diffed_df
 from .handler import OutputHandler

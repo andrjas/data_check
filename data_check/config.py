@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
 if TYPE_CHECKING:
     from data_check.sql.load_mode import LoadMode
 
-from .io import read_yaml
+from .file_ops import read_yaml
 
 TEMPLATE_FILE = "template.yml"
 CHECKS_PATH = "checks"

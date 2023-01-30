@@ -14,7 +14,7 @@ from .checks import (
     TableCheck,
 )
 from .config import DataCheckConfig
-from .io import expand_files, parse_template, read_sql_file, read_yaml
+from .file_ops import expand_files, parse_template, read_sql_file, read_yaml
 from .output import DataCheckOutput
 from .result import DataCheckResult
 from .runner import DataCheckRunner

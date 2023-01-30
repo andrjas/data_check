@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Tuple
 
-from data_check.io import expand_files, read_sql_file
+from data_check.file_ops import expand_files, read_sql_file
 
 if TYPE_CHECKING:
     from data_check import DataCheck

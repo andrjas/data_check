@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, List, Union, cast
 
 import pandas as pd
 
-from ..io import get_expect_file, read_csv
+from ..file_ops import get_expect_file, read_csv
 from ..result import DataCheckResult, ResultType
 from .sql_base_check import SQLBaseCheck
 

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from data_check.sql import Table, ColumnInfo
 
 from ..date import fix_date_dtype
-from ..io import expand_files, read_csv
+from ..file_ops import expand_files, read_csv
 from ..utils.deprecation import deprecated_method_argument
 from .load_mode import LoadMode
 

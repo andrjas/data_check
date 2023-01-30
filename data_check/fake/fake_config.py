@@ -5,7 +5,7 @@ import pandas as pd
 import yaml
 from faker import Faker
 
-from data_check.io import write_csv
+from data_check.file_ops import write_csv
 from data_check.sql import DataCheckSql, Table
 
 from .column_config import ColumnConfig

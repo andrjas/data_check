@@ -7,7 +7,7 @@ import pandas as pd
 
 from data_check.sql.query_result import QueryResult
 
-from ..io import read_sql_file
+from ..file_ops import read_sql_file
 from ..result import DataCheckResult, ResultType
 from .base_check import BaseCheck
 

@@ -7,7 +7,7 @@ from sqlalchemy import Table as SQLTable
 
 from data_check import DataCheck  # noqa E402
 from data_check.fake.fake_config import FakeConfig
-from data_check.io import read_csv
+from data_check.file_ops import read_csv
 from data_check.sql.table import Table
 
 
