@@ -49,8 +49,9 @@ Multiple python versions can be installed with [pyenv](https://github.com/pyenv/
 pyenv install 3.8.1
 pyenv install 3.9.1
 pyenv install 3.10.1
+pyenv install 3.11.1
 
-pyenv local 3.8.1 3.9.1 3.10.1
+pyenv local 3.8.1 3.9.1 3.10.1 3.11.1
 ```
 
 Install all versions mentioned in _tox.ini_. Then run the tests with tox: `tox`.

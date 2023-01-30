@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict
 
@@ -18,7 +18,7 @@ from .iterators import dec, inc, random
 class FakeIterator:
     fake_config: FakeConfig
     count: int = 1
-    data: pd.DataFrame = pd.DataFrame()
+    data: pd.DataFrame = field(default_factory=pd.DataFrame)
 
     def load_config(self, config: Dict[str, Any]):
         self.count = config.get("count", 1)
