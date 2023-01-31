@@ -10,6 +10,23 @@ from .common import common_options, get_data_check
 
 @click.command()
 @common_options
+@click.option(
+    "--wait",
+    is_flag=True,
+    help="retry and wait until timeout is reached",
+)
+@click.option(
+    "--timeout",
+    type=int,
+    default=DataCheckConfig.wait_timeout,
+    help=f"timeout for wait in seconds (default: {DataCheckConfig.wait_timeout})",
+)
+@click.option(
+    "--retry",
+    type=int,
+    default=DataCheckConfig.wait_retry,
+    help=f"retry for wait in seconds (default: {DataCheckConfig.wait_retry})",
+)
 @click.pass_context
 def ping(
     ctx: click.Context,
@@ -19,6 +36,9 @@ def ping(
     verbose: bool = False,
     traceback: bool = False,
     quiet: bool = False,
+    wait: bool = False,
+    timeout: int = 5,
+    retry: int = 1,
     log: Optional[Union[str, Path]] = None,
 ):
     """Tries to connect to the database."""
@@ -33,7 +53,7 @@ def ping(
         log=log,
     )
 
-    test = dc.sql.test_connection()
+    test = dc.sql.test_connection(wait=wait, timeout=timeout, retry=retry)
     if test:
         ctx.exit(0)
     else:

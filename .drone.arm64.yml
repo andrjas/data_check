@@ -15,7 +15,7 @@ steps:
   - cp -rn example/fake test/int_test/oracle
   - poetry install -E oracle
   - cd test/int_test/oracle
-  - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
+  - poetry run data_check ping --wait --timeout 60 --retry 5
   - rm -f checks/pipelines/fake_data/main.simple_fake_table.csv
   - rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv
   - rm -f checks/generated/data_with_hash.csv
@@ -67,7 +67,7 @@ steps:
   - cp -rn example/fake test/int_test/sqlite
   - poetry install
   - cd test/int_test/sqlite
-  - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
+  - poetry run data_check ping --wait --timeout 60 --retry 5
   - rm -f checks/pipelines/fake_data/main.simple_fake_table.csv
   - rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv
   - rm -f checks/generated/data_with_hash.csv
@@ -104,7 +104,7 @@ steps:
   - cp -rn example/fake test/int_test/mysql
   - poetry install -E mysql
   - cd test/int_test/mysql
-  - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
+  - poetry run data_check ping --wait --timeout 60 --retry 5
   - rm -f checks/pipelines/fake_data/main.simple_fake_table.csv
   - rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv
   - rm -f checks/generated/data_with_hash.csv
@@ -147,7 +147,7 @@ steps:
   - cp -rn example/fake test/int_test/postgres
   - poetry install -E postgres
   - cd test/int_test/postgres
-  - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
+  - poetry run data_check ping --wait --timeout 60 --retry 5
   - rm -f checks/pipelines/fake_data/main.simple_fake_table.csv
   - rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv
   - rm -f checks/generated/data_with_hash.csv
@@ -185,7 +185,7 @@ steps:
   - cp -rn example/fake test/int_test/mssql
   - poetry install -E mssql
   - cd test/int_test/mssql
-  - bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'
+  - poetry run data_check ping --wait --timeout 60 --retry 5
   - rm -f checks/pipelines/fake_data/main.simple_fake_table.csv
   - rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv
   - rm -f checks/generated/data_with_hash.csv

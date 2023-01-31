@@ -2,6 +2,7 @@ import warnings
 from functools import cached_property
 from os import path
 from pathlib import Path
+from time import sleep, time
 from typing import Any, Dict, List, Optional, Union, cast
 
 import pandas as pd
@@ -151,20 +152,42 @@ class DataCheckSql:
             result = QueryResult(query, self.get_connection().execute(sql, **params))
         return result
 
-    def test_connection(self) -> bool:
-        """
-        Returns True if we can connect to the database.
-        Mainly for integration tests.
-        """
-        engine = self.get_engine(extra_params={"pool_pre_ping": True})
+    def _try_connect(self, engine) -> bool:
         try:
             engine.connect()
-            self.output.print("connecting succeeded")
             return True
         except Exception as e:  # noqa E722
             self.output.print_exception(e)
-            self.output.print("connecting failed")
             return False
+
+    def test_connection(
+        self,
+        wait=False,
+        timeout=DataCheckConfig.wait_timeout,
+        retry=DataCheckConfig.wait_retry,
+    ) -> bool:
+        """
+        Returns True if we can connect to the database.
+        If "wait" is true, we retry each "retry" second, for "timeout" seconds.
+        Mainly for integration tests.
+        """
+        success_msg = "connecting succeeded"
+        engine = self.get_engine(extra_params={"pool_pre_ping": True})
+        if wait:
+            timeout_time = time() + timeout
+            while time() < timeout_time:
+                if self._try_connect(engine):
+                    self.output.print(success_msg)
+                    return True
+                else:
+                    sleep(retry)
+                    self.output.print("retry")
+        else:
+            if self._try_connect(engine):
+                self.output.print(success_msg)
+                return True
+        self.output.print("connecting failed")
+        return False
 
     def run_sql(
         self,

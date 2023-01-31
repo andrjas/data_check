@@ -20,6 +20,9 @@ class DataCheckConfig:
 
     default_print_format = "csv"
 
+    wait_timeout = 5
+    wait_retry = 1
+
     def __init__(self, config_path: Optional[Path] = None) -> None:
         self.config: Dict[str, Any] = {}
         self.connection: Optional[str] = None

@@ -211,6 +211,30 @@ def test_ping():
     assert res.output.strip() == "connecting succeeded"
 
 
+def test_ping_wait():
+    res = run(["ping", "--wait"])
+    assert res.exit_code == 0
+    assert res.output.strip() == "connecting succeeded"
+
+
+def test_ping_wait_timeout():
+    res = run(["ping", "--wait", "--timeout", "5"])
+    assert res.exit_code == 0
+    assert res.output.strip() == "connecting succeeded"
+
+
+def test_ping_wait_timeout_retry():
+    res = run(["ping", "--wait", "--timeout", "4", "--retry", "2"])
+    assert res.exit_code == 0
+    assert res.output.strip() == "connecting succeeded"
+
+
+def test_ping_wait_retry():
+    res = run(["ping", "--wait", "--retry", "2"])
+    assert res.exit_code == 0
+    assert res.output.strip() == "connecting succeeded"
+
+
 def test_invalid_verbose():
     res = run(["--verbose", "checks/failing/invalid.sql"])
     assert_failed(res)

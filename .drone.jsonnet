@@ -2,7 +2,7 @@
 # to generate .drone.yml
 
 local generic_int_test = [
-    "bash -c 'while ! poetry run data_check ping --quiet; do sleep 1; done'",
+    "poetry run data_check ping --wait --timeout 60 --retry 5",
     "rm -f checks/pipelines/fake_data/main.simple_fake_table.csv",
     "rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv",
     "rm -f checks/generated/data_with_hash.csv",
