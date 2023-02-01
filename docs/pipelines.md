@@ -274,6 +274,22 @@ With custom output path:
     output: fake_table.csv
 ```
 
+### ping
+_ping_ is like calling `data_check ping --wait`. This will try to connect to the database and fail the pipeline if it doesn't succeed within the timeout. Timeout duration and time between retries can be configured.
+
+Short form:
+```yaml
+- ping:
+```
+
+With timeout and retry configuration:
+```yaml
+- ping:
+    timeout: 5
+    retry: 1
+```
+This will retry the connection each second and timeout after 5 seconds, which are the default values.
+
 ### sql_files
 
 _sql\_files_ is deprecated. Use [sql](#sql) instead.

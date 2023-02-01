@@ -97,13 +97,22 @@ Common options can be used with any command.
 ## ping
 
 `ping` tries to connect to the database. The exit code is 0 if it successful, otherwise it is 1.
-`ping` doesn't have any special options, except the common ones.
+With `--wait` `ping` will retry to connect to the database until the timeout is reached.
+
+### Options
+
+* `--wait` - retry and wait until timeout is reached
+* `--timeout SECONDS` - timeout for wait in seconds (default: 5)
+* `--retry SECONDS` - retry for wait in seconds (default: 1)
 
 ### Examples
 
 * `data_check ping` - Tries to connect to the default database.
 * `data_check ping --connection test2` - Tries to connect to the database with the connection _test2_.
 * `data_check ping --quiet` - Tries to connect to the default database. Doesn't print anything.
+* `data_check ping --wait` - Tries to connect to the default database for 5 seconds, retrying each second.
+* `data_check ping --wait --timeout 60` - Tries to connect to the default database for 60 seconds, retrying each second.
+* `data_check ping --wait --timeout 60 --retry 5` - Tries to connect to the default database for 60 seconds, retrying each 5 seconds.
 
 
 ## sql

@@ -1,4 +1,7 @@
 steps:
+  - ping:
+      timeout: 10
+      retry: 2
   - cmd:
     - echo "start data_check pipeline {{PIPELINE_PATH}}"
     - "echo 'connection: {{CONNECTION}}'"

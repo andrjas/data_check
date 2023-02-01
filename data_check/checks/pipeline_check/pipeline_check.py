@@ -6,6 +6,7 @@ from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union, cast
 
+from data_check.config import DataCheckConfig
 from data_check.sql.load_mode import LoadMode
 from data_check.utils.deprecation import deprecated_method
 
@@ -66,6 +67,8 @@ class PipelineCheck(BaseCheck):
             convert_to_path_list=["configs"],
             convert_to_path=["output"],
         )
+        ping_step = partial(self.data_check.sql.test_connection, wait=True)
+        self.register_pipeline_step("ping", ping_step)
 
     def load_table_or_tables(
         self,
