@@ -69,6 +69,8 @@ class PipelineCheck(BaseCheck):
         )
         ping_step = partial(self.data_check.sql.test_connection, wait=True)
         self.register_pipeline_step("ping", ping_step)
+        append_step = partial(self.load_table_or_tables, mode=LoadMode.APPEND)
+        self.register_pipeline_step("append", append_step)
 
     def load_table_or_tables(
         self,

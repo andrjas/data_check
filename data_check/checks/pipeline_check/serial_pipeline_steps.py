@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Union
 
@@ -75,7 +76,10 @@ class SerialPipelineSteps:
             prepared_params = self.pipeline_check.get_prepared_parameters(
                 step_type, params
             )
-            argspec = inspect.getfullargspec(call_method)
+            spec_method = (
+                call_method.func if isinstance(call_method, partial) else call_method
+            )
+            argspec = inspect.getfullargspec(spec_method)
             if "base_path" in argspec.args:
                 prepared_params.update({"base_path": path})
             return call_method(**prepared_params)

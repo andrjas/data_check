@@ -7,6 +7,7 @@ from colorama import init
 
 from data_check.config import DataCheckConfig
 
+from .append import append
 from .common import common_options, init_common
 from .fake import fake
 from .generate import gen
@@ -47,4 +48,5 @@ cli.add_command(sql)
 cli.add_command(gen)
 cli.add_command(ping)
 cli.add_command(load)
+cli.add_command(append)
 cli.add_command(fake)

@@ -27,3 +27,4 @@ steps:
       commands:
       - echo "not printed"
       print: false
+  - append: load_pipeline_data/test_simple_pipeline.csv

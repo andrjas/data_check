@@ -6,6 +6,7 @@
 * `data_check fake` - [Generate test data](#fake).
 * `data_check gen` -  [Generate CSV files from query files](#gen).
 * `data_check load` - [Load data from files into tables](#load).
+* `data_check append` - [Append data from files into tables](#append).
 * `data_check ping` - [Tries to connect to the database](#ping).
 * `data_check sql` - [Run SQL statements](#sql).
 
@@ -82,7 +83,7 @@ Common options can be used with any command.
 
 ### Options
 
-* `--table`-  Table name to load data into
+* `--table` -  Table name to load data into
 * `--mode` -  How to load the table: truncate (default), append or replace.
 
 ### Examples
@@ -93,6 +94,17 @@ Common options can be used with any command.
 * `data_check load --mode replace some_path/schema.table.csv` - Drops and recreates the table schema.table and loads the csv from _some\_path/schema.table.csv_ into the table.
 * `data_check load some_path/schema.table.csv other_path/schema2.other_table.csv` - Loads multiple tables from multiple files.
 * `data_check load some_path` - Loads all CSV/Excel files from _some\_path_ each into the same table as the file name.
+
+## append
+
+`append` is an alias for `load --mode append`.
+
+### Options
+* `--table` -  Table name to load data into
+
+### Examples
+
+See [load](#load) examples.
 
 ## ping
 

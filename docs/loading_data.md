@@ -37,6 +37,10 @@ The default load mode can also be set for the whole project in _data\_check.yml_
 default_load_mode: append
 ```
 
+## append alias
+
+You can use `data_check append` instead of `data_check load --mode append`.
+
 ## CSV and data types
 
 When loading data from CSV files, data_check (or more precisely: [pandas](https://pandas.pydata.org/)) will infer the data types from the file.

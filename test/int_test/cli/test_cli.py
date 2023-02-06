@@ -76,6 +76,7 @@ def all_options():
 def test_all_options_tested():
     dc_options = all_options()
     tested_options = Path(__file__).read_text()
+    tested_options += ((Path(__file__).parent) / "test_load_cli.py").read_text()
 
     join: List[str] = []
     for option in dc_options:
@@ -363,23 +364,6 @@ def test_sql_file_no_file():
     assert res.exit_code == 1
 
 
-def test_load_tables():
-    res = run(["load", "load_data/test.csv"])
-    assert res.exit_code == 0
-    assert res.output.strip() == f"table test loaded from load_data{sep}test.csv"
-
-
-def test_load_tables_folder(caplog):
-    res = run(["load", "load_data/tables"])
-    assert res.exit_code == 0
-    assert f"table test1 loaded from load_data{sep}tables{sep}test1.csv" in res.output
-    assert f"table test3 loaded from load_data{sep}tables{sep}test3.xlsx" in res.output
-    assert (
-        f"table main.test2 loaded from load_data{sep}tables{sep}main.test2.csv"
-        in res.output
-    )
-
-
 def test_sql():
     res = run(["sql", "select 1 as a"])
     assert res.exit_code == 0
@@ -415,105 +399,6 @@ def test_sql_output_o():
 def test_sql_invalid_query():
     res = run(["sql", "selct 1 as a"])
     assert res.exit_code == 1
-
-
-def test_load_table():
-    res = run(["load", "load_data/test.csv", "--table", "test_load_table"])
-    assert res.exit_code == 0
-    assert (
-        res.output.strip()
-        == f"table test_load_table loaded from load_data{sep}test.csv"
-    )
-
-
-def test_load_table_excel():
-    res = run(
-        [
-            "load",
-            "load_data/test.xlsx",
-            "--table",
-            "test_load_table_excel",
-        ]
-    )
-    assert res.exit_code == 0
-    assert (
-        res.output.strip()
-        == f"table test_load_table_excel loaded from load_data{sep}test.xlsx"
-    )
-
-
-def test_load_mode_truncate():
-    res = run(
-        [
-            "load",
-            "load_data/test.csv",
-            "--table",
-            "test_load_table_truncate",
-            "--mode",
-            "truncate",
-        ]
-    )
-    assert res.exit_code == 0
-    assert (
-        res.output.strip()
-        == f"table test_load_table_truncate loaded from load_data{sep}test.csv"
-    )
-
-
-def test_load_mode_append():
-    res = run(
-        [
-            "load",
-            "load_data/test.csv",
-            "--table",
-            "test_load_table_append",
-            "--mode",
-            "append",
-        ]
-    )
-    assert res.exit_code == 0
-    assert (
-        res.output.strip()
-        == f"table test_load_table_append loaded from load_data{sep}test.csv"
-    )
-
-
-def test_load_mode_replace():
-    res = run(
-        [
-            "load",
-            "load_data/test.csv",
-            "--table",
-            "test_load_table_replace",
-            "--mode",
-            "replace",
-        ]
-    )
-    assert res.exit_code == 0
-    assert (
-        res.output.strip()
-        == f"table test_load_table_replace loaded from load_data{sep}test.csv"
-    )
-
-
-def test_load_mode_invalid():
-    res = run(
-        [
-            "load",
-            "load_data/test.csv",
-            "--table",
-            "test_load_table_invalid",
-            "--mode",
-            "invalid",
-        ]
-    )
-    assert res.exit_code == 1
-
-
-def test_load_mode_with_load_tables():
-    res = run(["load", "load_data/test.csv", "--mode", "append"])
-    assert res.exit_code == 0
-    assert res.output.strip() == f"table test loaded from load_data{sep}test.csv"
 
 
 def test_quiet():

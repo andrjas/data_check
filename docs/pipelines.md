@@ -136,6 +136,30 @@ Overriding the table name:
 
 You can only use a single CSV file when overriding the table name. Using multiple files will fail.
 
+### append
+
+_append_ is an alias for
+
+```yaml
+- load:
+    mode: append
+```
+
+
+Short form:
+```yaml
+- append: some_path/schema.table_name.csv
+```
+
+Long form:
+```yaml
+- append:
+    files:
+      - some_path
+      - some/other/path/schema.other_table.csv
+```
+
+
 ### sql
 
 _sql_ is like calling `data_check sql ...`.
