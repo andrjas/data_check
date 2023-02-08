@@ -3,6 +3,7 @@
 ## Commands
 
 * `data_check run` - [Run checks (default command)](#run).
+* `data_check init` - [Create a data_check project or pipeline.](#init)
 * `data_check fake` - [Generate test data](#fake).
 * `data_check gen` -  [Generate CSV files from query files](#gen).
 * `data_check load` - [Load data from files into tables](#load).
@@ -44,6 +45,21 @@ Common options can be used with any command.
 * `data_check run some_folder/some_file.sql` - Run data_check against the default connection for a single test.
 * `data_check run --print` - Run data_check against the default connection in the  _checks_ folder and prints all failed result data.
 * `data_check run --print --diff some_folder` - Run data_check against the default connection in the _some\_folder_ folder and prints only the different columns for failed results.
+
+## init
+
+`init` creates a new data_check project or a pipeline.
+
+### Options
+
+* `-p/--pipeline` - create a pipeline instead of a project.
+
+### Examples
+
+* `data_check init new_project` - Creates a folder _new\_project_ if it doesn't exists yet and a sample _data\_check.yml_ inside it.
+* `data_check init .` - Creates a sample _data\_check.yml_ inside the current folder, it it doesn't exists yet.
+* `data_check init --pipeline new_pipeline` - Creates a folder _new\_pipeline_ if it doesn't exists yet and a sample _data\_check\_pipeline.yml_ inside it.
+* `data_check init -p .` - Creates a sample _data\_check\_pipeline.yml_ inside the current folder, it it doesn't exists yet.
 
 ## fake
 

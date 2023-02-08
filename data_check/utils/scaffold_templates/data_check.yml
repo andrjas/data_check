@@ -1,0 +1,7 @@
+default_connection: con1
+# log: data_check.log
+# default_load_mode: truncate
+
+connections:
+    con1: sqlite+pysqlite://
+    con2: sqlite+pysqlite://

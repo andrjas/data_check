@@ -77,6 +77,7 @@ def test_all_options_tested():
     dc_options = all_options()
     tested_options = Path(__file__).read_text()
     tested_options += ((Path(__file__).parent) / "test_load_cli.py").read_text()
+    tested_options += ((Path(__file__).parent) / "test_init_cli.py").read_text()
 
     join: List[str] = []
     for option in dc_options:

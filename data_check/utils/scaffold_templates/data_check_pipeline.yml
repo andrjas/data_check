@@ -1,0 +1,45 @@
+steps:
+  # run checks in checks_path
+  - check: checks_path
+
+  # run a single check
+  - check: some_check.sql
+
+  # load files from a folder into the same table as the file name
+  - load: path_with_csv_or_excel
+
+  # load some_file.csv into schema.some_table
+  - load:
+      table: schema.some_table
+      file: some_file.csv
+
+  # alias for "load: mode: append"
+  - append: ...
+
+  # run a sql query/statement
+  - sql: "select * from ..."
+
+  # run sqls from a folder (in parallel)
+  - sql: path_with_sqls
+
+  # execute a command on the shell
+  - cmd: echo "start data_check pipeline {{PIPELINE_PATH}}"
+
+  # this block will always run
+  - always_run:
+    - cmd: echo "this will run even if the previous steps failed"
+
+  # generate some test data
+  - fake: fake_conf.yml
+
+  # wait for the db to become available
+  - ping:
+      timeout: 10
+      retry: 2
+
+  # example pipeline:
+  - sql: prepare
+
+  - load: step/1/data
+  - cmd: {{PROJECT_PATH}}/run_pipeline.sh {{CONNECTION}} pipeline_name
+  - check: step/1/check
