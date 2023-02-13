@@ -1,6 +1,9 @@
 ---
 kind: pipeline
 name: oracle
+platform:
+  arch: amd64
+  os: linux
 steps:
 - commands:
   - cp -rn example/checks test/int_test/oracle
@@ -48,6 +51,9 @@ volumes:
 ---
 kind: pipeline
 name: sqlite
+platform:
+  arch: amd64
+  os: linux
 steps:
 - commands:
   - cp -rn example/checks test/int_test/sqlite
@@ -80,6 +86,9 @@ volumes:
 ---
 kind: pipeline
 name: mysql
+platform:
+  arch: amd64
+  os: linux
 steps:
 - commands:
   - cp -rn example/checks test/int_test/mysql
@@ -118,6 +127,9 @@ volumes:
 ---
 kind: pipeline
 name: postgres
+platform:
+  arch: amd64
+  os: linux
 steps:
 - commands:
   - cp -rn example/checks test/int_test/postgres
@@ -156,6 +168,9 @@ volumes:
 ---
 kind: pipeline
 name: mssql
+platform:
+  arch: amd64
+  os: linux
 steps:
 - commands:
   - cp -rn example/checks test/int_test/mssql

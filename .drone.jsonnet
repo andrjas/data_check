@@ -1,5 +1,8 @@
-# run "drone jsonnet  --format --stream" whenever you change this file
-# to generate .drone.yml
+# run this whenever you change this file to generate .drone.yml and .drone.arm64.yml:
+# drone jsonnet --format --stream --target .drone.yml --extVar arch=amd64
+# drone jsonnet --format --stream --target .drone.arm64.yml --extVar arch=arm64
+
+local arch = std.extVar("arch");
 
 local generic_int_test = [
     "poetry run data_check ping --wait --timeout 60 --retry 5",
@@ -13,11 +16,15 @@ local generic_int_test = [
 ];
 
 
-local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, extra_volumes=[], image_extra_volumes=[]) =
+local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, extra_volumes=[], image_extra_volumes=[], p_arch="") =
 {
     kind: "pipeline",
     type: "docker",
     name: db,
+    platform: {
+        "os": "linux",
+        "arch": if p_arch == "" then arch else p_arch
+    },
     steps: [
         {
             name: "data_check",
@@ -111,7 +118,10 @@ local mssql_test() = int_pipeline("mssql", "local/poetry_mssql",
     DB_USER: {from_secret: "MSSQL_USER"},
     DB_PASSWORD: {from_secret: "MSSQL_PASSWORD"},
     DB_CONNECTION: {from_secret: "MSSQL_CONNECTION"},
-});
+},
+"", {}, [], [],
+"amd64"  # mssql cannot run in arm64 for now
+);
 
 
 local oracle_test() = int_pipeline("oracle", "local/poetry_oracle",
