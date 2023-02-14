@@ -169,7 +169,7 @@ volumes:
 kind: pipeline
 name: mssql
 platform:
-  arch: amd64
+  arch: arm64
   os: linux
 steps:
 - commands:

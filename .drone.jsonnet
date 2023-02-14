@@ -16,14 +16,14 @@ local generic_int_test = [
 ];
 
 
-local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, extra_volumes=[], image_extra_volumes=[], p_arch="") =
+local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, extra_volumes=[], image_extra_volumes=[]) =
 {
     kind: "pipeline",
     type: "docker",
     name: db,
     platform: {
         "os": "linux",
-        "arch": if p_arch == "" then arch else p_arch
+        "arch": arch
     },
     steps: [
         {
@@ -118,10 +118,7 @@ local mssql_test() = int_pipeline("mssql", "local/poetry_mssql",
     DB_USER: {from_secret: "MSSQL_USER"},
     DB_PASSWORD: {from_secret: "MSSQL_PASSWORD"},
     DB_CONNECTION: {from_secret: "MSSQL_CONNECTION"},
-},
-"", {}, [], [],
-"amd64"  # mssql cannot run in arm64 for now
-);
+});
 
 
 local oracle_test() = int_pipeline("oracle", "local/poetry_oracle",
