@@ -6,6 +6,13 @@ platform:
   os: linux
 steps:
 - commands:
+  - dnf module install -y python39
+  - alternatives --set python3 /usr/bin/python3.9
+  - alternatives --set python /usr/bin/python3.9
+  - dnf install -y python39-pip python39-devel oracle-release-el8 gcc libaio
+  - dnf install -y oracle-instantclient19.10-basic
+  - python3 -m pip install -U pip
+  - python3 -m pip install poetry
   - cp -rn example/checks test/int_test/oracle
   - cp -rn example/load_data test/int_test/oracle
   - cp -rn example/run_sql test/int_test/oracle
@@ -32,19 +39,24 @@ steps:
     LC_ALL: en_US.utf-8
     NLS_LANG: .utf8
     TNS_ADMIN: /app/network/admin
-  image: local/poetry_oracle
+  image: oraclelinux:8
   name: data_check
   pull: if-not-exists
   volumes:
   - name: cache
     path: /root/.cache
+  - name: pkg_cache
+    path: /var/cache/dnf
   - name: wallet
     path: /app/network/admin
 type: docker
 volumes:
 - host:
-    path: /tmp/data_check_cache
+    path: /tmp/data_check_cache/oracle
   name: cache
+- host:
+    path: /tmp/data_check_cache/oracle_pkg
+  name: pkg_cache
 - host:
     path: /home/data_check/wallet
   name: wallet
@@ -56,6 +68,8 @@ platform:
   os: linux
 steps:
 - commands:
+  - python -m pip install -U pip
+  - python -m pip install poetry
   - cp -rn example/checks test/int_test/sqlite
   - cp -rn example/load_data test/int_test/sqlite
   - cp -rn example/run_sql test/int_test/sqlite
@@ -72,17 +86,22 @@ steps:
   - poetry run pytest ../test_int_tests.py
   - poetry run pytest ../../../test/database
   environment: {}
-  image: local/poetry:3.8
+  image: python:3.8
   name: data_check
   pull: if-not-exists
   volumes:
   - name: cache
     path: /root/.cache
+  - name: pkg_cache
+    path: /var/cache/apt
 type: docker
 volumes:
 - host:
-    path: /tmp/data_check_cache
+    path: /tmp/data_check_cache/sqlite
   name: cache
+- host:
+    path: /tmp/data_check_cache/sqlite_pkg
+  name: pkg_cache
 ---
 kind: pipeline
 name: mysql
@@ -91,6 +110,8 @@ platform:
   os: linux
 steps:
 - commands:
+  - python -m pip install -U pip
+  - python -m pip install poetry
   - cp -rn example/checks test/int_test/mysql
   - cp -rn example/load_data test/int_test/mysql
   - cp -rn example/run_sql test/int_test/mysql
@@ -113,17 +134,22 @@ steps:
       from_secret: MYSQL_PASSWORD
     DB_USER:
       from_secret: MYSQL_USER
-  image: local/poetry:3.8
+  image: python:3.8
   name: data_check
   pull: if-not-exists
   volumes:
   - name: cache
     path: /root/.cache
+  - name: pkg_cache
+    path: /var/cache/apt
 type: docker
 volumes:
 - host:
-    path: /tmp/data_check_cache
+    path: /tmp/data_check_cache/mysql
   name: cache
+- host:
+    path: /tmp/data_check_cache/mysql_pkg
+  name: pkg_cache
 ---
 kind: pipeline
 name: postgres
@@ -132,6 +158,8 @@ platform:
   os: linux
 steps:
 - commands:
+  - python -m pip install -U pip
+  - python -m pip install poetry
   - cp -rn example/checks test/int_test/postgres
   - cp -rn example/load_data test/int_test/postgres
   - cp -rn example/run_sql test/int_test/postgres
@@ -154,17 +182,22 @@ steps:
       from_secret: POSTGRES_PASSWORD
     DB_USER:
       from_secret: POSTGRES_USER
-  image: local/poetry:3.8
+  image: python:3.8
   name: data_check
   pull: if-not-exists
   volumes:
   - name: cache
     path: /root/.cache
+  - name: pkg_cache
+    path: /var/cache/apt
 type: docker
 volumes:
 - host:
-    path: /tmp/data_check_cache
+    path: /tmp/data_check_cache/postgres
   name: cache
+- host:
+    path: /tmp/data_check_cache/postgres_pkg
+  name: pkg_cache
 ---
 kind: pipeline
 name: mssql
@@ -173,6 +206,14 @@ platform:
   os: linux
 steps:
 - commands:
+  - python -m pip install -U pip
+  - python -m pip install poetry
+  - curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+  - curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list
+  - rm /etc/apt/apt.conf.d/docker-clean
+  - apt-get update
+  - apt-get install -y unixodbc unixodbc-dev python3.9-dev
+  - ACCEPT_EULA=Y apt-get install -y msodbcsql18
   - cp -rn example/checks test/int_test/mssql
   - cp -rn example/load_data test/int_test/mssql
   - cp -rn example/run_sql test/int_test/mssql
@@ -195,14 +236,19 @@ steps:
       from_secret: MSSQL_PASSWORD
     DB_USER:
       from_secret: MSSQL_USER
-  image: local/poetry_mssql
+  image: python:3.9
   name: data_check
   pull: if-not-exists
   volumes:
   - name: cache
     path: /root/.cache
+  - name: pkg_cache
+    path: /var/cache/apt
 type: docker
 volumes:
 - host:
-    path: /tmp/data_check_cache
+    path: /tmp/data_check_cache/mssql
   name: cache
+- host:
+    path: /tmp/data_check_cache/mssql_pkg
+  name: pkg_cache

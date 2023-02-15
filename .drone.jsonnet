@@ -16,7 +16,7 @@ local generic_int_test = [
 ];
 
 
-local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, extra_volumes=[], image_extra_volumes=[]) =
+local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, extra_volumes=[], image_extra_volumes=[], pkg_cache_path="/var/cache/apt") =
 {
     kind: "pipeline",
     type: "docker",
@@ -36,6 +36,10 @@ local int_pipeline(db, image, prepare_commands, environment={}, db_image="", ser
                 {
                     name: "cache",
                     path: "/root/.cache"
+                },
+                {
+                    name: "pkg_cache",
+                    path: pkg_cache_path
                 }
             ] + image_extra_volumes
         }
@@ -51,15 +55,23 @@ local int_pipeline(db, image, prepare_commands, environment={}, db_image="", ser
         {
             name: "cache",
             host: {
-                path: "/tmp/data_check_cache"
+                path: "/tmp/data_check_cache/"+db
+            }
+        },
+        {
+            name: "pkg_cache",
+            host: {
+                path: "/tmp/data_check_cache/"+db+"_pkg"
             }
         }
     ] + extra_volumes
 };
 
 
-local sqlite_test() = int_pipeline("sqlite", "local/poetry:3.8",
+local sqlite_test() = int_pipeline("sqlite", "python:3.8",
 [
+    "python -m pip install -U pip",
+    "python -m pip install poetry",
     "cp -rn example/checks test/int_test/sqlite",
     "cp -rn example/load_data test/int_test/sqlite",
     "cp -rn example/run_sql test/int_test/sqlite",
@@ -70,8 +82,10 @@ local sqlite_test() = int_pipeline("sqlite", "local/poetry:3.8",
 ]);
 
 
-local postgres_test() = int_pipeline("postgres", "local/poetry:3.8",
+local postgres_test() = int_pipeline("postgres", "python:3.8",
 [
+    "python -m pip install -U pip",
+    "python -m pip install poetry",
     "cp -rn example/checks test/int_test/postgres",
     "cp -rn example/load_data test/int_test/postgres",
     "cp -rn example/run_sql test/int_test/postgres",
@@ -87,8 +101,10 @@ local postgres_test() = int_pipeline("postgres", "local/poetry:3.8",
 });
 
 
-local mysql_test() = int_pipeline("mysql", "local/poetry:3.8",
+local mysql_test() = int_pipeline("mysql", "python:3.8",
 [
+    "python -m pip install -U pip",
+    "python -m pip install poetry",
     "cp -rn example/checks test/int_test/mysql",
     "cp -rn example/load_data test/int_test/mysql",
     "cp -rn example/run_sql test/int_test/mysql",
@@ -104,8 +120,16 @@ local mysql_test() = int_pipeline("mysql", "local/poetry:3.8",
 });
 
 
-local mssql_test() = int_pipeline("mssql", "local/poetry_mssql",
+local mssql_test() = int_pipeline("mssql", "python:3.9",
 [
+    "python -m pip install -U pip",
+    "python -m pip install poetry",
+    "curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -",
+    "curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list",
+    "rm /etc/apt/apt.conf.d/docker-clean",  # enable caching
+    "apt-get update",
+    "apt-get install -y unixodbc unixodbc-dev python3.9-dev",
+    "ACCEPT_EULA=Y apt-get install -y msodbcsql18",
     "cp -rn example/checks test/int_test/mssql",
     "cp -rn example/load_data test/int_test/mssql",
     "cp -rn example/run_sql test/int_test/mssql",
@@ -121,8 +145,15 @@ local mssql_test() = int_pipeline("mssql", "local/poetry_mssql",
 });
 
 
-local oracle_test() = int_pipeline("oracle", "local/poetry_oracle",
+local oracle_test() = int_pipeline("oracle", "oraclelinux:8",
 [
+    "dnf module install -y python39",
+    "alternatives --set python3 /usr/bin/python3.9",
+    "alternatives --set python /usr/bin/python3.9",
+    "dnf install -y python39-pip python39-devel oracle-release-el8 gcc libaio",
+    "dnf install -y oracle-instantclient19.10-basic",
+    "python3 -m pip install -U pip",
+    "python3 -m pip install poetry",
     "cp -rn example/checks test/int_test/oracle",
     "cp -rn example/load_data test/int_test/oracle",
     "cp -rn example/run_sql test/int_test/oracle",
@@ -151,7 +182,8 @@ local oracle_test() = int_pipeline("oracle", "local/poetry_oracle",
         name: "wallet",
         path: "/app/network/admin"
     }
-]);
+], "/var/cache/dnf"
+);
 
 
 [
