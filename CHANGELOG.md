@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.15.0] - 2023-02-17
+
+### Added
+-- 'data_check init' to create projects and pipelines
+-- 'append' as alias for append-mode in cli and pipelines
+-- 'ping --wait' and --timeout/--retry
+-- Python 3.11 support
+
+### Changed
+-- io module is renamed to file_ops
+-- running csv file without matching sql file will fail, otherwise it will run the csv check
+-- MSSQL uses arm64 image for CI
+
+### Fixed
+-- NA/NaT should be treated equally in checks
+-- CTRL+C should work in Windows
+-- 'data_check gen' works with full table checks
+
+### Removed
+- custom docker images for CI
+
 ## [0.14.0] - 2023-01-13
 
 ### Added
