@@ -77,6 +77,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#load">load</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#append">append</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#sql">sql</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#query-mode">query mode</a>
@@ -90,6 +92,8 @@
     <li class="toctree-l3"><a class="reference internal" href="#always_run">always_run</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#fake">fake</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#ping">ping</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#sql_files">sql_files</a>
     </li>
@@ -243,6 +247,20 @@ You can also override the table name when using a single CSV file.</p>
     file: some_file.csv
 </code></pre>
 <p>You can only use a single CSV file when overriding the table name. Using multiple files will fail.</p>
+<h3 id="append">append</h3>
+<p><em>append</em> is an alias for</p>
+<pre><code class="language-yaml">- load:
+    mode: append
+</code></pre>
+<p>Short form:</p>
+<pre><code class="language-yaml">- append: some_path/schema.table_name.csv
+</code></pre>
+<p>Long form:</p>
+<pre><code class="language-yaml">- append:
+    files:
+      - some_path
+      - some/other/path/schema.other_table.csv
+</code></pre>
 <h3 id="sql">sql</h3>
 <p><em>sql</em> is like calling <code>data_check sql ...</code>.
 <em>sql</em> has two modes: query mode and files mode.
@@ -335,6 +353,17 @@ If the parameter is not a file, <em>sql</em> will execute in query mode.</p>
         - fake_conf.yml
     output: fake_table.csv
 </code></pre>
+<h3 id="ping">ping</h3>
+<p><em>ping</em> is like calling <code>data_check ping --wait</code>. This will try to connect to the database and fail the pipeline if it doesn't succeed within the timeout. Timeout duration and time between retries can be configured.</p>
+<p>Short form:</p>
+<pre><code class="language-yaml">- ping:
+</code></pre>
+<p>With timeout and retry configuration:</p>
+<pre><code class="language-yaml">- ping:
+    timeout: 5
+    retry: 1
+</code></pre>
+<p>This will retry the connection each second and timeout after 5 seconds, which are the default values.</p>
 <h3 id="sql_files">sql_files</h3>
 <p><em>sql_files</em> is deprecated. Use <a href="#sql">sql</a> instead.</p>
 <p><em>sql_files</em> is like calling <code>data_check sql --files ...</code>. This will run a SQL file or all SQL files in a folder against the configured database. All SQL files are executed in parallel. If you need to execute a file after another file, you need to call <em>sql_files</em> twice. <em>sql_file</em> is an alias for <em>sql_files</em>.</p>

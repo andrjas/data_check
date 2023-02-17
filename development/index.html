@@ -142,15 +142,15 @@
 <li>Microsoft SQL Server</li>
 </ul>
 <p>The integration tests are run via <a href="https://www.drone.io/">Drone CI</a>. The file <em>.drone.yml</em> is generated from <em>.drone.jsonnet</em> and checked in into the Git repository. To update <em>.drone.yml</em> run <code>drone jsonnet  --format --stream</code>.</p>
-<p>To speed up integration tests the CI pipeline uses local, pre-build docker images. These images are maintained in a separate <a href="https://github.com/andrjas/data_check_images">repository</a>.</p>
 <h2 id="python-support">Python support</h2>
 <p><a href="https://github.com/tox-dev/tox">tox</a> is used to test data_check against multiple python versions.</p>
 <p>Multiple python versions can be installed with <a href="https://github.com/pyenv/pyenv">pyenv</a>:</p>
 <pre><code>pyenv install 3.8.1
 pyenv install 3.9.1
 pyenv install 3.10.1
+pyenv install 3.11.1
 
-pyenv local 3.8.1 3.9.1 3.10.1
+pyenv local 3.8.1 3.9.1 3.10.1 3.11.1
 </code></pre>
 <p>Install all versions mentioned in <em>tox.ini</em>. Then run the tests with tox: <code>tox</code>.</p>
               

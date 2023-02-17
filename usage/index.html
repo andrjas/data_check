@@ -63,7 +63,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#fake">fake</a>
+    <li class="toctree-l2"><a class="reference internal" href="#init">init</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#options_1">Options</a>
     </li>
@@ -71,7 +71,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#gen">gen</a>
+    <li class="toctree-l2"><a class="reference internal" href="#fake">fake</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#options_2">Options</a>
     </li>
@@ -79,7 +79,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#load">load</a>
+    <li class="toctree-l2"><a class="reference internal" href="#gen">gen</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#options_3">Options</a>
     </li>
@@ -87,17 +87,35 @@
     </li>
         </ul>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#load">load</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#options_4">Options</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#examples_4">Examples</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#append">append</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#options_5">Options</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#examples_5">Examples</a>
+    </li>
+        </ul>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#ping">ping</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#examples_4">Examples</a>
+    <li class="toctree-l3"><a class="reference internal" href="#options_6">Options</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#examples_6">Examples</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#sql">sql</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#options_4">Options</a>
+    <li class="toctree-l3"><a class="reference internal" href="#options_7">Options</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#examples_5">Examples</a>
+    <li class="toctree-l3"><a class="reference internal" href="#examples_7">Examples</a>
     </li>
         </ul>
     </li>
@@ -169,9 +187,11 @@
 <h2 id="commands">Commands</h2>
 <ul>
 <li><code>data_check run</code> - <a href="#run">Run checks (default command)</a>.</li>
+<li><code>data_check init</code> - <a href="#init">Create a data_check project or pipeline.</a></li>
 <li><code>data_check fake</code> - <a href="#fake">Generate test data</a>.</li>
 <li><code>data_check gen</code> -  <a href="#gen">Generate CSV files from query files</a>.</li>
 <li><code>data_check load</code> - <a href="#load">Load data from files into tables</a>.</li>
+<li><code>data_check append</code> - <a href="#append">Append data from files into tables</a>.</li>
 <li><code>data_check ping</code> - <a href="#ping">Tries to connect to the database</a>.</li>
 <li><code>data_check sql</code> - <a href="#sql">Run SQL statements</a>.</li>
 </ul>
@@ -206,14 +226,27 @@
 <li><code>data_check run --print</code> - Run data_check against the default connection in the  <em>checks</em> folder and prints all failed result data.</li>
 <li><code>data_check run --print --diff some_folder</code> - Run data_check against the default connection in the <em>some_folder</em> folder and prints only the different columns for failed results.</li>
 </ul>
+<h2 id="init">init</h2>
+<p><code>init</code> creates a new data_check project or a pipeline.</p>
+<h3 id="options_1">Options</h3>
+<ul>
+<li><code>-p/--pipeline</code> - create a pipeline instead of a project.</li>
+</ul>
+<h3 id="examples_1">Examples</h3>
+<ul>
+<li><code>data_check init new_project</code> - Creates a folder <em>new_project</em> if it doesn't exists yet and a sample <em>data_check.yml</em> inside it.</li>
+<li><code>data_check init .</code> - Creates a sample <em>data_check.yml</em> inside the current folder, it it doesn't exists yet.</li>
+<li><code>data_check init --pipeline new_pipeline</code> - Creates a folder <em>new_pipeline</em> if it doesn't exists yet and a sample <em>data_check_pipeline.yml</em> inside it.</li>
+<li><code>data_check init -p .</code> - Creates a sample <em>data_check_pipeline.yml</em> inside the current folder, it it doesn't exists yet.</li>
+</ul>
 <h2 id="fake">fake</h2>
 <p><code>fake</code> generates test data for existing tables and writes it into CSV files. The configuration file is described in <a href="../test_data/">Test data</a>.</p>
-<h3 id="options_1">Options</h3>
+<h3 id="options_2">Options</h3>
 <ul>
 <li><code>-o/--output PATH</code> - Output path for the CSV file.</li>
 <li><code>--force</code> - Overwrite existing files.</li>
 </ul>
-<h3 id="examples_1">Examples</h3>
+<h3 id="examples_2">Examples</h3>
 <ul>
 <li><code>data_check fake fake_config.yml</code> - Generates test data as defined in <em>fake_config.yml</em> and writes it into a CSV file with the same name as the table name.</li>
 <li><code>data_check fake fake_config.yml --output fake.csv</code> - Generates test data as defined in <em>fake_config.yml</em> and writes it into <em>fake.csv</em>.</li>
@@ -222,23 +255,23 @@
 </ul>
 <h2 id="gen">gen</h2>
 <p><code>gen</code> generates the expectation files (CSV).</p>
-<h3 id="options_2">Options</h3>
+<h3 id="options_3">Options</h3>
 <ul>
 <li><code>--force</code> - Overwrite existing files.</li>
 </ul>
-<h3 id="examples_2">Examples</h3>
+<h3 id="examples_3">Examples</h3>
 <ul>
 <li><code>data_check gen</code> - Generates all missing expectation files in the <em>checks</em> folder.</li>
 <li><code>data_check gen --force some_folder</code> - Generates and overwrites all expectation files in the <em>some_folder</em> folder.</li>
 </ul>
 <h2 id="load">load</h2>
 <p><code>load</code> is used to load data from files (CSV or Excel) into database tables. By default it will load into a table with the same name as the file and truncate the table before loading. If the table does not exists, it will create the table with a column definition guessed from the file content.</p>
-<h3 id="options_3">Options</h3>
+<h3 id="options_4">Options</h3>
 <ul>
-<li><code>--table</code>-  Table name to load data into</li>
+<li><code>--table</code> -  Table name to load data into</li>
 <li><code>--mode</code> -  How to load the table: truncate (default), append or replace.</li>
 </ul>
-<h3 id="examples_3">Examples</h3>
+<h3 id="examples_4">Examples</h3>
 <ul>
 <li><code>data_check load some_path/schema.table.csv</code> - Truncates the table schema.table and loads the csv from <em>some_path/schema.table.csv</em> into the table.</li>
 <li><code>data_check load --table schema.other_table some_path/schema.table.csv</code> - Same as above but uses the table schema.other_table. Only works for a single CSV/Excel file.</li>
@@ -247,25 +280,42 @@
 <li><code>data_check load some_path/schema.table.csv other_path/schema2.other_table.csv</code> - Loads multiple tables from multiple files.</li>
 <li><code>data_check load some_path</code> - Loads all CSV/Excel files from <em>some_path</em> each into the same table as the file name.</li>
 </ul>
+<h2 id="append">append</h2>
+<p><code>append</code> is an alias for <code>load --mode append</code>.</p>
+<h3 id="options_5">Options</h3>
+<ul>
+<li><code>--table</code> -  Table name to load data into</li>
+</ul>
+<h3 id="examples_5">Examples</h3>
+<p>See <a href="#load">load</a> examples.</p>
 <h2 id="ping">ping</h2>
 <p><code>ping</code> tries to connect to the database. The exit code is 0 if it successful, otherwise it is 1.
-<code>ping</code> doesn't have any special options, except the common ones.</p>
-<h3 id="examples_4">Examples</h3>
+With <code>--wait</code> <code>ping</code> will retry to connect to the database until the timeout is reached.</p>
+<h3 id="options_6">Options</h3>
+<ul>
+<li><code>--wait</code> - retry and wait until timeout is reached</li>
+<li><code>--timeout SECONDS</code> - timeout for wait in seconds (default: 5)</li>
+<li><code>--retry SECONDS</code> - retry for wait in seconds (default: 1)</li>
+</ul>
+<h3 id="examples_6">Examples</h3>
 <ul>
 <li><code>data_check ping</code> - Tries to connect to the default database.</li>
 <li><code>data_check ping --connection test2</code> - Tries to connect to the database with the connection <em>test2</em>.</li>
 <li><code>data_check ping --quiet</code> - Tries to connect to the default database. Doesn't print anything.</li>
+<li><code>data_check ping --wait</code> - Tries to connect to the default database for 5 seconds, retrying each second.</li>
+<li><code>data_check ping --wait --timeout 60</code> - Tries to connect to the default database for 60 seconds, retrying each second.</li>
+<li><code>data_check ping --wait --timeout 60 --retry 5</code> - Tries to connect to the default database for 60 seconds, retrying each 5 seconds.</li>
 </ul>
 <h2 id="sql">sql</h2>
 <p><code>sql</code> runs any SQL query/command against the database. The query can be passed as an argument or from a file. The result of the query can be written into a CSV file.</p>
-<h3 id="options_4">Options</h3>
+<h3 id="options_7">Options</h3>
 <ul>
 <li><code>--file, --file</code> - Run any SQL script in a list of SQL files.</li>
 <li><code>-o/--output PATH</code> - Output path for the result.</li>
 <li><code>-W/--write-check PATH</code> - Create a check from the sql statement (SQL and CSV
                           file).</li>
 </ul>
-<h3 id="examples_5">Examples</h3>
+<h3 id="examples_7">Examples</h3>
 <ul>
 <li><code>data_check sql "select * from some.table"</code> - Runs the given query against the default database connection.</li>
 <li><code>data_check sql --connection test2 "select * from some.table"</code> - Runs the given query against the database connection for <em>test2</em>.</li>
