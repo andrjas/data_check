@@ -124,7 +124,6 @@ def get_data_check(
     quiet: bool,
     log: Optional[Union[str, Path]],
 ) -> DataCheck:
-
     init_common(
         ctx=ctx,
         connection=connection,

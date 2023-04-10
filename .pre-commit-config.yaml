@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
     - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v3.2.0
+      rev: v4.4.0
       hooks:
           - id: trailing-whitespace
           - id: end-of-file-fixer
@@ -10,13 +10,13 @@ repos:
           - id: check-case-conflict
 
     - repo: https://github.com/PyCQA/isort
-      rev: 5.10.1
+      rev: 5.12.0
       hooks:
           - id: isort
             args: ["--profile", "black"]
 
     - repo: https://github.com/psf/black
-      rev: 22.10.0
+      rev: 23.3.0
       hooks:
           - id: black
             # It is recommended to specify the latest version of Python
@@ -26,24 +26,24 @@ repos:
             language_version: python3.10
 
     - repo: https://github.com/jendrikseipp/vulture
-      rev: v2.6
+      rev: v2.7
       hooks:
           - id: vulture
 
     - repo: https://github.com/myint/eradicate
-      rev: v2.1.0
+      rev: 2.2.0
       hooks:
           - id: eradicate
 
     - repo: https://github.com/pre-commit/mirrors-mypy
-      rev: v0.982
+      rev: v1.2.0
       hooks:
           - id: mypy
             additional_dependencies: ["types-python-dateutil", "types-PyYAML"]
             exclude: ^.vulture_whitelist.py
 
     - repo: https://github.com/dosisod/refurb
-      rev: v1.3.0
+      rev: v1.15.0
       hooks:
           - id: refurb
             language_version: python3.10
