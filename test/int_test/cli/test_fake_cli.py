@@ -1,7 +1,5 @@
-import os
 import shutil
-import warnings
-from os import linesep, sep
+from os import sep
 from pathlib import Path
 from typing import List, Optional
 

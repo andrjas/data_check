@@ -17,7 +17,7 @@ def create_test_table(table_name: str, schema: str, sql: DataCheckSql):
     elif sql.dialect == "sqlite":
         sql.run_sql(f"create table {table} (id decimal primary key, data varchar(10))")
     else:
-        metadata = MetaData(sql.get_engine())
+        metadata = MetaData()
         SQLTable(
             table.name,
             metadata,
@@ -25,7 +25,7 @@ def create_test_table(table_name: str, schema: str, sql: DataCheckSql):
             Column("data", String(10)),
             schema=table.schema,
         )
-        metadata.create_all()
+        metadata.create_all(bind=sql.get_engine())
     return table
 
 

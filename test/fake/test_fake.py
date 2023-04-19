@@ -17,7 +17,7 @@ def create_test_table_db(table_name: str, schema: str, dc: DataCheck):
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(f"create table {table} (id number(10), data varchar2(10))")
     else:
-        metadata = MetaData(dc.sql.get_engine())
+        metadata = MetaData()
         SQLTable(
             table.name,
             metadata,
@@ -25,7 +25,7 @@ def create_test_table_db(table_name: str, schema: str, dc: DataCheck):
             Column("data", String(10)),
             schema=table.schema,
         )
-        metadata.create_all()
+        metadata.create_all(bind=dc.sql.get_engine())
 
 
 def test_fake_config(tmp_path: Path, dc_serial: DataCheck):

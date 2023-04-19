@@ -32,9 +32,9 @@ class Table:
     def drop_if_exists(self):
         if self.exists():
             drop_stmt = f"DROP TABLE {self.full_name}"
-            self.sql.get_connection().execute(
-                text(drop_stmt).execution_options(autocommit=True)
-            )
+            with self.sql.conn() as connection:
+                connection.execute(text(drop_stmt))
+                connection.commit()
 
     def exists(self) -> bool:
         return self.sql.inspector.has_table(table_name=self.name, schema=self.schema)
@@ -55,9 +55,9 @@ class Table:
 
     def truncate_if_exists(self):
         if self.exists():
-            self.sql.get_connection().execute(
-                text(self._truncate_statement()).execution_options(autocommit=True)
-            )
+            connection = self.sql.get_connection()
+            connection.execute(text(self._truncate_statement()))
+            connection.commit()
 
     @staticmethod
     def from_table_name(sql: DataCheckSql, table_name: str) -> Table:
@@ -76,12 +76,11 @@ class Table:
 
     @cached_property
     def sql_table(self) -> SQLTable:
-        engine = self.sql.get_engine()
-        metadata = MetaData(engine)
+        metadata = MetaData()
         table = SQLTable(
             self.name,
             metadata,
-            autoload_with=engine,
+            autoload_with=self.sql.get_engine(),
             schema=self.schema,
         )
         return table

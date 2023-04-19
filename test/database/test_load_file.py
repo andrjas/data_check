@@ -25,7 +25,7 @@ def create_test_table(table_name: str, schema: str, dc: DataCheck):
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(f"create table {table} (id decimal, data varchar2(10))")
     else:
-        metadata = MetaData(dc.sql.get_engine())
+        metadata = MetaData()
         SQLTable(
             table.name,
             metadata,
@@ -33,7 +33,7 @@ def create_test_table(table_name: str, schema: str, dc: DataCheck):
             Column("data", String(10)),
             schema=table.schema,
         )
-        metadata.create_all()
+        metadata.create_all(bind=dc.sql.get_engine())
     return table
 
 
@@ -45,7 +45,7 @@ def create_test_table_with_date(table_name: str, schema: str, dc: DataCheck):
             (f"create table {table} (id number(10), data varchar2(10), dat date)")
         )
     else:
-        metadata = MetaData(dc.sql.get_engine())
+        metadata = MetaData()
         SQLTable(
             table.name,
             metadata,
@@ -54,7 +54,7 @@ def create_test_table_with_date(table_name: str, schema: str, dc: DataCheck):
             Column("dat", Date),
             schema=table.schema,
         )
-        metadata.create_all()
+        metadata.create_all(bind=dc.sql.get_engine())
     return table
 
 
@@ -66,7 +66,7 @@ def create_test_table_with_datetime(table_name: str, schema: str, dc: DataCheck)
             (f"create table {table} " "(id number(10), data varchar2(10), dat date)")
         )
     else:
-        metadata = MetaData(dc.sql.get_engine())
+        metadata = MetaData()
         SQLTable(
             table.name,
             metadata,
@@ -75,7 +75,7 @@ def create_test_table_with_datetime(table_name: str, schema: str, dc: DataCheck)
             Column("dat", DateTime),
             schema=table.schema,
         )
-        metadata.create_all()
+        metadata.create_all(bind=dc.sql.get_engine())
     return table
 
 
@@ -89,7 +89,7 @@ def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
             )
         )
     else:
-        metadata = MetaData(dc.sql.get_engine())
+        metadata = MetaData()
         SQLTable(
             table.name,
             metadata,
@@ -98,7 +98,7 @@ def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
             Column("decim", Numeric(10, 4)),
             schema=table.schema,
         )
-        metadata.create_all()
+        metadata.create_all(bind=dc.sql.get_engine())
     return table
 
 
@@ -108,14 +108,14 @@ def create_test_table_with_large_decimal(table_name: str, schema: str, dc: DataC
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql((f"create table {table} (d_col decimal(38, 0))"))
     else:
-        metadata = MetaData(dc.sql.get_engine())
+        metadata = MetaData()
         SQLTable(
             table.name,
             metadata,
             Column("d_col", Numeric(38, 0)),
             schema=table.schema,
         )
-        metadata.create_all()
+        metadata.create_all(bind=dc.sql.get_engine())
     return table
 
 
@@ -130,7 +130,7 @@ def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
             )
         )
     else:
-        metadata = MetaData(dc.sql.get_engine())
+        metadata = MetaData()
         SQLTable(
             table.name,
             metadata,
@@ -149,7 +149,7 @@ def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
             Column("m", DateTime),
             schema=table.schema,
         )
-        metadata.create_all()
+        metadata.create_all(bind=dc.sql.get_engine())
     return table
 
 

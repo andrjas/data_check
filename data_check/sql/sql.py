@@ -1,4 +1,4 @@
-import warnings
+from contextlib import contextmanager, suppress
 from functools import cached_property
 from os import path
 from pathlib import Path
@@ -11,6 +11,7 @@ from sqlalchemy.engine import Connection, Engine
 from sqlalchemy.engine.cursor import CursorResult
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.engine.row import Row
+from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.sql import text
 from sqlalchemy.sql.elements import TextClause
 from sqlalchemy.sql.expression import bindparam
@@ -111,12 +112,19 @@ class DataCheckSql:
                 return _connection
         return self.__connection
 
+    @contextmanager
+    def conn(self) -> Connection:
+        with self.get_engine().connect() as c:
+            yield c
+
     def disconnect(self):
         if self.__connection:
-            self.__connection.close()
+            with suppress(ProgrammingError):
+                self.__connection.close()
             self.__connection = None
         if self.__engine:
-            self.__engine.dispose()
+            with suppress(ProgrammingError):
+                self.__engine.dispose(close=False)
             self.__engine = None
 
     def __del__(self):
@@ -147,9 +155,9 @@ class DataCheckSql:
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
         sql = self._bindparams(query)
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")  # ignore RemovedIn20Warning
-            result = QueryResult(query, self.get_connection().execute(sql, **params))
+        result = QueryResult(
+            query, self.get_connection().execute(sql, parameters=params)
+        )
         return result
 
     def _try_connect(self, engine) -> bool:
@@ -197,9 +205,11 @@ class DataCheckSql:
         base_path: Path = Path("."),
     ):
         sq_text = self._bindparams(query)
-        result: CursorResult = self.get_connection().execute(
-            sq_text.execution_options(autocommit=True), **params
-        )
+        with self.conn() as connection:
+            result: CursorResult = connection.execute(
+                sq_text.execution_options(autocommit=True), parameters=params
+            )
+            connection.commit()
         try:
             res: List[Row] = result.fetchall()
             columns: List[str] = list(result.keys())
@@ -214,10 +224,4 @@ class DataCheckSql:
 
     @property
     def inspector(self) -> Inspector:
-        if self.keep_connection():
-            return self.cached_inspector
-        return cast(Inspector, inspect(self.get_engine()))
-
-    @cached_property
-    def cached_inspector(self) -> Inspector:
         return cast(Inspector, inspect(self.get_engine()))

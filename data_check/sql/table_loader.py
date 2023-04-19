@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Union, cast
 
@@ -54,7 +53,7 @@ class TableLoader:
             # into these columns.
             if table.exists():
                 if table.sql_table.primary_key:
-                    connection.execute(f"SET IDENTITY_INSERT {table} ON")
+                    connection.execute(text(f"SET IDENTITY_INSERT {table} ON"))
 
     def upsert_data(self, data: pd.DataFrame, table: Table) -> bool:
         other_columns = [
@@ -69,16 +68,19 @@ class TableLoader:
             update_stmt = update_stmt.where(sql_table.c[p] == bindparam(f"_{p}"))
 
         update_stmt = update_stmt.values(**{oc: bindparam(oc) for oc in other_columns})
-        connection = self.sql.get_connection()
-        self.pre_insert(connection, table)
+        with self.sql.conn() as connection:
+            self.pre_insert(connection, table)
 
-        for _, row in data.iterrows():
-            row_as_dict = cast(Dict[str, Any], row.to_dict())
-            for p in table.primary_keys:
-                row_as_dict[f"_{p}"] = row_as_dict.pop(p)
-            rows = connection.execute(update_stmt, **row_as_dict)
-            if rows.rowcount == 0:
-                connection.execute(insert_stmt, **cast(Dict[str, Any], row.to_dict()))
+            for _, row in data.iterrows():
+                row_as_dict = cast(Dict[str, Any], row.to_dict())
+                for p in table.primary_keys:
+                    row_as_dict[f"_{p}"] = row_as_dict.pop(p)
+                rows = connection.execute(update_stmt, parameters=row_as_dict)
+                if rows.rowcount == 0:
+                    connection.execute(
+                        insert_stmt, parameters=cast(Dict[str, Any], row.to_dict())
+                    )
+            connection.commit()
         return False
 
     def load_table(
@@ -86,26 +88,25 @@ class TableLoader:
     ) -> bool:
         self._prepare_table_for_load(table, mode)
         if_exists = self._load_mode_to_pandas_if_exists(mode=mode)
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")  # ignore SADeprecationWarning
-            fix_date_dtype(data, dtype)
-            if not dtype:
-                # dtype can be {}, but for to_sql it's best to use None then
-                dtype = None
-            if mode == LoadMode.UPSERT:
-                return self.upsert_data(data, table)
-            else:
-                connection = self.sql.get_connection()
-                self.pre_insert(connection, table)
-                data.to_sql(
-                    name=table.name,
-                    schema=table.schema,
-                    con=connection,
-                    if_exists=if_exists,
-                    index=False,
-                    dtype=dtype,
-                )
-                return True
+        fix_date_dtype(data, dtype)
+        if not dtype:
+            # dtype can be {}, but for to_sql it's best to use None then
+            dtype = None
+        if mode == LoadMode.UPSERT:
+            return self.upsert_data(data, table)
+        else:
+            connection = self.sql.get_connection()
+            self.pre_insert(connection, table)
+            data.to_sql(
+                name=table.name,
+                schema=table.schema,
+                con=connection,
+                if_exists=if_exists,
+                index=False,
+                dtype=dtype,
+            )
+            connection.commit()
+            return True
 
     def get_load_mode(self, deprecated_load_mode, mode) -> LoadMode:
         if deprecated_load_mode is not None:
