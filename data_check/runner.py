@@ -1,6 +1,12 @@
 import multiprocessing as mp
 import sys
-from concurrent.futures import Executor, Future, ProcessPoolExecutor, as_completed
+from concurrent.futures import (
+    Executor,
+    Future,
+    ProcessPoolExecutor,
+    ThreadPoolExecutor,
+    as_completed,
+)
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from .checks.base_check import BaseCheck
@@ -28,11 +34,14 @@ class NoPoolExecutor(Executor):
 
 
 class DataCheckRunner:
-    def __init__(self, workers: int, output: Optional[DataCheckOutput] = None) -> None:
+    def __init__(
+        self, workers: int, output: Optional[DataCheckOutput] = None, use_process=False
+    ) -> None:
         self.workers = workers
         if output is None:
             output = DataCheckOutput()
         self.output = output
+        self.use_process = use_process
 
     def executor(self, task_list: List[Any]) -> Executor:
         max_new_workers = self.workers - len(mp.get_context().active_children())
@@ -41,7 +50,10 @@ class DataCheckRunner:
         # Makes no sense to create a single worker
         # if we can process the work in this process:
         if max_new_workers > 1:
-            return ProcessPoolExecutor(max_workers=max_new_workers)
+            if self.use_process:
+                return ProcessPoolExecutor(max_workers=max_new_workers)
+            else:
+                return ThreadPoolExecutor(max_workers=max_new_workers)
         return NoPoolExecutor()
 
     def run_checks(

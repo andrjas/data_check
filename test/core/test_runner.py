@@ -1,4 +1,4 @@
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 
 import pytest
 
@@ -30,6 +30,15 @@ def test_executor_returns_dummy_executor_if_workers_eq_1(task_size: int):
 def test_executor_returns_process_pool_executor_for_task_list_with_more_task(
     workers: int, task_size: int
 ):
-    runner = DataCheckRunner(workers=workers)
+    runner = DataCheckRunner(workers=workers, use_process=True)
     executor = runner.executor([1] * task_size)
     assert isinstance(executor, ProcessPoolExecutor)
+
+
+@pytest.mark.parametrize("workers,task_size", [(2, 2), (2, 10), (5, 2), (5, 10)])
+def test_executor_returns_thread_pool_executor_for_task_list_with_more_task(
+    workers: int, task_size: int
+):
+    runner = DataCheckRunner(workers=workers)
+    executor = runner.executor([1] * task_size)
+    assert isinstance(executor, ThreadPoolExecutor)
