@@ -24,6 +24,7 @@ def init(
     path: Union[str, Path],
     connection: str = "",
     workers: int = DataCheckConfig.parallel_workers,
+    use_process: bool = DataCheckConfig.use_process,
     config: Union[str, Path] = DataCheckConfig.config_path,
     verbose: bool = False,
     traceback: bool = False,

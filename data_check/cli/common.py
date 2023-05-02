@@ -11,6 +11,7 @@ from data_check.data_check import DataCheck
 DEFAULT_VALUES: Dict[str, Any] = {
     "connection": "",
     "workers": DataCheckConfig.parallel_workers,
+    "use_process": DataCheckConfig.use_process,
     "config": DataCheckConfig.config_path,
     "verbose": False,
     "traceback": False,
@@ -52,6 +53,12 @@ def common_options(function: Callable[..., Any]) -> Callable[..., Any]:
     )(function)
 
     function = click.option(
+        "--use-process",
+        is_flag=True,
+        help=("use processes instead of threads"),
+    )(function)
+
+    function = click.option(
         "--config",
         type=str,
         default=DataCheckConfig.config_path,
@@ -66,6 +73,7 @@ def init_common(
     ctx: click.Context,
     connection: str = DEFAULT_VALUES["connection"],
     workers: int = DEFAULT_VALUES["workers"],
+    use_process: bool = DEFAULT_VALUES["use_process"],
     config: Union[str, Path] = DEFAULT_VALUES["config"],
     verbose: bool = DEFAULT_VALUES["verbose"],
     traceback: bool = DEFAULT_VALUES["traceback"],
@@ -77,6 +85,7 @@ def init_common(
     config = Path(config)
     set_once(ctx, "connection", connection)
     set_once(ctx, "workers", workers)
+    set_once(ctx, "use_process", use_process)
     set_once(ctx, "config", config)
     set_once(ctx, "verbose", verbose)
     set_once(ctx, "traceback", traceback)
@@ -90,11 +99,13 @@ def get_config(ctx: click.Context) -> DataCheckConfig:
     config = get_value(ctx, "config")
     connection = get_value(ctx, "connection")
     workers = get_value(ctx, "workers")
+    use_process = get_value(ctx, "use_process")
     log = get_value(ctx, "log")
     dc_config = (
         DataCheckConfig(config_path=config).load_config().set_connection(connection)
     )
     dc_config.parallel_workers = workers
+    dc_config.use_process = use_process
     if log:
         dc_config.log_path = Path(log)
     if not dc_config.connection:
@@ -118,6 +129,7 @@ def get_data_check(
     ctx: click.Context,
     connection: str,
     workers: int,
+    use_process: bool,
     config: Union[str, Path],
     verbose: bool,
     traceback: bool,
@@ -128,6 +140,7 @@ def get_data_check(
         ctx=ctx,
         connection=connection,
         workers=workers,
+        use_process=use_process,
         config=config,
         verbose=verbose,
         traceback=traceback,

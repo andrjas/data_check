@@ -32,7 +32,9 @@ class DataCheck:
             config = DataCheckConfig()
         self.config = config
         self.output = DataCheckOutput()
-        self.runner = DataCheckRunner(config.parallel_workers, output=self.output)
+        self.runner = DataCheckRunner(
+            config.parallel_workers, output=self.output, use_process=config.use_process
+        )
         if not isinstance(config.connection, str):
             raise Exception("connection is not initialized")
         self.sql = DataCheckSql(

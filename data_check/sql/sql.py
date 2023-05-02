@@ -42,13 +42,15 @@ class DataCheckSql:
             output = DataCheckOutput()
         self.output = output
 
-        if runner is None:
-            runner = DataCheckRunner(workers=1, output=self.output)
-        self.runner = runner
-
         if config is None:
             config = DataCheckConfig()
         self.config = config
+
+        if runner is None:
+            runner = DataCheckRunner(
+                workers=1, output=self.output, use_process=self.config.use_process
+            )
+        self.runner = runner
 
     @cached_property
     def table_loader(self) -> TableLoader:

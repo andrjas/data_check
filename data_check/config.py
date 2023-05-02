@@ -17,6 +17,7 @@ class DataCheckConfig:
     config_path = Path("data_check.yml")
 
     parallel_workers = 4
+    use_process = False
 
     default_print_format = "csv"
 

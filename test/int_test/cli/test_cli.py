@@ -142,6 +142,11 @@ def test_workers_invalid_number():
     assert res.exit_code == 2
 
 
+def test_use_process():
+    res = run_check(["--use-process"])
+    assert_passed(res)
+
+
 def test_print():
     res = run(["--print", "checks/failing/expected_to_fail.sql"])
     assert_failed(res)

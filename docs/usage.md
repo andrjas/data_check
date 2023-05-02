@@ -17,6 +17,7 @@ Common options can be used with any command.
 
 * `-c/--connection CONNECTION` - Use another connection than the default.
 * `-n/--workers WORKERS` - Use WORKERS threads to run the queries (default: 4).
+* `--use-process` - Use processes instead of threads.
 * `--config CONFIG` - Config file to use (default: _data\_check.yml_).
 * `--quiet` - Do not print any output.
 * `--verbose` - Print verbose output.
