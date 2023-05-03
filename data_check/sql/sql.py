@@ -12,6 +12,7 @@ from sqlalchemy.engine.cursor import CursorResult
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.engine.row import Row
 from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.pool import SingletonThreadPool
 from sqlalchemy.sql import text
 from sqlalchemy.sql.elements import TextClause
 from sqlalchemy.sql.expression import bindparam
@@ -78,6 +79,7 @@ class DataCheckSql:
             _engine = create_engine(
                 path.expandvars(self.connection),
                 **{**self.get_db_params(), **extra_params},
+                poolclass=SingletonThreadPool,
             )
             self.register_setinputsizes_event(_engine)
             if self.keep_connection():
