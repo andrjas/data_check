@@ -18,9 +18,10 @@ def file_type(request):
 def test_load_from_dataframe_append(sql: DataCheckSql):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     table = Table(sql, "test_load_from_dataframe_append")
-    sql.get_connection().execute(
-        text(f"create table {table} (id number(10), data varchar2(10))")
-    )
+    with sql.conn() as c:
+        c.execute(
+            text(f"create table {table} (id number(10), data varchar2(10))")
+        )
     sql.table_loader.load_table(table, data, LoadMode.APPEND)
     df = sql.run_query(f"select id, data from {table}")
     assert_frame_equal(data, df)
@@ -47,9 +48,10 @@ def test_load_from_dataframe_append_adds_data(sql: DataCheckSql):
         {"id": [0, 1, 2, 3, 4, 5], "data": ["a", "b", "c", "d", "e", "f"]}
     )
     table = Table(sql, "test_load_from_dataframe_append_adds_data")
-    sql.get_connection().execute(
-        text(f"create table {table} (id number(10), data varchar2(10))")
-    )
+    with sql.conn() as c:
+        c.execute(
+            text(f"create table {table} (id number(10), data varchar2(10))")
+        )
     sql.table_loader.load_table(table, data, LoadMode.APPEND)
     sql.table_loader.load_table(table, data2, LoadMode.APPEND)
     df = sql.run_query(f"select id, data from {table}")
@@ -59,9 +61,10 @@ def test_load_from_dataframe_append_adds_data(sql: DataCheckSql):
 def test_load_from_dataframe_truncate(sql: DataCheckSql):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     table = Table(sql, "test_load_from_dataframe_truncate")
-    sql.get_connection().execute(
-        text(f"create table {table} (id number(10), data varchar2(10))")
-    )
+    with sql.conn() as c:
+        c.execute(
+            text(f"create table {table} (id number(10), data varchar2(10))")
+        )
     sql.table_loader.load_table(table, data, LoadMode.TRUNCATE)
     df = sql.run_query(f"select id, data from {table}")
     assert_frame_equal(data, df)
@@ -69,9 +72,10 @@ def test_load_from_dataframe_truncate(sql: DataCheckSql):
 
 def test_load_from_dataframe_truncate_deletes_data(sql: DataCheckSql):
     table = Table(sql, "test_load_from_dataframe_truncate_deletes_data")
-    sql.get_connection().execute(
-        text(f"create table {table} (id number(10), data varchar2(10))")
-    )
+    with sql.conn() as c:
+        c.execute(
+            text(f"create table {table} (id number(10), data varchar2(10))")
+        )
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     sql.table_loader.load_table(table, data, LoadMode.TRUNCATE)
     data2 = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "d"]})
@@ -99,9 +103,10 @@ def test_load_from_dataframe_truncate_creates_table_if_no_table_exists(
 def test_load_from_dataframe_replace(sql: DataCheckSql):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     table = Table(sql, "test_load_from_dataframe_replace")
-    sql.get_connection().execute(
-        text(f"create table {table} (id number(10), data varchar2(10))")
-    )
+    with sql.conn() as c:
+        c.execute(
+            text(f"create table {table} (id number(10), data varchar2(10))")
+        )
     sql.table_loader.load_table(table, data, LoadMode.REPLACE)
     df = sql.run_query(f"select id, data from {table}")
     assert_frame_equal(data, df)
@@ -126,9 +131,10 @@ def test_load_from_dataframe_replace_creates_table_if_no_table_exists(
 def test_load_from_dataframe_replace_deletes_data(sql: DataCheckSql):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     table = Table(sql, "test_load_from_dataframe_replace_deletes_data")
-    sql.get_connection().execute(
-        text(f"create table {table} (id number(10), data varchar2(10))")
-    )
+    with sql.conn() as c:
+        c.execute(
+            text(f"create table {table} (id number(10), data varchar2(10))")
+        )
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     sql.table_loader.load_table(table, data, LoadMode.REPLACE)
     data2 = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "d"]})
@@ -139,11 +145,12 @@ def test_load_from_dataframe_replace_deletes_data(sql: DataCheckSql):
 
 def test_load_from_file(sql: DataCheckSql, file_type):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
-    sql.get_connection().execute(
-        text(
-            f"create table test_load_from_file_{file_type} (id number(10), data varchar2(10))"
+    with sql.conn() as c:
+        c.execute(
+            text(
+                f"create table test_load_from_file_{file_type} (id number(10), data varchar2(10))"
+            )
         )
-    )
     sql.table_loader.load_table_from_file(
         f"test_load_from_file_{file_type}",
         Path(f"load_data/test.{file_type}"),
@@ -218,9 +225,10 @@ def test_load_from_file_non_existing_file(sql: DataCheckSql, file_type):
 def test_load_from_dataframe_schema(sql: DataCheckSql):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     table = Table.from_table_name(sql, "temp.test_load_from_dataframe_schema")
-    sql.get_connection().execute(
-        text(f"create table {table} (id number(10), data varchar2(10))")
-    )
+    with sql.conn() as c:
+        c.execute(
+            text(f"create table {table} (id number(10), data varchar2(10))")
+        )
     # need to disconnect here, as otherwise pandas inspector request is cached
     # and returns that the table has not been created
     sql.disconnect()
@@ -232,9 +240,10 @@ def test_load_from_dataframe_schema(sql: DataCheckSql):
 def test_load_leading_zeros_string(sql: DataCheckSql):
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["123", "012", "000"]})
     table = Table.from_table_name(sql, "temp.test_load_leading_zeros_string")
-    sql.get_connection().execute(
-        text(f"create table {table} (id number(10), data varchar2(10))")
-    )
+    with sql.conn() as c:
+        c.execute(
+            text(f"create table {table} (id number(10), data varchar2(10))")
+        )
     sql.disconnect()  # see test_load_from_dataframe_schema
 
     sql.table_loader.load_table(table, data, LoadMode.TRUNCATE)

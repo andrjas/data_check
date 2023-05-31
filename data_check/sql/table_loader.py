@@ -80,7 +80,6 @@ class TableLoader:
                     connection.execute(
                         insert_stmt, parameters=cast(Dict[str, Any], row.to_dict())
                     )
-            connection.commit()
         return False
 
     def load_table(
@@ -95,17 +94,16 @@ class TableLoader:
         if mode == LoadMode.UPSERT:
             return self.upsert_data(data, table)
         else:
-            connection = self.sql.get_connection()
-            self.pre_insert(connection, table)
-            data.to_sql(
-                name=table.name,
-                schema=table.schema,
-                con=connection,
-                if_exists=if_exists,
-                index=False,
-                dtype=dtype,
-            )
-            connection.commit()
+            with self.sql.conn() as connection:
+                self.pre_insert(connection, table)
+                data.to_sql(
+                    name=table.name,
+                    schema=table.schema,
+                    con=connection,
+                    if_exists=if_exists,
+                    index=False,
+                    dtype=dtype,
+                )
             return True
 
     def get_load_mode(self, deprecated_load_mode, mode) -> LoadMode:

@@ -11,20 +11,14 @@ from ..date import parse_date_columns
 class QueryResult:
     def __init__(self, query: str, result: CursorResult):
         self.query = query
-        self.result = result
-        self._data: Optional[List[Row]] = None
+        self.data: List[Row] = []
+        self.columns: List[str] = []
         self._df: Optional[pd.DataFrame] = None
         self._date_columns: List[str] = []
 
-    @property
-    def data(self) -> List[Row]:
-        if self._data is None:
-            self._data = cast(List[Row], self.result.fetchall())
-        return self._data
-
-    @property
-    def columns(self) -> List[str]:
-        return cast(List[str], self.result.keys())
+        if result is not None:
+            self.data = cast(List[Row], result.fetchall())
+            self.columns = cast(List[str], result.keys())
 
     @property
     def date_columns(self) -> List[str]:

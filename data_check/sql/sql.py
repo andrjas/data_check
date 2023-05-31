@@ -107,19 +107,11 @@ class DataCheckSql:
                     if dbapitype is CLOB:
                         del inputsizes[bindparam]
 
-    def get_connection(self) -> Connection:
-        if self.__connection is None:
-            _connection = self.get_engine().connect()
-            if self.keep_connection():
-                self.__connection = _connection
-            else:
-                return _connection
-        return self.__connection
-
     @contextmanager
     def conn(self) -> Connection:
         with self.get_engine().connect() as c:
             yield c
+            c.commit()
 
     def disconnect(self):
         if self.__connection:
@@ -159,9 +151,8 @@ class DataCheckSql:
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
         sql = self._bindparams(query)
-        result = QueryResult(
-            query, self.get_connection().execute(sql, parameters=params)
-        )
+        with self.conn() as c:
+            result = QueryResult(query, c.execute(sql, parameters=params))
         return result
 
     def _try_connect(self, engine) -> bool:
@@ -206,14 +197,13 @@ class DataCheckSql:
         query: str,
         output: Union[str, Path] = "",
         params: Dict[str, Any] = {},
-        base_path: Path = Path("."),
+        base_path: Path = Path(),
     ):
         sq_text = self._bindparams(query)
         with self.conn() as connection:
             result: CursorResult = connection.execute(
-                sq_text.execution_options(autocommit=True), parameters=params
+                sq_text.execution_options(), parameters=params
             )
-            connection.commit()
         try:
             res: List[Row] = result.fetchall()
             columns: List[str] = list(result.keys())

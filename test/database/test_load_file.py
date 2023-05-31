@@ -33,7 +33,8 @@ def create_test_table(table_name: str, schema: str, dc: DataCheck):
             Column("data", String(10)),
             schema=table.schema,
         )
-        metadata.create_all(bind=dc.sql.get_engine())
+        with dc.sql.conn() as c:
+            metadata.create_all(bind=c)
     return table
 
 
@@ -54,7 +55,8 @@ def create_test_table_with_date(table_name: str, schema: str, dc: DataCheck):
             Column("dat", Date),
             schema=table.schema,
         )
-        metadata.create_all(bind=dc.sql.get_engine())
+        with dc.sql.conn() as c:
+            metadata.create_all(bind=c)
     return table
 
 
@@ -75,7 +77,8 @@ def create_test_table_with_datetime(table_name: str, schema: str, dc: DataCheck)
             Column("dat", DateTime),
             schema=table.schema,
         )
-        metadata.create_all(bind=dc.sql.get_engine())
+        with dc.sql.conn() as c:
+            metadata.create_all(bind=c)
     return table
 
 
@@ -98,7 +101,8 @@ def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
             Column("decim", Numeric(10, 4)),
             schema=table.schema,
         )
-        metadata.create_all(bind=dc.sql.get_engine())
+        with dc.sql.conn() as c:
+            metadata.create_all(bind=c)
     return table
 
 
@@ -115,7 +119,8 @@ def create_test_table_with_large_decimal(table_name: str, schema: str, dc: DataC
             Column("d_col", Numeric(38, 0)),
             schema=table.schema,
         )
-        metadata.create_all(bind=dc.sql.get_engine())
+        with dc.sql.conn() as c:
+            metadata.create_all(bind=c)
     return table
 
 
@@ -149,7 +154,8 @@ def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
             Column("m", DateTime),
             schema=table.schema,
         )
-        metadata.create_all(bind=dc.sql.get_engine())
+        with dc.sql.conn() as c:
+            metadata.create_all(bind=c)
     return table
 
 
