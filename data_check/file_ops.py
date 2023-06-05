@@ -79,18 +79,8 @@ DEFAULT_READ_CSV_PARAMS = {
 }
 
 
-def read_csv_header(csv_file: Path) -> List[str]:
-    """Read only the header of a CSV file and returns the list of columns."""
-    try:
-        df = pd.read_csv(csv_file, nrows=0, **DEFAULT_READ_CSV_PARAMS)
-    except Exception as e:
-        raise DataCheckException(f"Failed to read {csv_file}: {e}")
-    return df.columns.tolist()
-
-
 def read_csv(
     csv_file: Path,
-    parse_dates: Union[bool, List[str]] = False,
     string_columns: List[str] = [],
 ) -> pd.DataFrame:
     """Reads a CSV file and returns a DataFrame with the data from the file.
@@ -99,29 +89,18 @@ def read_csv(
 
     string_columns holds a list of all columns that should be treated as strings, without any convertion.
     """
-    if not parse_dates:
-        parse_dates = False
     dtypes: DtypeArg = {s: "object" for s in string_columns}
-
-    # remove columns from parse_dates if they are not in the CSV file
-    if isinstance(parse_dates, List):
-        header = read_csv_header(csv_file)
-        parse_dates = [p for p in parse_dates if p in header]
 
     try:
         df = pd.read_csv(
             csv_file,
-            parse_dates=parse_dates,
-            date_parser=isoparse,
             dtype=dtypes,
             **DEFAULT_READ_CSV_PARAMS,
         )
     except Exception as e:
         raise DataCheckException(f"Failed to read {csv_file}: {e}")
 
-    if not parse_dates:
-        _, df = parse_date_columns(df)
-    fix_date_dtype(df, {})
+    _, df = parse_date_columns(df)
     return df
 
 

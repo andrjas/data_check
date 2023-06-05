@@ -150,7 +150,6 @@ class TableLoader:
         if file.suffix.lower() == ".csv":
             data = read_csv(
                 csv_file=file,
-                parse_dates=column_info.date_column_names,
                 string_columns=column_info.string_column_names,
             )
         elif file.suffix.lower() == ".xlsx":
