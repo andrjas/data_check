@@ -21,13 +21,13 @@ def test_isoparse_date():
 def test_isoparse_empty_string():
     s = ""
     d = isoparse(s)
-    assert d == ""
+    assert d is None
 
 
 def test_isoparse_empty_null():
     s = None
     d = isoparse(s)
-    assert d == ""
+    assert d is None
 
 
 def test_isoparse_datetime_huge_date():
@@ -82,7 +82,7 @@ def test_parse_date_columns_with_dates_and_others():
     df = pd.DataFrame.from_dict(
         {
             "a": [1, 2, 3],
-            "b": ["2020-12-20", "2020-10-10", "0123456789"],
+            "b": ["2020-12-20", "2020-10-10", "0123498765"],
         }
     )
     date_columns, parsed_df = parse_date_columns(df)
@@ -94,7 +94,7 @@ def test_parse_date_columns_with_datetimes_and_others():
     df = pd.DataFrame.from_dict(
         {
             "a": [1, 2, 3],
-            "b": ["2020-12-20 12:12:12", "2020-10-10 10:10:10", "0123456789"],
+            "b": ["2020-12-20 12:12:12", "2020-10-10 10:10:10", "0123498765"],
         }
     )
     date_columns, parsed_df = parse_date_columns(df)

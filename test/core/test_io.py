@@ -46,7 +46,7 @@ def test_get_expect_file_null():
 
 
 def test_get_expect_file_empty():
-    p = Path("")
+    p = Path()
     ef = get_expect_file(p)
     assert ef == Path()
 
@@ -71,4 +71,4 @@ def test_non_unicode_csv():
 
 def test_read_csv_date_columns_with_empty_values_return_nat():
     df = read_csv(Path("load_data/sample/test_date_with_null_dates.csv"))
-    assert df["j"].iloc[1] == ""
+    assert df["j"].iloc[1] is None

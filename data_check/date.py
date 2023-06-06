@@ -18,9 +18,7 @@ def parse_date_columns(df: pd.DataFrame) -> Tuple[List[str], pd.DataFrame]:
         # only try to convert, if some values exist in the column
         if not column.isna().all():
             with suppress(Exception):
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore", category=FutureWarning)
-                    _col = column.apply(isoparse, convert_dtype=False)
+                _col = column.apply(isoparse, convert_dtype=False)
                 df[column_name] = _col
                 _date_columns.append(str(column_name))
     return _date_columns, df
@@ -30,7 +28,7 @@ def isoparse(column: Union[int, float, str, None]):
     if isinstance(column, float) and math.isnan(column):
         column = ""
     if column is None or not str(column):
-        return ""
+        return None
     if len(str(column)) < 10 or not isinstance(column, str):
         # must be at least of format YYYY-MM-DD to be a date
         raise ValueError(("VE", column, type(column)))
