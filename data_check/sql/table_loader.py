@@ -55,6 +55,33 @@ class TableLoader:
                 if table.sql_table.primary_key:
                     connection.execute(text(f"SET IDENTITY_INSERT {table} ON"))
 
+    def prepare_dtypes(
+        self, data: pd.DataFrame, table: Table, dtype
+    ) -> Optional[Dict[str, Any]]:
+        if self.sql.dialect == "oracle":
+            # when creating a new table in Oracle with FLOAT types, we need to specify the binary_precision
+            float_types = {
+                k: v
+                for k, v in dict(data.dtypes).items()
+                if v in ("float32", "float64")
+            }
+            if any(float_types) and not table.exists():
+                from sqlalchemy.dialects import oracle
+                from sqlalchemy.sql.sqltypes import Float
+
+                for col_name, dt in float_types.items():
+                    # use same precision as in pandas' _sqlalchemy_type
+                    precision = 23 if dt == "float32" else 53
+                    binary_precision = 76 if dt == "float32" else 126
+                    dtype[col_name] = Float(precision=precision).with_variant(
+                        oracle.FLOAT(binary_precision=binary_precision), "oracle"
+                    )
+
+        if not dtype:
+            # dtype can be {}, but for to_sql it's best to use None then
+            dtype = None
+        return dtype
+
     def upsert_data(self, data: pd.DataFrame, table: Table) -> bool:
         other_columns = [
             c for c in data.columns.to_list() if c not in table.primary_keys
@@ -88,12 +115,10 @@ class TableLoader:
         self._prepare_table_for_load(table, mode)
         if_exists = self._load_mode_to_pandas_if_exists(mode=mode)
         fix_date_dtype(data, dtype)
-        if not dtype:
-            # dtype can be {}, but for to_sql it's best to use None then
-            dtype = None
         if mode == LoadMode.UPSERT:
             return self.upsert_data(data, table)
         else:
+            dtype = self.prepare_dtypes(data, table, dtype)
             with self.sql.conn() as connection:
                 self.pre_insert(connection, table)
                 data.to_sql(
@@ -123,7 +148,7 @@ class TableLoader:
         table: str,
         file: Path,
         mode: Union[str, LoadMode] = LoadMode.DEFAULT,
-        base_path: Path = Path("."),
+        base_path: Path = Path(),
         load_mode: Union[str, LoadMode, None] = None,
     ):
         from data_check.sql import Table
@@ -164,7 +189,7 @@ class TableLoader:
         self,
         files: List[Path],
         mode: Union[str, LoadMode] = LoadMode.DEFAULT,
-        base_path: Path = Path("."),
+        base_path: Path = Path(),
         load_mode: Union[str, LoadMode, None] = None,
     ):
         deprecated_method_argument(load_mode, mode, LoadMode.DEFAULT)
