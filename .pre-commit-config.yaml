@@ -23,7 +23,7 @@ repos:
             # supported by your project here, or alternatively use
             # pre-commit's default_language_version, see
             # https://pre-commit.com/#top_level-default_language_version
-            language_version: python3.10
+            language_version: python3.11
 
     - repo: https://github.com/jendrikseipp/vulture
       rev: v2.7
@@ -36,14 +36,14 @@ repos:
           - id: eradicate
 
     - repo: https://github.com/pre-commit/mirrors-mypy
-      rev: v1.2.0
+      rev: v1.3.0
       hooks:
           - id: mypy
             additional_dependencies: ["types-python-dateutil", "types-PyYAML"]
             exclude: ^.vulture_whitelist.py
 
     - repo: https://github.com/dosisod/refurb
-      rev: v1.15.0
+      rev: v1.16.0
       hooks:
           - id: refurb
-            language_version: python3.10
+            language_version: python3.11
