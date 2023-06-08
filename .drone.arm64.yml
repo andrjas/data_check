@@ -18,7 +18,7 @@ steps:
   - cp -rn example/run_sql test/int_test/oracle
   - cp -rn example/lookups test/int_test/oracle
   - cp -rn example/fake test/int_test/oracle
-  - poetry install -E oracle
+  - poetry install -E oracledb
   - cd test/int_test/oracle
   - poetry run data_check ping --wait --timeout 60 --retry 5
   - rm -f checks/pipelines/fake_data/main.simple_fake_table.csv

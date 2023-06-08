@@ -1,5 +1,5 @@
 default_connection: test
 
 connections:
-    test: oracle://${DB_USER}:${DB_PASSWORD}@${DB_CONNECTION}
-    test2: oracle+cx_oracle://${DB_USER}:${DB_PASSWORD}@some_other_server
+    test: oracle+oracledb://${DB_USER}:${DB_PASSWORD}@${DB_CONNECTION}
+    test2: oracle+oracledb://${DB_USER}:${DB_PASSWORD}@some_other_server

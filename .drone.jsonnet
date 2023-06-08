@@ -159,7 +159,7 @@ local oracle_test() = int_pipeline("oracle", "oraclelinux:8",
     "cp -rn example/run_sql test/int_test/oracle",
     "cp -rn example/lookups test/int_test/oracle",
     "cp -rn example/fake test/int_test/oracle",
-    "poetry install -E oracle",
+    "poetry install -E oracledb",
     "cd test/int_test/oracle"
 ],
 {
