@@ -96,3 +96,7 @@ Use `pipx install data-check[mssql]` to install data_check with `pyodbc`.
 `cx_Oracle` needs Oracle client libraries to work. [https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html](https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html) shows how to install them.
 
 Use `pipx install data-check[oracle]` to install data_check with `cx_Oracle`.
+
+Alternatively you can use [python-oracledb](https://oracle.github.io/python-oracledb/) that does not requires any extra libraries.
+
+Use `pipx install data-check[oracledb]` to install data_check with `python-oracledb`.

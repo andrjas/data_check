@@ -74,7 +74,13 @@ postgresql://username:password@db_host:5432/db_name
 
 ### Oracle
 
+For cx_Oracle:
+
 oracle+cx_oracle://username:password@db_host:1521/?service_name=XEPDB1
+
+For python-oracledb:
+
+oracle+oracledb://username:password@db_host:1521/?service_name=XEPDB1
 
 ### MySQL/MariaDB
 

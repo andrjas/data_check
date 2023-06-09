@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.16.0] - 2023-06-09
+
+### Added
+- CI with ARM64 MSSQL driver
+- oracledb as alternative for cx_oracle
+- `--use-process` parameter to switch back to ProcessPoolExecutor
+
+### Changed
+- upgraded to pandas 2
+- upgraded to SQLAlchemy 2
+- switched to ThreadPoolExecutor by default
+
+
 ## [0.15.0] - 2023-02-17
 
 ### Added
