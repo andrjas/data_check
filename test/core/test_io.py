@@ -72,3 +72,11 @@ def test_non_unicode_csv():
 def test_read_csv_date_columns_with_empty_values_return_nat():
     df = read_csv(Path("load_data/sample/test_date_with_null_dates.csv"))
     assert df["j"].iloc[1] is None
+
+
+def test_read_csv_leading_zeros_as_string():
+    df = read_csv(
+        Path("checks/basic/decimal_varchar.csv"),
+        string_columns=["leading_zero_varchar"],
+    )
+    assert df["leading_zero_varchar"].dtype == "object"
