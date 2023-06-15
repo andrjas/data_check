@@ -16,7 +16,7 @@ class CmdStep:
         self.output = output
         self.print = print
 
-    def _run_cmd(self, cmd: str, base_path: Path = Path(".")):
+    def _run_cmd(self, cmd: str, base_path: Path = Path()):
         self.output.print(f"# {cmd}")
         process = subprocess.Popen(
             cmd,
@@ -31,7 +31,7 @@ class CmdStep:
         exitcode = process.wait()
         return exitcode == 0
 
-    def run(self, base_path: Path = Path(".")):
+    def run(self, base_path: Path = Path()):
         if isinstance(self.cmd, List):
             for c in self.cmd:
                 if not self._run_cmd(c, base_path=base_path):

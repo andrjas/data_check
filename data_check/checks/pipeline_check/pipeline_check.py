@@ -78,7 +78,7 @@ class PipelineCheck(BaseCheck):
         table: str = "",
         file: Union[str, Path] = "",
         mode: Union[str, LoadMode] = LoadMode.DEFAULT,
-        base_path: Path = Path("."),
+        base_path: Path = Path(),
         load_mode: Union[str, LoadMode, None] = None,
     ):
         if files:
@@ -123,7 +123,7 @@ class PipelineCheck(BaseCheck):
         table: str,
         file: Path,
         mode: Union[str, LoadMode] = LoadMode.DEFAULT,
-        base_path: Path = Path("."),
+        base_path: Path = Path(),
         load_mode: Union[str, LoadMode, None] = None,
     ):
         deprecated_method(
@@ -138,7 +138,7 @@ load:
             table=table, file=file, mode=mode, base_path=base_path, load_mode=load_mode
         )
 
-    def deprecated_sql_files(self, files: List[Path], base_path: Path = Path(".")):
+    def deprecated_sql_files(self, files: List[Path], base_path: Path = Path()):
         deprecated_method(
             "sql_files",
             """
@@ -156,10 +156,10 @@ sql:
         print_query: bool = True,
         files: List[Path] = [],
         file: List[Path] = [],
-        base_path: Path = Path("."),
+        base_path: Path = Path(),
         write_check: Union[str, Path] = "",
     ):
-        if base_path == Path("."):
+        if base_path == Path():
             base_path = self.check_path
 
         if query_or_files and not query:
@@ -266,7 +266,7 @@ sql:
         return self.run_steps_pipeline(steps)
 
     def run_cmd(
-        self, commands: List[str], print: bool = True, base_path: Path = Path(".")
+        self, commands: List[str], print: bool = True, base_path: Path = Path()
     ):
         c = CmdStep(commands, self.data_check.output, print=print)
         return c.run(base_path=base_path)

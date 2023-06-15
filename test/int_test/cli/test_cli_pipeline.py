@@ -11,7 +11,7 @@ from data_check.data_check import DataCheck
 
 @pytest.fixture
 def pc(dc_serial: DataCheck) -> PipelineCheck:
-    _pc = PipelineCheck(dc_serial, Path("."))
+    _pc = PipelineCheck(dc_serial, Path())
     return _pc
 
 

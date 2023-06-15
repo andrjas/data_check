@@ -79,10 +79,9 @@ def test_all_options_tested():
     tested_options += ((Path(__file__).parent) / "test_load_cli.py").read_text()
     tested_options += ((Path(__file__).parent) / "test_init_cli.py").read_text()
 
-    join: List[str] = []
-    for option in dc_options:
-        if f'"{option}"' in tested_options:
-            join.append(option)
+    join: List[str] = [
+        option for option in dc_options if f'"{option}"' in tested_options
+    ]
 
     assert set(join) == set(dc_options)
     assert len(dc_options) > 10
@@ -272,15 +271,15 @@ def test_g():
     gen_sql_org = Path("checks/generated/generate_before_running.sql")
     gen_sql = Path("checks/generated/generate_before_running_g.sql")
     if gen_csv.exists():
-        os.unlink(gen_csv)
+        gen_csv.unlink()
     if gen_sql.exists():
-        os.unlink(gen_sql)
+        gen_sql.unlink()
     shutil.copy(gen_sql_org, gen_sql)
     res = run(["gen", str(gen_sql)])
     assert res.exit_code == 0
     assert gen_csv.exists()
-    os.unlink(gen_csv)
-    os.unlink(gen_sql)
+    gen_csv.unlink()
+    gen_sql.unlink()
     assert res.output.startswith(
         f"expectation written to checks{sep}generated{sep}generate_before_running_g.csv"
     )
@@ -289,13 +288,13 @@ def test_g():
 def test_generate_no_overwrite_without_force():
     gen_csv = Path("checks/generated/generate_before_running.csv")
     if gen_csv.exists():
-        os.unlink(gen_csv)
+        gen_csv.unlink()
     gen_csv.write_text("")
     res = run(["gen", "checks/generated/generate_before_running.sql"])
     assert res.exit_code == 0
     assert gen_csv.exists()
     assert gen_csv.read_text() == ""
-    os.unlink(gen_csv)
+    gen_csv.unlink()
     assert res.output.startswith(
         f"expectation skipped for checks{sep}generated{sep}generate_before_running.csv"
     )
@@ -304,7 +303,7 @@ def test_generate_no_overwrite_without_force():
 def test_generate_force():
     gen_csv = Path("checks/generated/generate_before_running.csv")
     if gen_csv.exists():
-        os.unlink(gen_csv)
+        gen_csv.unlink()
     gen_csv.write_text("")
     res = run(
         [
@@ -316,7 +315,7 @@ def test_generate_force():
     assert res.exit_code == 0
     assert gen_csv.exists()
     assert gen_csv.read_text() != ""
-    os.unlink(gen_csv)
+    gen_csv.unlink()
     assert res.output.startswith(
         f"expectation written to checks{sep}generated{sep}generate_before_running.csv"
     )
@@ -333,7 +332,7 @@ def test_generate_full_table_check(tmp_path: Path):
         csv = "sqlite_master.csv"
         gen_csv = Path(csv)
         if gen_csv.exists():
-            os.unlink(gen_csv)
+            gen_csv.unlink()
         gen_csv.write_text(csv_txt)
 
         res = run(["gen", "--force", csv])

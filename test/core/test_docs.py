@@ -19,8 +19,9 @@ def test_all_options_are_documented():
     assert usage_md.exists()
     usage_txt = usage_md.read_text()
 
-    join = []
-    for opt in all_options:
-        if re.search(r"\* \`data_check\s+[^\`]*" + opt + r"[\`\s\/]", usage_txt):
-            join.append(opt)
+    join = [
+        opt
+        for opt in all_options
+        if re.search(r"\* \`data_check\s+[^\`]*" + opt + r"[\`\s\/]", usage_txt)
+    ]
     assert set(join) == set(all_options)

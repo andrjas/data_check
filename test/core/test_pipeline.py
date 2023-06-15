@@ -9,7 +9,7 @@ from data_check.result import DataCheckResult  # noqa E402
 
 @pytest.fixture
 def pc(dc_serial: DataCheck) -> PipelineCheck:
-    _pc = PipelineCheck(dc_serial, Path("."))
+    _pc = PipelineCheck(dc_serial, Path())
     return _pc
 
 
@@ -273,7 +273,7 @@ def test_project_path_is_absolute_path(pc: PipelineCheck):
     tp = pc.template_parameters(pipeline_path=Path("checks/pipelines/simple_pipeline"))
     project_path = Path(tp["PROJECT_PATH"])
     assert project_path.is_absolute()
-    assert project_path == Path(".").absolute()
+    assert project_path == Path().absolute()
 
 
 def test_pipeline_template_connection(pc: PipelineCheck):

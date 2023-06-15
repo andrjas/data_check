@@ -89,7 +89,7 @@ class DataCheck:
         return None
 
     def collect_checks(
-        self, files: List[Path], base_path: Path = Path(".")
+        self, files: List[Path], base_path: Path = Path()
     ) -> List[BaseCheck]:
         base_path = base_path.absolute()
         checks: List[BaseCheck] = []
@@ -106,7 +106,7 @@ class DataCheck:
         return checks
 
     def run(
-        self, files: List[Path], base_path: Path = Path("."), do_cleanup: bool = True
+        self, files: List[Path], base_path: Path = Path(), do_cleanup: bool = True
     ) -> bool:
         """
         Runs a data_check test for all element in the list.
@@ -127,7 +127,7 @@ class DataCheck:
         self.output.print(sql_text)
         return self.sql.run_sql(query=sql_text, params=self.sql_params)
 
-    def run_sql_files(self, files: List[Path], base_path: Path = Path(".")):
+    def run_sql_files(self, files: List[Path], base_path: Path = Path()):
         parameters = [{"file": f} for f in expand_files(files, base_path=base_path)]
         return all(
             self.runner.run_any(run_method=self.run_sql_file, parameters=parameters)
@@ -137,7 +137,7 @@ class DataCheck:
         self,
         query: str,
         output: Union[str, Path] = "",
-        base_path: Path = Path("."),
+        base_path: Path = Path(),
         print_query: bool = False,
     ):
         sql_query = parse_template(query, template_data=self.template_data)
@@ -148,7 +148,7 @@ class DataCheck:
     def load_lookups(self):
         self.lookup_data.update(load_lookups_from_path(self))
 
-    def write_check(self, query: str, check_path: Path, base_path: Path = Path(".")):
+    def write_check(self, query: str, check_path: Path, base_path: Path = Path()):
         output_sql = base_path / check_path
         output_csv = output_sql.with_suffix(".csv")
         exists_failed = False
@@ -170,7 +170,7 @@ class DataCheck:
         self,
         configs: List[Path],
         output: Path = Path(),
-        base_path: Path = Path("."),
+        base_path: Path = Path(),
         force: bool = False,
     ):
         from .fake.fake_data import fake_from_config

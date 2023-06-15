@@ -31,7 +31,7 @@ def create_test_table_db(table_name: str, schema: str, dc: DataCheck):
 def test_fake_config(tmp_path: Path, dc_serial: DataCheck):
     create_test_table_db("test_fake_config", "main", dc_serial)
     csv = tmp_path / "main.test_fake_config.csv"
-    fake_config = FakeConfig(Path("."))
+    fake_config = FakeConfig(Path())
     config = {"table": "main.test_fake_config"}
     fake_config.load_config(config)
     fake_config.init(dc_serial.sql)
@@ -44,7 +44,7 @@ def test_fake_config(tmp_path: Path, dc_serial: DataCheck):
 def test_fake_config_other_path(tmp_path: Path, dc_serial: DataCheck):
     create_test_table_db("test_fake_config2", "main", dc_serial)
     csv = tmp_path / "main.test_fake_config2_other_path.csv"
-    fake_config = FakeConfig(Path("."))
+    fake_config = FakeConfig(Path())
     config = {"table": "main.test_fake_config2"}
     fake_config.load_config(config)
     fake_config.init(dc_serial.sql)
@@ -55,7 +55,7 @@ def test_fake_config_other_path(tmp_path: Path, dc_serial: DataCheck):
 def test_fake_config_with_more_columns_fails(dc_serial: DataCheck):
     """This test fails, since we cannot query non existent columns"""
     create_test_table_db("test_fake_config_with_more_columns", "main", dc_serial)
-    fake_config = FakeConfig(Path("."))
+    fake_config = FakeConfig(Path())
     config = {
         "table": "main.test_fake_config_with_more_columns",
         "columns": {
@@ -70,7 +70,7 @@ def test_fake_config_with_more_columns_fails(dc_serial: DataCheck):
 def test_fake_config_iterations(tmp_path: Path, dc_serial: DataCheck):
     create_test_table_db("test_fake_config_iterations", "main", dc_serial)
     csv = tmp_path / "main.test_fake_config_iterations.csv"
-    fake_config = FakeConfig(Path("."))
+    fake_config = FakeConfig(Path())
     config = {"table": "main.test_fake_config_iterations", "iterations": {"count": 3}}
     fake_config.load_config(config)
     fake_config.init(dc_serial.sql)
@@ -83,7 +83,7 @@ def test_fake_config_iterations(tmp_path: Path, dc_serial: DataCheck):
 
 
 def test_fake_config_non_existing_table(dc_serial: DataCheck):
-    fake_config = FakeConfig(Path("."))
+    fake_config = FakeConfig(Path())
     config = {"table": "main.test_fake_config_non_existing"}
     fake_config.load_config(config)
     with pytest.raises(Exception):
@@ -97,7 +97,7 @@ def test_fake_config_iterations_wrong_next_strategy(
         "test_fake_config_iterations_wrong_next_strategy", "main", dc_serial
     )
     csv = tmp_path / "main.test_fake_config_iterations_wrong_next_strategy.csv"
-    fake_config = FakeConfig(Path("."))
+    fake_config = FakeConfig(Path())
     config = {
         "table": "main.test_fake_config_iterations_wrong_next_strategy",
         "iterations": {"count": 3},

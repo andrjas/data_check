@@ -171,7 +171,7 @@ def test_base_path_subdir(tmp_path: Path):
 
 def test_base_path_default():
     config = DataCheckConfig().load_config()
-    assert config.base_path == Path(".").absolute()
+    assert config.base_path == Path().absolute()
 
 
 def test_log_path_is_absolute(tmp_path: Path):

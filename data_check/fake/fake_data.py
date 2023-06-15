@@ -10,7 +10,7 @@ def fake_from_config(
     sql: DataCheckSql,
     output: Path = Path(),
     force=False,
-    base_path: Path = Path("."),
+    base_path: Path = Path(),
 ) -> bool:
     print("fake from", config)
     fake_config = FakeConfig(config)

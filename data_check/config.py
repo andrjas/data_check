@@ -32,8 +32,8 @@ class DataCheckConfig:
         if config_path is not None:
             self.config_path = config_path
 
-        self.project_path = Path(".").absolute()
-        self.base_path = Path(".").absolute()
+        self.project_path = Path().absolute()
+        self.base_path = Path().absolute()
 
         self.generate_mode = False
         self.force = False
@@ -74,7 +74,7 @@ class DataCheckConfig:
             return self.find_config(abs_base_path.parent)
         return abs_base_path / self.config_path
 
-    def load_config(self, base_path: Path = Path(".")):
+    def load_config(self, base_path: Path = Path()):
         try:
             config_path = self.find_config(base_path)
         except Exception:

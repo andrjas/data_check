@@ -14,7 +14,7 @@ from .exceptions import DataCheckException
 def expand_files(
     files: List[Path],
     extension: Union[str, List[str]] = ".sql",
-    base_path: Path = Path("."),
+    base_path: Path = Path(),
 ) -> List[Path]:
     """
     Expands the list of files or folders,
@@ -58,12 +58,11 @@ def get_expect_file(sql_file: Path) -> Path:
     """
     Returns the csv file with the expected results for a sql file.
     """
-    if (
-        str(sql_file) == ""
-        or sql_file.stem == ""
-        or sql_file.suffix == ""
-        or sql_file.suffix.lower() not in (".sql")
-    ):
+    if "" in (
+        str(sql_file),
+        sql_file.stem,
+        sql_file.suffix,
+    ) or sql_file.suffix.lower() not in (".sql"):
         return Path()
     return sql_file.parent / (sql_file.stem + ".csv")
 
@@ -108,9 +107,7 @@ def print_csv(df: DataFrame, print_method):
     print_method(df.to_csv(index=False))
 
 
-def write_csv(
-    df: DataFrame, output: Union[str, Path] = "", base_path: Path = Path(".")
-):
+def write_csv(df: DataFrame, output: Union[str, Path] = "", base_path: Path = Path()):
     if output:
         result = df.to_csv(index=False, lineterminator="\n")
         # escape # in strings that would otherwise be treated as the start of a comment
@@ -135,6 +132,6 @@ def rel_path(path: Path) -> Path:
     if it's relative to this path.
     """
     try:
-        return path.absolute().relative_to(Path(".").absolute())
+        return path.absolute().relative_to(Path().absolute())
     except ValueError:
         return path
