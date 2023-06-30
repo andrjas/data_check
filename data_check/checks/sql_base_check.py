@@ -75,9 +75,6 @@ class SQLBaseCheck(BaseCheck):
                         df_1[o_col], df_2[o_col]
                     )
 
-    def cleanup(self):
-        self.data_check.sql.disconnect()
-
     @staticmethod
     def convert_dtypes(
         col_1: pd.Series, col_2: pd.Series

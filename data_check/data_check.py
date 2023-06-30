@@ -105,6 +105,14 @@ class DataCheck:
                 checks.extend(self.collect_checks(dir_files, base_path=base_path))
         return checks
 
+    def validate_checks(self, checks: List[BaseCheck]):
+        for c in checks:
+            try:
+                if not c.validate():
+                    raise ValueError(f"{c} is not valid")
+            except Exception as e:
+                raise ValueError(f"{c} is not valid: {e}")
+
     def run(
         self, files: List[Path], base_path: Path = Path(), do_cleanup: bool = True
     ) -> bool:
@@ -113,6 +121,7 @@ class DataCheck:
         Returns True, if all calls returned True, otherwise False.
         """
         all_checks = self.collect_checks(files, base_path=base_path)
+        self.validate_checks(all_checks)
         delegate = partial(self.delegate_test, do_cleanup=do_cleanup)
         results = self.runner.run_checks(delegate, all_checks)
 

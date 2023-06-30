@@ -33,6 +33,3 @@ class EmptySetCheck(BaseCheck):
             return self.data_check.output.prepare_result(
                 ResultType.FAILED_WITH_EXCEPTION, source=self.check_path, exception=exc
             )
-
-    def cleanup(self):
-        self.data_check.sql.disconnect()

@@ -17,6 +17,10 @@ class BaseCheck:
     def run_test(self) -> DataCheckResult:
         raise NotImplementedError()
 
+    def validate(self) -> bool:
+        """Runs a validation for the check if possible and returns whether the check is valid and can be run."""
+        return True
+
     @staticmethod
     def is_check_path(path: Path) -> bool:
         return False

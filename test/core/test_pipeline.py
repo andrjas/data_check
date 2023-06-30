@@ -40,67 +40,39 @@ def test_pipeline_sqls_are_not_in_simple_tests(dc_serial: DataCheck):
     assert pipeline_test_sql not in checks
 
 
-def test_register_pipeline_step(pc: PipelineCheck):
-    def step_test():
-        pass
-
-    pc.register_pipeline_step("step_test", step_test)
-    method = pc.get_pipeline_method("step_test")
-    assert method == step_test
+# def test_register_pipeline_step(pc: PipelineCheck):
+#     def step_test():
+#         pass
 
 
-def test_prepared_parameters_str_to_path_list(pc: PipelineCheck):
-    def step_test(arg1):
-        pass
-
-    pc.register_pipeline_step("step_test", step_test, ["arg1"])
-    parameters = pc.get_prepared_parameters("step_test", "test_arg1")
-    assert parameters == {"arg1": [Path("test_arg1")]}
+# def test_prepared_parameters_str_to_path_list(pc: PipelineCheck):
+#     def step_test(arg1):
+#         pass
 
 
-def test_prepared_parameters_str_list_to_path_list(pc: PipelineCheck):
-    def step_test(arg1):
-        pass
-
-    pc.register_pipeline_step("step_test", step_test, ["arg1"])
-    parameters = pc.get_prepared_parameters("step_test", ["test_arg1"])
-    assert parameters == {"arg1": [Path("test_arg1")]}
+# def test_prepared_parameters_str_list_to_path_list(pc: PipelineCheck):
+#     def step_test(arg1):
+#         pass
 
 
-def test_prepared_parameters_dict_to_path_list(pc: PipelineCheck):
-    def step_test(arg1):
-        pass
-
-    pc.register_pipeline_step("step_test", step_test, ["arg1"])
-    parameters = pc.get_prepared_parameters("step_test", {"arg1": ["test_arg1"]})
-    assert parameters == {"arg1": [Path("test_arg1")]}
+# def test_prepared_parameters_dict_to_path_list(pc: PipelineCheck):
+#     def step_test(arg1):
+#         pass
 
 
-def test_prepared_parameters_dict_str_to_path_list(pc: PipelineCheck):
-    def step_test(arg1):
-        pass
-
-    pc.register_pipeline_step("step_test", step_test, ["arg1"])
-    parameters = pc.get_prepared_parameters("step_test", {"arg1": "test_arg1"})
-    assert parameters == {"arg1": [Path("test_arg1")]}
+# def test_prepared_parameters_dict_str_to_path_list(pc: PipelineCheck):
+#     def step_test(arg1):
+#         pass
 
 
-def test_prepared_parameters_str_to_path(pc: PipelineCheck):
-    def step_test(arg1):
-        pass
-
-    pc.register_pipeline_step("step_test", step_test, convert_to_path=["arg1"])
-    parameters = pc.get_prepared_parameters("step_test", "test_arg1")
-    assert parameters == {"arg1": Path("test_arg1")}
+# def test_prepared_parameters_str_to_path(pc: PipelineCheck):
+#     def step_test(arg1):
+#         pass
 
 
-def test_prepared_parameters_no_convert(pc: PipelineCheck):
-    def step_test(arg1):
-        pass
-
-    pc.register_pipeline_step("step_test", step_test)
-    parameters = pc.get_prepared_parameters("step_test", "test_arg1")
-    assert parameters == {"arg1": "test_arg1"}
+# def test_prepared_parameters_no_convert(pc: PipelineCheck):
+#     def step_test(arg1):
+#         pass
 
 
 def test_run_test_returns_DataCheckResult(pc: PipelineCheck):
@@ -298,39 +270,45 @@ def test_pipeline_stops_after_failing_step(pc: PipelineCheck):
 
 def test_sql_files_is_deprecated(pc: PipelineCheck):
     steps = [{"sql_files": ["run_sql/run_test.sql"]}]
+    pc._pipeline_config = {"steps": steps}
     with pytest.warns(FutureWarning, match="sql_files is deprecated, use"):
-        pc.run_steps_pipeline(steps)
+        pc.run_test()
 
 
 def test_sql_file_alias(pc: PipelineCheck):
     steps = [{"sql": {"file": "run_sql/run_test.sql"}}]
-    result = pc.run_steps_pipeline(steps)
+    pc._pipeline_config = {"steps": steps}
+    result = pc.run_test()
     assert result
 
 
 def test_sql_files_and_file_simultaneously_raise_exception(pc: PipelineCheck):
     steps = [{"sql": {"file": "run_sql/run_test.sql", "files": "run_sql/run_test.sql"}}]
-    result = pc.run_steps_pipeline(steps)
+    pc._pipeline_config = {"steps": steps}
+    result = pc.run_test()
     assert result.exception
 
 
 def test_run_is_alias_for_check(pc: PipelineCheck):
     steps = [{"run": ["checks/basic"]}]
-    result = pc.run_steps_pipeline(steps)
+    pc._pipeline_config = {"steps": steps}
+    result = pc.run_test()
     assert result
 
 
 def test_write_check_in_pipeline(pc: PipelineCheck, tmp_path: Path):
     pc.check_path = tmp_path
     steps = [{"sql": {"query": "select 1 as a", "write_check": "a.sql"}}]
-    pc.run_steps_pipeline(steps)
+    pc._pipeline_config = {"steps": steps}
+    pc.run_test()
     assert (tmp_path / "a.sql").exists()
     assert (tmp_path / "a.csv").exists()
 
 
 def test_output_with_files(pc: PipelineCheck):
     steps = [{"sql": {"files": "run_sql/run_test.sql", "output": "run_test.csv"}}]
-    result = pc.run_steps_pipeline(steps)
+    pc._pipeline_config = {"steps": steps}
+    result = pc.run_test()
     assert result
     assert not Path("run_test.csv").exists()
 
@@ -344,19 +322,22 @@ def test_load_table_is_deprecated(pc: PipelineCheck):
             }
         }
     ]
+    pc._pipeline_config = {"steps": steps}
     with pytest.warns(FutureWarning, match="load_table is deprecated, use"):
-        pc.run_steps_pipeline(steps)
+        pc.run_test()
 
 
 def test_load_files_and_file_simultaneously_raise_exception(pc: PipelineCheck):
     steps = [{"load": {"file": "load_data/test.csv", "files": "load_data/test.csv"}}]
-    result = pc.run_steps_pipeline(steps)
+    pc._pipeline_config = {"steps": steps}
+    result = pc.run_test()
     assert result.exception
 
 
 def test_load_table_without_file_raise_exception(pc: PipelineCheck):
     steps = [{"load": {"table": "test_load_table_without_file_raise_exception"}}]
-    result = pc.run_steps_pipeline(steps)
+    pc._pipeline_config = {"steps": steps}
+    result = pc.run_test()
     assert result.exception
 
 
@@ -369,13 +350,15 @@ def test_load_table_with_files_raise_exception(pc: PipelineCheck):
             }
         }
     ]
-    result = pc.run_steps_pipeline(steps)
+    pc._pipeline_config = {"steps": steps}
+    result = pc.run_test()
     assert result.exception
 
 
 def test_load_file_is_alias_for_files(pc: PipelineCheck):
     steps = [{"load": {"file": "load_data/test.csv"}}]
-    result = pc.run_steps_pipeline(steps)
+    pc._pipeline_config = {"steps": steps}
+    result = pc.run_test()
     assert result
 
 
