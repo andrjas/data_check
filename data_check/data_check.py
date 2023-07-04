@@ -121,12 +121,21 @@ class DataCheck:
         Returns True, if all calls returned True, otherwise False.
         """
         all_checks = self.collect_checks(files, base_path=base_path)
+        results = self.run_checks(all_checks, do_cleanup)
+        overall_result = self.get_overall_result(results, self.config.print_overall_result)
+        return overall_result
+
+    def run_checks(self, all_checks: List[BaseCheck], do_cleanup: bool = True):
         self.validate_checks(all_checks)
         delegate = partial(self.delegate_test, do_cleanup=do_cleanup)
         results = self.runner.run_checks(delegate, all_checks)
-
+        return results
+    
+    def get_overall_result(self, results: List[DataCheckResult], print_overall: bool = False, print_summary: bool = False):
         overall_result = all(results)
-        if self.config.print_overall_result:
+        if print_summary:
+            self.output.pprint_result_summary(results)
+        if print_overall:
             self.output.pprint_overall_result(overall_result)
         return overall_result
 

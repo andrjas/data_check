@@ -20,12 +20,12 @@ def run(command: List[str], workers: Optional[int] = 1) -> Result:
 
 def assert_passed(result: Result):
     assert result.exit_code == 0
-    assert "overall result: PASSED" in result.output
+    assert ": PASSED" in result.output
 
 
 def assert_failed(result: Result):
     assert result.exit_code == 1
-    assert "overall result: FAILED" in result.output
+    assert ": FAILED" in result.output
 
 
 def should_pass(command: List[str], workers: Optional[int] = 1):

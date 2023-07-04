@@ -47,6 +47,8 @@ class DataCheckResult:
     full_result: Optional[pd.DataFrame] = None
     """Optional DataFrame with full result information (pre-diff)"""
 
+    result_type: Optional[ResultType] = None
+
     def __bool__(self):
         return self.passed
 
@@ -96,3 +98,7 @@ class DataCheckResult:
         if passed:
             return ResultType.PASSED
         return ResultType.FAILED
+
+    @property
+    def is_warning(self) -> bool:
+        return self.result_type in (ResultType.FAILED_PATH_NOT_EXISTS, ResultType.NO_EXPECTED_RESULTS_FILE)

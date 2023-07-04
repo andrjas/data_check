@@ -97,6 +97,13 @@ class DataCheckOutput:
         self.print("")
         self.print(f"overall result: {overall_result_msg}")
 
+    def pprint_result_summary(self, results: List[DataCheckResult]) -> None:
+        self.print("")
+        passed = len([r for r in results if r.passed])
+        warnings = len([r for r in results if r.is_warning])
+        failed = len([r for r in results if not r.passed]) - warnings
+        self.print(f"summary: {passed} {self.str_pass('passed')}, {failed} {self.str_fail('failed')}, {warnings} {self.str_warn('warnings')}")
+
     def _get_df(self, result: Union[DataCheckResult, pd.DataFrame]) -> pd.DataFrame:
         if isinstance(result, pd.DataFrame):
             return result
@@ -189,4 +196,5 @@ class DataCheckOutput:
             source_message=source_message,
             extra_message=extra_message,
             full_result=full_result,
+            result_type=result_type,
         )

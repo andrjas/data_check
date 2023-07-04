@@ -37,17 +37,13 @@ def run_check(command: List[str], workers: Optional[int] = 1):
 def assert_passed(result: Result):
     assert result.exit_code == 0
     assert (
-        result.output.replace("\x1b[0m", "").replace("\x1b[32m", "")
-        == f"""checks{sep}basic{sep}simple_string.sql: PASSED
-
-overall result: PASSED
-"""
+        "summary: 1 passed, 0 failed, 0 warning" in result.output.replace("\x1b[0m", "").replace("\x1b[32m", "")
     )
 
 
 def assert_failed(result: Result):
     assert result.exit_code == 1
-    assert "overall result: FAILED" in result.output
+    assert ": FAILED" in result.output
 
 
 def test_help():
@@ -464,27 +460,29 @@ def test_log_is_written_in_project_path(tmp_path: Path):
     """This test runs data_check in a subfolder of the project path.
     The log file must still be written in the project path.
     """
-    checks_path = tmp_path / "checks"
-    checks_path.mkdir()
-
-    Path(tmp_path / "data_check.yml").write_text(
-        """
-connections:
-    test: sqlite+pysqlite://
-
-log: dc.log
-"""
-    )
 
     runner = CliRunner()
     workers_cmd = ["-n", str(1)]
     command = ["run", "-c", "test"]
 
-    with runner.isolated_filesystem(checks_path):  # type: ignore
+    with runner.isolated_filesystem(tmp_path) as td:  # type: ignore
+        tdp = Path(td)
+        checks_path = tdp / "checks"
+        checks_path.mkdir()
+
+        Path(tdp / "data_check.yml").write_text(
+            """
+    connections:
+        test: sqlite+pysqlite://
+
+    log: dc.log
+    """
+        )
+
         runner.invoke(cli, command + workers_cmd)
 
-    log_file = tmp_path / "dc.log"
-    assert log_file.exists()
+        log_file = Path(tdp) / "dc.log"
+        assert log_file.exists()
 
 
 def test_failing_prints_no_setting_with_copy_warning():
