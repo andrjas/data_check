@@ -382,3 +382,30 @@ You can use some predefined parameters in a pipeline definition:
 ## Generating pipeline checks
 
 Like [generating expectation files](csv_checks.md#generating-expectation-files) you can also run `data_check gen` for a pipeline. In this mode the pipeline is executed, but each _check_ step will generate the CSV files instead of running the actual checks. Adding `--force` will overwrite existing CSV files.
+
+
+## Debugging a pipeline
+
+You can add a breakpoint between pipeline steps to stop the pipeline and run the Python Debugger (pdb).
+
+Example:
+```yaml
+steps:
+  - sql: select 1 as a, 'b' as t {{from_dual}}
+  - breakpoint:
+  - sql: select 2 as a, 'c' as t {{from_dual}}
+```
+
+You have access to all [debugger commands](https://docs.python.org/3/library/pdb.html#debugger-commands), e.g. 'c', 'cont' or 'continue' to continue execution until the next breakpoint. 'q' or 'quit' will quit the debugger and the pipeline will fail.
+
+Additionally you can use these variables and function to interact with the pipeline:
+
+* data_check: access to the main data_check instance
+* sql: access to SQL functions
+* pipeline: access to the current pipeline
+* steps: list of all steps in the pipeline
+* current_step(): returns the current step
+* next_step(): returns the next step without executing it
+* run_next(): run the next step in the pipeline
+
+To run a SQL statement in the debugger, use `sql.run_sql("<any sql statement>")`. If you want to use the result as a DataFrame, use `sql.run_query("select ...")` which will return a DataFrame.

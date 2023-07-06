@@ -21,6 +21,11 @@ class Step(BaseModel):
     def run(self) -> bool:
         return False
 
+    def run_step(self) -> bool:
+        self.has_run = True
+        result = self.run()
+        return result
+
     @staticmethod
     def set_base_path(values: Dict[str, Any]):
         pipeline_check: PipelineCheck = values["pipeline_check"]

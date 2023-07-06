@@ -1,6 +1,6 @@
-from typing import Any, List
+from typing import Iterator, List
 
-from pydantic import BaseModel, root_validator, validator
+from pydantic import root_validator
 
 from .step import Step
 
@@ -22,4 +22,10 @@ class AlwaysRunStep(Step):
     def run(self):
         from ..pipeline_model import PipelineModel
 
-        return PipelineModel.run_steps(self.steps, self.pipeline_check)
+        return PipelineModel.run_steps(self.steps_iterator, self.pipeline_check)
+
+    @property
+    def steps_iterator(self) -> Iterator[Step]:
+        for step in self.steps:
+            if not step.has_run:
+                yield step

@@ -1,0 +1,4 @@
+steps:
+  - sql: select 1 as a, 'b' as t {{from_dual}}
+  - breakpoint:
+  - sql: select 2 as a, 'c' as t {{from_dual}}

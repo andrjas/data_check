@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from contextlib import suppress
-from pathlib import Path
-from typing import Any, Dict, List, Type, Union
+from typing import Any, Dict, Iterable, Iterator, List, Optional, Type
 
 from pydantic import BaseModel, root_validator, validator
 
@@ -44,13 +43,15 @@ STEP_TO_CLASS: Dict[str, Type[Step]] = {
 class PipelineModel(BaseModel):
     pipeline_check: PipelineCheck
     steps: List[Step] = []
+    current_step: Optional[Step] = None
 
     @staticmethod
-    def run_steps(steps: List[Step], pipeline_check: PipelineCheck) -> DataCheckResult:
+    def run_steps(
+        steps: Iterable[Step], pipeline_check: PipelineCheck
+    ) -> DataCheckResult:
         for step in steps:
             try:
-                result = step.run()
-                step.has_run = True
+                result = step.run_step()
                 if not result:
                     PipelineModel.process_always_run(steps)
                     return DataCheckResult(
@@ -72,10 +73,33 @@ class PipelineModel(BaseModel):
         )
 
     def run(self) -> DataCheckResult:
-        return PipelineModel.run_steps(self.steps, self.pipeline_check)
+        return PipelineModel.run_steps(self.steps_iterator, self.pipeline_check)
+
+    @property
+    def steps_iterator(self) -> Iterator[Step]:
+        for step in self.steps:
+            if not step.has_run:
+                self.current_step = step
+                yield step
+
+    @property
+    def next_step(self) -> Optional[Step]:
+        for step in self.steps:
+            if not step.has_run:
+                return step
+        else:
+            return None
+
+    def run_next_step(self) -> bool:
+        next_step = self.next_step
+        self.current_step = next_step
+
+        if next_step:
+            return next_step.run_step()
+        return True
 
     @staticmethod
-    def process_always_run(steps: List[Step]):
+    def process_always_run(steps: Iterable[Step]):
         for current_step in steps:
             if isinstance(current_step, AlwaysRunStep) and not current_step.has_run:
                 with suppress(BaseException):

@@ -199,6 +199,10 @@ class DataCheckSql:
         params: Dict[str, Any] = {},
         base_path: Path = Path(),
     ):
+        """
+        Runs a SQL statement. If it is a query, a list of the rows is returned, otherwise a boolean is returned indicating success or failure of the statement.
+        If output is given, the result of the query is written to the file relative to base_path.
+        """
         sq_text = self._bindparams(query)
         with self.conn() as connection:
             result: CursorResult = connection.execute(
