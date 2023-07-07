@@ -79,10 +79,11 @@ def run(
     if not files:
         files = [dc.config.checks_path]  # use default checks path if nothing is given
     path_list = [Path(f) for f in files]
-    dc.load_template()
-    dc.load_lookups()
+
     all_checks = dc.collect_checks(path_list)
     result = dc.run_checks(all_checks)
-    overall_result = dc.get_overall_result(result, print_overall=False, print_summary=True)
+    overall_result = dc.get_overall_result(
+        result, print_overall=False, print_summary=True
+    )
     if not overall_result:
         ctx.exit(1)
