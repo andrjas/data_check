@@ -122,7 +122,9 @@ class DataCheck:
         """
         all_checks = self.collect_checks(files, base_path=base_path)
         results = self.run_checks(all_checks, do_cleanup)
-        overall_result = self.get_overall_result(results, self.config.print_overall_result)
+        overall_result = self.get_overall_result(
+            results, self.config.print_overall_result
+        )
         return overall_result
 
     def run_checks(self, all_checks: List[BaseCheck], do_cleanup: bool = True):
@@ -130,8 +132,13 @@ class DataCheck:
         delegate = partial(self.delegate_test, do_cleanup=do_cleanup)
         results = self.runner.run_checks(delegate, all_checks)
         return results
-    
-    def get_overall_result(self, results: List[DataCheckResult], print_overall: bool = False, print_summary: bool = False):
+
+    def get_overall_result(
+        self,
+        results: List[DataCheckResult],
+        print_overall: bool = False,
+        print_summary: bool = False,
+    ):
         overall_result = all(results)
         if print_summary:
             self.output.pprint_result_summary(results)
@@ -157,11 +164,14 @@ class DataCheck:
         output: Union[str, Path] = "",
         base_path: Path = Path(),
         print_query: bool = False,
+        sort_output: bool = False,
     ):
         sql_query = parse_template(query, template_data=self.template_data)
         if print_query:
             self.output.print(f"-- {sql_query}")
-        return self.sql.run_sql(sql_query, output, self.sql_params, base_path)
+        return self.sql.run_sql(
+            sql_query, output, self.sql_params, base_path, sort_output=sort_output
+        )
 
     def load_lookups(self):
         self.lookup_data.update(load_lookups_from_path(self))
@@ -179,7 +189,7 @@ class DataCheck:
         if exists_failed:
             return False
         query_result = self.run_sql_query(
-            query=query, output=output_csv, base_path=base_path
+            query=query, output=output_csv, base_path=base_path, sort_output=True
         )
         output_sql.write_text(query)
         return query_result

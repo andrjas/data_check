@@ -34,7 +34,7 @@ class DataCheckGenerator(BaseCheck):
         if not expect_result.exists() or force:
             result = self.check_obj.get_sql_result()
             assert isinstance(result, QueryResult)
-            write_csv(result.df, expect_result)
+            write_csv(result.df, expect_result, sort_output=True)
             output = f"expectation written to {_rel_path}"
         else:
             output = f"expectation skipped for {_rel_path}"

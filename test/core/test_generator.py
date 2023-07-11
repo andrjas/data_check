@@ -10,9 +10,8 @@ from data_check.checks.table_check import TableCheck
 from data_check.sql.query_result import QueryResult
 
 
-def prepare_sql(tmp_path: Path):
+def prepare_sql(tmp_path: Path, sql_text="select 1 as test", exp_result={"test": [1]}):
     sql_file = tmp_path / "a.sql"
-    sql_text = "select 1 as test"
     sql_file.write_text(sql_text)
 
     expect_result = tmp_path / "a.csv"
@@ -22,7 +21,7 @@ def prepare_sql(tmp_path: Path):
 
     check = create_autospec(CSVCheck, instance=True)
     qr = QueryResult(sql_text, None)
-    qr._df = pd.DataFrame.from_dict({"test": [1]})
+    qr._df = pd.DataFrame.from_dict(exp_result)
     check.get_sql_result.return_value = qr
     return data_check, sql_file, expect_result, check
 
@@ -94,3 +93,16 @@ def test_gen_with_table_check(tmp_path: Path):
 
     assert expect_result.exists()
     assert expect_result.read_text().strip() == "test\n1"
+
+
+def test_gen_csv_is_sorted(tmp_path: Path):
+    data_check, sql_file, expect_result, check = prepare_sql(
+        tmp_path=tmp_path,
+        sql_text="select 2 as test union all select 1 as test",
+        exp_result={"test": [2, 1]},
+    )
+
+    generator = DataCheckGenerator(data_check, sql_file, check)
+    generator.gen_expectation(sql_file=sql_file)
+
+    assert expect_result.read_text().strip() == "test\n1\n2"

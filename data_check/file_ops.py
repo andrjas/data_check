@@ -107,8 +107,15 @@ def print_csv(df: DataFrame, print_method):
     print_method(df.to_csv(index=False))
 
 
-def write_csv(df: DataFrame, output: Union[str, Path] = "", base_path: Path = Path()):
+def write_csv(
+    df: DataFrame,
+    output: Union[str, Path] = "",
+    base_path: Path = Path(),
+    sort_output: bool = False,
+):
     if output:
+        if sort_output:
+            df = df.sort_values(by=list(df.columns), axis=0)
         result = df.to_csv(index=False, lineterminator="\n")
         # escape # in strings that would otherwise be treated as the start of a comment
         result = result.replace("#", "\\#")

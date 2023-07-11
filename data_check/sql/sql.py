@@ -198,6 +198,7 @@ class DataCheckSql:
         output: Union[str, Path] = "",
         params: Dict[str, Any] = {},
         base_path: Path = Path(),
+        sort_output: bool = False,
     ):
         """
         Runs a SQL statement. If it is a query, a list of the rows is returned, otherwise a boolean is returned indicating success or failure of the statement.
@@ -213,7 +214,9 @@ class DataCheckSql:
             columns: List[str] = list(result.keys())
             df = pd.DataFrame(data=res, columns=columns)
             if output:
-                write_csv(df, output=output, base_path=base_path)
+                write_csv(
+                    df, output=output, base_path=base_path, sort_output=sort_output
+                )
             else:
                 print_csv(df, self.output.print)
             return res
