@@ -40,41 +40,6 @@ def test_pipeline_sqls_are_not_in_simple_tests(dc_serial: DataCheck):
     assert pipeline_test_sql not in checks
 
 
-# def test_register_pipeline_step(pc: PipelineCheck):
-#     def step_test():
-#         pass
-
-
-# def test_prepared_parameters_str_to_path_list(pc: PipelineCheck):
-#     def step_test(arg1):
-#         pass
-
-
-# def test_prepared_parameters_str_list_to_path_list(pc: PipelineCheck):
-#     def step_test(arg1):
-#         pass
-
-
-# def test_prepared_parameters_dict_to_path_list(pc: PipelineCheck):
-#     def step_test(arg1):
-#         pass
-
-
-# def test_prepared_parameters_dict_str_to_path_list(pc: PipelineCheck):
-#     def step_test(arg1):
-#         pass
-
-
-# def test_prepared_parameters_str_to_path(pc: PipelineCheck):
-#     def step_test(arg1):
-#         pass
-
-
-# def test_prepared_parameters_no_convert(pc: PipelineCheck):
-#     def step_test(arg1):
-#         pass
-
-
 def test_run_test_returns_DataCheckResult(pc: PipelineCheck):
     pc.check_path = Path("checks/pipelines/simple_pipeline")
     result = pc.run_test()
