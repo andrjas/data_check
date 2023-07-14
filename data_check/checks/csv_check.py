@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Union, cast
+from typing import TYPE_CHECKING, List, Optional, Union, cast
 
 import pandas as pd
 
@@ -17,8 +17,9 @@ if TYPE_CHECKING:
 @dataclass
 class CSVCheckResult:
     result_type: ResultType
-    diff: pd.DataFrame
-    merged: pd.DataFrame
+    diff: Optional[pd.DataFrame] = None
+    merged: Optional[pd.DataFrame] = None
+    exception: Optional[Exception] = None
 
 
 class CSVCheck(SQLBaseCheck):
@@ -48,7 +49,10 @@ class CSVCheck(SQLBaseCheck):
         expect_result.replace(r"^$", pd.NA, regex=True, inplace=True)
         expect_result.replace({pd.NaT: pd.NA}, inplace=True)
 
-        df_merged = SQLBaseCheck.merge_results(sql_result, expect_result)
+        try:
+            df_merged = SQLBaseCheck.merge_results(sql_result, expect_result)
+        except Exception as e:
+            return CSVCheckResult(ResultType.FAILED_WITH_EXCEPTION, exception=e)
         df_diff = cast(pd.DataFrame, df_merged[df_merged._merge != "both"])
 
         # empty diff means there are no differences and the test has passed
@@ -104,4 +108,5 @@ class CSVCheck(SQLBaseCheck):
             source=sql_file,
             result=result.diff,
             full_result=result.merged,
+            exception=result.exception,
         )

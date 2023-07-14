@@ -61,8 +61,16 @@ def test_run_sql_files(dc: DataCheck):
     assert results
 
 
-def test_run_test_faling_duplicates(dc: DataCheck):
+def test_run_test_failing_duplicates(dc: DataCheck):
     check = dc.get_check(Path("checks/failing/duplicates.sql"))
     assert check
     result = check.run_test()
     assert not result
+
+
+def test_run_failing_non_unique_columns(dc: DataCheck):
+    check = dc.get_check(Path("checks/failing/non_unique_columns.sql"))
+    assert check
+    result = check.run_test()
+    assert not result
+    assert "Data columns not unique" in str(result.exception)

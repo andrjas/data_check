@@ -43,6 +43,8 @@ class SQLBaseCheck(BaseCheck):
 
         try:
             df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
+        except pd.errors.MergeError as e:
+            raise e
         except ValueError:
             # treat both columns as str if their data types differ
             for sc in cast(List[str], sql_result.columns):
