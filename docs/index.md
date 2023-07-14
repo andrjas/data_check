@@ -17,7 +17,7 @@ data_check is a simple data validation tool. In its most basic form, it will exe
 
 ## Database support
 
-data_check should work with any database that works with [SQLAlchemy](https://docs.sqlalchemy.org/en/14/dialects/). Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.
+data_check should work with any database that works with [SQLAlchemy](https://docs.sqlalchemy.org/en/20/dialects/). Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.
 
 ## Why?
 
@@ -55,7 +55,7 @@ connections:
     con: connection-string
 ```
 
-Under _connections_ you can put multiple [connection strings](https://docs.sqlalchemy.org/en/14/core/engines.html) with names. _default_connection_ is the connection name that data_check uses when no additional arguments are given. You can also use environment variables in the connection string to store the credentials outside _data\_check.yml_ (e.g. `postgresql://postgres:${POSTGRES_PWD}@db:5432`).
+Under _connections_ you can put multiple [connection strings](https://docs.sqlalchemy.org/en/20/core/engines.html) with names. _default_connection_ is the connection name that data_check uses when no additional arguments are given. You can also use environment variables in the connection string to store the credentials outside _data\_check.yml_ (e.g. `postgresql://postgres:${POSTGRES_PWD}@db:5432`).
 
 ## Test files
 

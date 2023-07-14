@@ -91,7 +91,7 @@ class DataCheckSql:
     def register_setinputsizes_event(self, engine: Engine):
         if engine.dialect.name == "oracle":
             # do not use CLOB for loading strings (and large decimals)
-            # https://docs.sqlalchemy.org/en/14/dialects/oracle.html#example-2-remove-all-bindings-to-clob
+            # https://docs.sqlalchemy.org/en/20/dialects/oracle.html#example-2-remove-all-bindings-to-clob
             try:
                 from cx_Oracle import CLOB  # type: ignore
             except ImportError:

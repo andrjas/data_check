@@ -17,7 +17,7 @@ data_check is a simple data validation tool. In its most basic form it will exec
 
 ## Database support
 
-data_check should work with any database that works with [SQLAlchemy](https://docs.sqlalchemy.org/en/14/dialects/). Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.
+data_check should work with any database that works with [SQLAlchemy](https://docs.sqlalchemy.org/en/20/dialects/). Currently data_check is tested against PostgreSQL, MySQL, SQLite, Oracle and Microsoft SQL Server.
 
 ## Quickstart
 

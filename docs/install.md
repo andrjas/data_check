@@ -62,7 +62,7 @@ To upgrade data_check in the virtual environment: `python3 -m pip install data-c
 
 ## Databases
 
-Installing data_check alone will only support SQLite, which is bundled with Python. You need additional drivers for other databases. See [https://docs.sqlalchemy.org/en/14/dialects/index.html](https://docs.sqlalchemy.org/en/14/dialects/index.html) for all possible drivers and how to install them.
+Installing data_check alone will only support SQLite, which is bundled with Python. You need additional drivers for other databases. See [https://docs.sqlalchemy.org/en/20/dialects/index.html](https://docs.sqlalchemy.org/en/20/dialects/index.html) for all possible drivers and how to install them.
 
 With pipx you can install the drivers with `pipx inject data-check <drivername>` (watch the minus sign in _data-check_ instead of the underscore).
 In a virtual environment you just activate the environment and run `pip install <drivername>`.
