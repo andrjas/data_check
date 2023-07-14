@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -7,7 +9,7 @@ from jinja2 import Template
 from pandas._typing import DtypeArg
 from pandas.core.frame import DataFrame
 
-from .date import fix_date_dtype, isoparse, parse_date_columns
+from .date import parse_date_columns
 from .exceptions import DataCheckException
 
 
@@ -67,17 +69,6 @@ def get_expect_file(sql_file: Path) -> Path:
     return sql_file.parent / (sql_file.stem + ".csv")
 
 
-DEFAULT_READ_CSV_PARAMS = {
-    "na_values": [""],  # use empty string as nan
-    "keep_default_na": False,
-    "comment": "#",
-    "escapechar": "\\",
-    "quotechar": '"',
-    "quoting": 0,
-    "engine": "c",
-}
-
-
 def read_csv(
     csv_file: Path,
     string_columns: List[str] = [],
@@ -94,7 +85,13 @@ def read_csv(
         df = pd.read_csv(
             csv_file,
             dtype=dtypes,
-            **DEFAULT_READ_CSV_PARAMS,
+            na_values=[""],  # use empty string as nan
+            keep_default_na=False,
+            comment="#",
+            escapechar="\\",
+            quotechar='"',
+            quoting=0,
+            engine="c",
         )
     except Exception as e:
         raise DataCheckException(f"Failed to read {csv_file}: {e}")

@@ -56,7 +56,6 @@ class PipelineModel(BaseModel):
                     PipelineModel.process_always_run(steps)
                     return DataCheckResult(
                         passed=False,
-                        result=result,
                         source=f"pipeline {pipeline_check.check_path}",
                     )
             except Exception as e:

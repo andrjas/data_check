@@ -45,7 +45,7 @@ class LoadStep(Step):
 
     def run_files(self):
         return self.data_check.sql.table_loader.load_tables_from_files(
-            files=self.files,
+            files=Step.as_path_list(self.files),
             mode=self.mode,
             base_path=self.base_path,
             load_mode=self.load_mode,
@@ -54,7 +54,7 @@ class LoadStep(Step):
     def run_table(self):
         return self.data_check.sql.table_loader.load_table_from_file(
             table=self.table,
-            file=self.file,
+            file=Step.as_path(self.file),
             mode=self.mode,
             base_path=self.base_path,
             load_mode=self.load_mode,

@@ -3,7 +3,7 @@ from functools import cached_property
 from os import path
 from pathlib import Path
 from time import sleep, time
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, Iterator, List, Optional, Sequence, Union, cast
 
 import pandas as pd
 from sqlalchemy import create_engine, event, inspect
@@ -108,7 +108,7 @@ class DataCheckSql:
                         del inputsizes[bindparam]
 
     @contextmanager
-    def conn(self) -> Connection:
+    def conn(self) -> Iterator[Connection]:
         with self.get_engine().connect() as c:
             yield c
             c.commit()
@@ -141,7 +141,7 @@ class DataCheckSql:
     @staticmethod
     def _bindparams(query: str) -> TextClause:
         sql = cast(TextClause, text(query))
-        for bp in sql._bindparams.keys():  # type: ignore
+        for bp in sql._bindparams.keys():
             sql = sql.bindparams(bindparam(bp, expanding=True))
         return sql
 
@@ -199,7 +199,7 @@ class DataCheckSql:
         params: Dict[str, Any] = {},
         base_path: Path = Path(),
         sort_output: bool = False,
-    ):
+    ) -> Union[bool, Sequence[Row]]:
         """
         Runs a SQL statement. If it is a query, a list of the rows is returned, otherwise a boolean is returned indicating success or failure of the statement.
         If output is given, the result of the query is written to the file relative to base_path.
@@ -210,7 +210,7 @@ class DataCheckSql:
                 sq_text.execution_options(), parameters=params
             )
         try:
-            res: List[Row] = result.fetchall()
+            res: Sequence[Row] = result.fetchall()
             columns: List[str] = list(result.keys())
             df = pd.DataFrame(data=res, columns=columns)
             if output:

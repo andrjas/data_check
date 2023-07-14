@@ -101,4 +101,7 @@ class DataCheckResult:
 
     @property
     def is_warning(self) -> bool:
-        return self.result_type in (ResultType.FAILED_PATH_NOT_EXISTS, ResultType.NO_EXPECTED_RESULTS_FILE)
+        return self.result_type in (
+            ResultType.FAILED_PATH_NOT_EXISTS,
+            ResultType.NO_EXPECTED_RESULTS_FILE,
+        )

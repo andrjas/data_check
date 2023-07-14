@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Union, cast
 
 from pydantic import BaseModel, Extra, root_validator
 
@@ -43,7 +43,7 @@ class Step(BaseModel):
         return self.pipeline_check.data_check
 
     @staticmethod
-    def to_path_list(v) -> List[Path]:
+    def to_path_list(v: Any) -> List[Path]:
         if isinstance(v, str):
             return [Path(v)]
         elif isinstance(v, Path):
@@ -52,6 +52,18 @@ class Step(BaseModel):
             return [Path(e) for e in v]
         else:
             raise ValueError(f"unknown list format: {v}")
+
+    @staticmethod
+    def as_path_list(v: StrOrPathList) -> List[Path]:
+        assert isinstance(v, List)
+        for e in v:
+            assert isinstance(e, Path)
+        return cast(List[Path], v)
+
+    @staticmethod
+    def as_path(v: Union[str, Path]) -> Path:
+        assert isinstance(v, Path)
+        return cast(Path, v)
 
     class Config:
         arbitrary_types_allowed = True

@@ -20,7 +20,9 @@ def test_raise_exception_if_running_without_connection():
     config = DataCheckConfig()
     config.connection = str(None)
     dc = DataCheck(config)
-    result = dc.get_check(Path("checks/basic/simple_string.sql")).run_test()
+    check = dc.get_check(Path("checks/basic/simple_string.sql"))
+    assert check
+    result = check.run_test()
     assert not result
     result.prepare_message(dc.output.prepare_data_check_result)
     assert "with exception in " in result.message

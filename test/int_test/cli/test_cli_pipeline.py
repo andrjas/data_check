@@ -25,7 +25,7 @@ def get_pipeline_step_names(pc: PipelineCheck) -> List[str]:
 
 
 def get_common_params() -> List[str]:
-    return [p.name for p in cli.params]
+    return [p.name for p in cli.params if p.name]
 
 
 IGNORE_PARAMS = [
@@ -46,6 +46,7 @@ def get_command_param_names() -> List[Tuple[str, str]]:
         if param.name not in get_common_params()
         and (cmd, param.name) not in IGNORE_PARAMS
         and cmd not in IGNORE_COMMANDS
+        and param.name is not None
     ]
 
 

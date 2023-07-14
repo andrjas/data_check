@@ -7,7 +7,9 @@ class CheckStep(Step):
     files: StrOrPathList
 
     def run(self):
-        return self.data_check.run(files=self.files, base_path=self.base_path)
+        return self.data_check.run(
+            files=Step.as_path_list(self.files), base_path=self.base_path
+        )
 
     @validator("files")
     def files_to_list(cls, v):

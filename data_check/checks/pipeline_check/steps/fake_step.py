@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Union
 
 from pydantic import validator
 
@@ -21,8 +21,8 @@ class FakeStep(Step):
 
     def run(self):
         return self.data_check.fake_data(
-            configs=self.configs,
-            output=self.output,
+            configs=Step.as_path_list(self.configs),
+            output=Step.as_path(self.output),
             base_path=self.base_path,
             force=self.force,
         )

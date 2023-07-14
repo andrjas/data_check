@@ -9,7 +9,7 @@ from ..date import parse_date_columns
 
 
 class QueryResult:
-    def __init__(self, query: str, result: CursorResult):
+    def __init__(self, query: str, result: Optional[CursorResult]):
         self.query = query
         self.data: List[Row] = []
         self.columns: List[str] = []

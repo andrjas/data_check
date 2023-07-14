@@ -36,9 +36,9 @@ def run_check(command: List[str], workers: Optional[int] = 1):
 
 def assert_passed(result: Result):
     assert result.exit_code == 0
-    assert (
-        "summary: 1 passed, 0 failed, 0 warning" in result.output.replace("\x1b[0m", "").replace("\x1b[32m", "")
-    )
+    assert "summary: 1 passed, 0 failed, 0 warning" in result.output.replace(
+        "\x1b[0m", ""
+    ).replace("\x1b[32m", "")
 
 
 def assert_failed(result: Result):

@@ -61,7 +61,9 @@ class SqlStep(Step):
         )
 
     def run_files(self):
-        return self.data_check.run_sql_files(files=self.files, base_path=self.base_path)
+        return self.data_check.run_sql_files(
+            files=Step.as_path_list(self.files), base_path=self.base_path
+        )
 
 
 class DeprecatedSqlFilesStep(SqlStep):

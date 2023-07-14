@@ -39,7 +39,8 @@ repos:
       rev: v1.3.0
       hooks:
           - id: mypy
-            additional_dependencies: ["types-python-dateutil", "types-PyYAML"]
+            args: [--check-untyped-defs]
+            language: system
             exclude: ^.vulture_whitelist.py
 
     - repo: https://github.com/dosisod/refurb

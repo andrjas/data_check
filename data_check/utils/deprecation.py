@@ -17,11 +17,19 @@ warnings.showwarning = showwarning
 def retrieve_name(var):
     """Returns the name of a variable from 2 frames back (i.e. the method calling the caller of retrieve_name)."""
     # modified from https://stackoverflow.com/questions/18425225/getting-the-name-of-a-variable-as-a-string
-    callers_parents_vars = inspect.currentframe().f_back.f_back.f_locals.items()
-    return next(
-        iter(var_name for var_name, var_val in callers_parents_vars if var_val is var),
-        None,
-    )
+    cur_frame = inspect.currentframe()
+    if cur_frame is not None:
+        next_frame = cur_frame.f_back
+        if next_frame is not None and next_frame.f_back is not None:
+            callers_parents_vars = next_frame.f_back.f_locals.items()
+            return next(
+                iter(
+                    var_name
+                    for var_name, var_val in callers_parents_vars
+                    if var_val is var
+                ),
+                None,
+            )
 
 
 def retrieve_caller() -> str:
