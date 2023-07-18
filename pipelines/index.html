@@ -107,6 +107,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#generating-pipeline-checks">Generating pipeline checks</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#debugging-a-pipeline">Debugging a pipeline</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -409,6 +411,26 @@ If the parameter is not a file, <em>sql</em> will execute in query mode.</p>
 </ul>
 <h2 id="generating-pipeline-checks">Generating pipeline checks</h2>
 <p>Like <a href="../csv_checks/#generating-expectation-files">generating expectation files</a> you can also run <code>data_check gen</code> for a pipeline. In this mode the pipeline is executed, but each <em>check</em> step will generate the CSV files instead of running the actual checks. Adding <code>--force</code> will overwrite existing CSV files.</p>
+<h2 id="debugging-a-pipeline">Debugging a pipeline</h2>
+<p>You can add a breakpoint between pipeline steps to stop the pipeline and run the Python Debugger (pdb).</p>
+<p>Example:</p>
+<pre><code class="language-yaml">steps:
+  - sql: select 1 as a, 'b' as t {{from_dual}}
+  - breakpoint:
+  - sql: select 2 as a, 'c' as t {{from_dual}}
+</code></pre>
+<p>You have access to all <a href="https://docs.python.org/3/library/pdb.html#debugger-commands">debugger commands</a>, e.g. 'c', 'cont' or 'continue' to continue execution until the next breakpoint. 'q' or 'quit' will quit the debugger and the pipeline will fail.</p>
+<p>Additionally you can use these variables and function to interact with the pipeline:</p>
+<ul>
+<li>data_check: access to the main data_check instance</li>
+<li>sql: access to SQL functions</li>
+<li>pipeline: access to the current pipeline</li>
+<li>steps: list of all steps in the pipeline</li>
+<li>current_step(): returns the current step</li>
+<li>next_step(): returns the next step without executing it</li>
+<li>run_next(): run the next step in the pipeline</li>
+</ul>
+<p>To run a SQL statement in the debugger, use <code>sql.run_sql("&lt;any sql statement&gt;")</code>. If you want to use the result as a DataFrame, use <code>sql.run_query("select ...")</code> which will return a DataFrame.</p>
               
             </div>
           </div><footer>

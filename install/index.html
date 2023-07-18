@@ -165,7 +165,7 @@ PowerShell: <code>&lt;venv&gt;\Scripts\Activate.ps1</code></p>
 <p><code>python3 -m pip install data-check</code></p>
 <p>To upgrade data_check in the virtual environment: <code>python3 -m pip install data-check --upgrade</code></p>
 <h2 id="databases">Databases</h2>
-<p>Installing data_check alone will only support SQLite, which is bundled with Python. You need additional drivers for other databases. See <a href="https://docs.sqlalchemy.org/en/14/dialects/index.html">https://docs.sqlalchemy.org/en/14/dialects/index.html</a> for all possible drivers and how to install them.</p>
+<p>Installing data_check alone will only support SQLite, which is bundled with Python. You need additional drivers for other databases. See <a href="https://docs.sqlalchemy.org/en/20/dialects/index.html">https://docs.sqlalchemy.org/en/20/dialects/index.html</a> for all possible drivers and how to install them.</p>
 <p>With pipx you can install the drivers with <code>pipx inject data-check &lt;drivername&gt;</code> (watch the minus sign in <em>data-check</em> instead of the underscore).
 In a virtual environment you just activate the environment and run <code>pip install &lt;drivername&gt;</code>.</p>
 <p>Some drivers need additional dependencies. Here are the drivers used for <a href="../development/#testing">testing</a> data_check:</p>
