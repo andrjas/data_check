@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.17.0] - 2023-07-18
+
+## Added
+- pipeline YAML validation via pydantic
+- more breakpoint step features and documentation
+
+### Changed
+- replaced 'overall result' with 'summary'
+
+
+### Fixed
+- load_template and load_lookups called twice in run
+- generating sorted csv for checks
+- updated SQLAlchemy links to 2.0
+- print exception if merging non-unique columns
+
 ## [0.16.0] - 2023-06-09
 
 ### Added
