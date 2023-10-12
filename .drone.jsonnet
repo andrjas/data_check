@@ -68,7 +68,7 @@ local int_pipeline(db, image, prepare_commands, environment={}, db_image="", ser
 };
 
 
-local sqlite_test() = int_pipeline("sqlite", "python:3.8",
+local sqlite_test() = int_pipeline("sqlite", "python:3.9",
 [
     "python -m pip install -U pip",
     "python -m pip install poetry",
@@ -82,7 +82,7 @@ local sqlite_test() = int_pipeline("sqlite", "python:3.8",
 ]);
 
 
-local postgres_test() = int_pipeline("postgres", "python:3.8",
+local postgres_test() = int_pipeline("postgres", "python:3.9",
 [
     "python -m pip install -U pip",
     "python -m pip install poetry",
@@ -101,7 +101,7 @@ local postgres_test() = int_pipeline("postgres", "python:3.8",
 });
 
 
-local mysql_test() = int_pipeline("mysql", "python:3.8",
+local mysql_test() = int_pipeline("mysql", "python:3.9",
 [
     "python -m pip install -U pip",
     "python -m pip install poetry",

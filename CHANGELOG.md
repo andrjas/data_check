@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- updated dependencies
+- simplified dependency update process
+
+### Removed
+- Python 3.8 support
+
 ## [0.17.0] - 2023-07-18
 
 ## Added

@@ -25,7 +25,7 @@ To upgrade data_check via pipx: `pipx upgrade data-check`
 
 Create a new conda environment:
 
-`conda create --name data_check python=3.8`
+`conda create --name data_check python=3.11`
 
 Activate the environment:
 
