@@ -1,28 +1,26 @@
 from typing import Iterator, List
 
-from pydantic import root_validator
+from pydantic import model_validator
 
+from ..pipeline_check import PipelineCheck
 from .step import Step
 
 
 class AlwaysRunStep(Step):
     steps: List[Step]
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def always_run_steps(cls, values):
-        from ..pipeline_model import PipelineModel
+        from ..pipeline_model import concrete_step
 
-        pipeline_check = values["pipeline_check"]
-        values["steps"] = [
-            PipelineModel.concrete_step(pipeline_check, step)
-            for step in values["steps"]
-        ]
+        values["steps"] = [concrete_step(step) for step in values["steps"]]
         return values
 
-    def run(self):
+    def run(self, pipeline_check: PipelineCheck):
         from ..pipeline_model import PipelineModel
 
-        return PipelineModel.run_steps(self.steps_iterator, self.pipeline_check)
+        return PipelineModel.run_steps(self.steps_iterator, pipeline_check)
 
     @property
     def steps_iterator(self) -> Iterator[Step]:

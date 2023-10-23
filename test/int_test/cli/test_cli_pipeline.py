@@ -57,7 +57,7 @@ def test_cli_commands_have_pipeline_step(command_name, pc: PipelineCheck):
 
 def get_pipeline_step_args(step_name: str) -> List[str]:
     step = STEP_TO_CLASS[step_name]
-    return list(step.__fields__.keys())
+    return list(step.model_fields.keys())
 
 
 @pytest.mark.parametrize(["cmd", "param"], get_command_param_names())

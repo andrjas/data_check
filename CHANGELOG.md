@@ -5,6 +5,7 @@
 ### Changed
 - updated dependencies
 - simplified dependency update process
+- updated to Pydantic 2
 
 ### Removed
 - Python 3.8 support

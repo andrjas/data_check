@@ -6,8 +6,6 @@ local arch = std.extVar("arch");
 
 local generic_int_test = [
     "poetry run data_check ping --wait --timeout 60 --retry 5",
-    "rm -f checks/pipelines/fake_data/main.simple_fake_table.csv",
-    "rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv",
     "rm -f checks/generated/data_with_hash.csv",
     "rm -f test.db",
     "poetry run data_check sql --workers 1 --files prepare",

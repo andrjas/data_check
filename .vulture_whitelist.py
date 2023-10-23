@@ -12,3 +12,6 @@ _.output_to_path  # type: ignore
 _.configs_to_path_list  # type: ignore
 _.query_or_files  # type: ignore
 _.init_step  # type: ignore
+_.model_config  # type: ignore
+_.parse_table_or_files_validator  # type: ignore
+_.parse_query_or_files_validator  # type: ignore

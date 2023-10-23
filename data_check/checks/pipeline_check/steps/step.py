@@ -3,44 +3,33 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Union, cast
 
-from pydantic import BaseModel, Extra, root_validator
-
-if TYPE_CHECKING:
-    from data_check import DataCheck
+from pydantic import BaseModel, ConfigDict, model_validator
 
 from ..pipeline_check import PipelineCheck
+
+# if TYPE_CHECKING:
+
 
 StrOrPathList = Union[str, List[Any], Path, List[Path]]
 
 
 class Step(BaseModel):
-    pipeline_check: PipelineCheck
-    base_path: Path = Path()
     has_run: bool = False
 
-    def run(self) -> bool:
+    model_config = ConfigDict(arbitrary_types_allowed=True, extra="forbid")
+
+    def run(self, pipeline_check: PipelineCheck) -> bool:
         return False
 
-    def run_step(self) -> bool:
+    def run_step(self, pipeline_check: PipelineCheck) -> bool:
         self.has_run = True
-        result = self.run()
+        result = self.run(pipeline_check)
         return result
 
-    @staticmethod
-    def set_base_path(values: Dict[str, Any]):
-        pipeline_check: PipelineCheck = values["pipeline_check"]
-
-        if values["base_path"] == Path():
-            values["base_path"] = pipeline_check.check_path
-
-    @root_validator(pre=False)
+    @model_validator(mode="after")
+    @classmethod
     def init_step(cls, values):
-        cls.set_base_path(values)
         return values
-
-    @property
-    def data_check(self) -> DataCheck:
-        return self.pipeline_check.data_check
 
     @staticmethod
     def to_path_list(v: Any) -> List[Path]:
@@ -65,6 +54,22 @@ class Step(BaseModel):
         assert isinstance(v, Path)
         return cast(Path, v)
 
-    class Config:
-        arbitrary_types_allowed = True
-        extra = Extra.forbid
+    def validate_step(self, pipeline_check: PipelineCheck) -> bool:
+        return True
+
+    @staticmethod
+    def validate_path_list_exists(path_list: List[Path], base_path: Path) -> bool:
+        for path in path_list:
+            return Step.validate_path_exists(path, base_path)
+        return True
+
+    @staticmethod
+    def validate_path_exists(path: Path, base_path: Path) -> bool:
+        try_path = base_path / path
+        if not try_path.exists():
+            raise FileNotFoundError(f"file not found: {try_path}")
+        return True
+
+    @staticmethod
+    def base_path(pipeline_check: PipelineCheck) -> Path:
+        return pipeline_check.check_path

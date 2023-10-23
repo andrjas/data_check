@@ -117,17 +117,12 @@ def test_fake_pipeline(dc_serial: DataCheck):
 
     csv1 = Path("checks/pipelines/fake_data/main.simple_fake_table.csv")
     csv2 = Path("checks/pipelines/fake_data/main.simple_fake_table_2.csv")
-    if csv1.exists():
-        csv1.unlink()
-    if csv2.exists():
-        csv2.unlink()
 
     result = check.run_test()
 
     csv1_exists = csv1.exists()
     csv2_exists = csv2.exists()
-    if csv1.exists():
-        csv1.unlink()
+
     if csv2.exists():
         csv2.unlink()
 

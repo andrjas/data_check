@@ -21,8 +21,6 @@ steps:
   - poetry install -E oracledb
   - cd test/int_test/oracle
   - poetry run data_check ping --wait --timeout 60 --retry 5
-  - rm -f checks/pipelines/fake_data/main.simple_fake_table.csv
-  - rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv
   - rm -f checks/generated/data_with_hash.csv
   - rm -f test.db
   - poetry run data_check sql --workers 1 --files prepare
@@ -78,8 +76,6 @@ steps:
   - poetry install
   - cd test/int_test/sqlite
   - poetry run data_check ping --wait --timeout 60 --retry 5
-  - rm -f checks/pipelines/fake_data/main.simple_fake_table.csv
-  - rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv
   - rm -f checks/generated/data_with_hash.csv
   - rm -f test.db
   - poetry run data_check sql --workers 1 --files prepare
@@ -120,8 +116,6 @@ steps:
   - poetry install -E mysql
   - cd test/int_test/mysql
   - poetry run data_check ping --wait --timeout 60 --retry 5
-  - rm -f checks/pipelines/fake_data/main.simple_fake_table.csv
-  - rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv
   - rm -f checks/generated/data_with_hash.csv
   - rm -f test.db
   - poetry run data_check sql --workers 1 --files prepare
@@ -168,8 +162,6 @@ steps:
   - poetry install -E postgres
   - cd test/int_test/postgres
   - poetry run data_check ping --wait --timeout 60 --retry 5
-  - rm -f checks/pipelines/fake_data/main.simple_fake_table.csv
-  - rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv
   - rm -f checks/generated/data_with_hash.csv
   - rm -f test.db
   - poetry run data_check sql --workers 1 --files prepare
@@ -222,8 +214,6 @@ steps:
   - poetry install -E mssql
   - cd test/int_test/mssql
   - poetry run data_check ping --wait --timeout 60 --retry 5
-  - rm -f checks/pipelines/fake_data/main.simple_fake_table.csv
-  - rm -f checks/pipelines/fake_data/main.simple_fake_table_2.csv
   - rm -f checks/generated/data_with_hash.csv
   - rm -f test.db
   - poetry run data_check sql --workers 1 --files prepare

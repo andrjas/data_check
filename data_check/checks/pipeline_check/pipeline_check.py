@@ -58,16 +58,15 @@ class PipelineCheck(BaseCheck):
     def pipeline_model(self) -> PipelineModel:
         from .pipeline_model import PipelineModel
 
-        return PipelineModel(pipeline_check=self, **self.pipeline_config)
+        return PipelineModel(**self.pipeline_config)
 
     def validate(self) -> bool:
         # creating the model will validate it
-        pipeline = self.pipeline_model
-        return True
+        return self.pipeline_model.validate_pipeline(self)
 
     def run_test(self) -> DataCheckResult:
         try:
-            return self.pipeline_model.run()
+            return self.pipeline_model.run(self)
         except Exception as e:
             return self.data_check.output.prepare_result(
                 result_type=ResultType.FAILED_WITH_EXCEPTION,
