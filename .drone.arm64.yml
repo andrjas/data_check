@@ -6,11 +6,6 @@ platform:
   os: linux
 steps:
 - commands:
-  - dnf module install -y python39
-  - alternatives --set python3 /usr/bin/python3.9
-  - alternatives --set python /usr/bin/python3.9
-  - dnf install -y python39-pip python39-devel oracle-release-el8 gcc libaio
-  - dnf install -y oracle-instantclient19.10-basic
   - python -m pip install -U pip
   - python -m pip install poetry
   - cp -rn example/checks test/int_test/oracledb
@@ -37,7 +32,7 @@ steps:
     LC_ALL: en_US.utf-8
     NLS_LANG: .utf8
     TNS_ADMIN: /app/network/admin
-  image: oraclelinux:8
+  image: python:3.9
   name: data_check
   pull: if-not-exists
   volumes:

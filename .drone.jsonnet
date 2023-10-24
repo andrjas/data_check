@@ -113,14 +113,7 @@ local mssql_test() = int_pipeline("mssql", "python:3.9",
 });
 
 
-local oracle_test() = int_pipeline("oracledb", "oraclelinux:8",
-[
-    "dnf module install -y python39",
-    "alternatives --set python3 /usr/bin/python3.9",
-    "alternatives --set python /usr/bin/python3.9",
-    "dnf install -y python39-pip python39-devel oracle-release-el8 gcc libaio",
-    "dnf install -y oracle-instantclient19.10-basic",
-],
+local oracle_test() = int_pipeline("oracledb", "python:3.9", [],
 {
     DB_USER: {from_secret: "ORACLE_USER"},
     DB_PASSWORD: {from_secret: "ORACLE_PASSWORD"},
