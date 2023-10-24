@@ -6,6 +6,7 @@
 - updated dependencies
 - simplified dependency update process
 - updated to Pydantic 2
+- simplified db int tests
 
 ### Removed
 - Python 3.8 support

@@ -1,6 +1,4 @@
-# run this whenever you change this file to generate .drone.yml and .drone.arm64.yml:
-# drone jsonnet --format --stream --target .drone.yml --extVar arch=amd64
-# drone jsonnet --format --stream --target .drone.arm64.yml --extVar arch=arm64
+# run `./mkdrone.sh` whenever you change this file to generate .drone.yml and .drone.arm64.yml
 
 local arch = std.extVar("arch");
 
@@ -13,8 +11,22 @@ local generic_int_test = [
     "poetry run pytest ../../../test/database",
 ];
 
+local generic_prepare_commands(db) =
+[
+    "python -m pip install -U pip",
+    "python -m pip install poetry",
+    "cp -rn example/checks test/int_test/"+db,
+    "cp -rn example/load_data test/int_test/"+db,
+    "cp -rn example/run_sql test/int_test/"+db,
+    "cp -rn example/lookups test/int_test/"+db,
+    "cp -rn example/fake test/int_test/"+db,
+    "cd test/int_test/"+db,
+]+
+if db == "sqlite" then ["poetry install"] else ["poetry install -E "+db]
+;
 
-local int_pipeline(db, image, prepare_commands, environment={}, db_image="", service_extra={}, extra_volumes=[], image_extra_volumes=[], pkg_cache_path="/var/cache/apt") =
+
+local int_pipeline(db, image, prepare_commands=[], environment={}, db_image="", service_extra={}, extra_volumes=[], image_extra_volumes=[], pkg_cache_path="/var/cache/apt") =
 {
     kind: "pipeline",
     type: "docker",
@@ -28,7 +40,7 @@ local int_pipeline(db, image, prepare_commands, environment={}, db_image="", ser
             name: "data_check",
             image: image,
             pull: "if-not-exists",
-            commands: prepare_commands + generic_int_test,
+            commands: prepare_commands + generic_prepare_commands(db) + generic_int_test,
             environment: environment,
             volumes: [
                 {
@@ -66,32 +78,10 @@ local int_pipeline(db, image, prepare_commands, environment={}, db_image="", ser
 };
 
 
-local sqlite_test() = int_pipeline("sqlite", "python:3.9",
-[
-    "python -m pip install -U pip",
-    "python -m pip install poetry",
-    "cp -rn example/checks test/int_test/sqlite",
-    "cp -rn example/load_data test/int_test/sqlite",
-    "cp -rn example/run_sql test/int_test/sqlite",
-    "cp -rn example/lookups test/int_test/sqlite",
-    "cp -rn example/fake test/int_test/sqlite",
-    "poetry install",
-    "cd test/int_test/sqlite"
-]);
+local sqlite_test() = int_pipeline("sqlite", "python:3.9");
 
 
-local postgres_test() = int_pipeline("postgres", "python:3.9",
-[
-    "python -m pip install -U pip",
-    "python -m pip install poetry",
-    "cp -rn example/checks test/int_test/postgres",
-    "cp -rn example/load_data test/int_test/postgres",
-    "cp -rn example/run_sql test/int_test/postgres",
-    "cp -rn example/lookups test/int_test/postgres",
-    "cp -rn example/fake test/int_test/postgres",
-    "poetry install -E postgres",
-    "cd test/int_test/postgres"
-],
+local postgres_test() = int_pipeline("postgres", "python:3.9", [],
 {
     DB_USER: {from_secret: "POSTGRES_USER"},
     DB_PASSWORD: {from_secret: "POSTGRES_PASSWORD"},
@@ -99,18 +89,7 @@ local postgres_test() = int_pipeline("postgres", "python:3.9",
 });
 
 
-local mysql_test() = int_pipeline("mysql", "python:3.9",
-[
-    "python -m pip install -U pip",
-    "python -m pip install poetry",
-    "cp -rn example/checks test/int_test/mysql",
-    "cp -rn example/load_data test/int_test/mysql",
-    "cp -rn example/run_sql test/int_test/mysql",
-    "cp -rn example/lookups test/int_test/mysql",
-    "cp -rn example/fake test/int_test/mysql",
-    "poetry install -E mysql",
-    "cd test/int_test/mysql"
-],
+local mysql_test() = int_pipeline("mysql", "python:3.9", [],
 {
     DB_USER: {from_secret: "MYSQL_USER"},
     DB_PASSWORD: {from_secret: "MYSQL_PASSWORD"},
@@ -120,21 +99,12 @@ local mysql_test() = int_pipeline("mysql", "python:3.9",
 
 local mssql_test() = int_pipeline("mssql", "python:3.9",
 [
-    "python -m pip install -U pip",
-    "python -m pip install poetry",
     "curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -",
     "curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list",
     "rm /etc/apt/apt.conf.d/docker-clean",  # enable caching
     "apt-get update",
     "apt-get install -y unixodbc unixodbc-dev python3.9-dev",
     "ACCEPT_EULA=Y apt-get install -y msodbcsql18",
-    "cp -rn example/checks test/int_test/mssql",
-    "cp -rn example/load_data test/int_test/mssql",
-    "cp -rn example/run_sql test/int_test/mssql",
-    "cp -rn example/lookups test/int_test/mssql",
-    "cp -rn example/fake test/int_test/mssql",
-    "poetry install -E mssql",
-    "cd test/int_test/mssql"
 ],
 {
     DB_USER: {from_secret: "MSSQL_USER"},
@@ -143,22 +113,13 @@ local mssql_test() = int_pipeline("mssql", "python:3.9",
 });
 
 
-local oracle_test() = int_pipeline("oracle", "oraclelinux:8",
+local oracle_test() = int_pipeline("oracledb", "oraclelinux:8",
 [
     "dnf module install -y python39",
     "alternatives --set python3 /usr/bin/python3.9",
     "alternatives --set python /usr/bin/python3.9",
     "dnf install -y python39-pip python39-devel oracle-release-el8 gcc libaio",
     "dnf install -y oracle-instantclient19.10-basic",
-    "python3 -m pip install -U pip",
-    "python3 -m pip install poetry",
-    "cp -rn example/checks test/int_test/oracle",
-    "cp -rn example/load_data test/int_test/oracle",
-    "cp -rn example/run_sql test/int_test/oracle",
-    "cp -rn example/lookups test/int_test/oracle",
-    "cp -rn example/fake test/int_test/oracle",
-    "poetry install -E oracledb",
-    "cd test/int_test/oracle"
 ],
 {
     DB_USER: {from_secret: "ORACLE_USER"},
