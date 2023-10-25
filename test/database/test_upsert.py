@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 from pandas.testing import assert_frame_equal
 from sqlalchemy import Column, Integer, MetaData, String
 from sqlalchemy import Table as SQLTable
@@ -16,6 +17,8 @@ def create_test_table(table_name: str, schema: str, sql: DataCheckSql):
         )
     elif sql.dialect == "sqlite":
         sql.run_sql(f"create table {table} (id decimal primary key, data varchar(10))")
+    elif sql.dialect == "duckdb":
+        sql.run_sql(f"create table {table} (id integer primary key, data varchar(10))")
     else:
         metadata = MetaData()
         SQLTable(
@@ -30,17 +33,23 @@ def create_test_table(table_name: str, schema: str, sql: DataCheckSql):
 
 
 def test_get_pk(sql: DataCheckSql):
+    if sql.dialect == "duckdb":
+        pytest.skip("duckdb-engine doesn't yet support reflection on indices")
     table = create_test_table("test_upsert_get_pk", "main", sql)
     assert table.primary_keys == ["id"]
 
 
 def test_get_table(sql: DataCheckSql):
+    if sql.dialect == "duckdb":
+        pytest.skip("duckdb-engine doesn't yet support reflection on indices")
     table = create_test_table("test_upsert_get_table", "main", sql)
     sql_table = table.sql_table
     assert len(list(sql_table.columns)) == 2
 
 
 def test_upsert(sql: DataCheckSql):
+    if sql.dialect == "duckdb":
+        pytest.skip("duckdb-engine doesn't yet support reflection on indices")
     df = pd.DataFrame.from_dict(
         {
             "id": [1, 2, 3],

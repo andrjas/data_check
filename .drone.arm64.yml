@@ -237,3 +237,43 @@ volumes:
 - host:
     path: /tmp/data_check_cache/mssql_pkg
   name: pkg_cache
+---
+kind: pipeline
+name: duckdb
+platform:
+  arch: arm64
+  os: linux
+steps:
+- commands:
+  - python -m pip install -U pip
+  - python -m pip install poetry
+  - cp -rn example/checks test/int_test/duckdb
+  - cp -rn example/load_data test/int_test/duckdb
+  - cp -rn example/run_sql test/int_test/duckdb
+  - cp -rn example/lookups test/int_test/duckdb
+  - cp -rn example/fake test/int_test/duckdb
+  - cd test/int_test/duckdb
+  - poetry install -E duckdb
+  - poetry run data_check ping --wait --timeout 60 --retry 5
+  - rm -f checks/generated/data_with_hash.csv
+  - rm -f test.db
+  - poetry run data_check sql --workers 1 --files prepare
+  - poetry run pytest ../test_int_tests.py
+  - poetry run pytest ../../../test/database
+  environment: {}
+  image: python:3.9
+  name: data_check
+  pull: if-not-exists
+  volumes:
+  - name: cache
+    path: /root/.cache
+  - name: pkg_cache
+    path: /var/cache/apt
+type: docker
+volumes:
+- host:
+    path: /tmp/data_check_cache/duckdb
+  name: cache
+- host:
+    path: /tmp/data_check_cache/duckdb_pkg
+  name: pkg_cache

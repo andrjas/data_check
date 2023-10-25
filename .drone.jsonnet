@@ -137,6 +137,7 @@ local oracle_test() = int_pipeline("oracledb", "python:3.9", [],
 ], "/var/cache/dnf"
 );
 
+local duckdb_test() = int_pipeline("duckdb", "python:3.9");
 
 [
 oracle_test(),
@@ -144,4 +145,5 @@ sqlite_test(),
 mysql_test(),
 postgres_test(),
 mssql_test(),
+duckdb_test(),
 ]

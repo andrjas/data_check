@@ -1,0 +1,5 @@
+default_connection: test
+
+connections:
+    test: duckdb:///test.db
+    test2: duckdb:///test2.db

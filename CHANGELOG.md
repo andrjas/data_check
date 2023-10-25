@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+## Added
+- partial support for DuckDB
+
 ### Changed
 - updated dependencies
 - simplified dependency update process

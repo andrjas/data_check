@@ -171,6 +171,8 @@ def test_load_file_replace(dc_serial: DataCheck, file_type: str):
 
 
 def test_load_file_replace_with_table(dc_serial: DataCheck, file_type: str):
+    if dc_serial.sql.dialect == "duckdb":
+        pytest.skip("duckdb-engine doesn't yet support reflection on indices")
     data = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     create_test_table(f"test_replace2_{file_type}", "main", dc_serial)
     dc_serial.sql.table_loader.load_table_from_file(
@@ -290,6 +292,8 @@ def test_load_file_datetime_type(dc_serial: DataCheck, file_type: str):
 def test_load_file_date_with_existing_table_replace(
     dc_serial: DataCheck, file_type: str
 ):
+    if dc_serial.sql.dialect == "duckdb":
+        pytest.skip("duckdb-engine doesn't yet support reflection on indices")
     create_test_table_with_datetime(f"test_date_replace_{file_type}", "main", dc_serial)
     dc_serial.sql.table_loader.load_table_from_file(
         f"main.test_date_replace_{file_type}",
