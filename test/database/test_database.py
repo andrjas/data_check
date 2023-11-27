@@ -107,6 +107,7 @@ def test_dialect(dc: DataCheck):
         "mssql",
         "oracle",
         "duckdb",
+        "databricks",
     )
 
 

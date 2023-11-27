@@ -138,9 +138,16 @@ class DataCheckSql:
         """
         return self.run_query_with_result(query, params=params).df
 
-    @staticmethod
-    def _bindparams(query: str) -> TextClause:
-        sql = cast(TextClause, text(query))
+    def use_parameters(self) -> bool:
+        if self.dialect == "databricks":
+            # cannot use bindparams due to https://github.com/databricks/databricks-sql-python/pull/267
+            return False
+        return True
+
+    def _bindparams(self, query: str) -> TextClause:
+        sql = text(query)
+        if not self.use_parameters():
+            return sql
         for bp in sql._bindparams.keys():
             sql = sql.bindparams(bindparam(bp, expanding=True))
         return sql
@@ -152,7 +159,10 @@ class DataCheckSql:
             raise DataCheckException(f"undefined connection: {self.connection}")
         sql = self._bindparams(query)
         with self.conn() as c:
-            result = QueryResult(query, c.execute(sql, parameters=params))
+            if self.use_parameters():
+                result = QueryResult(query, c.execute(sql, parameters=params))
+            else:
+                result = QueryResult(query, c.execute(sql))
         return result
 
     def _try_connect(self, engine) -> bool:
@@ -206,9 +216,13 @@ class DataCheckSql:
         """
         sq_text = self._bindparams(query)
         with self.conn() as connection:
-            result: CursorResult = connection.execute(
-                sq_text.execution_options(), parameters=params
-            )
+            result: CursorResult
+            if self.use_parameters():
+                result = connection.execute(
+                    sq_text.execution_options(), parameters=params
+                )
+            else:
+                result = connection.execute(sq_text.execution_options())
         try:
             res: Sequence[Row] = result.fetchall()
             columns: List[str] = list(result.keys())
