@@ -1,0 +1,11 @@
+template_value: ABC
+from_dual: ""
+decimal_type: decimal
+date_type: timestamp
+test_date: "'2020-12-20 00:00:00'::timestamp"
+varchar_type: varchar(10)
+test_schema: main
+huge_date: "'9999-12-31 00:00:00'::timestamp"
+empty_string_date: "null"
+unicode_column_name: '"testcol_äöü"'
+large_decimal_type: decimal(38,0)

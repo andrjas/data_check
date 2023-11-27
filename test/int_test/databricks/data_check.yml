@@ -1,0 +1,5 @@
+default_connection: test
+
+connections:
+    test: databricks://token:${access_token}@${host}?http_path=${http_path}&catalog=${catalog}
+    test2: databricks://token:${access_token}@${host}?http_path=${http_path}&catalog=${catalog}

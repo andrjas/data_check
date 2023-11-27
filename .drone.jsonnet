@@ -139,6 +139,16 @@ local oracle_test() = int_pipeline("oracledb", "python:3.9", [],
 
 local duckdb_test() = int_pipeline("duckdb", "python:3.9");
 
+local databricks_test() = int_pipeline("databricks", "python:3.9", [],
+{
+    access_token: {from_secret: "DATABRICKS_TOKEN"},
+    host: {from_secret: "DATABRICKS_SERVER_HOSTNAME"},
+    http_path: {from_secret: "DATABRICKS_HTTP_PATH"},
+    catalog: {from_secret: "DATABRICKS_CATALOG"},
+    schema: {from_secret: "DATABRICKS_SCHEMA"},
+}
+);
+
 [
 oracle_test(),
 sqlite_test(),
