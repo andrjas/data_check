@@ -119,6 +119,8 @@ def test_leading_zeros_string(dc: DataCheck):
 
 
 def test_lookup_bindings(dc: DataCheck):
+    if dc.sql.dialect == "databricks":
+        pytest.skip("databricks doesn't support lookups yet")
     dc.load_lookups()
     check = dc.get_check(Path("checks/templates/binding.sql"))
     assert check

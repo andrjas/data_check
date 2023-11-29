@@ -69,12 +69,17 @@ def create_test_table_with_datetime(table_name: str, schema: str, dc: DataCheck)
         )
     else:
         metadata = MetaData()
+        _DateTime = DateTime
+        if dc.sql.dialect == "databricks":
+            from databricks.sqlalchemy import TIMESTAMP  # type: ignore
+
+            _DateTime = TIMESTAMP
         SQLTable(
             table.name,
             metadata,
             Column("id", Integer),
             Column("data", String(10)),
-            Column("dat", DateTime),
+            Column("dat", _DateTime),
             schema=table.schema,
         )
         with dc.sql.conn() as c:
@@ -136,6 +141,11 @@ def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
         )
     else:
         metadata = MetaData()
+        _DateTime = DateTime
+        if dc.sql.dialect == "databricks":
+            from databricks.sqlalchemy import TIMESTAMP
+
+            _DateTime = TIMESTAMP
         SQLTable(
             table.name,
             metadata,
@@ -146,12 +156,12 @@ def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
             Column("e", String(10)),
             Column("f", Integer),
             Column("g", Integer),
-            Column("h", DateTime),
-            Column("i", DateTime),
-            Column("j", DateTime),
+            Column("h", _DateTime),
+            Column("i", _DateTime),
+            Column("j", _DateTime),
             Column("k", String(10)),
             Column("l", Integer),
-            Column("m", DateTime),
+            Column("m", _DateTime),
             schema=table.schema,
         )
         with dc.sql.conn() as c:
@@ -167,7 +177,7 @@ def test_load_file_replace(dc_serial: DataCheck, file_type: str):
         LoadMode.REPLACE,
     )
     df = dc_serial.sql.run_query(f"select id, data from main.test_replace_{file_type}")
-    assert_frame_equal(data, df)
+    assert_frame_equal(data, df.sort_values(by=("id")).reset_index(drop=True))
 
 
 def test_load_file_replace_with_table(dc_serial: DataCheck, file_type: str):
@@ -181,7 +191,7 @@ def test_load_file_replace_with_table(dc_serial: DataCheck, file_type: str):
         LoadMode.REPLACE,
     )
     df = dc_serial.sql.run_query(f"select id, data from main.test_replace2_{file_type}")
-    assert_frame_equal(data, df)
+    assert_frame_equal(data, df.sort_values(by=("id")).reset_index(drop=True))
 
 
 def test_load_file_truncate(dc_serial: DataCheck, file_type: str):
@@ -192,7 +202,7 @@ def test_load_file_truncate(dc_serial: DataCheck, file_type: str):
         LoadMode.TRUNCATE,
     )
     df = dc_serial.sql.run_query(f"select id, data from main.test_truncate_{file_type}")
-    assert_frame_equal(data, df)
+    assert_frame_equal(data, df.sort_values(by=("id")).reset_index(drop=True))
 
 
 def test_load_file_truncate_with_table(dc_serial: DataCheck, file_type: str):
@@ -206,7 +216,7 @@ def test_load_file_truncate_with_table(dc_serial: DataCheck, file_type: str):
     df = dc_serial.sql.run_query(
         f"select id, data from main.test_truncate2_{file_type}"
     )
-    assert_frame_equal(data, df)
+    assert_frame_equal(data, df.sort_values(by=("id")).reset_index(drop=True))
 
 
 def test_load_file_append(dc_serial: DataCheck, file_type: str):
@@ -224,7 +234,10 @@ def test_load_file_append(dc_serial: DataCheck, file_type: str):
     check_data = pd.DataFrame.from_dict(
         {"id": [0, 1, 2, 0, 1, 2], "data": ["a", "b", "c", "a", "b", "c"]}
     )
-    assert_frame_equal(check_data, df)
+    assert_frame_equal(
+        check_data.sort_values(by=("id")).reset_index(drop=True),
+        df.sort_values(by=("id")).reset_index(drop=True),
+    )
     assert len(df) == 6
 
 
@@ -237,7 +250,7 @@ def test_load_file_append_with_table(dc_serial: DataCheck, file_type: str):
         LoadMode.APPEND,
     )
     df = dc_serial.sql.run_query(f"select id, data from main.test_append2_{file_type}")
-    assert_frame_equal(data, df)
+    assert_frame_equal(data, df.sort_values(by=("id")).reset_index(drop=True))
     assert len(df) == 3
 
 
@@ -272,7 +285,7 @@ def test_load_file_date_type_huge_date(dc_serial: DataCheck, file_type: str):
     df = dc_serial.sql.run_query(
         f"select id, data, dat from main.test_date_huge_{file_type}"
     )
-    assert_frame_equal(data, df)
+    assert_frame_equal(data, df.sort_values(by=("id")).reset_index(drop=True))
 
 
 def test_load_file_datetime_type(dc_serial: DataCheck, file_type: str):
@@ -323,7 +336,7 @@ def test_load_file_decimal_type(dc_serial: DataCheck, file_type: str):
     df = dc_serial.sql.run_query(
         f"select id, data, decim from main.test_decimals_{file_type}"
     )
-    assert_frame_equal(data, df)
+    assert_frame_equal(data, df.sort_values(by=("id")).reset_index(drop=True))
 
 
 def test_load_file_less_columns_in_file(dc_serial: DataCheck, file_type: str):
@@ -341,7 +354,7 @@ def test_load_file_less_columns_in_file(dc_serial: DataCheck, file_type: str):
     df = dc_serial.sql.run_query(
         f"select id, data, decim from main.test_less_columns_in_{file_type}"
     )
-    assert_frame_equal(data, df)
+    assert_frame_equal(data, df.sort_values(by=("id")).reset_index(drop=True))
 
 
 def test_load_file_more_columns_in_file(dc_serial: DataCheck, file_type: str):

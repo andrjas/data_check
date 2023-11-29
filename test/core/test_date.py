@@ -1,8 +1,10 @@
 from datetime import datetime
 
 import pandas as pd
+import pytz
 from pandas.testing import assert_frame_equal
 
+from data_check.checks.sql_base_check import SQLBaseCheck
 from data_check.date import isoparse, parse_date_columns
 
 
@@ -124,3 +126,14 @@ def test_parse_date_columns_with_datetimes_and_empty_at_end():
     date_columns, parsed_df = parse_date_columns(df)
     assert date_columns == ["b"]
     assert_frame_equal(df, parsed_df)
+
+
+def test_mixed_tzinfo_datetime():
+    dt1 = datetime(2020, 12, 20, 12, 12, 12, tzinfo=pytz.UTC)
+    dt2 = datetime(2020, 12, 20, 12, 12, 12)
+    df1 = pd.DataFrame.from_dict({"a": [1], "d": [dt1]})
+    df2 = pd.DataFrame.from_dict({"a": [1], "d": [dt2]})
+    SQLBaseCheck.convert_mixed_tzinfo_columns(df1, df2)
+    mr = SQLBaseCheck.merge_results(df1, df2)
+    assert len(mr) == 1
+    assert mr["_merge"].iloc[0] == "both"

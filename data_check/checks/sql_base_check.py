@@ -40,6 +40,7 @@ class SQLBaseCheck(BaseCheck):
         Returns the merged DataFrame.
         """
         SQLBaseCheck.convert_mixed_object_columns(sql_result, expect_result)
+        SQLBaseCheck.convert_mixed_tzinfo_columns(sql_result, expect_result)
 
         try:
             df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
@@ -92,3 +93,13 @@ class SQLBaseCheck(BaseCheck):
             col_1 = col_1.astype("str")
             col_2 = col_2.astype("str")
         return col_1, col_2
+
+    @staticmethod
+    def convert_mixed_tzinfo_columns(df_1: pd.DataFrame, df_2: pd.DataFrame):
+        """Remove timezone information from datetime columns."""
+        datetime_columns = set(df_1.columns[df_1.dtypes == "datetime64[ns]"])
+        datetime_columns.update(set(df_2.columns[df_2.dtypes == "datetime64[ns]"]))
+        for dt_col in datetime_columns:
+            if dt_col in df_1.columns and dt_col in df_2.columns:
+                df_1[dt_col] = df_1[dt_col].dt.tz_localize(None)
+                df_2[dt_col] = df_2[dt_col].dt.tz_localize(None)

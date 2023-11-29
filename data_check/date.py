@@ -2,7 +2,7 @@ import math
 import warnings
 from contextlib import suppress
 from datetime import date, datetime
-from typing import List, Tuple, Union, cast
+from typing import List, Optional, Tuple, Union, cast
 
 import pandas as pd
 from dateutil.parser import isoparse as _isoparse
@@ -18,13 +18,29 @@ def parse_date_columns(df: pd.DataFrame) -> Tuple[List[str], pd.DataFrame]:
         # only try to convert, if some values exist in the column
         if not column.isna().all():
             with suppress(Exception):
-                _col = column.apply(isoparse, convert_dtype=False)
+                _col = column.apply(isoparse)
                 df[column_name] = _col
                 _date_columns.append(str(column_name))
     return _date_columns, df
 
 
-def isoparse(column: Union[int, float, str, None]):
+def isoparse(
+    column: Union[int, float, str, pd.Timestamp, date, datetime, None]
+) -> Optional[datetime]:
+    if isinstance(column, pd.Timestamp):
+        dt = datetime(
+            column.year,
+            column.month,
+            column.day,
+            column.hour,
+            column.minute,
+            column.second,
+        )
+        return dt
+    if isinstance(column, date):
+        return datetime(column.year, column.month, column.day)
+    if isinstance(column, datetime):
+        return column
     if isinstance(column, float) and math.isnan(column):
         column = ""
     if column is None or not str(column):

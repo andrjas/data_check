@@ -35,6 +35,10 @@ def create_test_table(table_name: str, schema: str, sql: DataCheckSql):
 def test_get_pk(sql: DataCheckSql):
     if sql.dialect == "duckdb":
         pytest.skip("duckdb-engine doesn't yet support reflection on indices")
+    elif sql.dialect == "databricks":
+        pytest.skip(
+            "databricks: Table constraints are only supported in Unity Catalog."
+        )
     table = create_test_table("test_upsert_get_pk", "main", sql)
     assert table.primary_keys == ["id"]
 
@@ -42,6 +46,10 @@ def test_get_pk(sql: DataCheckSql):
 def test_get_table(sql: DataCheckSql):
     if sql.dialect == "duckdb":
         pytest.skip("duckdb-engine doesn't yet support reflection on indices")
+    elif sql.dialect == "databricks":
+        pytest.skip(
+            "databricks: Table constraints are only supported in Unity Catalog."
+        )
     table = create_test_table("test_upsert_get_table", "main", sql)
     sql_table = table.sql_table
     assert len(list(sql_table.columns)) == 2
@@ -50,6 +58,10 @@ def test_get_table(sql: DataCheckSql):
 def test_upsert(sql: DataCheckSql):
     if sql.dialect == "duckdb":
         pytest.skip("duckdb-engine doesn't yet support reflection on indices")
+    elif sql.dialect == "databricks":
+        pytest.skip(
+            "databricks: Table constraints are only supported in Unity Catalog."
+        )
     df = pd.DataFrame.from_dict(
         {
             "id": [1, 2, 3],

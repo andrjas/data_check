@@ -9,6 +9,13 @@ from data_check.cli.main import cli
 
 
 def run(command: List[str], workers: Optional[int] = 1) -> Result:
+    # ignore unclosed SSLSocket ResourceWarning for Databricks
+    import warnings
+
+    warnings.filterwarnings(
+        action="ignore", message="unclosed", category=ResourceWarning
+    )
+
     runner = CliRunner()
     if not workers:
         workers_cmd = []
@@ -53,6 +60,7 @@ def passing_tests(request):
 
 def test_passing_tests(passing_tests):
     res = run(command=[passing_tests])
+    print(res.output)
     assert_passed(res)
 
 
@@ -74,6 +82,7 @@ def failing_tests(request):
 
 def test_failing_tests(failing_tests):
     res = run(command=[failing_tests])
+    print(res.output)
     assert_failed(res)
 
 

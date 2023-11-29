@@ -75,6 +75,13 @@ class DataCheckSql:
         """
         Return the database engine for the connection.
         """
+        # ignore unclosed SSLSocket ResourceWarning for Databricks
+        import warnings
+
+        warnings.filterwarnings(
+            action="ignore", message="unclosed", category=ResourceWarning
+        )
+
         if self.__engine is None:
             _engine = create_engine(
                 path.expandvars(self.connection),
@@ -233,6 +240,11 @@ class DataCheckSql:
                 )
             else:
                 print_csv(df, self.output.print)
+            if self.dialect == "databricks":
+                # Databricks returns an empty list and a single column 'Result' if the query is a DML/DDL.
+                # That's why we convert it to True in this case to indicate successful execution.
+                if res == [] and columns == ["Result"]:
+                    return True
             return res
         except Exception:
             return bool(result)
