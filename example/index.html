@@ -49,6 +49,10 @@
                 </li>
               </ul>
               <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../databases/">Databases</a>
+                </li>
+              </ul>
+              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
                 </li>
               </ul>
@@ -86,18 +90,6 @@
     <li class="toctree-l3"><a class="reference internal" href="#by-pipeline">By pipeline</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#by-test-execution-time">By test execution time</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#database-urls">Database URLs</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#postgresql">PostgreSQL</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#oracle">Oracle</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#mysqlmariadb">MySQL/MariaDB</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#microsoft-sql-server">Microsoft SQL Server</a>
     </li>
         </ul>
     </li>
@@ -177,19 +169,6 @@ checks/basic/unicode_string.sql: PASSED
         ...
 </code></pre>
 <p>This way you can run quick test, for example schema validation, many times during development. Other tests that must process a lot of data can be run less frequently, for example in an integration environment.</p>
-<h2 id="database-urls">Database URLs</h2>
-<p>These are the connection strings used in the <a href="../development/#integration-tests">integration test</a>. Other connection strings can be found in the <a href="https://docs.sqlalchemy.org/en/20/core/engines.html">SQLAlchemy documentation</a>.</p>
-<h3 id="postgresql">PostgreSQL</h3>
-<p>postgresql://username:password@db_host:5432/db_name</p>
-<h3 id="oracle">Oracle</h3>
-<p>For cx_Oracle:</p>
-<p>oracle+cx_oracle://username:password@db_host:1521/?service_name=XEPDB1</p>
-<p>For python-oracledb:</p>
-<p>oracle+oracledb://username:password@db_host:1521/?service_name=XEPDB1</p>
-<h3 id="mysqlmariadb">MySQL/MariaDB</h3>
-<p>mysql+pymysql://username:password@db_host:3306/db_name</p>
-<h3 id="microsoft-sql-server">Microsoft SQL Server</h3>
-<p>mssql+pyodbc://username:password@db_host:1433/db_name?driver=ODBC+Driver+17+for+SQL+Server</p>
               
             </div>
           </div><footer>

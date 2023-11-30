@@ -49,6 +49,10 @@
                 </li>
               </ul>
               <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../databases/">Databases</a>
+                </li>
+              </ul>
+              <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
                 </li>
               </ul>
@@ -145,12 +149,11 @@
 <h2 id="python-support">Python support</h2>
 <p><a href="https://github.com/tox-dev/tox">tox</a> is used to test data_check against multiple python versions.</p>
 <p>Multiple python versions can be installed with <a href="https://github.com/pyenv/pyenv">pyenv</a>:</p>
-<pre><code>pyenv install 3.8.1
-pyenv install 3.9.1
+<pre><code>pyenv install 3.9.1
 pyenv install 3.10.1
 pyenv install 3.11.1
 
-pyenv local 3.8.1 3.9.1 3.10.1 3.11.1
+pyenv local 3.9.1 3.10.1 3.11.1
 </code></pre>
 <p>Install all versions mentioned in <em>tox.ini</em>. Then run the tests with tox: <code>tox</code>.</p>
               

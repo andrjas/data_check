@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Databases - data_check</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Databases";
+        var mkdocs_page_input_path = "databases.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> data_check
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Databases</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#postgresql">PostgreSQL</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-string">Connection string</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mysqlmariadb">MySQL/MariaDB</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#installation_1">Installation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-string_1">Connection string</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#microsoft-sql-server">Microsoft SQL Server</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#installation_2">Installation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-string_2">Connection string</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#oracle">Oracle</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#oracledb">oracledb</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#installation_3">Installation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#connection-string_3">Connection string</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cx_oracle">cx_Oracle</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#installation_4">Installation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-string_4">Connection string</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#duckdb">DuckDB</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#installation_5">Installation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-string_5">Connection string</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#limitations">Limitations</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#databricks">Databricks</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#installation_6">Installation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-string_6">Connection string</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#limitations_1">Limitations</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../csv_checks/">CSV checks</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../loading_data/">Loading data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../sql/">Running SQL</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../pipelines/">Pipelines</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../test_data/">Test data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../howtos/">HowTos</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../example/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../development/">Development</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">data_check</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+      <li>Databases</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="databases">Databases</h1>
+<p>These databases are supported by data_check. The instructions assume you use <code>pipx</code>. If you want to install the database drivers inside a virtual environment, replace <code>pipx</code> with <code>pip</code>.</p>
+<p>Note: Do not store the credentials, especially the password directly, in the configuration! Use environment variables instead.
+For example <code>postgresql://${DB_USER}:${DB_PASSWORD}@${DB_CONNECTION}</code> instead of <code>postgresql://username:password@db_host:5432/db_name</code>.</p>
+<h2 id="postgresql">PostgreSQL</h2>
+<h3 id="installation">Installation</h3>
+<p>Use <code>data-check[postgres]</code> to install data_check with PostgreSQL support:</p>
+<pre><code>pipx install data-check[postgres]
+</code></pre>
+<p>This will install <code>psycopg2-binary</code> as the database driver. <code>psycopg2-binary</code> should work on most systems without any additional dependencies.</p>
+<h3 id="connection-string">Connection string</h3>
+<pre><code>postgresql://username:password@db_host:5432/db_name
+</code></pre>
+<h2 id="mysqlmariadb">MySQL/MariaDB</h2>
+<h3 id="installation_1">Installation</h3>
+<p>Use <code>data-check[mysql]</code> to install data_check with MySQL/MariaDB support:</p>
+<pre><code>pipx install data-check[mysql]
+</code></pre>
+<p>This will install <code>PyMySQL[rsa]</code> as described in <a href="https://pypi.org/project/PyMySQL/">https://pypi.org/project/PyMySQL/</a> with additional cryptography dependencies.</p>
+<h3 id="connection-string_1">Connection string</h3>
+<pre><code>mysql+pymysql://username:password@db_host:3306/db_name
+</code></pre>
+<h2 id="microsoft-sql-server">Microsoft SQL Server</h2>
+<h3 id="installation_2">Installation</h3>
+<p>Use <code>data-check[mssql]</code> to install data_check with Microsoft SQL Server support:</p>
+<pre><code>pipx install data-check[mssql]
+</code></pre>
+<p>This will install <code>pyodbc</code> which needs <code>unixodbc</code> and the development package (<code>unixodbc-dev</code>) on Linux.</p>
+<p>Additionally you must install the <a href="https://docs.microsoft.com/en-us/sql/connect/odbc/microsoft-odbc-driver-for-sql-server">Microsoft ODBC driver for SQL Server</a> on your system.</p>
+<h3 id="connection-string_2">Connection string</h3>
+<pre><code>mssql+pyodbc://username:password@db_host:1433/db_name?driver=ODBC+Driver+17+for+SQL+Server
+</code></pre>
+<h2 id="oracle">Oracle</h2>
+<p>You can choose between <code>oracledb</code> and <code>cx_Oracle</code> for Oracle. <code>oracledb</code> is preferred.</p>
+<h3 id="oracledb">oracledb</h3>
+<h4 id="installation_3">Installation</h4>
+<p>Use <code>data-check[oracledb]</code> to install data_check with Oracle support:</p>
+<pre><code>pipx install data-check[oracledb]
+</code></pre>
+<p>This will install <a href="https://oracle.github.io/python-oracledb/">python-oracledb</a> which does not requires any extra libraries.</p>
+<h4 id="connection-string_3">Connection string</h4>
+<pre><code>oracle+oracledb://username:password@db_host:1521/?service_name=XEPDB1
+</code></pre>
+<h3 id="cx_oracle">cx_Oracle</h3>
+<h4 id="installation_4">Installation</h4>
+<p>Use <code>data-check[oracle]</code> to install data_check with Oracle support:</p>
+<pre><code>pipx install data-check[oracle]
+</code></pre>
+<p><code>cx_Oracle</code> needs Oracle client libraries. See <a href="https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html">https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html</a> how to install them.</p>
+<h3 id="connection-string_4">Connection string</h3>
+<pre><code>oracle+cx_oracle://username:password@db_host:1521/?service_name=XEPDB1
+</code></pre>
+<h2 id="duckdb">DuckDB</h2>
+<h3 id="installation_5">Installation</h3>
+<p>Use <code>data-check[duckdb]</code> to install data_check with DuckDB support:</p>
+<pre><code>pipx install data-check[duckdb]
+</code></pre>
+<p>This will install <a href="https://github.com/Mause/duckdb_engine">duckdb-engine</a>.</p>
+<h3 id="connection-string_5">Connection string</h3>
+<pre><code>duckdb:///path/to/duck.db
+</code></pre>
+<p>Note: This will use a relative path to the database file. Use <code>duckdb:////full/path/to/duck.db</code> to specify a full path.</p>
+<h3 id="limitations">Limitations</h3>
+<p>The <a href="../loading_data/#load-modes">load modes</a> <code>replace</code> and <code>upsert</code> will not work with DuckDB since <code>duckdb-engine</code> does not support reflection on indices yet.</p>
+<h2 id="databricks">Databricks</h2>
+<h3 id="installation_6">Installation</h3>
+<p>Use <code>data-check[databricks]</code> to install data_check with Databricks support:</p>
+<pre><code>pipx install data-check[databricks]
+</code></pre>
+<p>This will install <a href="https://github.com/databricks/databricks-sql-python">databricks-sql-python</a> with the <code>sqlalchemy</code> option.</p>
+<h3 id="connection-string_6">Connection string</h3>
+<pre><code>databricks://token:${access_token}@${host}?http_path=${http_path}&amp;catalog=${catalog}&amp;schema=${schema}
+</code></pre>
+<h3 id="limitations_1">Limitations</h3>
+<p><a href="../csv_checks/#lookups">Lookups</a> do not work yet.</p>
+<p>The upsert <a href="../loading_data/#load-modes">load mode</a> is not tested for Databricks.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../install/" class="btn btn-neutral float-left" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../usage/" class="btn btn-neutral float-right" title="Usage">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../install/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../usage/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

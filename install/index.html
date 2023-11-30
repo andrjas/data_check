@@ -56,18 +56,12 @@
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#databases">Databases</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#postgresql">PostgreSQL</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#mysqlmariadb">MySQL/MariaDB</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#microsoft-sql-server">Microsoft SQL Server</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#oracle">Oracle</a>
-    </li>
-        </ul>
     </li>
     </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../databases/">Databases</a>
                 </li>
               </ul>
               <ul>
@@ -146,7 +140,7 @@
 <p>To upgrade data_check via pipx: <code>pipx upgrade data-check</code></p>
 <h2 id="with-anacondaminiconda">With Anaconda/Miniconda</h2>
 <p>Create a new conda environment:</p>
-<p><code>conda create --name data_check python=3.8</code></p>
+<p><code>conda create --name data_check python=3.11</code></p>
 <p>Activate the environment:</p>
 <p><code>conda activate data_check</code></p>
 <p>and install pip:</p>
@@ -165,33 +159,14 @@ PowerShell: <code>&lt;venv&gt;\Scripts\Activate.ps1</code></p>
 <p><code>python3 -m pip install data-check</code></p>
 <p>To upgrade data_check in the virtual environment: <code>python3 -m pip install data-check --upgrade</code></p>
 <h2 id="databases">Databases</h2>
-<p>Installing data_check alone will only support SQLite, which is bundled with Python. You need additional drivers for other databases. See <a href="https://docs.sqlalchemy.org/en/20/dialects/index.html">https://docs.sqlalchemy.org/en/20/dialects/index.html</a> for all possible drivers and how to install them.</p>
-<p>With pipx you can install the drivers with <code>pipx inject data-check &lt;drivername&gt;</code> (watch the minus sign in <em>data-check</em> instead of the underscore).
-In a virtual environment you just activate the environment and run <code>pip install &lt;drivername&gt;</code>.</p>
-<p>Some drivers need additional dependencies. Here are the drivers used for <a href="../development/#testing">testing</a> data_check:</p>
-<h3 id="postgresql">PostgreSQL</h3>
-<p><code>psycopg2-binary</code> should work on most systems without any additional dependencies.</p>
-<p>You can use <code>data-check[postgres]</code> to install data_check directly with <code>psycopg2-binary</code>:
-e.g. with pipx: <code>pipx install data-check[postgres]</code></p>
-<h3 id="mysqlmariadb">MySQL/MariaDB</h3>
-<p><code>PyMySQL</code> as described in <a href="https://pypi.org/project/PyMySQL/">https://pypi.org/project/PyMySQL/</a> with additional cryptography dependencies.</p>
-<p>Use <code>pipx install data-check[mysql]</code> to install data_check with <code>PyMySQL[rsa]</code>.</p>
-<h3 id="microsoft-sql-server">Microsoft SQL Server</h3>
-<p><code>pyodbc</code> needs unixodbc and the development package (unixodbc-dev) on Linux.</p>
-<p>Additionally you must install the
-<a href="https://docs.microsoft.com/en-us/sql/connect/odbc/microsoft-odbc-driver-for-sql-server">Microsoft ODBC driver for SQL Server</a> on your system.</p>
-<p>Use <code>pipx install data-check[mssql]</code> to install data_check with <code>pyodbc</code>.</p>
-<h3 id="oracle">Oracle</h3>
-<p><code>cx_Oracle</code> needs Oracle client libraries to work. <a href="https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html">https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html</a> shows how to install them.</p>
-<p>Use <code>pipx install data-check[oracle]</code> to install data_check with <code>cx_Oracle</code>.</p>
-<p>Alternatively you can use <a href="https://oracle.github.io/python-oracledb/">python-oracledb</a> that does not requires any extra libraries.</p>
-<p>Use <code>pipx install data-check[oracledb]</code> to install data_check with <code>python-oracledb</code>.</p>
+<p>Installing data_check alone will only support SQLite, which is bundled with Python. You need additional drivers for other databases.
+See <a href="../databases/">databases</a> for instructions for each supported database.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../usage/" class="btn btn-neutral float-right" title="Usage">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../databases/" class="btn btn-neutral float-right" title="Databases">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -217,7 +192,7 @@ e.g. with pipx: <code>pipx install data-check[postgres]</code></p>
       <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../usage/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../databases/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
