@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.18.0] - 2023-11-30
 
 ## Added
 - partial support for DuckDB
