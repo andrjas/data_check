@@ -17,9 +17,8 @@ data_check is a simple data validation tool. In its most basic form, it will exe
 
 ## Database support
 
-data_check should work with any database that works with [SQLAlchemy](https://docs.sqlalchemy.org/en/20/dialects/).
+data_check is tested with these databases:
 
-Tested databases:
 - PostgreSQL
 - MySQL
 - SQLite
@@ -27,7 +26,11 @@ Tested databases:
 - Microsoft SQL Server
 
 Partially supported:
+
 - DuckDB
+- Databricks
+
+Other databases supported by [SQLAlchemy](https://docs.sqlalchemy.org/en/20/dialects/) might also work.
 
 ## Why?
 

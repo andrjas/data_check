@@ -2,6 +2,7 @@ site_name: data_check
 nav:
     - Home: index.md
     - Installation: install.md
+    - Databases: databases.md
     - Usage: usage.md
     - CSV checks: csv_checks.md
     - Loading data: loading_data.md

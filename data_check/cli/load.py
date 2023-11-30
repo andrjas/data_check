@@ -65,7 +65,7 @@ def load_cmd(
     "--mode",
     type=str,
     default="truncate",
-    help="how to load the table: truncate (default), append or replace",
+    help="how to load the table: truncate (default), append, replace or upsert",
 )
 @click.argument("files", nargs=-1, type=click.Path())
 @click.pass_context

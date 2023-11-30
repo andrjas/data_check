@@ -63,29 +63,3 @@ checks/
 ```
 
 This way you can run quick test, for example schema validation, many times during development. Other tests that must process a lot of data can be run less frequently, for example in an integration environment.
-
-## Database URLs
-
-These are the connection strings used in the [integration test](development.md#integration-tests). Other connection strings can be found in the [SQLAlchemy documentation](https://docs.sqlalchemy.org/en/20/core/engines.html).
-
-### PostgreSQL
-
-postgresql://username:password@db_host:5432/db_name
-
-### Oracle
-
-For cx_Oracle:
-
-oracle+cx_oracle://username:password@db_host:1521/?service_name=XEPDB1
-
-For python-oracledb:
-
-oracle+oracledb://username:password@db_host:1521/?service_name=XEPDB1
-
-### MySQL/MariaDB
-
-mysql+pymysql://username:password@db_host:3306/db_name
-
-### Microsoft SQL Server
-
-mssql+pyodbc://username:password@db_host:1433/db_name?driver=ODBC+Driver+17+for+SQL+Server

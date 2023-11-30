@@ -4,6 +4,7 @@
 
 ## Added
 - partial support for DuckDB
+- partial support for Databricks
 
 ### Changed
 - updated dependencies

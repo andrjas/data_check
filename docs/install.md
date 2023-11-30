@@ -62,41 +62,5 @@ To upgrade data_check in the virtual environment: `python3 -m pip install data-c
 
 ## Databases
 
-Installing data_check alone will only support SQLite, which is bundled with Python. You need additional drivers for other databases. See [https://docs.sqlalchemy.org/en/20/dialects/index.html](https://docs.sqlalchemy.org/en/20/dialects/index.html) for all possible drivers and how to install them.
-
-With pipx you can install the drivers with `pipx inject data-check <drivername>` (watch the minus sign in _data-check_ instead of the underscore).
-In a virtual environment you just activate the environment and run `pip install <drivername>`.
-
-Some drivers need additional dependencies. Here are the drivers used for [testing](development.md#testing) data_check:
-
-### PostgreSQL
-
-`psycopg2-binary` should work on most systems without any additional dependencies.
-
-You can use `data-check[postgres]` to install data_check directly with `psycopg2-binary`:
-e.g. with pipx: `pipx install data-check[postgres]`
-
-### MySQL/MariaDB
-
-`PyMySQL` as described in [https://pypi.org/project/PyMySQL/](https://pypi.org/project/PyMySQL/) with additional cryptography dependencies.
-
-Use `pipx install data-check[mysql]` to install data_check with `PyMySQL[rsa]`.
-
-### Microsoft SQL Server
-
-`pyodbc` needs unixodbc and the development package (unixodbc-dev) on Linux.
-
-Additionally you must install the
-[Microsoft ODBC driver for SQL Server](https://docs.microsoft.com/en-us/sql/connect/odbc/microsoft-odbc-driver-for-sql-server) on your system.
-
-Use `pipx install data-check[mssql]` to install data_check with `pyodbc`.
-
-### Oracle
-
-`cx_Oracle` needs Oracle client libraries to work. [https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html](https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html) shows how to install them.
-
-Use `pipx install data-check[oracle]` to install data_check with `cx_Oracle`.
-
-Alternatively you can use [python-oracledb](https://oracle.github.io/python-oracledb/) that does not requires any extra libraries.
-
-Use `pipx install data-check[oracledb]` to install data_check with `python-oracledb`.
+Installing data_check alone will only support SQLite, which is bundled with Python. You need additional drivers for other databases.
+See [databases](databases.md) for instructions for each supported database.
