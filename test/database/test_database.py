@@ -50,8 +50,8 @@ def test_data_types_huge_date(data_types_check):
     assert data_types_check.inf_date_test == datetime.datetime(9999, 12, 31)
 
 
-def test_data_types_huge_date_is_datetime_type(data_types_check):
-    assert type(data_types_check.inf_date_test) == datetime.datetime
+def test_data_types_huge_date_is_timestamp_type(data_types_check):
+    assert type(data_types_check.inf_date_test) == pd.Timestamp
 
 
 def test_data_types_null(data_types_check):

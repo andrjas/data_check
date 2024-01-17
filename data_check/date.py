@@ -1,55 +1,38 @@
-import math
-import warnings
 from contextlib import suppress
 from datetime import date, datetime
-from typing import List, Optional, Tuple, Union, cast
+from typing import List, Tuple, cast
 
 import pandas as pd
-from dateutil.parser import isoparse as _isoparse
+
+
+def is_possible_date_column(column: pd.Series) -> bool:
+    """For a column to be a possible date it must have some non-empty values that are at least 10 characters long."""
+    not_null = column.dropna()
+    non_empty = not_null[not_null.astype(str).str.len() > 0]
+    min_len_10 = non_empty[non_empty.astype(str).str.len() >= 10]
+    return len(min_len_10) > 0
 
 
 def parse_date_columns(df: pd.DataFrame) -> Tuple[List[str], pd.DataFrame]:
     """Tries to parse each column as a date.
     Returns a tuple with the list of the column names that were parsed as dates
-    and the DataFrame with these columns replaced as datetime.
+    and the DataFrame with these columns replaced as Timestamp.
     """
     _date_columns: List[str] = []
     for column_name, column in df.items():
-        # only try to convert, if some values exist in the column
-        if not column.isna().all():
-            with suppress(Exception):
-                _col = column.apply(isoparse)
+        if is_possible_date_column(column):
+            try:
+                _col = pd.to_datetime(column, errors="raise", format="ISO8601")
                 df[column_name] = _col
                 _date_columns.append(str(column_name))
+            except pd._libs.tslibs.np_datetime.OutOfBoundsDatetime:
+                with suppress(Exception):
+                    _col_ts = column.apply(pd.Timestamp)
+                    df[column_name] = _col_ts
+                    _date_columns.append(str(column_name))
+            except Exception:
+                pass
     return _date_columns, df
-
-
-def isoparse(
-    column: Union[int, float, str, pd.Timestamp, date, datetime, None]
-) -> Optional[datetime]:
-    if isinstance(column, pd.Timestamp):
-        dt = datetime(
-            column.year,
-            column.month,
-            column.day,
-            column.hour,
-            column.minute,
-            column.second,
-        )
-        return dt
-    if isinstance(column, date):
-        return datetime(column.year, column.month, column.day)
-    if isinstance(column, datetime):
-        return column
-    if isinstance(column, float) and math.isnan(column):
-        column = ""
-    if column is None or not str(column):
-        return None
-    if len(str(column)) < 10 or not isinstance(column, str):
-        # must be at least of format YYYY-MM-DD to be a date
-        raise ValueError(("VE", column, type(column)))
-    res = _isoparse(str(column))
-    return res
 
 
 def column_has_empty_values(column: pd.Series):

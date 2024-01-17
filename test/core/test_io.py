@@ -71,7 +71,7 @@ def test_non_unicode_csv():
 
 def test_read_csv_date_columns_with_empty_values_return_nat():
     df = read_csv(Path("load_data/sample/test_date_with_null_dates.csv"))
-    assert df["j"].iloc[1] is None
+    assert df["j"].iloc[1] is pd.NaT
 
 
 def test_read_csv_leading_zeros_as_string():

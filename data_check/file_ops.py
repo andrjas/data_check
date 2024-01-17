@@ -74,10 +74,8 @@ def read_csv(
     string_columns: List[str] = [],
 ) -> pd.DataFrame:
     """Reads a CSV file and returns a DataFrame with the data from the file.
-    If parse_dates is given, .date.isoparse is used to convert the columns in parse_dates to datetime.
-    If parse_dates is not given, .date.parse_date_columns is used to try to convert all columns to datetime.
 
-    string_columns holds a list of all columns that should be treated as strings, without any convertion.
+    string_columns holds a list of all columns that should be treated as strings, without any conversion.
     """
     dtypes: DtypeArg = {s: "object" for s in string_columns}
 
