@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pandas as pd
+import pytest
 import pytz
 from pandas.testing import assert_frame_equal
 
@@ -101,3 +102,25 @@ def test_mixed_tzinfo_datetime():
     mr = SQLBaseCheck.merge_results(df1, df2)
     assert len(mr) == 1
     assert mr["_merge"].iloc[0] == "both"
+
+
+test_dates = [
+    ("2023-12-20", "2023-12-21"),
+    ("2023-12-20", "9999-12-31"),
+    ("8888-12-31", "9999-12-31"),
+    ("2023-12-20", ""),
+    ("9999-12-31", ""),
+    ("9999-12-31", "2023-12-20"),
+    ("", "2023-12-20"),
+    ("", "9999-12-31"),
+]
+
+
+@pytest.mark.parametrize("date1,date2", test_dates)
+def test_result_different_dates(date1, date2):
+    df1 = pd.DataFrame.from_dict({"a": [1], "d": [date1]})
+    df2 = pd.DataFrame.from_dict({"a": [1], "d": [date2]})
+    _, parsed_df1 = parse_date_columns(df1)
+    _, parsed_df2 = parse_date_columns(df2)
+    mr = SQLBaseCheck.merge_results(parsed_df1, parsed_df2)
+    assert len(mr) == 2

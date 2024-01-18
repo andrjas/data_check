@@ -101,5 +101,7 @@ class SQLBaseCheck(BaseCheck):
         datetime_columns.update(set(df_2.columns[df_2.dtypes == "datetime64[ns]"]))
         for dt_col in datetime_columns:
             if dt_col in df_1.columns and dt_col in df_2.columns:
-                df_1[dt_col] = df_1[dt_col].dt.tz_localize(None)
-                df_2[dt_col] = df_2[dt_col].dt.tz_localize(None)
+                with suppress(AttributeError):
+                    df_1[dt_col] = df_1[dt_col].dt.tz_localize(None)
+                with suppress(AttributeError):
+                    df_2[dt_col] = df_2[dt_col].dt.tz_localize(None)
