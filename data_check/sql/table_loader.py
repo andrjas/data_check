@@ -13,7 +13,6 @@ if TYPE_CHECKING:
     from data_check.output import DataCheckOutput
     from data_check.sql import Table, ColumnInfo
 
-from ..date import fix_date_dtype
 from ..file_ops import expand_files, read_csv
 from ..utils.deprecation import deprecated_method_argument
 from .load_mode import LoadMode
@@ -114,7 +113,6 @@ class TableLoader:
     ) -> bool:
         self._prepare_table_for_load(table, mode)
         if_exists = self._load_mode_to_pandas_if_exists(mode=mode)
-        fix_date_dtype(data, dtype)
         if mode == LoadMode.UPSERT:
             return self.upsert_data(data, table)
         else:
