@@ -14,17 +14,12 @@ from .checks.base_check import BaseCheck
 from .output import DataCheckOutput
 from .result import DataCheckResult
 
-if sys.version_info >= (3, 9):
-    SubmitResult = Future[Any]
-else:
-    SubmitResult = Future
-
 
 class NoPoolExecutor(Executor):
     def submit(  # type: ignore
         self, fn: Callable[..., Any], *args: Tuple[Any], **kwargs: Dict[str, Any]
-    ) -> SubmitResult:
-        f: SubmitResult = Future()
+    ) -> Future[Any]:
+        f: Future[Any] = Future()
         try:
             result = fn(*args, **kwargs)
         except BaseException as e:
@@ -75,29 +70,29 @@ class DataCheckRunner:
         Returns a list of the results
         """
         executor = self.executor(all_checks)
-        results: List[DataCheckResult] = []
-        try:
-            result_futures = [executor.submit(run_method, f) for f in all_checks]
-            for future in as_completed(result_futures):
-                dc_result = future.result()
-                results.append(dc_result)
-                self.output.print(dc_result)
-        except KeyboardInterrupt:
-            executor.shutdown(wait=False)
-            for f in result_futures:
-                f.cancel()
-        return results
+        result_futures = [executor.submit(run_method, f) for f in all_checks]
+        return self._run(executor, result_futures, completed_hook=self.output.print)
 
     def run_any(
         self, run_method: Callable[..., Any], parameters: List[Dict[str, Any]]
     ) -> List[Any]:
         executor = self.executor(parameters)
+        result_futures = [executor.submit(run_method, **p) for p in parameters]
+        return self._run(executor, result_futures)
+
+    def _run(
+        self,
+        executor: Executor,
+        result_futures: List[Future[Any]],
+        completed_hook: Optional[Callable[..., None]] = None,
+    ) -> List[Any]:
         results: List[Any] = []
         try:
-            result_futures = [executor.submit(run_method, **p) for p in parameters]
             for future in as_completed(result_futures):
                 dc_result = future.result()
                 results.append(dc_result)
+                if completed_hook:
+                    completed_hook(dc_result)
         except KeyboardInterrupt:
             executor.shutdown(wait=False)
             for f in result_futures:
