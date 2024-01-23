@@ -5,7 +5,7 @@ import pytest
 
 from data_check import DataCheck
 from data_check.config import DataCheckConfig
-from data_check.sql import DataCheckSql
+from data_check.sql import DataCheckSql, get_sql
 
 
 @pytest.fixture(autouse=True)
@@ -64,5 +64,5 @@ def dc_wo_template() -> DataCheck:
 @pytest.fixture
 def sql() -> DataCheckSql:
     dc_config = DataCheckConfig().load_config().set_connection("test")
-    _sql = DataCheckSql(dc_config.connection)
+    _sql = get_sql(dc_config.connection)
     return _sql

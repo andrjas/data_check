@@ -6,7 +6,7 @@ from time import sleep, time
 from typing import Any, Dict, Iterator, List, Optional, Sequence, Union, cast
 
 import pandas as pd
-from sqlalchemy import create_engine, event, inspect
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine import Connection, Engine
 from sqlalchemy.engine.cursor import CursorResult
 from sqlalchemy.engine.reflection import Inspector
@@ -88,31 +88,15 @@ class DataCheckSql:
                 **{**self.get_db_params(), **extra_params},
                 poolclass=SingletonThreadPool,
             )
-            self.register_setinputsizes_event(_engine)
+            self.post_get_engine_hook(_engine)
             if self.keep_connection():
                 self.__engine = _engine
             else:
                 return _engine
         return self.__engine
 
-    def register_setinputsizes_event(self, engine: Engine):
-        if engine.dialect.name == "oracle":
-            # do not use CLOB for loading strings (and large decimals)
-            # https://docs.sqlalchemy.org/en/20/dialects/oracle.html#example-2-remove-all-bindings-to-clob
-            try:
-                from cx_Oracle import CLOB  # type: ignore
-            except ImportError:
-                CLOB = None
-
-            @event.listens_for(engine, "do_setinputsizes")
-            def _remove_clob(inputsizes, cursor, statement, parameters, context):
-                _ = cursor
-                _ = statement
-                _ = parameters
-                _ = context
-                for bindparam, dbapitype in list(inputsizes.items()):
-                    if dbapitype is CLOB:
-                        del inputsizes[bindparam]
+    def post_get_engine_hook(self, engine: Engine):
+        pass
 
     @contextmanager
     def conn(self) -> Iterator[Connection]:

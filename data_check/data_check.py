@@ -19,7 +19,7 @@ from .file_ops import expand_files, parse_template, read_sql_file, read_yaml
 from .output import DataCheckOutput
 from .result import DataCheckResult
 from .runner import DataCheckRunner
-from .sql import DataCheckSql
+from .sql import get_sql
 from .utils.lookup_loader import load_lookups_from_path
 
 
@@ -38,7 +38,7 @@ class DataCheck:
         )
         if not isinstance(config.connection, str):
             raise Exception("connection is not initialized")
-        self.sql = DataCheckSql(
+        self.sql = get_sql(
             connection=config.connection,
             runner=self.runner,
             output=self.output,
