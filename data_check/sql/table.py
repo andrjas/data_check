@@ -31,7 +31,7 @@ class Table:
 
     def drop_if_exists(self):
         if self.exists():
-            drop_stmt = f"DROP TABLE {self.full_name}"
+            drop_stmt = self.sql.get_drop_table_statement(self.full_name)
             with self.sql.conn() as connection:
                 connection.execute(text(drop_stmt))
 
@@ -48,9 +48,7 @@ class Table:
         return self.full_name
 
     def _truncate_statement(self) -> str:
-        if self.sql.dialect == "sqlite":
-            return f"DELETE FROM {self.full_name}"
-        return f"TRUNCATE TABLE {self.full_name}"
+        return self.sql.get_truncate_table_statement(self.full_name)
 
     def truncate_if_exists(self):
         if self.exists():

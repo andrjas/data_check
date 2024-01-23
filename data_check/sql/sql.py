@@ -236,3 +236,9 @@ class DataCheckSql:
     @property
     def inspector(self) -> Inspector:
         return cast(Inspector, inspect(self.get_engine()))
+
+    def get_truncate_table_statement(self, table_name: str) -> str:
+        return f"TRUNCATE TABLE {table_name}"
+
+    def get_drop_table_statement(self, table_name: str) -> str:
+        return f"DROP TABLE {table_name}"

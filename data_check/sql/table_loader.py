@@ -57,25 +57,8 @@ class TableLoader:
     def prepare_dtypes(
         self, data: pd.DataFrame, table: Table, dtype
     ) -> Optional[Dict[str, Any]]:
-        if self.sql.dialect == "oracle":
-            # when creating a new table in Oracle with FLOAT types, we need to specify the binary_precision
-            float_types = {
-                k: v
-                for k, v in dict(data.dtypes).items()
-                if v in ("float32", "float64")
-            }
-            if any(float_types) and not table.exists():
-                from sqlalchemy.dialects import oracle
-                from sqlalchemy.sql.sqltypes import Float
-
-                for col_name, dt in float_types.items():
-                    # use same precision as in pandas' _sqlalchemy_type
-                    precision = 23 if dt == "float32" else 53
-                    binary_precision = 76 if dt == "float32" else 126
-                    dtype[col_name] = Float(precision=precision).with_variant(
-                        oracle.FLOAT(binary_precision=binary_precision), "oracle"
-                    )
-
+        _ = data
+        _ = table
         if not dtype:
             # dtype can be {}, but for to_sql it's best to use None then
             dtype = None
