@@ -937,6 +937,7 @@ files = [
 numpy = [
     {version = ">=1.22.4,<2", markers = "python_version < \"3.11\""},
     {version = ">=1.23.2,<2", markers = "python_version == \"3.11\""},
+    {version = ">=1.26.0,<2", markers = "python_version >= \"3.12\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
@@ -1689,5 +1690,5 @@ postgres = ["psycopg2-binary"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.9,<3.12"
-content-hash = "53b771adb0a3f7657e9cd85cefd31f36786e889177d0cfd63fd64f5d7e4193c8"
+python-versions = "^3.9,<3.13"
+content-hash = "fb36898a6598b809e40130d1da7add273d5f757a0767f1016711d12edea8cbd2"
