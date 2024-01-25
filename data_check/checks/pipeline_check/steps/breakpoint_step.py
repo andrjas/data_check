@@ -18,7 +18,7 @@ class BreakpointStep(Step):
         steps = self._pipeline_check.pipeline_model.steps  # noqa F401
         current_step = self.get_current_step  # noqa F401
         next_step = self.get_next_step  # noqa F401
-        sql = pipeline_check.data_check.sql
+        sql = pipeline_check.data_check.sql  # noqa F401
         run_next = self.run_next_step  # noqa F401
 
         breakpoint()
@@ -36,7 +36,7 @@ class BreakpointStep(Step):
         """
         try:
             result = self._pipeline_check.pipeline_model.run_next_step()
-        except:
+        except Exception:
             result = False
         if not result:
             self.result = result

@@ -3,8 +3,6 @@ from typing import List, Union
 
 from pydantic import field_validator
 
-from data_check.checks.pipeline_check.pipeline_check import PipelineCheck
-
 from ..pipeline_check import PipelineCheck
 from .step import Step, StrOrPathList
 

@@ -4,7 +4,6 @@ from typing import Union
 from pydantic import model_validator
 
 from data_check import DataCheck
-from data_check.checks.pipeline_check.pipeline_check import PipelineCheck
 from data_check.utils.deprecation import deprecated_method
 
 from ..pipeline_check import PipelineCheck
@@ -29,13 +28,13 @@ class SqlStep(Step):
     def parse_query_or_files(cls, values):
         if "file" in values:
             if "files" in values:
-                raise ValueError(f"cannot use files and file at the same time")
+                raise ValueError("cannot use files and file at the same time")
             values["files"] = cls.to_path_list(values["file"])
         elif "files" in values:
             values["files"] = cls.to_path_list(values["files"])
 
         if "query" in values and "files" in values:
-            raise ValueError(f"cannot use query and files at the same time")
+            raise ValueError("cannot use query and files at the same time")
         return values
 
     def prepare_query_or_files(self, base_path: Path):

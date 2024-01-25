@@ -1,3 +1,5 @@
+# ruff: noqa: F821
+
 _remove_clob  # type: ignore
 _.drop_if_exists  # type: ignore
 _.init_pipeline  # type: ignore

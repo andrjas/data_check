@@ -1,7 +1,7 @@
 import sys
 import traceback
 from pathlib import Path
-from typing import IO, Any, Callable, List, Optional, Tuple, Union, cast
+from typing import IO, Any, Callable, List, Optional, Tuple, Union
 
 import pandas as pd
 from colorama import Fore, Style

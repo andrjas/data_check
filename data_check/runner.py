@@ -1,5 +1,4 @@
 import multiprocessing as mp
-import sys
 import threading
 from concurrent.futures import (
     Executor,

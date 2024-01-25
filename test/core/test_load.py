@@ -239,7 +239,7 @@ def test_load_table_from_file_load_mode_is_deprecated(sql: DataCheckSql):
     with pytest.warns(FutureWarning):
         sql.table_loader.load_table_from_file(
             "test_load_table_from_file_load_mode_is_deprecated",
-            Path(f"load_data/test.csv"),
+            Path("load_data/test.csv"),
             load_mode=LoadMode.TRUNCATE,
         )
 
@@ -248,7 +248,7 @@ def test_load_table_from_file_load_mode_is_deprecated_as_str(sql: DataCheckSql):
     with pytest.warns(FutureWarning):
         sql.table_loader.load_table_from_file(
             "test_load_table_from_file_load_mode_is_deprecated_as_str",
-            Path(f"load_data/test.csv"),
+            Path("load_data/test.csv"),
             load_mode="truncate",
         )
 
@@ -256,14 +256,14 @@ def test_load_table_from_file_load_mode_is_deprecated_as_str(sql: DataCheckSql):
 def test_load_tables_from_files_load_mode_is_deprecated(sql: DataCheckSql):
     with pytest.warns(FutureWarning):
         sql.table_loader.load_tables_from_files(
-            [Path(f"load_data/test.csv")], load_mode=LoadMode.TRUNCATE
+            [Path("load_data/test.csv")], load_mode=LoadMode.TRUNCATE
         )
 
 
 def test_load_tables_from_files_load_mode_is_deprecated_as_str(sql: DataCheckSql):
     with pytest.warns(FutureWarning):
         sql.table_loader.load_tables_from_files(
-            [Path(f"load_data/test.csv")], load_mode="truncate"
+            [Path("load_data/test.csv")], load_mode="truncate"
         )
 
 

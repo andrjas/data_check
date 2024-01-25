@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import pandas as pd
 import pytest
 from sqlalchemy import Column, Integer, MetaData, String
 from sqlalchemy import Table as SQLTable

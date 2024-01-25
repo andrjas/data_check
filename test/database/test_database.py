@@ -4,7 +4,6 @@ from pathlib import Path
 import pandas as pd
 import pytest
 from pandas.core.frame import DataFrame
-from sqlalchemy import Column, Integer, MetaData, String, Table
 
 from data_check import DataCheck  # noqa E402
 

@@ -25,6 +25,11 @@ repos:
             # https://pre-commit.com/#top_level-default_language_version
             language_version: python3.11
 
+    - repo: https://github.com/astral-sh/ruff-pre-commit
+      rev: v0.1.14
+      hooks:
+        - id: ruff
+
     - repo: https://github.com/jendrikseipp/vulture
       rev: v2.7
       hooks:

@@ -1,14 +1,11 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Union, cast
+from typing import Any, List, Union, cast
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
 from ..pipeline_check import PipelineCheck
-
-# if TYPE_CHECKING:
-
 
 StrOrPathList = Union[str, List[Any], Path, List[Path]]
 

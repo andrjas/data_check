@@ -1,5 +1,3 @@
-import pytest
-
 from data_check.sql import DataCheckSql, Table
 
 

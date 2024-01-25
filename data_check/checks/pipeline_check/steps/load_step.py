@@ -3,7 +3,6 @@ from typing import Union
 
 from pydantic import model_validator
 
-from data_check.checks.pipeline_check.pipeline_check import PipelineCheck
 from data_check.sql import DataCheckSql
 from data_check.sql.load_mode import LoadMode
 from data_check.utils.deprecation import deprecated_method

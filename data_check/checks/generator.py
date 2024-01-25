@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING
 
-from ..file_ops import get_expect_file, read_sql_file, rel_path, write_csv
+from ..file_ops import get_expect_file, rel_path, write_csv
 from ..result import DataCheckResult
 from ..sql.query_result import QueryResult
 from .base_check import BaseCheck

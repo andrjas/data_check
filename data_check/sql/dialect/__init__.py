@@ -1,3 +1,5 @@
+# ruff: noqa: F401
+
 from .duckdb import DataCheckSqlDuckDB
 from .mssql import DataCheckSqlMSSQL
 from .mysql import DataCheckSqlMySQL

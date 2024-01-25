@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from click.testing import CliRunner, Result
+from click.testing import CliRunner
 
 from data_check.cli.main import cli
 

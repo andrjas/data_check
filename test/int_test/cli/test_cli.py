@@ -1,4 +1,3 @@
-import os
 import shutil
 import warnings
 from os import linesep, sep
