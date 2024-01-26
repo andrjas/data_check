@@ -38,11 +38,8 @@ def test_data_types_date(data_types_check):
     assert data_types_check.date_test == datetime.datetime(2020, 12, 20)
 
 
-@pytest.mark.skip(
-    reason="pandas automatically infers this type to timestamp. Skipped, until this feature is removed."
-)
 def test_data_types_date_is_datetime_type(data_types_check):
-    assert type(data_types_check.date_test) == datetime.datetime
+    assert type(data_types_check.date_test) == pd.Timestamp
 
 
 def test_data_types_huge_date(data_types_check):
