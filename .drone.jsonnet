@@ -99,11 +99,11 @@ local mysql_test() = int_pipeline("mysql", "python:3.9", [],
 
 local mssql_test() = int_pipeline("mssql", "python:3.9",
 [
-    "curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -",
+    "curl https://packages.microsoft.com/keys/microsoft.asc > /etc/apt/trusted.gpg.d/microsoft.asc",
     "curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list",
     "rm /etc/apt/apt.conf.d/docker-clean",  # enable caching
     "apt-get update",
-    "apt-get install -y unixodbc unixodbc-dev python3.9-dev",
+    "apt-get install -y unixodbc unixodbc-dev",
     "ACCEPT_EULA=Y apt-get install -y msodbcsql18",
 ],
 {
