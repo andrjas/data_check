@@ -93,7 +93,8 @@ def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(
             (
-                f"create table {table} (id number(10), data varchar2(10), decim decimal(10, 4))"
+                f"create table {table} (id number(10), data varchar2(10), "
+                "decim decimal(10, 4))"
             )
         )
     else:
@@ -136,7 +137,9 @@ def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
         dc.sql.run_sql(
             (
                 f"create table {table} "
-                "(a number(10), b number(10), c varchar2(10), d number(10), e varchar2(10), f number(10), g number(10), h date, i date, j date, k varchar2(10), l number(10), m date)"
+                "(a number(10), b number(10), c varchar2(10), d number(10), "
+                "e varchar2(10),f number(10), g number(10), h date, i date, "
+                "j date, k varchar2(10), l number(10), m date)"
             )
         )
     else:
@@ -449,7 +452,8 @@ def test_load_file_with_only_null_dates_and_missing_column_with_existing_table(
     )
     assert table.exists()
     data = dc_serial.sql.run_query(
-        "select * from main.test_load_file_with_only_null_dates_and_miss_cols_with_ex_tab"
+        "select * from "
+        "main.test_load_file_with_only_null_dates_and_miss_cols_with_ex_tab"
     )
     assert not data.empty
 

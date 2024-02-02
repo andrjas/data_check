@@ -50,7 +50,8 @@ def test_get_column_types_huge_date(sql: DataCheckSql):
         "create table test_get_column_types_huge_date (a varchar2, b decimal, c date)"
     )
     sql.run_sql(
-        "insert into test_get_column_types_huge_date values ('a', 1.13, date('9999-01-01'))"
+        "insert into test_get_column_types_huge_date values "
+        "('a', 1.13, date('9999-01-01'))"
     )
     sq = sql.run_query_with_result("select a,b,c from test_get_column_types_huge_date")
     assert sq.date_columns == ["c"]
@@ -59,10 +60,12 @@ def test_get_column_types_huge_date(sql: DataCheckSql):
 
 def test_get_column_types_varchar_date(sql: DataCheckSql):
     sql.run_sql(
-        "create table test_get_column_types_varchar_date (a varchar2, b decimal, c varchar2)"
+        "create table test_get_column_types_varchar_date "
+        "(a varchar2, b decimal, c varchar2)"
     )
     sql.run_sql(
-        "insert into test_get_column_types_varchar_date values ('a', 1.13, date('9999-01-01'))"
+        "insert into test_get_column_types_varchar_date values "
+        "('a', 1.13, date('9999-01-01'))"
     )
     sq = sql.run_query_with_result(
         "select a,b,c from test_get_column_types_varchar_date"
@@ -73,10 +76,12 @@ def test_get_column_types_varchar_date(sql: DataCheckSql):
 
 def test_get_column_types_datetime(sql: DataCheckSql):
     sql.run_sql(
-        "create table test_get_column_types_datetime (a varchar2, b decimal, c varchar2)"
+        "create table test_get_column_types_datetime "
+        "(a varchar2, b decimal, c varchar2)"
     )
     sql.run_sql(
-        "insert into test_get_column_types_datetime values ('a', 1.13, '9999-01-01 23:59:59.000')"
+        "insert into test_get_column_types_datetime values "
+        "('a', 1.13, '9999-01-01 23:59:59.000')"
     )
     sq = sql.run_query_with_result("select a,b,c from test_get_column_types_datetime")
     assert sq.date_columns == ["c"]
@@ -85,7 +90,8 @@ def test_get_column_types_datetime(sql: DataCheckSql):
 
 def test_get_column_types_mixed_dates(sql: DataCheckSql):
     sql.run_sql(
-        "create table test_get_column_types_mixed_dates (a varchar2, b decimal, c varchar2)"
+        "create table test_get_column_types_mixed_dates "
+        "(a varchar2, b decimal, c varchar2)"
     )
     sql.run_sql(
         "insert into test_get_column_types_mixed_dates values ('a', 1.13, '9999-01-01')"

@@ -5,7 +5,8 @@ from .base_check import BaseCheck
 
 
 class PathNotExists(BaseCheck):
-    """Special "check" that is used when a path/file that should contain a check doesn't exists.
+    """Special "check" that is used when a path/file that
+    should contain a check doesn't exists.
     Always returns a failing result.
     """
 

@@ -30,7 +30,9 @@ def get_sql(
     output: Optional[DataCheckOutput] = None,
     config: Optional[DataCheckConfig] = None,
 ) -> DataCheckSql:
-    """Returns a specialized dialect for the given connection or DataCheckSql as fallback."""
+    """Returns a specialized dialect for the given connection
+    or DataCheckSql as fallback.
+    """
     dialect = get_dialect_for_connection(connection)
     from .dialect import (
         DataCheckSqlDuckDB,

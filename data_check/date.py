@@ -5,7 +5,9 @@ import pandas as pd
 
 
 def is_possible_date_column(column: pd.Series) -> bool:
-    """For a column to be a possible date it must have some non-empty values that are at least 10 characters long."""
+    """For a column to be a possible date it must have some non-empty values
+    that are at least 10 characters long.
+    """
     not_null = column.dropna()
     non_empty = not_null[not_null.astype(str).str.len() > 0]
     min_len_10 = non_empty[non_empty.astype(str).str.len() >= 10]

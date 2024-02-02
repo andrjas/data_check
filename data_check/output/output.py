@@ -103,7 +103,8 @@ class DataCheckOutput:
         warnings = len([r for r in results if r.is_warning])
         failed = len([r for r in results if not r.passed]) - warnings
         self.print(
-            f"summary: {passed} {self.str_pass('passed')}, {failed} {self.str_fail('failed')}, {warnings} {self.str_warn('warnings')}"
+            f"summary: {passed} {self.str_pass('passed')}, {failed} "
+            f"{self.str_fail('failed')}, {warnings} {self.str_warn('warnings')}"
         )
 
     def _get_df(self, result: Union[DataCheckResult, pd.DataFrame]) -> pd.DataFrame:

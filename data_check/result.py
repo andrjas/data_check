@@ -29,7 +29,8 @@ class DataCheckResult:
     """Source of the result."""
     result: Union[pd.DataFrame, str, List[Tuple[str, pd.DataFrame]]] = ""
     """Additional information for the result.
-    If it is a DataFrame or a list with DataFrames, the DataFrame contains the non-matching results.
+    If it is a DataFrame or a list with DataFrames,
+    the DataFrame contains the non-matching results.
     If is is a string, the string is used for DataCheckResult.message.
     """
     _message: str = ""
@@ -43,7 +44,9 @@ class DataCheckResult:
     extra_message: str = ""
     """Additional message for the result."""
     _log_message: str = ""
-    """Content for the log message. Uses DataCheckResult.message if not explicitly set."""
+    """Content for the log message.
+    Uses DataCheckResult.message if not explicitly set.
+    """
     full_result: Optional[pd.DataFrame] = None
     """Optional DataFrame with full result information (pre-diff)"""
 

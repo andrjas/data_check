@@ -80,3 +80,10 @@ paths = ["data_check", ".vulture_whitelist.py"]
 
 [tool.mypy]
 files = ["data_check/", "test/"]
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+]

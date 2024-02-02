@@ -10,7 +10,8 @@ from data_check.sql import DataCheckSql, get_sql
 @pytest.fixture(autouse=True)
 def change_test_dir(monkeypatch: pytest.MonkeyPatch):
     """Switch to example folder when running test.
-    If we are in int_test, the folder might not exists, since we are in the right project folder already.
+    If we are in int_test, the folder might not exists,
+    since we are in the right project folder already.
     """
     if Path("example").exists():
         monkeypatch.chdir("example")

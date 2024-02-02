@@ -136,7 +136,8 @@ def test_load_from_file(sql: DataCheckSql, file_type):
     with sql.conn() as c:
         c.execute(
             text(
-                f"create table test_load_from_file_{file_type} (id number(10), data varchar2(10))"
+                f"create table test_load_from_file_{file_type} "
+                "(id number(10), data varchar2(10))"
             )
         )
     sql.table_loader.load_table_from_file(

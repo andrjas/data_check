@@ -14,7 +14,8 @@ class TableLoaderOracle(TableLoader):
     def prepare_dtypes(
         self, data: pd.DataFrame, table: Table, dtype
     ) -> Optional[Dict[str, Any]]:
-        # when creating a new table in Oracle with FLOAT types, we need to specify the binary_precision
+        # when creating a new table in Oracle with FLOAT types,
+        # we need to specify the binary_precision
         float_types = {
             k: v for k, v in dict(data.dtypes).items() if v in ("float32", "float64")
         }

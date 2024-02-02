@@ -71,7 +71,8 @@ class ColumnConfig:
             precision = self.sql_type.precision or 5
             scale = self.sql_type.scale or 0
             if not self.faker_args.get("left_digits", None):
-                # In SQL precision is the whole "length" of the decimal including the scale.
+                # In SQL precision is the whole "length" of the decimal
+                # including the scale.
                 self.faker_args["left_digits"] = precision - scale
             if not self.faker_args.get("right_digits", None):
                 self.faker_args["right_digits"] = scale

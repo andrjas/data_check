@@ -42,7 +42,8 @@ class DataCheckRunner:
         if self.use_process:
             max_new_workers = self.workers - len(mp.get_context().active_children())
         else:
-            # threading.active_count() also counts the current thread, which is not needed here
+            # threading.active_count() also counts the current thread,
+            # which is not needed here
             max_new_workers = self.workers - threading.active_count() + 1
         max_new_workers = min(max_new_workers, task_count)
         return max_new_workers

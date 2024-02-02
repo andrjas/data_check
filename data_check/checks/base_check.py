@@ -18,7 +18,9 @@ class BaseCheck:
         raise NotImplementedError()
 
     def validate(self) -> bool:
-        """Runs a validation for the check if possible and returns whether the check is valid and can be run."""
+        """Runs a validation for the check if possible
+        and returns whether the check is valid and can be run.
+        """
         return True
 
     @staticmethod

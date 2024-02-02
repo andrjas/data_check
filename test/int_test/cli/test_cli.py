@@ -498,6 +498,7 @@ def test_run_pipeline_yaml():
 
     assert res_file
     assert res_folder
-    # Currently there is a bug with nested pipelines being run in parallel/non deterministically, even with a single worker.
+    # Currently there is a bug with nested pipelines
+    # being run in parallel/non deterministically, even with a single worker.
     # Hence, we can only compare the length of the output, not the output itself.
     assert len(res_folder.output) == len(res_file.output)

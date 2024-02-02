@@ -75,7 +75,8 @@ def read_csv(
 ) -> pd.DataFrame:
     """Reads a CSV file and returns a DataFrame with the data from the file.
 
-    string_columns holds a list of all columns that should be treated as strings, without any conversion.
+    string_columns holds a list of all columns that should be treated as strings,
+    without any conversion.
     """
     dtypes: DtypeArg = {s: "object" for s in string_columns}
 

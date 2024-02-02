@@ -32,7 +32,8 @@ class BreakpointStep(Step):
 
     def run_next_step(self):
         """
-        Executes the next step of the pipeline and sets result to False if the step fails so that the whole pipeline fails.
+        Executes the next step of the pipeline and sets result to False
+        if the step fails so that the whole pipeline fails.
         """
         try:
             result = self._pipeline_check.pipeline_model.run_next_step()

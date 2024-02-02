@@ -15,7 +15,9 @@ warnings.showwarning = showwarning
 
 
 def retrieve_name(var):
-    """Returns the name of a variable from 2 frames back (i.e. the method calling the caller of retrieve_name)."""
+    """Returns the name of a variable from 2 frames back
+    (i.e. the method calling the caller of retrieve_name).
+    """
     # modified from https://stackoverflow.com/questions/18425225/getting-the-name-of-a-variable-as-a-string
     cur_frame = inspect.currentframe()
     if cur_frame is not None:
@@ -33,7 +35,9 @@ def retrieve_name(var):
 
 
 def retrieve_caller() -> str:
-    """Returns the name of the calling method from 2 frames back (i.e. the method calling the caller of retrieve_caller)."""
+    """Returns the name of the calling method from 2 frames back
+    (i.e. the method calling the caller of retrieve_caller).
+    """
     cur_frame = inspect.currentframe()
     if cur_frame and cur_frame.f_back and cur_frame.f_back.f_back:
         return cur_frame.f_back.f_back.f_code.co_name
@@ -52,7 +56,8 @@ def deprecated_method_argument(
         warnings.warn(warn_msg, FutureWarning)
         if instead_argument != instead_default_value:
             raise ValueError(
-                f"{argument_name} and {use_instead_argument} cannot be used at the same time"
+                f"{argument_name} and {use_instead_argument} "
+                "cannot be used at the same time"
             )
 
 

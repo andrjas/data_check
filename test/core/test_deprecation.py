@@ -70,6 +70,7 @@ def test_deprecated_method_none():
 def test_deprecated_method_none_instead():
     with pytest.warns(
         FutureWarning,
-        match=r"test_deprecated_method_none_instead is deprecated, use test_method instead",
+        match=r"test_deprecated_method_none_instead is deprecated, "
+        "use test_method instead",
     ):
         deprecation.deprecated_method(instead_method="test_method")

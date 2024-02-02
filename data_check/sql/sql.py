@@ -202,8 +202,10 @@ class DataCheckSql:
         sort_output: bool = False,
     ) -> Union[bool, Sequence[Row]]:
         """
-        Runs a SQL statement. If it is a query, a list of the rows is returned, otherwise a boolean is returned indicating success or failure of the statement.
-        If output is given, the result of the query is written to the file relative to base_path.
+        Runs a SQL statement. If it is a query, a list of the rows is returned,
+        otherwise a boolean is returned indicating success or failure of the statement.
+        If output is given, the result of the query is written to the file
+        relative to base_path.
         """
         sq_text = self._bindparams(query)
         with self.conn() as connection:
@@ -225,8 +227,9 @@ class DataCheckSql:
             else:
                 print_csv(df, self.output.print)
             if self.dialect == "databricks":
-                # Databricks returns an empty list and a single column 'Result' if the query is a DML/DDL.
-                # That's why we convert it to True in this case to indicate successful execution.
+                # Databricks returns an empty list and a single column 'Result'
+                # if the query is a DML/DDL. That's why we convert it to True
+                # in this case to indicate successful execution.
                 if res == [] and columns == ["Result"]:
                     return True
             return res

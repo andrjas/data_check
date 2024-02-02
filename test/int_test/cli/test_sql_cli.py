@@ -21,7 +21,9 @@ def test_sql_uses_lookups():
     res = run(
         [
             "sql",
-            """with dat as (select 1 as a, 'a' as b {{from_dual}} union all select 2 as a, 'b' as b {{from_dual}}) select a from dat where b in :b1""",
+            """with dat as (select 1 as a, 'a' as b {{from_dual}}
+            union all
+            select 2 as a, 'b' as b {{from_dual}}) select a from dat where b in :b1""",
         ]
     )
     assert res.exit_code == 0

@@ -13,7 +13,9 @@ from .base_check import BaseCheck
 
 
 class SQLBaseCheck(BaseCheck):
-    """Implements basic functionality for SQL checks. Base class for others, not really a check in itself."""
+    """Implements basic functionality for SQL checks.
+    Base class for others, not really a check in itself.
+    """
 
     def get_sql_result(self) -> Union[DataCheckResult, QueryResult]:
         return self.read_sql_file(sql_file=self.check_path)
