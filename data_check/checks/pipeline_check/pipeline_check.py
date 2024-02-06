@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, List, Optional, Union, cast
 
 from data_check.result import ResultType
 
@@ -26,7 +26,7 @@ class PipelineCheck(BaseCheck):
         if check_path.name == DATA_CHECK_PIPELINE_FILE:
             check_path = check_path.parent
         super().__init__(data_check, check_path)
-        self._pipeline_config: Optional[Dict] = None
+        self._pipeline_config: Optional[dict] = None
 
     @staticmethod
     def is_check_path(path: Path) -> bool:
@@ -34,7 +34,7 @@ class PipelineCheck(BaseCheck):
             path.name == DATA_CHECK_PIPELINE_FILE and path.exists()
         )
 
-    def _parse_pipeline_file(self, pipeline_file: Path) -> Dict[str, Any]:
+    def _parse_pipeline_file(self, pipeline_file: Path) -> dict[str, Any]:
         if pipeline_file.exists():
             yaml = read_yaml(
                 pipeline_file,
@@ -74,7 +74,7 @@ class PipelineCheck(BaseCheck):
                 exception=e,
             )
 
-    def template_parameters(self, pipeline_path: Path) -> Dict[str, str]:
+    def template_parameters(self, pipeline_path: Path) -> dict[str, str]:
         return {
             "CONNECTION": cast(str, self.data_check.config.connection_name),
             "CONNECTION_STRING": cast(str, self.data_check.config.connection),

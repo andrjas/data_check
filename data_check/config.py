@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Optional
 
 if TYPE_CHECKING:
     from data_check.sql.load_mode import LoadMode
@@ -25,7 +25,7 @@ class DataCheckConfig:
     wait_retry = 1
 
     def __init__(self, config_path: Optional[Path] = None) -> None:
-        self.config: Dict[str, Any] = {}
+        self.config: dict[str, Any] = {}
         self.connection: Optional[str] = None
         self.connection_name: Optional[str] = None
 
@@ -99,7 +99,7 @@ class DataCheckConfig:
         self.connection, self.connection_name = self.select_connection(connection)
         return self
 
-    def select_connection(self, connection: str) -> Tuple[str, str]:
+    def select_connection(self, connection: str) -> tuple[str, str]:
         """
         Returns the connection string to use and the chosen connection name.
         """

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Tuple
+from typing import TYPE_CHECKING, Any
 
 from data_check.file_ops import expand_files, read_sql_file
 
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 def load_lookup(
     data_check: DataCheck, lf: Path, lookups_path: Path
-) -> Tuple[str, List[Any]]:
+) -> tuple[str, list[Any]]:
     lf_path = lf.relative_to(lookups_path)  # remove "lookups"
     if lf_path.parent.parts:
         lf_path_str = "__".join(lf_path.parent.parts) + "__" + lf_path.stem
@@ -23,16 +23,16 @@ def load_lookup(
         read_sql_file(lf, template_data=data_check.template_data)
     )
     first_column = res.iloc[:, 0]
-    lkp_value: List[Any] = first_column.values.tolist()  # type: ignore
+    lkp_value: list[Any] = first_column.values.tolist()  # type: ignore
     return (lf_path_str, lkp_value)
 
 
-def load_lookups_from_path(data_check: DataCheck) -> Dict[str, Any]:
+def load_lookups_from_path(data_check: DataCheck) -> dict[str, Any]:
     lookups_path = data_check.config.lookups_path
-    lookup_data: Dict[str, Any] = {}
+    lookup_data: dict[str, Any] = {}
     if lookups_path.exists():
         lookup_files = expand_files([lookups_path])
-        results: List[Tuple[str, List[Any]]] = data_check.runner.run_any(
+        results: list[tuple[str, list[Any]]] = data_check.runner.run_any(
             load_lookup,
             [
                 {"data_check": data_check, "lf": lf, "lookups_path": lookups_path}

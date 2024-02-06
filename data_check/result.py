@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, Optional, Union
 
 import pandas as pd
 
@@ -27,7 +27,7 @@ class DataCheckResult:
     """True, if the result is from a passed check, False if the check failed."""
     source: Union[Path, str]
     """Source of the result."""
-    result: Union[pd.DataFrame, str, List[Tuple[str, pd.DataFrame]]] = ""
+    result: Union[pd.DataFrame, str, list[tuple[str, pd.DataFrame]]] = ""
     """Additional information for the result.
     If it is a DataFrame or a list with DataFrames,
     the DataFrame contains the non-matching results.

@@ -42,7 +42,7 @@ class TableCheck(SQLBaseCheck):
         )
         if isinstance(expect_result, DataCheckResult):
             return expect_result
-        column_list: List[str] = cast(List[str], expect_result.columns.tolist())
+        column_list: list[str] = cast(List[str], expect_result.columns.tolist())
         table_name = self.check_path.stem
         query = f"select {','.join(column_list)} from {table_name}"
         try:

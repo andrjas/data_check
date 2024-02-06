@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
@@ -20,7 +20,7 @@ class FakeIterator:
     count: int = 1
     data: pd.DataFrame = field(default_factory=pd.DataFrame)
 
-    def load_config(self, config: Dict[str, Any]):
+    def load_config(self, config: dict[str, Any]):
         self.count = config.get("count", 1)
 
     def get_iter_path(self, base_file: Path, i: int) -> Path:

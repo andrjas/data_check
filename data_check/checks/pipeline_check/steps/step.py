@@ -29,7 +29,7 @@ class Step(BaseModel):
         return values
 
     @staticmethod
-    def to_path_list(v: Any) -> List[Path]:
+    def to_path_list(v: Any) -> list[Path]:
         if isinstance(v, str):
             return [Path(v)]
         elif isinstance(v, Path):
@@ -40,7 +40,7 @@ class Step(BaseModel):
             raise ValueError(f"unknown list format: {v}")
 
     @staticmethod
-    def as_path_list(v: StrOrPathList) -> List[Path]:
+    def as_path_list(v: StrOrPathList) -> list[Path]:
         assert isinstance(v, List)
         for e in v:
             assert isinstance(e, Path)
@@ -55,7 +55,7 @@ class Step(BaseModel):
         return True
 
     @staticmethod
-    def validate_path_list_exists(path_list: List[Path], base_path: Path) -> bool:
+    def validate_path_list_exists(path_list: list[Path], base_path: Path) -> bool:
         for path in path_list:
             return Step.validate_path_exists(path, base_path)
         return True

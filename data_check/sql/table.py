@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from sqlalchemy import MetaData
 from sqlalchemy import Table as SQLTable
@@ -16,11 +16,11 @@ from data_check.sql.sql import DataCheckSql
 # some data types that need special handling
 @dataclass
 class ColumnInfo:
-    dtypes: Dict[Any, Any]
-    date_columns: Dict[Any, Any]
-    date_column_names: List[str]
-    string_columns: Dict[Any, Any]
-    string_column_names: List[str]
+    dtypes: dict[Any, Any]
+    date_columns: dict[Any, Any]
+    date_column_names: list[str]
+    string_columns: dict[Any, Any]
+    string_column_names: list[str]
 
 
 class Table:
@@ -64,7 +64,7 @@ class Table:
         return Table(sql, name, schema)
 
     @cached_property
-    def primary_keys(self) -> List[str]:
+    def primary_keys(self) -> list[str]:
         pk_constraint = self.sql.inspector.get_pk_constraint(
             table_name=self.name, schema=self.schema
         )

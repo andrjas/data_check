@@ -43,7 +43,7 @@ def create_test_table_with_date(table_name: str, schema: str, dc: DataCheck):
     table.drop_if_exists()
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(
-            (f"create table {table} (id number(10), data varchar2(10), dat date)")
+            f"create table {table} (id number(10), data varchar2(10), dat date)"
         )
     else:
         metadata = MetaData()
@@ -65,7 +65,7 @@ def create_test_table_with_datetime(table_name: str, schema: str, dc: DataCheck)
     table.drop_if_exists()
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(
-            (f"create table {table} " "(id number(10), data varchar2(10), dat date)")
+            f"create table {table} " "(id number(10), data varchar2(10), dat date)"
         )
     else:
         metadata = MetaData()
@@ -92,10 +92,8 @@ def create_test_table_with_decimal(table_name: str, schema: str, dc: DataCheck):
     table.drop_if_exists()
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(
-            (
-                f"create table {table} (id number(10), data varchar2(10), "
-                "decim decimal(10, 4))"
-            )
+            f"create table {table} (id number(10), data varchar2(10), "
+            "decim decimal(10, 4))"
         )
     else:
         metadata = MetaData()
@@ -116,7 +114,7 @@ def create_test_table_with_large_decimal(table_name: str, schema: str, dc: DataC
     table = Table(dc.sql, table_name, schema)
     table.drop_if_exists()
     if dc.sql.dialect == "oracle":
-        dc.sql.run_sql((f"create table {table} (d_col decimal(38, 0))"))
+        dc.sql.run_sql(f"create table {table} (d_col decimal(38, 0))")
     else:
         metadata = MetaData()
         SQLTable(
@@ -135,12 +133,10 @@ def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
     table.drop_if_exists()
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(
-            (
-                f"create table {table} "
-                "(a number(10), b number(10), c varchar2(10), d number(10), "
-                "e varchar2(10),f number(10), g number(10), h date, i date, "
-                "j date, k varchar2(10), l number(10), m date)"
-            )
+            f"create table {table} "
+            "(a number(10), b number(10), c varchar2(10), d number(10), "
+            "e varchar2(10),f number(10), g number(10), h date, i date, "
+            "j date, k varchar2(10), l number(10), m date)"
         )
     else:
         metadata = MetaData()

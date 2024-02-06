@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, cast
 
 import pandas as pd
 from sqlalchemy.engine import Connection
@@ -56,7 +56,7 @@ class TableLoader:
 
     def prepare_dtypes(
         self, data: pd.DataFrame, table: Table, dtype
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         _ = data
         _ = table
         if not dtype:
@@ -168,7 +168,7 @@ class TableLoader:
 
     def load_tables_from_files(
         self,
-        files: List[Path],
+        files: list[Path],
         mode: Union[str, LoadMode] = LoadMode.DEFAULT,
         base_path: Path = Path(),
         load_mode: Union[str, LoadMode, None] = None,

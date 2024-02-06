@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 import pandas as pd
 import yaml
@@ -14,10 +14,10 @@ from .exceptions import DataCheckException
 
 
 def expand_files(
-    files: List[Path],
-    extension: Union[str, List[str]] = ".sql",
+    files: list[Path],
+    extension: Union[str, list[str]] = ".sql",
     base_path: Path = Path(),
-) -> List[Path]:
+) -> list[Path]:
     """
     Expands the list of files or folders,
     with all SQL files in a folder as separate files.
@@ -26,7 +26,7 @@ def expand_files(
         extensions = [extension]
     else:
         extensions = extension
-    result: List[Path] = []
+    result: list[Path] = []
     for f in files:
         rel_file = base_path / f
         if rel_file.is_file():
@@ -39,12 +39,12 @@ def expand_files(
     return sorted(result)
 
 
-def parse_template(data: str, template_data: Dict[str, Any]) -> str:
+def parse_template(data: str, template_data: dict[str, Any]) -> str:
     return Template(data).render(**template_data)
 
 
 def read_sql_file(
-    sql_file: Path, template_data: Dict[str, Any], encoding: str = "UTF-8"
+    sql_file: Path, template_data: dict[str, Any], encoding: str = "UTF-8"
 ) -> str:
     """
     Reads the SQL file and returns it as a string.
@@ -71,7 +71,7 @@ def get_expect_file(sql_file: Path) -> Path:
 
 def read_csv(
     csv_file: Path,
-    string_columns: List[str] = [],
+    string_columns: list[str] = [],
 ) -> pd.DataFrame:
     """Reads a CSV file and returns a DataFrame with the data from the file.
 
@@ -121,7 +121,7 @@ def write_csv(
 def read_yaml(
     yaml_file: Path,
     encoding: str = "UTF-8",
-    template_data: Optional[Dict[str, Any]] = None,
+    template_data: Optional[dict[str, Any]] = None,
 ):
     data = yaml_file.read_text(encoding=encoding)
     if template_data:

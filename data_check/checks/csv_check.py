@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Optional, Union, cast
 
 import pandas as pd
 
@@ -66,7 +66,7 @@ class CSVCheck(SQLBaseCheck):
         )
 
     def read_expect_file(
-        self, expect_file: Path, string_columns: List[str]
+        self, expect_file: Path, string_columns: list[str]
     ) -> Union[DataCheckResult, pd.DataFrame]:
         try:
             expect_result = read_csv(

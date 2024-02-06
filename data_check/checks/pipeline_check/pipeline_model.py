@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextlib import suppress
-from typing import Any, Dict, Iterable, Iterator, List, Optional, Type
+from typing import Any, Iterable, Iterator, Optional
 
 from pydantic import BaseModel, BeforeValidator, ConfigDict, model_validator
 from typing_extensions import Annotated
@@ -25,7 +25,7 @@ from .steps import (
     Step,
 )
 
-STEP_TO_CLASS: Dict[str, Type[Step]] = {
+STEP_TO_CLASS: dict[str, type[Step]] = {
     "load": LoadStep,
     "load_table": DeprecatedLoadTableStep,
     "check": CheckStep,
@@ -68,7 +68,7 @@ AnnotatedStep = Annotated[Step, BeforeValidator(concrete_step)]
 
 
 class PipelineModel(BaseModel):
-    steps: List[AnnotatedStep] = []
+    steps: list[AnnotatedStep] = []
     current_step: Optional[Step] = None
 
     _pipeline_check: PipelineCheck
