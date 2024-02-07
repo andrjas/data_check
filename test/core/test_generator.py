@@ -10,7 +10,9 @@ from data_check.checks.table_check import TableCheck
 from data_check.sql.query_result import QueryResult
 
 
-def prepare_sql(tmp_path: Path, sql_text="select 1 as test", exp_result={"test": [1]}):
+def prepare_sql(tmp_path: Path, sql_text="select 1 as test", exp_result=None):
+    if exp_result is None:
+        exp_result = {"test": [1]}
     sql_file = tmp_path / "a.sql"
     sql_file.write_text(sql_text)
 

@@ -48,9 +48,11 @@ def run(
     print_format: str = DataCheckConfig.default_print_format,
     print_json: bool = False,
     print_diffed: bool = False,
-    files: List[Union[str, Path]] = [],
+    files: Optional[List[Union[str, Path]]] = None,
 ):
     """Run checks (default command)."""
+    if files is None:
+        files = []
     dc = get_data_check(
         ctx=ctx,
         connection=connection,

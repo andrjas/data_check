@@ -5,6 +5,7 @@ import pandas as pd
 import yaml
 from faker import Faker
 
+from data_check.exceptions import TableDoesNotExistsException
 from data_check.file_ops import write_csv
 from data_check.sql import DataCheckSql, Table
 
@@ -54,7 +55,7 @@ class FakeConfig:
     def init(self, sql: DataCheckSql):
         table = Table.from_table_name(sql, self.table_name)
         if not table.exists():
-            raise Exception(f"table {self.table_name} does not exist")
+            raise TableDoesNotExistsException(f"table {self.table_name} does not exist")
         Faker.seed()
         column_types = table.column_types
         self.add_columns_not_in_config(column_types)

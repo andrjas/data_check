@@ -162,7 +162,7 @@ def test_load_from_files(sql: DataCheckSql):
 
 
 def test_load_from_files_non_existing_dir(sql: DataCheckSql):
-    with pytest.raises(Exception):
+    with pytest.raises(FileNotFoundError):
         sql.table_loader.load_tables_from_files(
             [Path("load_data/non_existing")], LoadMode.REPLACE
         )

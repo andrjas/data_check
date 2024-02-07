@@ -41,7 +41,7 @@ class FakeIterator:
                 if strategy:
                     strategy(column, self.data)
                 else:
-                    raise Exception(f"unknown strategy: {column.next}")
+                    raise ValueError(f"unknown strategy: {column.next}")
 
     def next_to_strategy(self, next):
         return {"inc": inc, "random": random, "dec": dec}.get(next, None)

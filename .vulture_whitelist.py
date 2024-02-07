@@ -1,4 +1,4 @@
-# ruff: noqa: F821
+# ruff: noqa: F821 B018
 
 _remove_clob  # type: ignore
 _.drop_if_exists  # type: ignore

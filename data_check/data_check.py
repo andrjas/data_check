@@ -114,7 +114,7 @@ class DataCheck:
             except Exception as e:
                 raise ValidationException(
                     f"{c} validation failed: {e}", check=c, original_exception=e
-                )
+                ) from e
 
     def run(
         self, files: List[Path], base_path: Path = Path(), do_cleanup: bool = True

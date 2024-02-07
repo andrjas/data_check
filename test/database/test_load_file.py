@@ -6,6 +6,7 @@ import pytest
 from pandas.testing import assert_frame_equal
 from sqlalchemy import Column, Date, DateTime, Integer, MetaData, Numeric, String
 from sqlalchemy import Table as SQLTable
+from sqlalchemy.exc import DatabaseError
 
 from data_check import DataCheck  # noqa E402
 from data_check.sql import LoadMode, Table  # noqa E402
@@ -358,7 +359,7 @@ def test_load_file_less_columns_in_file(dc_serial: DataCheck, file_type: str):
 
 def test_load_file_more_columns_in_file(dc_serial: DataCheck, file_type: str):
     create_test_table(f"test_more_columns_in_{file_type}", "main", dc_serial)
-    with pytest.raises(Exception):
+    with pytest.raises(DatabaseError):
         dc_serial.sql.table_loader.load_table_from_file(
             f"main.test_more_columns_in_{file_type}",
             Path(f"load_data/test_decimals.{file_type}"),
@@ -379,14 +380,14 @@ def test_table_exists_non_existing(dc_serial: DataCheck):
 def test_drop_table_if_exists_with_existing_table(dc_serial: DataCheck):
     table = create_test_table("test_drop_existing", "main", dc_serial)
     table.drop_if_exists()
-    with pytest.raises(Exception):
+    with pytest.raises(DatabaseError):
         dc_serial.sql.run_query("select * from main.test_drop_existing")
 
 
 def test_drop_table_if_exists_with_non_existing_table(dc_serial: DataCheck):
     table = Table(dc_serial.sql, "test_drop_non_existing", "main")
     table.drop_if_exists()
-    with pytest.raises(Exception):
+    with pytest.raises(DatabaseError):
         dc_serial.sql.run_query("select * from main.test_drop_non_existing")
 
 

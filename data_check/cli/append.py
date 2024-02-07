@@ -29,9 +29,11 @@ def append(
     quiet: bool = False,
     log: Optional[Union[str, Path]] = None,
     table: Optional[str] = None,
-    files: List[Union[str, Path]] = [],
+    files: Optional[List[Union[str, Path]]] = None,
 ):
     """Append data from files into tables."""
+    if files is None:
+        files = []
     load_cmd(
         ctx,
         connection,

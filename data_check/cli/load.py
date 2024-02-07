@@ -20,8 +20,10 @@ def load_cmd(
     log: Optional[Union[str, Path]] = None,
     table: Optional[str] = None,
     mode: str = "truncate",
-    files: List[Union[str, Path]] = [],
+    files: Optional[List[Union[str, Path]]] = None,
 ):
+    if files is None:
+        files = []
     dc = get_data_check(
         ctx=ctx,
         connection=connection,
@@ -81,9 +83,11 @@ def load(
     log: Optional[Union[str, Path]] = None,
     table: Optional[str] = None,
     mode: str = "truncate",
-    files: List[Union[str, Path]] = [],
+    files: Optional[List[Union[str, Path]]] = None,
 ):
     """Load data from files into tables."""
+    if files is None:
+        files = []
     load_cmd(
         ctx,
         connection,

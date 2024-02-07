@@ -28,9 +28,11 @@ def gen(
     quiet: bool = False,
     log: Optional[Union[str, Path]] = None,
     force: bool = False,
-    files: List[Union[str, Path]] = [],
+    files: Optional[List[Union[str, Path]]] = None,
 ):
     """Generate CSV files from query files."""
+    if files is None:
+        files = []
     dc = get_data_check(
         ctx=ctx,
         connection=connection,

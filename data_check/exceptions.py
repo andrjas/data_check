@@ -31,3 +31,11 @@ class ValidationException(Exception):
         super().__init__(msg)
         self.check = check
         self.original_exception = original_exception
+
+
+class TableDoesNotExistsException(Exception):
+    """
+    Thrown when a table does not exist.
+    """
+
+    pass

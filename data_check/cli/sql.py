@@ -39,10 +39,12 @@ def sql(
     log: Optional[Union[str, Path]] = None,
     output: Union[str, Path] = "",
     write_check: Union[str, Path] = "",
-    files: List[Union[str, Path]] = [],
+    files: Optional[List[Union[str, Path]]] = None,
     query: str = "",
 ):
     """Run SQL statements."""
+    if files is None:
+        files = []
     dc = get_data_check(
         ctx=ctx,
         connection=connection,

@@ -35,7 +35,7 @@ def expand_files(
             for ext in extensions:
                 result.extend(rel_file.glob(f"**/*{ext}"))
         else:
-            raise Exception(f"unexpected path: {rel_file}")
+            raise FileNotFoundError(f"unexpected path: {rel_file}")
     return sorted(result)
 
 
@@ -53,7 +53,7 @@ def read_sql_file(
     try:
         return parse_template(sql_file.read_text(encoding=encoding), template_data)
     except Exception as e:
-        raise DataCheckException(f"Failed to read {sql_file}: {e}")
+        raise DataCheckException(f"Failed to read {sql_file}: {e}") from e
 
 
 def get_expect_file(sql_file: Path) -> Path:
@@ -71,13 +71,15 @@ def get_expect_file(sql_file: Path) -> Path:
 
 def read_csv(
     csv_file: Path,
-    string_columns: list[str] = [],
+    string_columns: Optional[list[str]] = None,
 ) -> pd.DataFrame:
     """Reads a CSV file and returns a DataFrame with the data from the file.
 
     string_columns holds a list of all columns that should be treated as strings,
     without any conversion.
     """
+    if string_columns is None:
+        string_columns = []
     dtypes: DtypeArg = {s: "object" for s in string_columns}
 
     try:
@@ -93,7 +95,7 @@ def read_csv(
             engine="c",
         )
     except Exception as e:
-        raise DataCheckException(f"Failed to read {csv_file}: {e}")
+        raise DataCheckException(f"Failed to read {csv_file}: {e}") from e
 
     _, df = parse_date_columns(df)
     return df

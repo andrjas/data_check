@@ -71,13 +71,15 @@ class DataCheckSql:
         # Cannot pickle otherwise.
         return self.runner.workers == 1
 
-    def get_engine(self, extra_params: Dict[str, Any] = {}) -> Engine:
+    def get_engine(self, extra_params: Optional[Dict[str, Any]] = None) -> Engine:
         """
         Return the database engine for the connection.
         """
         # ignore unclosed SSLSocket ResourceWarning for Databricks
         import warnings
 
+        if extra_params is None:
+            extra_params = {}
         warnings.filterwarnings(
             action="ignore", message="unclosed", category=ResourceWarning
         )
@@ -123,10 +125,14 @@ class DataCheckSql:
     def dialect(self) -> str:
         return self.get_engine().dialect.name
 
-    def run_query(self, query: str, params: Dict[str, Any] = {}) -> pd.DataFrame:
+    def run_query(
+        self, query: str, params: Optional[Dict[str, Any]] = None
+    ) -> pd.DataFrame:
         """
         Run a query on the database and return a Pandas DataFrame with the result.
         """
+        if params is None:
+            params = {}
         return self.run_query_with_result(query, params=params).df
 
     def use_parameters(self) -> bool:
@@ -144,8 +150,10 @@ class DataCheckSql:
         return sql
 
     def run_query_with_result(
-        self, query: str, params: Dict[str, Any] = {}
+        self, query: str, params: Optional[Dict[str, Any]] = None
     ) -> QueryResult:
+        if params is None:
+            params = {}
         if not self.connection:
             raise DataCheckException(f"undefined connection: {self.connection}")
         sql = self._bindparams(query)
@@ -197,7 +205,7 @@ class DataCheckSql:
         self,
         query: str,
         output: Union[str, Path] = "",
-        params: Dict[str, Any] = {},
+        params: Optional[Dict[str, Any]] = None,
         base_path: Path = Path(),
         sort_output: bool = False,
     ) -> Union[bool, Sequence[Row]]:
@@ -207,6 +215,8 @@ class DataCheckSql:
         If output is given, the result of the query is written to the file
         relative to base_path.
         """
+        if params is None:
+            params = {}
         sq_text = self._bindparams(query)
         with self.conn() as connection:
             result: CursorResult

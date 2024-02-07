@@ -89,6 +89,8 @@ select = [
     "F",
     # pyupgrade
     "UP",
+    # flake8-bugbear
+    "B",
 ]
 
 [tool.ruff.lint.pyupgrade]

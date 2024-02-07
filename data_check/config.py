@@ -77,12 +77,12 @@ class DataCheckConfig:
     def load_config(self, base_path: Path = Path()):
         try:
             config_path = self.find_config(base_path)
-        except Exception:
+        except Exception as exc:
             # raise basically the same exception as in find_config
             # but with base_path for better debugging
             raise Exception(
                 f"could not find {self.config_path} in {base_path.absolute()}"
-            )
+            ) from exc
 
         # project_path is always the directory where the config file is stored
         self.project_path = config_path.parent

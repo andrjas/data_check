@@ -45,7 +45,9 @@ def retrieve_caller() -> str:
 
 
 def deprecated_method_argument(
-    argument: Any, instead_argument: Any = None, instead_default_value: Any = None
+    argument: Any,
+    instead_argument: Optional[Any] = None,
+    instead_default_value: Optional[Any] = None,
 ):
     argument_name = retrieve_name(argument)
     use_instead_argument = retrieve_name(instead_argument)
@@ -53,7 +55,7 @@ def deprecated_method_argument(
         warn_msg = f"{argument_name} is deprecated"
         if use_instead_argument:
             warn_msg += f", use {use_instead_argument} instead"
-        warnings.warn(warn_msg, FutureWarning)
+        warnings.warn(warn_msg, FutureWarning, stacklevel=2)
         if instead_argument != instead_default_value:
             raise ValueError(
                 f"{argument_name} and {use_instead_argument} "
@@ -69,4 +71,4 @@ def deprecated_method(
     warn_msg = f"{deprecated_method_name} is deprecated"
     if instead_method:
         warn_msg += f", use {instead_method} instead"
-    warnings.warn(warn_msg, FutureWarning)
+    warnings.warn(warn_msg, FutureWarning, stacklevel=2)
