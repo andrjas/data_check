@@ -1,5 +1,6 @@
 # ruff: noqa: F401
 
+from .databricks import DataCheckSqlDatabricks
 from .duckdb import DataCheckSqlDuckDB
 from .mssql import DataCheckSqlMSSQL
 from .mysql import DataCheckSqlMySQL

@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, cast
 
 import pandas as pd
 from sqlalchemy.engine import Connection
-from sqlalchemy.sql import text
 from sqlalchemy.sql.expression import bindparam
 
 if TYPE_CHECKING:
@@ -46,13 +45,8 @@ class TableLoader:
         return "append"
 
     def pre_insert(self, connection: Connection, table: Table):
-        if self.sql.dialect == "mssql":
-            # When appending/upserting data into a table with identity columns,
-            # we need to enable IDENTITY_INSERT to allow inserting explicit values
-            # into these columns.
-            if table.exists():
-                if table.sql_table.primary_key:
-                    connection.execute(text(f"SET IDENTITY_INSERT {table} ON"))
+        """This hook is executed before data is inserted into the table."""
+        pass
 
     def prepare_dtypes(
         self, data: pd.DataFrame, table: Table, dtype

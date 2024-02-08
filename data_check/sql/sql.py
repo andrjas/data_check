@@ -136,9 +136,6 @@ class DataCheckSql:
         return self.run_query_with_result(query, params=params).df
 
     def use_parameters(self) -> bool:
-        if self.dialect == "databricks":
-            # cannot use bindparams due to https://github.com/databricks/databricks-sql-python/pull/267
-            return False
         return True
 
     def _bindparams(self, query: str) -> TextClause:
@@ -236,15 +233,15 @@ class DataCheckSql:
                 )
             else:
                 print_csv(df, self.output.print)
-            if self.dialect == "databricks":
-                # Databricks returns an empty list and a single column 'Result'
-                # if the query is a DML/DDL. That's why we convert it to True
-                # in this case to indicate successful execution.
-                if res == [] and columns == ["Result"]:
-                    return True
-            return res
+            return self.prepare_result(res, columns)
         except Exception:
             return bool(result)
+
+    def prepare_result(
+        self, res: Sequence[Row], columns: List[str]
+    ) -> Union[bool, Sequence[Row]]:
+        """This hook is for dialect specific handling of results."""
+        return res
 
     @property
     def inspector(self) -> Inspector:

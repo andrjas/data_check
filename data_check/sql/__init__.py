@@ -35,6 +35,7 @@ def get_sql(
     """
     dialect = get_dialect_for_connection(connection)
     from .dialect import (
+        DataCheckSqlDatabricks,
         DataCheckSqlDuckDB,
         DataCheckSqlMSSQL,
         DataCheckSqlMySQL,
@@ -50,6 +51,7 @@ def get_sql(
         "oracle": DataCheckSqlOracle,
         "postgresql": DataCheckSqlPostgreSQL,
         "sqlite": DataCheckSqlSQLite,
+        "databricks": DataCheckSqlDatabricks,
     }
 
     dialect_cls = DIALECT_MAP.get(dialect, DataCheckSql)
