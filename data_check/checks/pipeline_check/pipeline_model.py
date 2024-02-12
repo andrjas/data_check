@@ -54,11 +54,7 @@ def concrete_step(v: Any) -> Step:
         return step_class(**args)
     else:
         first_not_in_step = next(
-            (
-                k
-                for k in step_class.model_fields.keys()
-                if k not in Step.model_fields.keys()
-            ),
+            (k for k in step_class.model_fields if k not in Step.model_fields),
             "__root__",
         )
         return step_class(**{first_not_in_step: args})
@@ -144,7 +140,4 @@ class PipelineModel(BaseModel):
         return values
 
     def validate_pipeline(self, pipeline_check: PipelineCheck) -> bool:
-        for step in self.steps:
-            if not step.validate_step(pipeline_check):
-                return False
-        return True
+        return all(step.validate_step(pipeline_check) for step in self.steps)

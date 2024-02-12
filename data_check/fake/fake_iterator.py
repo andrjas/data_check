@@ -44,4 +44,4 @@ class FakeIterator:
                     raise ValueError(f"unknown strategy: {column.next}")
 
     def next_to_strategy(self, next):
-        return {"inc": inc, "random": random, "dec": dec}.get(next, None)
+        return {"inc": inc, "random": random, "dec": dec}.get(next)

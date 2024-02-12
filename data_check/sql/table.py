@@ -103,16 +103,14 @@ class Table:
         col_types = self.column_types
         return {
             k: col_types[k]
-            for k in col_types.keys()
+            for k in col_types
             if col_types[k].python_type in date_column_types
         }
 
     @cached_property
     def string_columns(self):
         col_types = self.column_types
-        return {
-            k: col_types[k] for k in col_types.keys() if col_types[k].python_type == str
-        }
+        return {k: col_types[k] for k in col_types if col_types[k].python_type == str}
 
     @cached_property
     def column_info(self) -> ColumnInfo:

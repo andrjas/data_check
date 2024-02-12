@@ -51,11 +51,13 @@ class SQLBaseCheck(BaseCheck):
         except ValueError:
             # treat both columns as str if their data types differ
             for sc in cast(List[str], sql_result.columns):
-                if sc in expect_result.columns:
-                    if sql_result[sc].dtype != expect_result[sc].dtype:
-                        sql_result[sc], expect_result[sc] = SQLBaseCheck.convert_dtypes(
-                            sql_result[sc], expect_result[sc]
-                        )
+                if (
+                    sc in expect_result.columns
+                    and sql_result[sc].dtype != expect_result[sc].dtype
+                ):
+                    sql_result[sc], expect_result[sc] = SQLBaseCheck.convert_dtypes(
+                        sql_result[sc], expect_result[sc]
+                    )
             df_merged = sql_result.merge(expect_result, indicator=True, how="outer")
         return df_merged
 

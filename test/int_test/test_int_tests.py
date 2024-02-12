@@ -15,10 +15,7 @@ def run(command: List[str], workers: Optional[int] = 1) -> Result:
     )
 
     runner = CliRunner()
-    if not workers:
-        workers_cmd = []
-    else:
-        workers_cmd = ["-n", str(workers)]
+    workers_cmd = [] if not workers else ["-n", str(workers)]
     result = runner.invoke(cli, command + workers_cmd)
     return result
 

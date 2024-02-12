@@ -45,7 +45,7 @@ class FakeConfig:
 
     def add_columns_not_in_config(self, column_types: Dict[str, Any]):
         for column in column_types:
-            if column not in self.columns.keys():
+            if column not in self.columns:
                 is_unique = column == self.business_key
                 col_conf = ColumnConfig(
                     faker=self.faker, name=column, is_unique=is_unique

@@ -22,10 +22,7 @@ def expand_files(
     Expands the list of files or folders,
     with all SQL files in a folder as separate files.
     """
-    if isinstance(extension, str):
-        extensions = [extension]
-    else:
-        extensions = extension
+    extensions = [extension] if isinstance(extension, str) else extension
     result: list[Path] = []
     for f in files:
         rel_file = base_path / f

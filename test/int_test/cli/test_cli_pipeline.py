@@ -16,7 +16,7 @@ def pc(dc_serial: DataCheck) -> PipelineCheck:
 
 
 def get_command_names() -> List[str]:
-    return [cmd for cmd in cli.commands.keys() if cmd not in IGNORE_COMMANDS]
+    return [cmd for cmd in cli.commands if cmd not in IGNORE_COMMANDS]
 
 
 def get_pipeline_step_names(pc: PipelineCheck) -> List[str]:
@@ -40,7 +40,7 @@ IGNORE_COMMANDS = ["ping", "gen", "init"]
 def get_command_param_names() -> List[Tuple[str, str]]:
     return [
         (cmd, param.name)
-        for cmd in cli.commands.keys()
+        for cmd in cli.commands
         for param in cli.commands[cmd].params
         if param.name not in get_common_params()
         and (cmd, param.name) not in IGNORE_PARAMS

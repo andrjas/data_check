@@ -142,7 +142,7 @@ class DataCheckSql:
         sql = text(query)
         if not self.use_parameters():
             return sql
-        for bp in sql._bindparams.keys():
+        for bp in sql._bindparams:
             sql = sql.bindparams(bindparam(bp, expanding=True))
         return sql
 

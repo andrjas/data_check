@@ -13,9 +13,8 @@ class TableLoaderMSSQL(TableLoader):
         # When appending/upserting data into a table with identity columns,
         # we need to enable IDENTITY_INSERT to allow inserting explicit values
         # into these columns.
-        if table.exists():
-            if table.sql_table.primary_key:
-                connection.execute(text(f"SET IDENTITY_INSERT {table} ON"))
+        if table.exists() and table.sql_table.primary_key:
+            connection.execute(text(f"SET IDENTITY_INSERT {table} ON"))
 
 
 class DataCheckSqlMSSQL(DataCheckSql):
