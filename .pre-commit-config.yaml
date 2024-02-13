@@ -20,11 +20,6 @@ repos:
       hooks:
           - id: vulture
 
-    - repo: https://github.com/myint/eradicate
-      rev: 2.2.0
-      hooks:
-          - id: eradicate
-
     - repo: https://github.com/pre-commit/mirrors-mypy
       rev: v1.3.0
       hooks:

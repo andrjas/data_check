@@ -95,6 +95,8 @@ select = [
     "SIM",
     # isort
     "I",
+    # eradicate
+    "ERA",
 ]
 
 [tool.ruff.lint.pyupgrade]
