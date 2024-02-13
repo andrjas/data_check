@@ -5,9 +5,8 @@ from dataclasses import dataclass
 from functools import cached_property
 from typing import Any, Optional
 
-from sqlalchemy import MetaData
+from sqlalchemy import MetaData, text
 from sqlalchemy import Table as SQLTable
-from sqlalchemy import text
 from sqlalchemy.exc import NoSuchTableError
 
 from data_check.sql.sql import DataCheckSql

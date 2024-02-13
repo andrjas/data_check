@@ -93,6 +93,8 @@ select = [
     "B",
     # flake8-simplify
     "SIM",
+    # isort
+    "I",
 ]
 
 [tool.ruff.lint.pyupgrade]

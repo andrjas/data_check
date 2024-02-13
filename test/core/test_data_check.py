@@ -2,9 +2,9 @@ from pathlib import Path
 from unittest.mock import create_autospec
 
 from data_check import DataCheck
-from data_check.checks import DataCheckGenerator  # noqa E402
 from data_check.checks import (
     CSVCheck,
+    DataCheckGenerator,  # noqa E402
     EmptySetCheck,
     ExcelCheck,
     PipelineCheck,

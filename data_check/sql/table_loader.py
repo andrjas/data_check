@@ -8,9 +8,8 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.sql.expression import bindparam
 
 if TYPE_CHECKING:
-    from data_check.sql import DataCheckSql
     from data_check.output import DataCheckOutput
-    from data_check.sql import Table, ColumnInfo
+    from data_check.sql import ColumnInfo, DataCheckSql, Table
 
 from ..file_ops import expand_files, read_csv
 from ..utils.deprecation import deprecated_method_argument
