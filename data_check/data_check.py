@@ -102,7 +102,7 @@ class DataCheck:
                 checks.append(check)
                 check_paths.add(check.check_path)
             elif abs_file.is_dir():
-                dir_files = [d for d in abs_file.iterdir()]
+                dir_files = list(abs_file.iterdir())
                 checks.extend(self.collect_checks(dir_files, base_path=base_path))
         return checks
 

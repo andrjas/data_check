@@ -99,6 +99,8 @@ select = [
     "ERA",
     # flake8-builtins
     "A",
+    # flake8-comprehensions
+    "C4",
 ]
 ignore = ["A003"]
 

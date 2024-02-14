@@ -69,13 +69,13 @@ class SQLBaseCheck(BaseCheck):
         object_columns.update(set(df_2.columns[df_2.dtypes == "object"]))
         for o_col in object_columns:
             if o_col in df_1.columns and o_col in df_2.columns:
-                df_1_types = set(type(el) for el in df_1[o_col].array)
-                df_2_types = set(type(el) for el in df_2[o_col].array)
+                df_1_types = {type(el) for el in df_1[o_col].array}
+                df_2_types = {type(el) for el in df_2[o_col].array}
                 both_types = df_1_types.union(df_2_types)
                 if both_types in (
-                    set([str, int]),
-                    set([str, float]),
-                    set([str, int, float]),
+                    {str, int},
+                    {str, float},
+                    {str, int, float},
                 ):
                     # convert only if str is mixed with a numeric type
                     df_1[o_col], df_2[o_col] = SQLBaseCheck.convert_dtypes(
