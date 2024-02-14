@@ -43,6 +43,6 @@ class CmdStep(Step):
         )
         assert process.stdout is not None
         with process.stdout:
-            output.handle_subprocess_output(process.stdout, print=self.print)
+            output.handle_subprocess_output(process.stdout, _print=self.print)
         exitcode = process.wait()
         return exitcode == 0

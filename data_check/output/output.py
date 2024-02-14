@@ -88,8 +88,8 @@ class DataCheckOutput:
     def prepare_data_check_result(self, result: DataCheckResult):
         format_data_check_result(self, result)
 
-    def handle_subprocess_output(self, pipe: IO[bytes], print: bool = True):
-        self.handler.handle_subprocess_output(pipe, print=print)
+    def handle_subprocess_output(self, pipe: IO[bytes], _print: bool = True):
+        self.handler.handle_subprocess_output(pipe, _print=_print)
 
     def pprint_overall_result(self, passed: bool) -> None:
         overall_result_msg = self.passed_message if passed else self.failed_message

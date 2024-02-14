@@ -28,11 +28,11 @@ class OutputHandler:
             self.printer(msg)
         self.write_log(log_msg or msg)
 
-    def handle_subprocess_output(self, pipe: IO[bytes], print: bool = True):
+    def handle_subprocess_output(self, pipe: IO[bytes], _print: bool = True):
         for line in iter(pipe.readline, b""):
             try:
                 # try printing the line with the system encoding
-                self.print(line.decode(self.encoding).rstrip(os.linesep), _print=print)
+                self.print(line.decode(self.encoding).rstrip(os.linesep), _print=_print)
             except Exception:
                 # if this doesn't help, print the raw bytes without the b''
-                self.print(str(line)[2:-1].rstrip(os.linesep), _print=print)
+                self.print(str(line)[2:-1].rstrip(os.linesep), _print=_print)

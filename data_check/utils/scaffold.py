@@ -6,11 +6,11 @@ from data_check.exceptions import DataCheckException
 SCAFFOLD_TEMPLATES = "scaffold_templates"
 
 
-def _create_dir(dir: Path):
-    if not dir.exists():
-        dir.mkdir()
-    elif not dir.is_dir():
-        raise DataCheckException(f"{dir} exists, but is not a directory")
+def _create_dir(directory: Path):
+    if not directory.exists():
+        directory.mkdir()
+    elif not directory.is_dir():
+        raise DataCheckException(f"{directory} exists, but is not a directory")
 
 
 def _copy_file(src: Path, dst: Path):
