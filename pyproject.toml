@@ -103,6 +103,8 @@ select = [
     "C4",
     # flake8-pytest-style
     "PT",
+    # mccabe
+    "C90",
 ]
 ignore = ["A003"]
 
