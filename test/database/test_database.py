@@ -11,7 +11,7 @@ from data_check import DataCheck  # noqa E402
 # The tests are generic, but in integration tests each database uses specific SQL files.
 
 
-@pytest.fixture
+@pytest.fixture()
 def data_types_check(dc: DataCheck):
     check = dc.get_check(Path("checks/basic/data_types.sql"))
     assert check

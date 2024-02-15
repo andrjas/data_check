@@ -1,6 +1,6 @@
 from functools import partial
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from data_check.checks.base_check import BaseCheck
 
@@ -134,10 +134,10 @@ class DataCheck:
         try:
             self.validate_checks(all_checks)
         except ValidationException as e:
-            assert e.check
-            assert e.original_exception
             result = DataCheckResult(
-                passed=False, source=e.check.check_path, exception=e.original_exception
+                passed=False,
+                source=cast(BaseCheck, e.check).check_path,
+                exception=cast(Exception, e.original_exception),
             )
             self.output.print(result)
             return [result]

@@ -38,11 +38,11 @@ def test_deprecated_method_argument_instead_argument():
 
 
 def test_deprecated_method_argument_instead_argument_not_none():
+    arg = "test"
+    arg2 = "not none"
     with pytest.raises(
         ValueError, match=r"arg and arg2 cannot be used at the same time$"
     ):
-        arg = "test"
-        arg2 = "not none"
         deprecation.deprecated_method_argument(arg, arg2)
 
 

@@ -70,17 +70,19 @@ class DataCheckConfig:
         config_path = abs_base_path / self.config_path
         if not config_path.exists():
             if abs_base_path.parent == abs_base_path:
-                raise Exception(f"could not find {self.config_path} in {abs_base_path}")
+                raise FileNotFoundError(
+                    f"could not find {self.config_path} in {abs_base_path}"
+                )
             return self.find_config(abs_base_path.parent)
         return abs_base_path / self.config_path
 
     def load_config(self, base_path: Path = Path()):
         try:
             config_path = self.find_config(base_path)
-        except Exception as exc:
+        except FileNotFoundError as exc:
             # raise basically the same exception as in find_config
             # but with base_path for better debugging
-            raise Exception(
+            raise FileNotFoundError(
                 f"could not find {self.config_path} in {base_path.absolute()}"
             ) from exc
 

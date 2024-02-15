@@ -78,7 +78,7 @@ def test_load_config_from_subpath2(tmp_path: Path):
 
 
 def test_load_config_no_config(tmp_path: Path):
-    with pytest.raises(Exception) as e:
+    with pytest.raises(FileNotFoundError) as e:
         DataCheckConfig().load_config(base_path=tmp_path)
     assert "could not find " in str(e.value)
 

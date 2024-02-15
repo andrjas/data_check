@@ -116,7 +116,7 @@ test_dates = [
 ]
 
 
-@pytest.mark.parametrize("date1,date2", test_dates)
+@pytest.mark.parametrize(("date1", "date2"), test_dates)
 def test_result_different_dates(date1, date2):
     df1 = pd.DataFrame.from_dict({"a": [1], "d": [date1]})
     df2 = pd.DataFrame.from_dict({"a": [1], "d": [date2]})

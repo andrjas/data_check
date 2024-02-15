@@ -101,6 +101,8 @@ select = [
     "A",
     # flake8-comprehensions
     "C4",
+    # flake8-pytest-style
+    "PT",
 ]
 ignore = ["A003"]
 

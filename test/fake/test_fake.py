@@ -107,7 +107,7 @@ def test_fake_config_iterations_wrong_next_strategy(
     }
     fake_config.load_config(config)
     fake_config.init(dc_serial.sql)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"unknown strategy: unknown_strategy"):
         fake_config.run_faker(csv)
 
 

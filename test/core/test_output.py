@@ -18,7 +18,7 @@ def test_pprint_failed_output_is_sorted():
     assert_frame_equal(df.reset_index(drop=True), sorted_df.reset_index(drop=True))
 
 
-@pytest.fixture
+@pytest.fixture()
 def dc_out(tmp_path: Path):
     out = DataCheckOutput()
     log_file = tmp_path / "test.log"

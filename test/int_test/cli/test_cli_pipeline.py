@@ -9,7 +9,7 @@ from data_check.cli.main import cli
 from data_check.data_check import DataCheck
 
 
-@pytest.fixture
+@pytest.fixture()
 def pc(dc_serial: DataCheck) -> PipelineCheck:
     _pc = PipelineCheck(dc_serial, Path())
     return _pc
@@ -59,6 +59,6 @@ def get_pipeline_step_args(step_name: str) -> List[str]:
     return list(step.model_fields.keys())
 
 
-@pytest.mark.parametrize(["cmd", "param"], get_command_param_names())
+@pytest.mark.parametrize(("cmd", "param"), get_command_param_names())
 def test_cli_param_match_pipeline_param(cmd, param, pc: PipelineCheck):
     assert param in get_pipeline_step_args(cmd)

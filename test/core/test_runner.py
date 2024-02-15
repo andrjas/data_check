@@ -26,7 +26,7 @@ def test_executor_returns_dummy_executor_if_workers_eq_1(task_size: int):
     assert isinstance(executor, NoPoolExecutor)
 
 
-@pytest.mark.parametrize("workers,task_size", [(2, 2), (2, 10), (5, 2), (5, 10)])
+@pytest.mark.parametrize(("workers", "task_size"), [(2, 2), (2, 10), (5, 2), (5, 10)])
 def test_executor_returns_process_pool_executor_for_task_list_with_more_task(
     workers: int, task_size: int
 ):
@@ -35,7 +35,7 @@ def test_executor_returns_process_pool_executor_for_task_list_with_more_task(
     assert isinstance(executor, ProcessPoolExecutor)
 
 
-@pytest.mark.parametrize("workers,task_size", [(2, 2), (2, 10), (5, 2), (5, 10)])
+@pytest.mark.parametrize(("workers", "task_size"), [(2, 2), (2, 10), (5, 2), (5, 10)])
 def test_executor_returns_thread_pool_executor_for_task_list_with_more_task(
     workers: int, task_size: int
 ):
