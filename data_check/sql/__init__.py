@@ -46,7 +46,7 @@ def get_sql(
         DataCheckSqlSQLite,
     )
 
-    DIALECT_MAP = {
+    dialect_map = {
         "duckdb": DataCheckSqlDuckDB,
         "mssql": DataCheckSqlMSSQL,
         "mysql": DataCheckSqlMySQL,
@@ -56,7 +56,7 @@ def get_sql(
         "databricks": DataCheckSqlDatabricks,
     }
 
-    dialect_cls = DIALECT_MAP.get(dialect, DataCheckSql)
+    dialect_cls = dialect_map.get(dialect, DataCheckSql)
 
     return dialect_cls(
         connection=connection,

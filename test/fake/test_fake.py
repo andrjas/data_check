@@ -5,7 +5,7 @@ from sqlalchemy import Column, Integer, MetaData, String
 from sqlalchemy import Table as SQLTable
 
 from data_check import DataCheck  # noqa E402
-from data_check.exceptions import TableDoesNotExistsException
+from data_check.exceptions import TableDoesNotExistsError
 from data_check.fake.fake_config import FakeConfig
 from data_check.file_ops import read_csv
 from data_check.sql.table import Table
@@ -86,7 +86,7 @@ def test_fake_config_non_existing_table(dc_serial: DataCheck):
     fake_config = FakeConfig(Path())
     config = {"table": "main.test_fake_config_non_existing"}
     fake_config.load_config(config)
-    with pytest.raises(TableDoesNotExistsException):
+    with pytest.raises(TableDoesNotExistsError):
         fake_config.init(dc_serial.sql)
 
 

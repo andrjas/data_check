@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from data_check.exceptions import DataCheckException
+from data_check.exceptions import DataCheckError
 from data_check.file_ops import expand_files, get_expect_file, read_csv, read_sql_file
 
 
@@ -60,12 +60,12 @@ def test_get_expect_file_sql():
 
 
 def test_non_unicode_sql():
-    with pytest.raises(DataCheckException):
+    with pytest.raises(DataCheckError):
         read_sql_file(Path("checks/failing/non_unicode.sql"), {})
 
 
 def test_non_unicode_csv():
-    with pytest.raises(DataCheckException):
+    with pytest.raises(DataCheckError):
         read_csv(Path("checks/failing/non_unicode.csv"))
 
 

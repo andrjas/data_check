@@ -10,7 +10,7 @@ from pandas._typing import DtypeArg
 from pandas.core.frame import DataFrame
 
 from .date import parse_date_columns
-from .exceptions import DataCheckException
+from .exceptions import DataCheckError
 
 
 def expand_files(
@@ -50,7 +50,7 @@ def read_sql_file(
     try:
         return parse_template(sql_file.read_text(encoding=encoding), template_data)
     except Exception as e:
-        raise DataCheckException(f"Failed to read {sql_file}: {e}") from e
+        raise DataCheckError(f"Failed to read {sql_file}: {e}") from e
 
 
 def get_expect_file(sql_file: Path) -> Path:
@@ -92,7 +92,7 @@ def read_csv(
             engine="c",
         )
     except Exception as e:
-        raise DataCheckException(f"Failed to read {csv_file}: {e}") from e
+        raise DataCheckError(f"Failed to read {csv_file}: {e}") from e
 
     _, df = parse_date_columns(df)
     return df

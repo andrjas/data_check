@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from ..exceptions import DataCheckException
+from ..exceptions import DataCheckError
 
 
 class LoadMode(Enum):
@@ -22,6 +22,6 @@ class LoadMode(Enum):
         }.get(mode_name.lower(), None)
 
         if not mode:
-            raise DataCheckException(f"unknown load mode: {mode_name}")
+            raise DataCheckError(f"unknown load mode: {mode_name}")
         else:
             return mode

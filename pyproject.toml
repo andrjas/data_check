@@ -105,6 +105,8 @@ select = [
     "PT",
     # mccabe
     "C90",
+    # pep8-naming
+    "N",
 ]
 ignore = ["A003"]
 

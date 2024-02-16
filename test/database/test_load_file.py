@@ -70,17 +70,17 @@ def create_test_table_with_datetime(table_name: str, schema: str, dc: DataCheck)
         )
     else:
         metadata = MetaData()
-        _DateTime = DateTime
+        _date_time_type = DateTime
         if dc.sql.dialect == "databricks":
             from databricks.sqlalchemy import TIMESTAMP  # type: ignore
 
-            _DateTime = TIMESTAMP
+            _date_time_type = TIMESTAMP
         SQLTable(
             table.name,
             metadata,
             Column("id", Integer),
             Column("data", String(10)),
-            Column("dat", _DateTime),
+            Column("dat", _date_time_type),
             schema=table.schema,
         )
         with dc.sql.conn() as c:
@@ -141,11 +141,11 @@ def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
         )
     else:
         metadata = MetaData()
-        _DateTime = DateTime
+        _date_time_type = DateTime
         if dc.sql.dialect == "databricks":
             from databricks.sqlalchemy import TIMESTAMP
 
-            _DateTime = TIMESTAMP
+            _date_time_type = TIMESTAMP
         SQLTable(
             table.name,
             metadata,
@@ -156,12 +156,12 @@ def create_test_table_sample(table_name: str, schema: str, dc: DataCheck):
             Column("e", String(10)),
             Column("f", Integer),
             Column("g", Integer),
-            Column("h", _DateTime),
-            Column("i", _DateTime),
-            Column("j", _DateTime),
+            Column("h", _date_time_type),
+            Column("i", _date_time_type),
+            Column("j", _date_time_type),
             Column("k", String(10)),
             Column("l", Integer),
-            Column("m", _DateTime),
+            Column("m", _date_time_type),
             schema=table.schema,
         )
         with dc.sql.conn() as c:

@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from data_check.exceptions import DataCheckException
+from data_check.exceptions import DataCheckError
 
 SCAFFOLD_TEMPLATES = "scaffold_templates"
 
@@ -10,14 +10,14 @@ def _create_dir(directory: Path):
     if not directory.exists():
         directory.mkdir()
     elif not directory.is_dir():
-        raise DataCheckException(f"{directory} exists, but is not a directory")
+        raise DataCheckError(f"{directory} exists, but is not a directory")
 
 
 def _copy_file(src: Path, dst: Path):
     if not dst.exists():
         shutil.copy(src, dst)
     else:
-        raise DataCheckException(f"{dst.name} already exists")
+        raise DataCheckError(f"{dst.name} already exists")
 
 
 def create_project(project_path: Path):

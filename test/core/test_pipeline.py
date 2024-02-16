@@ -40,7 +40,7 @@ def test_pipeline_sqls_are_not_in_simple_tests(dc_serial: DataCheck):
     assert pipeline_test_sql not in checks
 
 
-def test_run_test_returns_DataCheckResult(pc: PipelineCheck):
+def test_run_test_returns_data_check_result(pc: PipelineCheck):
     pc.check_path = Path("checks/pipelines/simple_pipeline")
     result = pc.run_test()
     assert isinstance(result, DataCheckResult)

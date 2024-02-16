@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from data_check.checks.base_check import BaseCheck
 
 
-class DataCheckException(Exception):
+class DataCheckError(Exception):
     """
     Generic class for various exceptions that might occur in data_check.
     """
@@ -14,7 +14,7 @@ class DataCheckException(Exception):
     pass
 
 
-class ValidationException(Exception):
+class ValidationError(Exception):
     """
     Wraps errors that occur during validation.
     """
@@ -33,7 +33,7 @@ class ValidationException(Exception):
         self.original_exception = original_exception
 
 
-class TableDoesNotExistsException(Exception):
+class TableDoesNotExistsError(Exception):
     """
     Thrown when a table does not exist.
     """

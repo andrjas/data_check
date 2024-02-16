@@ -19,7 +19,7 @@ from sqlalchemy.sql.expression import bindparam
 
 from data_check.config import DataCheckConfig
 
-from ..exceptions import DataCheckException
+from ..exceptions import DataCheckError
 from ..file_ops import print_csv, write_csv
 from ..output import DataCheckOutput
 from ..runner import DataCheckRunner
@@ -152,7 +152,7 @@ class DataCheckSql:
         if params is None:
             params = {}
         if not self.connection:
-            raise DataCheckException(f"undefined connection: {self.connection}")
+            raise DataCheckError(f"undefined connection: {self.connection}")
         sql = self._bindparams(query)
         with self.conn() as c:
             if self.use_parameters():

@@ -50,7 +50,7 @@ class DataCheckSqlOracle(DataCheckSql):
         try:
             from cx_Oracle import CLOB  # type: ignore
         except ImportError:
-            CLOB = None
+            CLOB = None  # noqa: N806
 
         @event.listens_for(engine, "do_setinputsizes")
         def _remove_clob(inputsizes, cursor, statement, parameters, context):

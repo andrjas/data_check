@@ -14,7 +14,7 @@ from .checks import (
     TableCheck,
 )
 from .config import DataCheckConfig
-from .exceptions import ValidationException
+from .exceptions import ValidationError
 from .file_ops import expand_files, parse_template, read_sql_file, read_yaml
 from .output import DataCheckOutput
 from .result import DataCheckResult
@@ -110,9 +110,9 @@ class DataCheck:
         for c in checks:
             try:
                 if not c.validate():
-                    raise ValidationException(f"{c} validation failed", check=c)
+                    raise ValidationError(f"{c} validation failed", check=c)
             except Exception as e:
-                raise ValidationException(
+                raise ValidationError(
                     f"{c} validation failed: {e}", check=c, original_exception=e
                 ) from e
 
@@ -133,7 +133,7 @@ class DataCheck:
     def run_checks(self, all_checks: List[BaseCheck], do_cleanup: bool = True):
         try:
             self.validate_checks(all_checks)
-        except ValidationException as e:
+        except ValidationError as e:
             result = DataCheckResult(
                 passed=False,
                 source=cast(BaseCheck, e.check).check_path,

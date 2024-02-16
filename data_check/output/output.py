@@ -6,7 +6,7 @@ from typing import IO, Any, Callable, List, Optional, Tuple, Union
 import pandas as pd
 from colorama import Fore, Style
 
-from ..exceptions import DataCheckException
+from ..exceptions import DataCheckError
 from ..file_ops import rel_path
 from ..result import DataCheckResult, ResultType
 from .diffed_df import get_diffed_df
@@ -147,7 +147,7 @@ class DataCheckOutput:
             elif self.print_format.lower() == "json":
                 return df.to_json(orient="table", indent=2)
             else:
-                raise DataCheckException(f"unknown print format: {self.print_format}")
+                raise DataCheckError(f"unknown print format: {self.print_format}")
 
     @staticmethod
     def str_pass(string: str) -> str:

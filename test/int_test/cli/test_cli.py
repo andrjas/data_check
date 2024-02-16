@@ -441,7 +441,7 @@ def test_write_check(tmp_path: Path):
     assert check_csv.read_text() != ""
 
 
-def test_write_check_W(tmp_path: Path):
+def test_write_check_w(tmp_path: Path):
     check_sql = tmp_path / "write_check.sql"
     check_csv = tmp_path / "write_check.csv"
     res = run(["sql", "select 1 as a", "-W", str(check_sql)])

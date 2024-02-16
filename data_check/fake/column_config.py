@@ -34,13 +34,13 @@ class ColumnConfig:
         self.add_values = config.get("add_values", [])
 
     def python_type_to_faker(self, python_type) -> Callable[..., Any]:
-        TYPE_MAPPING = {
+        type_mapping = {
             decimal.Decimal: "pydecimal",
             str: "pystr",
             datetime.date: "date_between",
             datetime.datetime: "date_time_between",
         }
-        fake_provider = TYPE_MAPPING.get(python_type, "pyint")
+        fake_provider = type_mapping.get(python_type, "pyint")
         return getattr(self.faker, fake_provider)
 
     def fake_from_values(self) -> Any:
