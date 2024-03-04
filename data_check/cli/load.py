@@ -8,7 +8,7 @@ from data_check.config import DataCheckConfig
 from .common import common_options, get_data_check
 
 
-def load_cmd(
+def load_cmd(  # noqa: PLR0913
     ctx: click.Context,
     connection: str = "",
     workers: int = DataCheckConfig.parallel_workers,
@@ -71,7 +71,7 @@ def load_cmd(
 )
 @click.argument("files", nargs=-1, type=click.Path())
 @click.pass_context
-def load(
+def load(  # noqa: PLR0913
     ctx: click.Context,
     connection: str = "",
     workers: int = DataCheckConfig.parallel_workers,

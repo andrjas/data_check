@@ -30,7 +30,8 @@ def test_raise_exception_if_running_without_connection():
 
 def test_collect_checks(dc: DataCheck):
     checks = dc.collect_checks([Path("checks")])
-    assert len(checks) >= 41
+    min_checks_count = 41
+    assert len(checks) >= min_checks_count
 
 
 def test_collect_checks_sql_doesnt_return_table_check(dc: DataCheck):

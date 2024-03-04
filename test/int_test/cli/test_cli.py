@@ -8,6 +8,8 @@ from click.testing import CliRunner, Result
 
 from data_check.cli.main import cli
 
+FAILED_EXIT_CODE = 2
+
 
 def run(command: List[str], workers: Optional[int] = 1) -> Result:
     runner = CliRunner()
@@ -56,12 +58,12 @@ def all_options():
         lines = res.output.split("Options:", maxsplit=1)[1].strip().splitlines()
 
         for opt in lines:
-            opt = opt.strip()
-            if opt and opt.startswith("-"):
-                for o in opt.split(" "):
+            _opt = opt.strip()
+            if _opt and _opt.startswith("-"):
+                for o in _opt.split(" "):
                     if o.startswith("-"):
-                        o = o.rstrip(",")
-                        options.append(o)
+                        _o = o.rstrip(",")
+                        options.append(_o)
     return options
 
 
@@ -76,7 +78,8 @@ def test_all_options_tested():
     ]
 
     assert set(join) == set(dc_options)
-    assert len(dc_options) > 10
+    min_dc_options = 10
+    assert len(dc_options) > min_dc_options
 
 
 def test_single_file_check():
@@ -130,7 +133,7 @@ def test_workers():
 
 def test_workers_invalid_number():
     res = run_check(["--workers", "a"], workers=None)
-    assert res.exit_code == 2
+    assert res.exit_code == FAILED_EXIT_CODE
 
 
 def test_use_process():

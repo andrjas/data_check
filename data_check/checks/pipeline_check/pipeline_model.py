@@ -113,8 +113,7 @@ class PipelineModel(BaseModel):
         for step in self.steps:
             if not step.has_run:
                 return step
-        else:
-            return None
+        return None
 
     def run_next_step(self) -> bool:
         next_step = self.next_step

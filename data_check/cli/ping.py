@@ -28,7 +28,7 @@ from .common import common_options, get_data_check
     help=f"retry for wait in seconds (default: {DataCheckConfig.wait_retry})",
 )
 @click.pass_context
-def ping(
+def ping(  # noqa: PLR0913
     ctx: click.Context,
     connection: str = "",
     workers: int = DataCheckConfig.parallel_workers,

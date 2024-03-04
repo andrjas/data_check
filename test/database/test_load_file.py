@@ -238,7 +238,8 @@ def test_load_file_append(dc_serial: DataCheck, file_type: str):
         check_data.sort_values(by=("id")).reset_index(drop=True),
         df.sort_values(by=("id")).reset_index(drop=True),
     )
-    assert len(df) == 6
+    row_count = 6
+    assert len(df) == row_count
 
 
 def test_load_file_append_with_table(dc_serial: DataCheck, file_type: str):
@@ -251,7 +252,8 @@ def test_load_file_append_with_table(dc_serial: DataCheck, file_type: str):
     )
     df = dc_serial.sql.run_query(f"select id, data from main.test_append2_{file_type}")
     assert_frame_equal(data, df.sort_values(by=("id")).reset_index(drop=True))
-    assert len(df) == 3
+    row_count = 3
+    assert len(df) == row_count
 
 
 def test_load_file_date_type(dc_serial: DataCheck, file_type: str):

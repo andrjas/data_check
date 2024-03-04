@@ -27,7 +27,7 @@ from .common import common_options, get_data_check
 )
 @click.argument("query", nargs=1, type=str, required=False)
 @click.pass_context
-def sql(
+def sql(  # noqa: PLR0913
     ctx: click.Context,
     connection: str = "",
     workers: int = DataCheckConfig.parallel_workers,

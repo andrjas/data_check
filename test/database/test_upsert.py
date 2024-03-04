@@ -52,7 +52,8 @@ def test_get_table(sql: DataCheckSql):
         )
     table = create_test_table("test_upsert_get_table", "main", sql)
     sql_table = table.sql_table
-    assert len(list(sql_table.columns)) == 2
+    column_count = 2
+    assert len(list(sql_table.columns)) == column_count
 
 
 def test_upsert(sql: DataCheckSql):

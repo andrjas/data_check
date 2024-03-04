@@ -182,7 +182,8 @@ def test_load_from_file_load_modes(sql: DataCheckSql, file_type):
     df = sql.run_query(
         f"select id, data from test_load_from_file_load_modes_{file_type}"
     )
-    assert len(df) == 6
+    row_count = 6
+    assert len(df) == row_count
 
 
 def test_load_from_file_truncate_twice(sql: DataCheckSql, file_type):
@@ -199,7 +200,8 @@ def test_load_from_file_truncate_twice(sql: DataCheckSql, file_type):
     df = sql.run_query(
         f"select id, data from test_load_from_file_truncate_twice_{file_type}"
     )
-    assert len(df) == 3
+    row_count = 3
+    assert len(df) == row_count
 
 
 def test_load_from_file_non_existing_file(sql: DataCheckSql, file_type):

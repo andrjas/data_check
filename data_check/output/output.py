@@ -25,7 +25,7 @@ class DataCheckOutput:
         self.handler = OutputHandler(self.quiet)
         self.log_path: Optional[Path] = None
 
-    def configure_output(
+    def configure_output(  # noqa: PLR0913
         self,
         verbose: bool,
         traceback: bool,
@@ -169,7 +169,7 @@ class DataCheckOutput:
     def failed_message(self) -> str:
         return self.str_fail("FAILED")
 
-    def prepare_result(
+    def prepare_result(  # noqa: PLR0913
         self,
         result_type: ResultType,
         source: Path,

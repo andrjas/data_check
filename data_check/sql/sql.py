@@ -191,14 +191,13 @@ class DataCheckSql:
                 else:
                     sleep(retry)
                     self.output.print("retry")
-        else:
-            if self._try_connect(engine):
-                self.output.print(success_msg)
-                return True
+        elif self._try_connect(engine):
+            self.output.print(success_msg)
+            return True
         self.output.print("connecting failed")
         return False
 
-    def run_sql(
+    def run_sql(  # noqa: PLR0913
         self,
         query: str,
         output: Union[str, Path] = "",

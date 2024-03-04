@@ -18,7 +18,7 @@ from .common import common_options, get_data_check
 )
 @click.argument("configs", nargs=-1, type=str, required=False)
 @click.pass_context
-def fake(
+def fake(  # noqa: PLR0913
     ctx: click.Context,
     connection: str = "",
     workers: int = DataCheckConfig.parallel_workers,

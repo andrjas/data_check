@@ -117,7 +117,7 @@ class TableLoader:
             mode = self.default_load_mode
         return mode
 
-    def load_table_from_file(
+    def load_table_from_file(  # noqa: PLR0913
         self,
         table: str,
         file: Path,

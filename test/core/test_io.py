@@ -10,12 +10,14 @@ from data_check.file_ops import expand_files, get_expect_file, read_csv, read_sq
 
 def test_expand_files():
     files = expand_files([Path("checks/basic"), Path("checks/failing")])
-    assert len(files) >= 3
+    min_files_count = 3
+    assert len(files) >= min_files_count
 
 
 def test_expand_files_csv():
     files = expand_files([Path("load_data")], extension=".csv")
-    assert len(files) >= 3
+    min_files_count = 3
+    assert len(files) >= min_files_count
 
 
 def test_expand_files_empty():

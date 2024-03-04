@@ -3,6 +3,8 @@ from typing import List, Tuple
 
 import pandas as pd
 
+DATE_STRING_LENGTH = 10  # YYYY-MM-DD
+
 
 def is_possible_date_column(column: pd.Series) -> bool:
     """For a column to be a possible date it must have some non-empty values
@@ -10,7 +12,7 @@ def is_possible_date_column(column: pd.Series) -> bool:
     """
     not_null = column.dropna()
     non_empty = not_null[not_null.astype(str).str.len() > 0]
-    min_len_10 = non_empty[non_empty.astype(str).str.len() >= 10]
+    min_len_10 = non_empty[non_empty.astype(str).str.len() >= DATE_STRING_LENGTH]
     return len(min_len_10) > 0
 
 

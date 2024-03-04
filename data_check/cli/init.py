@@ -19,7 +19,7 @@ from .common import common_options
 )
 @click.argument("path", nargs=1, type=click.Path())
 @click.pass_context
-def init(
+def init(  # noqa: PLR0913
     ctx: click.Context,
     path: Union[str, Path],
     connection: str = "",

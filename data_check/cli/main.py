@@ -21,7 +21,7 @@ from .sql import sql
 @click.group(cls=DefaultGroup, default="run", default_if_no_args=True)
 @common_options
 @click.pass_context
-def cli(
+def cli(  # noqa: PLR0913
     ctx: click.Context,
     connection: str = "",
     workers: int = DataCheckConfig.parallel_workers,

@@ -17,7 +17,7 @@ from .common import common_options, get_data_check
 )
 @click.argument("files", nargs=-1, type=click.Path())
 @click.pass_context
-def gen(
+def gen(  # noqa: PLR0913
     ctx: click.Context,
     connection: str = "",
     workers: int = DataCheckConfig.parallel_workers,

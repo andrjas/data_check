@@ -107,6 +107,8 @@ select = [
     "C90",
     # pep8-naming
     "N",
+    # Pylint
+    "PL",
 ]
 ignore = ["A003"]
 

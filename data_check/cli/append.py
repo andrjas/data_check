@@ -18,7 +18,7 @@ from .load import load_cmd
 )
 @click.argument("files", nargs=-1, type=click.Path())
 @click.pass_context
-def append(
+def append(  # noqa: PLR0913
     ctx: click.Context,
     connection: str = "",
     workers: int = DataCheckConfig.parallel_workers,

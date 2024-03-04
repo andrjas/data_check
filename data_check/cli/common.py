@@ -69,7 +69,7 @@ def common_options(function: Callable[..., Any]) -> Callable[..., Any]:
     return function
 
 
-def init_common(
+def init_common(  # noqa: PLR0913
     ctx: click.Context,
     connection: str = DEFAULT_VALUES["connection"],
     workers: int = DEFAULT_VALUES["workers"],
@@ -125,7 +125,7 @@ def get_value(ctx: click.Context, obj: str) -> Any:
     return ctx.obj.get(obj, DEFAULT_VALUES[obj])
 
 
-def get_data_check(
+def get_data_check(  # noqa: PLR0913
     ctx: click.Context,
     connection: str,
     workers: int,

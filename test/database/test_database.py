@@ -27,11 +27,13 @@ def test_data_types_string(data_types_check):
 
 
 def test_data_types_int(data_types_check):
-    assert data_types_check.int_test == 42
+    int_test_value = 42
+    assert data_types_check.int_test == int_test_value
 
 
 def test_data_types_float(data_types_check):
-    assert data_types_check.float_test == 42.1
+    float_test_value = 42.1
+    assert data_types_check.float_test == float_test_value
 
 
 def test_data_types_date(data_types_check):

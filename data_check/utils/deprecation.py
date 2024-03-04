@@ -4,7 +4,7 @@ import warnings
 from typing import Any, Optional
 
 
-def showwarning(message, category, filename, lineno, file=None, line=None):
+def showwarning(message, category, filename, lineno, file=None, line=None):  # noqa: PLR0913
     _ = category
     _ = filename
     _ = lineno

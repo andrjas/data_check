@@ -73,21 +73,22 @@ class DataCheck:
         return check
 
     def get_check(self, check_path: Path) -> Optional[BaseCheck]:
+        check: Optional[BaseCheck] = None
         if PathNotExists.is_check_path(check_path):
-            return PathNotExists(self, check_path)
+            check = PathNotExists(self, check_path)
         elif PipelineCheck.is_check_path(check_path):
-            return PipelineCheck(self, check_path)
+            check = PipelineCheck(self, check_path)
         elif EmptySetCheck.is_check_path(check_path):
-            return EmptySetCheck(self, check_path)
+            check = EmptySetCheck(self, check_path)
         elif ExcelCheck.is_check_path(check_path):
-            return ExcelCheck(self, check_path)
+            check = ExcelCheck(self, check_path)
         elif CSVCheck.is_check_path(check_path):
             csv_check = CSVCheck(self, check_path)
-            return self._get_check_or_generator(check_path, csv_check)
+            check = self._get_check_or_generator(check_path, csv_check)
         elif TableCheck.is_check_path(check_path):
             table_check = TableCheck(self, check_path)
-            return self._get_check_or_generator(check_path, table_check)
-        return None
+            check = self._get_check_or_generator(check_path, table_check)
+        return check
 
     def collect_checks(
         self, files: List[Path], base_path: Path = Path()
@@ -170,7 +171,7 @@ class DataCheck:
             self.runner.run_any(run_method=self.run_sql_file, parameters=parameters)
         )
 
-    def run_sql_query(
+    def run_sql_query(  # noqa: PLR0913
         self,
         query: str,
         output: Union[str, Path] = "",

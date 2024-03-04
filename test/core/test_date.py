@@ -123,4 +123,5 @@ def test_result_different_dates(date1, date2):
     _, parsed_df1 = parse_date_columns(df1)
     _, parsed_df2 = parse_date_columns(df2)
     mr = SQLBaseCheck.merge_results(parsed_df1, parsed_df2)
-    assert len(mr) == 2
+    merged_row_count = 2
+    assert len(mr) == merged_row_count
