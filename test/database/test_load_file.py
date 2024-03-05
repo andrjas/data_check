@@ -66,7 +66,7 @@ def create_test_table_with_datetime(table_name: str, schema: str, dc: DataCheck)
     table.drop_if_exists()
     if dc.sql.dialect == "oracle":
         dc.sql.run_sql(
-            f"create table {table} " "(id number(10), data varchar2(10), dat date)"
+            f"create table {table} (id number(10), data varchar2(10), dat date)"
         )
     else:
         metadata = MetaData()
