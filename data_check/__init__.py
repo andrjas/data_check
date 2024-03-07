@@ -1,3 +1,4 @@
-from .config import DataCheckConfig  # noqa F401
-from .data_check import DataCheck  # noqa F401
-from .exceptions import DataCheckError  # noqa F401
+# ruff: noqa: F401
+from .config import DataCheckConfig
+from .data_check import DataCheck
+from .exceptions import DataCheckError

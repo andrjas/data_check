@@ -8,8 +8,8 @@ from sqlalchemy import Column, Date, DateTime, Integer, MetaData, Numeric, Strin
 from sqlalchemy import Table as SQLTable
 from sqlalchemy.exc import DatabaseError
 
-from data_check import DataCheck  # noqa E402
-from data_check.sql import LoadMode, Table  # noqa E402
+from data_check import DataCheck
+from data_check.sql import LoadMode, Table
 
 # These tests should work on any database.
 # The tests are generic, but in integration tests each database uses specific SQL files.

@@ -1,1 +1,3 @@
-from .output import DataCheckOutput  # noqa F401
+# ruff: noqa: F401
+
+from .output import DataCheckOutput

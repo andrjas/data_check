@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from data_check.output import DataCheckOutput  # noqa E402
+from data_check.output import DataCheckOutput
 from data_check.output.diffed_df import get_diffed_df
 from data_check.result import DataCheckResult
 

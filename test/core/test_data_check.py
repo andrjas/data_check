@@ -4,7 +4,7 @@ from unittest.mock import create_autospec
 from data_check import DataCheck
 from data_check.checks import (
     CSVCheck,
-    DataCheckGenerator,  # noqa E402
+    DataCheckGenerator,
     EmptySetCheck,
     ExcelCheck,
     PipelineCheck,

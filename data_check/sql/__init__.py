@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, Optional
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import ArgumentError
 
-from .load_mode import LoadMode  # noqa F401
-from .sql import DataCheckSql  # noqa F401
+from .load_mode import LoadMode  # noqa: F401
+from .sql import DataCheckSql
 from .table import (
-    ColumnInfo,  # noqa F401
-    Table,  # noqa F401
+    ColumnInfo,  # noqa: F401
+    Table,  # noqa: F401
 )
 
 if TYPE_CHECKING:

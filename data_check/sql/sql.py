@@ -165,7 +165,7 @@ class DataCheckSql:
         try:
             engine.connect()
             return True
-        except Exception as e:  # noqa E722
+        except Exception as e:
             self.output.print_exception(e)
             return False
 

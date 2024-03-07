@@ -3,9 +3,9 @@ from unittest.mock import create_autospec
 
 import pandas as pd
 
-from data_check import DataCheck, DataCheckConfig  # noqa E402
+from data_check import DataCheck, DataCheckConfig
 from data_check.checks.csv_check import CSVCheck
-from data_check.checks.generator import DataCheckGenerator  # noqa E402
+from data_check.checks.generator import DataCheckGenerator
 from data_check.checks.table_check import TableCheck
 from data_check.sql.query_result import QueryResult
 

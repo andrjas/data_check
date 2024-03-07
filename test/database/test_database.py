@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from pandas.core.frame import DataFrame
 
-from data_check import DataCheck  # noqa E402
+from data_check import DataCheck
 
 # These tests should work on any database.
 # The tests are generic, but in integration tests each database uses specific SQL files.

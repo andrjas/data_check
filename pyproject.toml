@@ -109,6 +109,8 @@ select = [
     "N",
     # Pylint
     "PL",
+    # Ruff-specific rules
+    "RUF"
 ]
 ignore = ["A003"]
 

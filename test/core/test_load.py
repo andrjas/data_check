@@ -7,7 +7,7 @@ from sqlalchemy import text
 
 from data_check.exceptions import DataCheckError
 from data_check.sql import DataCheckSql, LoadMode
-from data_check.sql.table import Table  # noqa E402
+from data_check.sql.table import Table
 
 
 @pytest.fixture(scope="module", params=["csv", "xlsx"])

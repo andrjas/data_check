@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy import Column, Integer, MetaData, String
 from sqlalchemy import Table as SQLTable
 
-from data_check import DataCheck  # noqa E402
+from data_check import DataCheck
 from data_check.exceptions import TableDoesNotExistsError
 from data_check.fake.fake_config import FakeConfig
 from data_check.file_ops import read_csv

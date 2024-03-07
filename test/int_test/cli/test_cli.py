@@ -29,7 +29,7 @@ def write_dc_config(path: Path):
 
 
 def run_check(command: List[str], workers: Optional[int] = 1):
-    return run(command + ["checks/basic/simple_string.sql"], workers=workers)
+    return run([*command, "checks/basic/simple_string.sql"], workers=workers)
 
 
 def assert_passed(result: Result):

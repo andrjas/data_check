@@ -12,7 +12,7 @@ from .step import Step, StrOrPathList
 
 
 class LoadStep(Step):
-    files: StrOrPathList = []
+    files: StrOrPathList = []  # noqa: RUF012
     table: str = ""
     file: Union[str, Path] = ""
     mode: Union[str, LoadMode] = LoadMode.DEFAULT

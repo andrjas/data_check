@@ -16,7 +16,7 @@ def run(command: List[str], workers: Optional[int] = 1) -> Result:
 
 
 def run_fake(command: List[str], workers: Optional[int] = 1) -> Result:
-    return run(["fake"] + command, workers)
+    return run(["fake", *command], workers)
 
 
 def write_dc_config(path: Path):

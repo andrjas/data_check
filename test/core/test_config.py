@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from data_check.config import DataCheckConfig  # noqa E402
+from data_check.config import DataCheckConfig
 
 T_CONFIG = """
 default_connection: t

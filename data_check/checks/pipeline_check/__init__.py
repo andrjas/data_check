@@ -1,1 +1,2 @@
-from .pipeline_check import PipelineCheck  # noqa E402
+# ruff: noqa: F401
+from .pipeline_check import PipelineCheck

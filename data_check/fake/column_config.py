@@ -91,7 +91,7 @@ class ColumnConfig:
         if self.fake_method:
             data = self.fake_method(**self.faker_args)
             if self.add_values:
-                values = [data] + self.add_values
+                values = [data, *self.add_values]
                 data = random.choice(values)
             if self.is_unique:
                 while data in self.unique_data:

@@ -13,13 +13,13 @@ class BreakpointStep(Step):
     def run(self, pipeline_check: PipelineCheck):
         self._pipeline_check = pipeline_check
         # set local variables to use in breakpoint
-        data_check = pipeline_check.data_check  # noqa F401
-        pipeline = pipeline_check  # noqa F401
-        steps = self._pipeline_check.pipeline_model.steps  # noqa F401
-        current_step = self.get_current_step  # noqa F401
-        next_step = self.get_next_step  # noqa F401
-        sql = pipeline_check.data_check.sql  # noqa F401
-        run_next = self.run_next_step  # noqa F401
+        data_check = pipeline_check.data_check  # noqa: F841
+        pipeline = pipeline_check  # noqa: F841
+        steps = self._pipeline_check.pipeline_model.steps  # noqa: F841
+        current_step = self.get_current_step  # noqa: F841
+        next_step = self.get_next_step  # noqa: F841
+        sql = pipeline_check.data_check.sql  # noqa: F841
+        run_next = self.run_next_step  # noqa: F841
 
         breakpoint()
         return self.result
