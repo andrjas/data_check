@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
     - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.4.0
+      rev: v4.5.0
       hooks:
           - id: trailing-whitespace
           - id: end-of-file-fixer
@@ -10,18 +10,18 @@ repos:
           - id: check-case-conflict
 
     - repo: https://github.com/astral-sh/ruff-pre-commit
-      rev: v0.1.14
+      rev: v0.3.1
       hooks:
         - id: ruff
         - id: ruff-format
 
     - repo: https://github.com/jendrikseipp/vulture
-      rev: v2.7
+      rev: v2.11
       hooks:
           - id: vulture
 
     - repo: https://github.com/pre-commit/mirrors-mypy
-      rev: v1.3.0
+      rev: v1.8.0
       hooks:
           - id: mypy
             args: [--check-untyped-defs]
@@ -29,7 +29,7 @@ repos:
             exclude: ^.vulture_whitelist.py
 
     - repo: https://github.com/dosisod/refurb
-      rev: v1.16.0
+      rev: v1.28.0
       hooks:
           - id: refurb
             language_version: python3.11
