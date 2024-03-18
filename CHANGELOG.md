@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.19.0] - 2024-03-18
+
+### Added
+- Python 3.12 support
+- ruff for linting
+
+### Changed
+- using pandas.Timestamp instead of datetime for date/datetime columns
+
+### Removed
+- custom datetime parsing
+- isort in pre-commit (using ruff instead)
+- black in pre-commit (using ruff instead)
+- eradicate in pre-commit (using ruff instead)
+
 ## [0.18.0] - 2023-11-30
 
 ## Added
