@@ -8,7 +8,7 @@
     <title>data_check</title>
     <link rel="stylesheet" href="css/theme.css" />
     <link rel="stylesheet" href="css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
@@ -17,12 +17,11 @@
         var mkdocs_page_url = null;
       </script>
     
-    <script src="js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -34,7 +33,7 @@
           <a href="." class="icon icon-home"> data_check
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -121,8 +120,8 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-      <li>Home</li>
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -165,7 +164,7 @@
 <p>data_check tries to solve a simple problem in data domains: during development you create multiple SQL queries to validate your data and compare the result manually. With data_check you can organize your data tests and run them automatically, for example in a CI pipeline.</p>
 <h2 id="how-to-get-started">How to get started</h2>
 <p>First <a href="install/">install</a> data_check. You can then try data_check with the <a href="example/#data_check-sample-project">sample project</a>.</p>
-<p>To create a new project folder write a <em>data_check.yml</em> for the <a href=".#configuration">configuration</a> and put your <a href=".#test-files">test files</a> in the <em>checks</em> folder.</p>
+<p>To create a new project folder write a <em>data_check.yml</em> for the <a href="./#configuration">configuration</a> and put your <a href="./#test-files">test files</a> in the <em>checks</em> folder.</p>
 <h2 id="project-layout">Project layout</h2>
 <p>data_check has a simple layout for projects: a single configuration file and a folder with the test files. You can also organize the test files in subfolders.</p>
 <pre><code>data_check.yml          # The configuration file
@@ -226,20 +225,21 @@ connections:
     
   </span>
 </div>
-    <script>var base_url = '.';</script>
-    <script src="js/theme_extra.js" defer></script>
-    <script src="js/theme.js" defer></script>
-      <script src="search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>
 </html>
 
 <!--
-MkDocs version : 1.3.1
-Build Date UTC : 2023-11-30 16:28:10.791592+00:00
+MkDocs version : 1.5.3
+Build Date UTC : 2024-03-18 06:08:46.023931+00:00
 -->
