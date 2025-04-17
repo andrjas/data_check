@@ -20,14 +20,6 @@ repos:
       hooks:
           - id: vulture
 
-    - repo: https://github.com/pre-commit/mirrors-mypy
-      rev: v1.8.0
-      hooks:
-          - id: mypy
-            args: [--check-untyped-defs]
-            language: system
-            exclude: ^.vulture_whitelist.py
-
     - repo: https://github.com/dosisod/refurb
       rev: v1.28.0
       hooks:

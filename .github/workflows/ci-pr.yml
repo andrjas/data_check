@@ -1,11 +1,11 @@
-name: Tox Tests
+name: PR Tests
 
 on:
     pull_request:
       types: [opened, synchronize]
 
 jobs:
-  pytest:
+  tox:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -16,3 +16,12 @@ jobs:
         run: uv tool install tox --with tox-uv
       - name: Run tox
         run: tox
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Run mypy
+        run: uv run mypy --check-untyped-defs --exclude '^.vulture_whitelist.py'
