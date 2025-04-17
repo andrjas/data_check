@@ -32,4 +32,3 @@ repos:
       rev: v1.28.0
       hooks:
           - id: refurb
-            language_version: python3.11

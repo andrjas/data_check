@@ -61,6 +61,7 @@ dev = [
     "types-pyyaml>=6.0.12.10,<7",
     "pandas-stubs>=2.0.2.230605,<3",
     "types-colorama>=0.4.15.11,<0.5",
+    "pre-commit>=4.2.0",
 ]
 
 [build-system]
