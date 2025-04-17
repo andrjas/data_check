@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.20.0] - 2025-04-17
+
+### Added
+- Python 3.13 support
+- devcontainer
+
+### Changed
+- updated dependencies
+- using GitHub actions instead of Drone for CI
+- mypy and refurb in CI instead of pre-commit
+- using uv for packaging
+
+### Removed
+- tox for Python support testing (using action matrix now)
+- poetry (replaced with uv)
+
 ## [0.19.0] - 2024-03-18
 
 ### Added
