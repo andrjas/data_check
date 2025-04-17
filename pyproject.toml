@@ -76,6 +76,7 @@ data_check = ["**/*.yml"]
 filterwarnings = [
     "error",
     "ignore::FutureWarning",
+    "ignore::DeprecationWarning", # datetime.datetime.utcnow() is deprecated in Python 3.12
 ]
 
 [tool.vulture]
