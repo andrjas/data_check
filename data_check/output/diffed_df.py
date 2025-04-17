@@ -1,12 +1,11 @@
 import itertools
-from typing import List
 
 import pandas as pd
 
 from data_check.result import DataCheckResult
 
 
-def _df_same_uniques(df: pd.DataFrame, columns: List[str]) -> bool:
+def _df_same_uniques(df: pd.DataFrame, columns: list[str]) -> bool:
     return len(df.drop_duplicates()) == len(df[columns].drop_duplicates())
 
 
@@ -17,7 +16,7 @@ def get_diffed_df(df: pd.DataFrame, result: DataCheckResult):
     if result.full_result is None:
         return df
     full_df = result.full_result
-    columns: List[str] = list(full_df.columns)
+    columns: list[str] = list(full_df.columns)
     # remove _merge from checking and append it at the end
     columns.remove("_merge")
     can_remove = columns[1:]  # always keep the first column
@@ -27,7 +26,7 @@ def get_diffed_df(df: pd.DataFrame, result: DataCheckResult):
         for iter_len in range(1, len(can_remove) + 1)
         for comb in itertools.combinations(can_remove, iter_len)
     ]
-    columns_to_remove: List[str] = []
+    columns_to_remove: list[str] = []
     # check which combinations keep the DataFrame of same size,
     # and remove the combination with the most columns
     for _cols in sorted(can_remove_combinations, key=len, reverse=True):

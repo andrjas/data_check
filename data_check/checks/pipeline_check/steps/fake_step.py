@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
 from pydantic import field_validator
 
@@ -14,7 +14,7 @@ class FakeStep(Step):
 
     @field_validator("configs")
     @classmethod
-    def configs_to_path_list(cls, v) -> List[Path]:
+    def configs_to_path_list(cls, v) -> list[Path]:
         return Step.to_path_list(v)
 
     @field_validator("output")

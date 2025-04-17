@@ -1,5 +1,4 @@
 from contextlib import suppress
-from typing import List, Tuple
 
 import pandas as pd
 
@@ -16,12 +15,12 @@ def is_possible_date_column(column: pd.Series) -> bool:
     return len(min_len_10) > 0
 
 
-def parse_date_columns(df: pd.DataFrame) -> Tuple[List[str], pd.DataFrame]:
+def parse_date_columns(df: pd.DataFrame) -> tuple[list[str], pd.DataFrame]:
     """Tries to parse each column as a date.
     Returns a tuple with the list of the column names that were parsed as dates
     and the DataFrame with these columns replaced as Timestamp.
     """
-    _date_columns: List[str] = []
+    _date_columns: list[str] = []
     for column_name, column in df.items():
         if is_possible_date_column(column):
             try:

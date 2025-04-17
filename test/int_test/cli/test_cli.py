@@ -2,7 +2,7 @@ import shutil
 import warnings
 from os import linesep, sep
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from click.testing import CliRunner, Result
 
@@ -11,7 +11,7 @@ from data_check.cli.main import cli
 FAILED_EXIT_CODE = 2
 
 
-def run(command: List[str], workers: Optional[int] = 1) -> Result:
+def run(command: list[str], workers: Optional[int] = 1) -> Result:
     runner = CliRunner()
     workers_cmd = [] if not workers else ["-n", str(workers)]
     result = runner.invoke(cli, command + workers_cmd)
@@ -28,7 +28,7 @@ def write_dc_config(path: Path):
     )
 
 
-def run_check(command: List[str], workers: Optional[int] = 1):
+def run_check(command: list[str], workers: Optional[int] = 1):
     return run([*command, "checks/basic/simple_string.sql"], workers=workers)
 
 
@@ -51,7 +51,7 @@ def test_help():
 
 
 def all_options():
-    options: List[str] = []
+    options: list[str] = []
 
     for subcommand in ("", "run", "gen", "load", "ping", "sql"):
         res = run([subcommand, "--help"])
@@ -73,7 +73,7 @@ def test_all_options_tested():
     tested_options += ((Path(__file__).parent) / "test_load_cli.py").read_text()
     tested_options += ((Path(__file__).parent) / "test_init_cli.py").read_text()
 
-    join: List[str] = [
+    join: list[str] = [
         option for option in dc_options if f'"{option}"' in tested_options
     ]
 

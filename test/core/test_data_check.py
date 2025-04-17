@@ -107,7 +107,7 @@ def test_run_fail_if_path_doesnt_exist(dc: DataCheck):
 
 
 def test_no_template_when_not_loaded(dc_wo_template: DataCheck):
-    assert dc_wo_template.template_data == {}
+    assert not dc_wo_template.template_data
 
 
 def test_load_template(dc_wo_template: DataCheck):
@@ -120,11 +120,11 @@ def test_load_template_without_template_folder(
 ):
     dc_wo_template.config.project_path = tmp_path
     dc_wo_template.load_template()
-    assert dc_wo_template.template_data == {}
+    assert not dc_wo_template.template_data
 
 
 def test_no_lookups_when_not_loaded(dc: DataCheck):
-    assert dc.lookup_data == {}
+    assert not dc.lookup_data
 
 
 def test_load_lookups(dc: DataCheck):
@@ -135,7 +135,7 @@ def test_load_lookups(dc: DataCheck):
 def test_load_lookups_without_lookup_folder(dc: DataCheck, tmp_path: Path):
     dc.config.project_path = tmp_path
     dc.load_lookups()
-    assert dc.lookup_data == {}
+    assert not dc.lookup_data
 
 
 def test_sql_params(dc: DataCheck):

@@ -1,7 +1,7 @@
 import sys
 import traceback
 from pathlib import Path
-from typing import IO, Any, Callable, List, Optional, Tuple, Union
+from typing import IO, Any, Callable, Optional, Union
 
 import pandas as pd
 from colorama import Fore, Style
@@ -97,7 +97,7 @@ class DataCheckOutput:
         self.print("")
         self.print(f"overall result: {overall_result_msg}")
 
-    def pprint_result_summary(self, results: List[DataCheckResult]) -> None:
+    def pprint_result_summary(self, results: list[DataCheckResult]) -> None:
         self.print("")
         passed = len([r for r in results if r.passed])
         warnings = len([r for r in results if r.is_warning])
@@ -169,11 +169,11 @@ class DataCheckOutput:
     def failed_message(self) -> str:
         return self.str_fail("FAILED")
 
-    def prepare_result(  # noqa: PLR0913
+    def prepare_result(
         self,
         result_type: ResultType,
         source: Path,
-        result: Union[pd.DataFrame, List[Tuple[str, pd.DataFrame]], None] = None,
+        result: Union[pd.DataFrame, list[tuple[str, pd.DataFrame]], None] = None,
         exception: Optional[Exception] = None,
         full_result: Optional[pd.DataFrame] = None,
     ) -> DataCheckResult:

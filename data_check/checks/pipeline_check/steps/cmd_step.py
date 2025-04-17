@@ -1,6 +1,6 @@
 import subprocess
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
 from pydantic import field_validator
 
@@ -11,7 +11,7 @@ from .step import Step
 
 
 class CmdStep(Step):
-    commands: Union[str, List[str]]
+    commands: Union[str, list[str]]
     print: bool = True
 
     @field_validator("commands")

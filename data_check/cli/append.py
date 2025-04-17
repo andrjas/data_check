@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import click
 
@@ -29,7 +29,7 @@ def append(  # noqa: PLR0913
     quiet: bool = False,
     log: Optional[Union[str, Path]] = None,
     table: Optional[str] = None,
-    files: Optional[List[Union[str, Path]]] = None,
+    files: Optional[list[Union[str, Path]]] = None,
 ):
     """Append data from files into tables."""
     if files is None:

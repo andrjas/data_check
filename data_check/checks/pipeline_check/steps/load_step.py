@@ -25,14 +25,14 @@ class LoadStep(Step):
         return LoadStep.parse_table_or_files(cls, values)
 
     @staticmethod
-    def parse_table_or_files(cls, values):
+    def parse_table_or_files(klass, values):
         if "files" in values:
             # file mode, other options are not allowed
             if "file" in values:
                 raise ValueError("load: cannot use files and file at the same time")
             if "table" in values:
                 raise ValueError("load: cannot use files and table at the same time")
-            values["files"] = cls.to_path_list(values["files"])
+            values["files"] = klass.to_path_list(values["files"])
 
         if "table" in values:
             # table mode
@@ -42,7 +42,7 @@ class LoadStep(Step):
             values["file"] = Path(values["file"])
         elif "file" in values:
             # use file as an alias for files
-            values["files"] = cls.to_path_list(values["file"])
+            values["files"] = klass.to_path_list(values["file"])
         return values
 
     def run(self, pipeline_check: PipelineCheck):

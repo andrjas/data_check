@@ -7,7 +7,7 @@ from concurrent.futures import (
     ThreadPoolExecutor,
     as_completed,
 )
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Optional
 
 from .checks.base_check import BaseCheck
 from .output import DataCheckOutput
@@ -16,7 +16,7 @@ from .result import DataCheckResult
 
 class NoPoolExecutor(Executor):
     def submit(  # type: ignore
-        self, fn: Callable[..., Any], *args: Tuple[Any], **kwargs: Dict[str, Any]
+        self, fn: Callable[..., Any], *args: tuple[Any], **kwargs: dict[str, Any]
     ) -> Future[Any]:
         f: Future[Any] = Future()
         try:
@@ -48,7 +48,7 @@ class DataCheckRunner:
         max_new_workers = min(max_new_workers, task_count)
         return max_new_workers
 
-    def executor(self, task_list: List[Any]) -> Executor:
+    def executor(self, task_list: list[Any]) -> Executor:
         max_new_workers = self._max_new_workers(len(task_list))
 
         # Makes no sense to create a single worker
@@ -63,8 +63,8 @@ class DataCheckRunner:
     def run_checks(
         self,
         run_method: Callable[[BaseCheck], DataCheckResult],
-        all_checks: List[BaseCheck],
-    ) -> List[DataCheckResult]:
+        all_checks: list[BaseCheck],
+    ) -> list[DataCheckResult]:
         """
         Runs all tests.
         Returns a list of the results
@@ -74,8 +74,8 @@ class DataCheckRunner:
         return self._run(executor, result_futures, completed_hook=self.output.print)
 
     def run_any(
-        self, run_method: Callable[..., Any], parameters: List[Dict[str, Any]]
-    ) -> List[Any]:
+        self, run_method: Callable[..., Any], parameters: list[dict[str, Any]]
+    ) -> list[Any]:
         executor = self.executor(parameters)
         result_futures = [executor.submit(run_method, **p) for p in parameters]
         return self._run(executor, result_futures)
@@ -83,10 +83,10 @@ class DataCheckRunner:
     def _run(
         self,
         executor: Executor,
-        result_futures: List[Future[Any]],
+        result_futures: list[Future[Any]],
         completed_hook: Optional[Callable[..., None]] = None,
-    ) -> List[Any]:
-        results: List[Any] = []
+    ) -> list[Any]:
+        results: list[Any] = []
         try:
             for future in as_completed(result_futures):
                 dc_result = future.result()

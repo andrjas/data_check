@@ -77,7 +77,7 @@ def read_csv(
     """
     if string_columns is None:
         string_columns = []
-    dtypes: DtypeArg = {s: "object" for s in string_columns}
+    dtypes: DtypeArg = dict.fromkeys(string_columns, "object")
 
     try:
         df = pd.read_csv(

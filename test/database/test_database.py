@@ -11,7 +11,7 @@ from data_check import DataCheck
 # The tests are generic, but in integration tests each database uses specific SQL files.
 
 
-@pytest.fixture()
+@pytest.fixture
 def data_types_check(dc: DataCheck):
     check = dc.get_check(Path("checks/basic/data_types.sql"))
     assert check
@@ -41,7 +41,7 @@ def test_data_types_date(data_types_check):
 
 
 def test_data_types_date_is_datetime_type(data_types_check):
-    assert type(data_types_check.date_test) == pd.Timestamp
+    assert type(data_types_check.date_test) is pd.Timestamp
 
 
 def test_data_types_huge_date(data_types_check):
@@ -49,7 +49,7 @@ def test_data_types_huge_date(data_types_check):
 
 
 def test_data_types_huge_date_is_timestamp_type(data_types_check):
-    assert type(data_types_check.inf_date_test) == pd.Timestamp
+    assert type(data_types_check.inf_date_test) is pd.Timestamp
 
 
 def test_data_types_null(data_types_check):

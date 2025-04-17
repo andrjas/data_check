@@ -13,12 +13,11 @@ from data_check.result import DataCheckResult
 def test_pprint_failed_output_is_sorted():
     sorted_df = pd.DataFrame.from_dict({"id": [0, 1, 2], "data": ["a", "b", "c"]})
     test_df = pd.DataFrame.from_dict({"id": [1, 0, 2], "data": ["b", "a", "c"]})
-    out = DataCheckOutput()
-    df = out.prepare_pprint_df(test_df)
+    df = DataCheckOutput().prepare_pprint_df(test_df)
     assert_frame_equal(df.reset_index(drop=True), sorted_df.reset_index(drop=True))
 
 
-@pytest.fixture()
+@pytest.fixture
 def dc_out(tmp_path: Path):
     out = DataCheckOutput()
     log_file = tmp_path / "test.log"

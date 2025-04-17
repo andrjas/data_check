@@ -17,7 +17,7 @@ def _change_test_dir(monkeypatch: pytest.MonkeyPatch):
         monkeypatch.chdir("example")
 
 
-@pytest.fixture()
+@pytest.fixture
 def dc() -> DataCheck:
     config = DataCheckConfig().load_config().set_connection("test")
     _dc = DataCheck(config)
@@ -31,7 +31,7 @@ def dc() -> DataCheck:
     return _dc
 
 
-@pytest.fixture()
+@pytest.fixture
 def dc_serial() -> DataCheck:
     config = DataCheckConfig().load_config().set_connection("test")
     config.parallel_workers = (
@@ -48,7 +48,7 @@ def dc_serial() -> DataCheck:
     return _dc
 
 
-@pytest.fixture()
+@pytest.fixture
 def dc_wo_template() -> DataCheck:
     config = DataCheckConfig().load_config().set_connection("test")
     _dc = DataCheck(config)
@@ -61,7 +61,7 @@ def dc_wo_template() -> DataCheck:
     return _dc
 
 
-@pytest.fixture()
+@pytest.fixture
 def sql() -> DataCheckSql:
     dc_config = DataCheckConfig().load_config().set_connection("test")
     _sql = get_sql(dc_config.connection)

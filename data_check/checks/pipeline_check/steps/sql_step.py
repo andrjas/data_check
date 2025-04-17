@@ -25,13 +25,13 @@ class SqlStep(Step):
         return SqlStep.parse_query_or_files(cls, values)
 
     @staticmethod
-    def parse_query_or_files(cls, values):
+    def parse_query_or_files(klass, values):
         if "file" in values:
             if "files" in values:
                 raise ValueError("cannot use files and file at the same time")
-            values["files"] = cls.to_path_list(values["file"])
+            values["files"] = klass.to_path_list(values["file"])
         elif "files" in values:
-            values["files"] = cls.to_path_list(values["files"])
+            values["files"] = klass.to_path_list(values["files"])
 
         if "query" in values and "files" in values:
             raise ValueError("cannot use query and files at the same time")

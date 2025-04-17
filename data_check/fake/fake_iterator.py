@@ -31,7 +31,7 @@ class FakeIterator:
         for i in range(1, self.count):
             self.generate_iteration()
             iter_path = self.get_iter_path(base_file, i + 1)
-            print(f"write iteration {i+1} to {iter_path}")
+            print(f"write iteration {i + 1} to {iter_path}")
             write_csv(self.data, output=iter_path)
 
     def generate_iteration(self):

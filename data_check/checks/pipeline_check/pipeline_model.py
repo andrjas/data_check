@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator
 from contextlib import suppress
-from typing import Any, Iterable, Iterator, Optional
+from typing import Annotated, Any, Optional
 
 from pydantic import BaseModel, BeforeValidator, ConfigDict, model_validator
-from typing_extensions import Annotated
 
 from data_check.result import DataCheckResult, ResultType
 

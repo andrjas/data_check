@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import click
 
@@ -48,7 +48,7 @@ def run(  # noqa: PLR0913
     print_format: str = DataCheckConfig.default_print_format,
     print_json: bool = False,
     print_diffed: bool = False,
-    files: Optional[List[Union[str, Path]]] = None,
+    files: Optional[list[Union[str, Path]]] = None,
 ):
     """Run checks (default command)."""
     if files is None:

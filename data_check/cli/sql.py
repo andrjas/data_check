@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import click
 
@@ -39,7 +39,7 @@ def sql(  # noqa: PLR0913
     log: Optional[Union[str, Path]] = None,
     output: Union[str, Path] = "",
     write_check: Union[str, Path] = "",
-    files: Optional[List[Union[str, Path]]] = None,
+    files: Optional[list[Union[str, Path]]] = None,
     query: str = "",
 ):
     """Run SQL statements."""

@@ -1,6 +1,6 @@
 from contextlib import suppress
 from pathlib import Path
-from typing import List, Tuple, Union, cast
+from typing import Union, cast
 
 import numpy as np
 import pandas as pd
@@ -50,7 +50,7 @@ class SQLBaseCheck(BaseCheck):
             raise e
         except ValueError:
             # treat both columns as str if their data types differ
-            for sc in cast(List[str], sql_result.columns):
+            for sc in cast(list[str], sql_result.columns):
                 if (
                     sc in expect_result.columns
                     and sql_result[sc].dtype != expect_result[sc].dtype
@@ -85,7 +85,7 @@ class SQLBaseCheck(BaseCheck):
     @staticmethod
     def convert_dtypes(
         col_1: pd.Series, col_2: pd.Series
-    ) -> Tuple[pd.Series, pd.Series]:
+    ) -> tuple[pd.Series, pd.Series]:
         # float64 can be in scientific notation, so it cannot be compared against a str
         if np.float64 in (col_1.dtype, col_2.dtype):
             # use Float64 instead of np.float64 since it is nullable

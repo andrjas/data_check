@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Optional, Union, cast
 
 from data_check.result import ResultType
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 DATA_CHECK_PIPELINE_FILE = "data_check_pipeline.yml"
 
-StrOrPathList = Union[str, List[str], Path, List[Path]]
+StrOrPathList = Union[str, list[str], Path, list[Path]]
 
 
 class PipelineCheck(BaseCheck):
@@ -38,10 +38,8 @@ class PipelineCheck(BaseCheck):
         if pipeline_file.exists():
             yaml = read_yaml(
                 pipeline_file,
-                template_data=dict(
-                    self.template_parameters(pipeline_file.parent),
-                    **self.data_check.template_data,
-                ),
+                template_data=self.template_parameters(pipeline_file.parent)
+                | self.data_check.template_data,
             )
             return yaml or {}  # yaml can return None, so convert it to an empty dict
         return {}

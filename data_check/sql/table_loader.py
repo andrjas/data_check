@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Literal, Optional, Union, cast
 
 import pandas as pd
 from sqlalchemy.engine import Connection
@@ -74,13 +74,13 @@ class TableLoader:
             self.pre_insert(connection, table)
 
             for _, row in data.iterrows():
-                row_as_dict = cast(Dict[str, Any], row.to_dict())
+                row_as_dict = cast(dict[str, Any], row.to_dict())
                 for p in table.primary_keys:
                     row_as_dict[f"_{p}"] = row_as_dict.pop(p)
                 rows = connection.execute(update_stmt, parameters=row_as_dict)
                 if rows.rowcount == 0:
                     connection.execute(
-                        insert_stmt, parameters=cast(Dict[str, Any], row.to_dict())
+                        insert_stmt, parameters=cast(dict[str, Any], row.to_dict())
                     )
         return False
 
@@ -117,7 +117,7 @@ class TableLoader:
             mode = self.default_load_mode
         return mode
 
-    def load_table_from_file(  # noqa: PLR0913
+    def load_table_from_file(
         self,
         table: str,
         file: Path,

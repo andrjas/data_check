@@ -1,21 +1,21 @@
 import shutil
 from os import sep
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from click.testing import CliRunner, Result
 
 from data_check.cli.main import cli
 
 
-def run(command: List[str], workers: Optional[int] = 1) -> Result:
+def run(command: list[str], workers: Optional[int] = 1) -> Result:
     runner = CliRunner()
     workers_cmd = [] if not workers else ["-n", str(workers)]
     result = runner.invoke(cli, command + workers_cmd)
     return result
 
 
-def run_fake(command: List[str], workers: Optional[int] = 1) -> Result:
+def run_fake(command: list[str], workers: Optional[int] = 1) -> Result:
     return run(["fake", *command], workers)
 
 

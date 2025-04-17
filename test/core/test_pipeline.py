@@ -7,7 +7,7 @@ from data_check.checks.pipeline_check import PipelineCheck
 from data_check.result import DataCheckResult
 
 
-@pytest.fixture()
+@pytest.fixture
 def pc(dc_serial: DataCheck) -> PipelineCheck:
     _pc = PipelineCheck(dc_serial, Path())
     return _pc

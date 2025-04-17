@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, List, Union, cast
+from typing import Any, Union, cast
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
 from ..pipeline_check import PipelineCheck
 
-StrOrPathList = Union[str, List[Any], Path, List[Path]]
+StrOrPathList = Union[str, list[Any], Path, list[Path]]
 
 
 class Step(BaseModel):
@@ -41,10 +41,10 @@ class Step(BaseModel):
 
     @staticmethod
     def as_path_list(v: StrOrPathList) -> list[Path]:
-        assert isinstance(v, List)
+        assert isinstance(v, list)
         for e in v:
             assert isinstance(e, Path)
-        return cast(List[Path], v)
+        return cast(list[Path], v)
 
     @staticmethod
     def as_path(v: Union[str, Path]) -> Path:

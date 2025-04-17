@@ -1,6 +1,6 @@
 from contextlib import suppress
 from pathlib import Path
-from typing import List, Union, cast
+from typing import Union, cast
 
 import pandas as pd
 
@@ -17,7 +17,7 @@ class ExcelCheck(CSVCheck):
         return sql_file.with_suffix(".xlsx")
 
     def clean_string_column(self, col: str):
-        return col.replace("\u00A0", " ")
+        return col.replace("\u00a0", " ")
 
     def clean_excel_df(self, df: pd.DataFrame) -> pd.DataFrame:
         for column_name, column in df.items():
@@ -28,7 +28,7 @@ class ExcelCheck(CSVCheck):
         return df
 
     def read_expect_file(
-        self, expect_file: Path, string_columns: List[str]
+        self, expect_file: Path, string_columns: list[str]
     ) -> Union[DataCheckResult, pd.DataFrame]:
         try:
             expect_result: pd.DataFrame = pd.read_excel(

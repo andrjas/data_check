@@ -1,9 +1,10 @@
+from collections.abc import Iterator, Sequence
 from contextlib import contextmanager, suppress
 from functools import cached_property
 from os import path
 from pathlib import Path
 from time import sleep, time
-from typing import Any, Dict, Iterator, List, Optional, Sequence, Union, cast
+from typing import Any, Optional, Union, cast
 
 import pandas as pd
 from sqlalchemy import create_engine, inspect
@@ -60,7 +61,7 @@ class DataCheckSql:
         """
         return TableLoader(self, self.output, self.config.default_load_mode)
 
-    def get_db_params(self) -> Dict[str, Any]:
+    def get_db_params(self) -> dict[str, Any]:
         """
         Return parameter specific to a database.
         """
@@ -71,7 +72,7 @@ class DataCheckSql:
         # Cannot pickle otherwise.
         return self.runner.workers == 1
 
-    def get_engine(self, extra_params: Optional[Dict[str, Any]] = None) -> Engine:
+    def get_engine(self, extra_params: Optional[dict[str, Any]] = None) -> Engine:
         """
         Return the database engine for the connection.
         """
@@ -126,7 +127,7 @@ class DataCheckSql:
         return self.get_engine().dialect.name
 
     def run_query(
-        self, query: str, params: Optional[Dict[str, Any]] = None
+        self, query: str, params: Optional[dict[str, Any]] = None
     ) -> pd.DataFrame:
         """
         Run a query on the database and return a Pandas DataFrame with the result.
@@ -147,7 +148,7 @@ class DataCheckSql:
         return sql
 
     def run_query_with_result(
-        self, query: str, params: Optional[Dict[str, Any]] = None
+        self, query: str, params: Optional[dict[str, Any]] = None
     ) -> QueryResult:
         if params is None:
             params = {}
@@ -197,11 +198,11 @@ class DataCheckSql:
         self.output.print("connecting failed")
         return False
 
-    def run_sql(  # noqa: PLR0913
+    def run_sql(
         self,
         query: str,
         output: Union[str, Path] = "",
-        params: Optional[Dict[str, Any]] = None,
+        params: Optional[dict[str, Any]] = None,
         base_path: Path = Path(),
         sort_output: bool = False,
     ) -> Union[bool, Sequence[Row]]:
@@ -224,7 +225,7 @@ class DataCheckSql:
                 result = connection.execute(sq_text.execution_options())
         try:
             res: Sequence[Row] = result.fetchall()
-            columns: List[str] = list(result.keys())
+            columns: list[str] = list(result.keys())
             df = pd.DataFrame(data=res, columns=columns)
             if output:
                 write_csv(
@@ -237,7 +238,7 @@ class DataCheckSql:
             return bool(result)
 
     def prepare_result(
-        self, res: Sequence[Row], columns: List[str]
+        self, res: Sequence[Row], columns: list[str]
     ) -> Union[bool, Sequence[Row]]:
         """This hook is for dialect specific handling of results."""
         return res

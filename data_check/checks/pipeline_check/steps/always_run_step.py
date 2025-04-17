@@ -1,4 +1,4 @@
-from typing import Iterator, List
+from collections.abc import Iterator
 
 from pydantic import model_validator
 
@@ -7,7 +7,7 @@ from .step import Step
 
 
 class AlwaysRunStep(Step):
-    steps: List[Step]
+    steps: list[Step]
 
     @model_validator(mode="before")
     @classmethod

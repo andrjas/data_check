@@ -1,6 +1,6 @@
 from functools import partial
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Union, cast
+from typing import Any, Optional, Union, cast
 
 from data_check.checks.base_check import BaseCheck
 
@@ -44,14 +44,14 @@ class DataCheck:
             output=self.output,
             config=self.config,
         )
-        self.template_data: Dict[str, Any] = {}
-        self.lookup_data: Dict[str, Any] = {}
+        self.template_data: dict[str, Any] = {}
+        self.lookup_data: dict[str, Any] = {}
 
     def __del__(self):
         self.sql.disconnect()
 
     @property
-    def sql_params(self) -> Dict[str, Any]:
+    def sql_params(self) -> dict[str, Any]:
         return self.lookup_data
 
     def load_template(self):
@@ -91,11 +91,11 @@ class DataCheck:
         return check
 
     def collect_checks(
-        self, files: List[Path], base_path: Path = Path()
-    ) -> List[BaseCheck]:
+        self, files: list[Path], base_path: Path = Path()
+    ) -> list[BaseCheck]:
         base_path = base_path.absolute()
-        checks: List[BaseCheck] = []
-        check_paths: Set[Path] = set()
+        checks: list[BaseCheck] = []
+        check_paths: set[Path] = set()
         for f in sorted(files):
             abs_file = f if f.is_absolute() else base_path / f
             check = self.get_check(abs_file)
@@ -107,7 +107,7 @@ class DataCheck:
                 checks.extend(self.collect_checks(dir_files, base_path=base_path))
         return checks
 
-    def validate_checks(self, checks: List[BaseCheck]):
+    def validate_checks(self, checks: list[BaseCheck]):
         for c in checks:
             try:
                 if not c.validate():
@@ -118,7 +118,7 @@ class DataCheck:
                 ) from e
 
     def run(
-        self, files: List[Path], base_path: Path = Path(), do_cleanup: bool = True
+        self, files: list[Path], base_path: Path = Path(), do_cleanup: bool = True
     ) -> bool:
         """
         Runs a data_check test for all element in the list.
@@ -131,7 +131,7 @@ class DataCheck:
         )
         return overall_result
 
-    def run_checks(self, all_checks: List[BaseCheck], do_cleanup: bool = True):
+    def run_checks(self, all_checks: list[BaseCheck], do_cleanup: bool = True):
         try:
             self.validate_checks(all_checks)
         except ValidationError as e:
@@ -148,7 +148,7 @@ class DataCheck:
 
     def get_overall_result(
         self,
-        results: List[DataCheckResult],
+        results: list[DataCheckResult],
         print_overall: bool = False,
         print_summary: bool = False,
     ):
@@ -165,13 +165,13 @@ class DataCheck:
         self.output.print(sql_text)
         return self.sql.run_sql(query=sql_text, params=self.sql_params)
 
-    def run_sql_files(self, files: List[Path], base_path: Path = Path()):
+    def run_sql_files(self, files: list[Path], base_path: Path = Path()):
         parameters = [{"file": f} for f in expand_files(files, base_path=base_path)]
         return all(
             self.runner.run_any(run_method=self.run_sql_file, parameters=parameters)
         )
 
-    def run_sql_query(  # noqa: PLR0913
+    def run_sql_query(
         self,
         query: str,
         output: Union[str, Path] = "",
@@ -209,7 +209,7 @@ class DataCheck:
 
     def fake_data(
         self,
-        configs: List[Path],
+        configs: list[Path],
         output: Path = Path(),
         base_path: Path = Path(),
         force: bool = False,

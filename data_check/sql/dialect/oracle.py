@@ -1,5 +1,5 @@
 from functools import cached_property
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import pandas as pd
 from sqlalchemy import event
@@ -13,7 +13,7 @@ from data_check.sql.table_loader import TableLoader
 class TableLoaderOracle(TableLoader):
     def prepare_dtypes(
         self, data: pd.DataFrame, table: Table, dtype
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         # when creating a new table in Oracle with FLOAT types,
         # we need to specify the binary_precision
         float_types = {

@@ -1,4 +1,5 @@
-from typing import List, Sequence, Union
+from collections.abc import Sequence
+from typing import Union
 
 from sqlalchemy import Row
 
@@ -11,7 +12,7 @@ class DataCheckSqlDatabricks(DataCheckSql):
         return False
 
     def prepare_result(
-        self, res: Sequence[Row], columns: List[str]
+        self, res: Sequence[Row], columns: list[str]
     ) -> Union[bool, Sequence[Row]]:
         # Databricks returns an empty list and a single column 'Result'
         # if the query is a DML/DDL. That's why we convert it to True

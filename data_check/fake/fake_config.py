@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
 import yaml
@@ -16,11 +16,11 @@ from .fake_iterator import FakeIterator
 class FakeConfig:
     def __init__(self, config: Path):
         self.config_file = config
-        self.config: Dict[str, Any]
+        self.config: dict[str, Any]
         self.table_name: str
         self.business_key: str
         self.rows: int
-        self.columns: Dict[str, ColumnConfig] = {}
+        self.columns: dict[str, ColumnConfig] = {}
         self.faker = Faker()
         self.iterator = FakeIterator(fake_config=self)
 
@@ -28,7 +28,7 @@ class FakeConfig:
         config = yaml.safe_load(self.config_file.read_text())
         self.load_config(config)
 
-    def load_config(self, config: Dict[str, Any]):
+    def load_config(self, config: dict[str, Any]):
         self.config = config
         self.table_name = self.config.get("table", "")
         self.business_key = self.config.get("business_key", [])
@@ -43,7 +43,7 @@ class FakeConfig:
                 col_conf.load_config(val)
             self.columns[name] = col_conf
 
-    def add_columns_not_in_config(self, column_types: Dict[str, Any]):
+    def add_columns_not_in_config(self, column_types: dict[str, Any]):
         for column in column_types:
             if column not in self.columns:
                 is_unique = column == self.business_key
@@ -62,7 +62,7 @@ class FakeConfig:
         for column in self.columns.values():
             column.init(sql_type=column_types.get(column.name, None), sql=sql)
 
-    def generate_row(self) -> Dict[str, Any]:
+    def generate_row(self) -> dict[str, Any]:
         row = {}
         for column in self.columns.values():
             row[column.name] = column.generate()

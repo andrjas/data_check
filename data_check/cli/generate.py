@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import click
 
@@ -28,7 +28,7 @@ def gen(  # noqa: PLR0913
     quiet: bool = False,
     log: Optional[Union[str, Path]] = None,
     force: bool = False,
-    files: Optional[List[Union[str, Path]]] = None,
+    files: Optional[list[Union[str, Path]]] = None,
 ):
     """Generate CSV files from query files."""
     if files is None:

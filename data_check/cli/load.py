@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import click
 
@@ -20,7 +20,7 @@ def load_cmd(  # noqa: PLR0913
     log: Optional[Union[str, Path]] = None,
     table: Optional[str] = None,
     mode: str = "truncate",
-    files: Optional[List[Union[str, Path]]] = None,
+    files: Optional[list[Union[str, Path]]] = None,
 ):
     if files is None:
         files = []
@@ -83,7 +83,7 @@ def load(  # noqa: PLR0913
     log: Optional[Union[str, Path]] = None,
     table: Optional[str] = None,
     mode: str = "truncate",
-    files: Optional[List[Union[str, Path]]] = None,
+    files: Optional[list[Union[str, Path]]] = None,
 ):
     """Load data from files into tables."""
     if files is None:

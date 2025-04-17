@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Union, cast
+from typing import TYPE_CHECKING, Union, cast
 
 from data_check.sql.query_result import QueryResult
 
@@ -42,7 +42,7 @@ class TableCheck(SQLBaseCheck):
         )
         if isinstance(expect_result, DataCheckResult):
             return expect_result
-        column_list: list[str] = cast(List[str], expect_result.columns.tolist())
+        column_list: list[str] = cast(list[str], expect_result.columns.tolist())
         table_name = self.check_path.stem
         query = f"select {','.join(column_list)} from {table_name}"
         try:

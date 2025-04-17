@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 import pytest
 from click.testing import CliRunner, Result
@@ -6,7 +6,7 @@ from click.testing import CliRunner, Result
 from data_check.cli.main import cli
 
 
-def run(command: List[str], workers: Optional[int] = 1) -> Result:
+def run(command: list[str], workers: Optional[int] = 1) -> Result:
     # ignore unclosed SSLSocket ResourceWarning for Databricks
     import warnings
 
@@ -30,7 +30,7 @@ def assert_failed(result: Result):
     assert ": FAILED" in result.output
 
 
-def should_pass(command: List[str], workers: Optional[int] = 1):
+def should_pass(command: list[str], workers: Optional[int] = 1):
     res = run(command=command, workers=workers)
     assert_passed(res)
 

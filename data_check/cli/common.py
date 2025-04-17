@@ -1,14 +1,14 @@
 import sys
 from importlib.metadata import version
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional, Union, cast
+from typing import Any, Callable, Optional, Union, cast
 
 import click
 
 from data_check.config import DataCheckConfig
 from data_check.data_check import DataCheck
 
-DEFAULT_VALUES: Dict[str, Any] = {
+DEFAULT_VALUES: dict[str, Any] = {
     "connection": "",
     "workers": DataCheckConfig.parallel_workers,
     "use_process": DataCheckConfig.use_process,
