@@ -13,7 +13,12 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
       - name: Run oracledb int_test
-        run: ./scripts/run_int_test.sh oracledb
+        run: |
+          if [ -n "$DB_CONNECTION" ]; then
+            ./scripts/run_int_test.sh oracledb
+          else
+            echo "DB_CONNECTION is empty. Skipping test."
+          fi
         env:
           DB_CONNECTION: ${{ secrets.ORACLE_CONNECTION }}
           DB_PASSWORD: ${{ secrets.ORACLE_PASSWORD }}
