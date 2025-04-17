@@ -1,16 +1,8 @@
 # Development
 
-[poetry](https://python-poetry.org/) must be installed first for development.
+Use the [Dev Container](https://containers.dev/) to create a dev environment.
 
-To set up a development environment initially with poetry:
-
-```bash
-poetry install
-```
-
-Later, just activate the virtual environment: `poetry shell`
-
-Please use [Black](https://github.com/psf/black) to format the code before committing any change: `black data_check`
+Alternatively, install [uv](https://docs.astral.sh/uv/) and run `uv sync --frozen`.
 
 ## Testing
 
