@@ -19,8 +19,3 @@ repos:
       rev: v2.11
       hooks:
           - id: vulture
-
-    - repo: https://github.com/dosisod/refurb
-      rev: v1.28.0
-      hooks:
-          - id: refurb
