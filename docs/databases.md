@@ -60,7 +60,7 @@ Additionally you must install the [Microsoft ODBC driver for SQL Server](https:/
 ### Connection string
 
 ```
-mssql+pyodbc://username:password@db_host:1433/db_name?driver=ODBC+Driver+17+for+SQL+Server
+mssql+pyodbc://username:password@db_host:1433/db_name?driver=ODBC+Driver+18+for+SQL+Server
 ```
 
 

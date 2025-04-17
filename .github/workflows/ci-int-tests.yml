@@ -1,0 +1,113 @@
+name: Int Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  oracledb:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Run oracledb int_test
+        run: ./scripts/run_int_test.sh oracledb
+        env:
+          DB_CONNECTION: ${{ secrets.ORACLE_CONNECTION }}
+          DB_PASSWORD: ${{ secrets.ORACLE_PASSWORD }}
+          DB_USER: ${{ secrets.ORACLE_USER }}
+          LANG: en_US.utf-8
+          NLS_LANG: .utf8
+  sqlite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Run sqlite int_test
+        run: ./scripts/run_int_test.sh sqlite
+  mysql:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_PASSWORD}}
+          MYSQL_DATABASE: testdb
+        options: >-
+          --health-cmd "mysqladmin ping --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Run mysql int_test
+        run: ./scripts/run_int_test.sh mysql
+        env:
+          DB_CONNECTION: mysql:3306/testdb
+          DB_PASSWORD: ${{ secrets.MYSQL_PASSWORD}}
+          DB_USER: root
+  postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD}}
+          POSTGRES_USER: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Run postgres int_test
+        run: ./scripts/run_int_test.sh postgres
+        env:
+          DB_CONNECTION: postgres:5432
+          DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD}}
+          DB_USER: postgres
+  mssql:
+    runs-on: ubuntu-latest
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/azure-sql-edge
+        env:
+          MSSQL_SA_PASSWORD: ${{ secrets.MSSQL_PASSWORD}}
+          ACCEPT_EULA: "Y"
+        options: >-
+          --health-cmd "/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P ${{ secrets.MSSQL_PASSWORD}} -Q 'SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Run mssql int_test
+        run: ./scripts/run_int_test.sh mssql
+        env:
+          DB_CONNECTION: sqlserver:1433/master?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes
+          DB_PASSWORD: ${{ secrets.MSSQL_PASSWORD}}
+          DB_USER: SA
+  duckdb:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Run duckdb int_test
+        run: ./scripts/run_int_test.sh duckdb
