@@ -1,0 +1,18 @@
+name: Tox Tests
+
+on:
+    pull_request:
+      types: [opened, synchronize]
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Install tox with tox-uv
+        run: uv tool install tox --with tox-uv
+      - name: Run tox
+        run: tox

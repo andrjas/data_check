@@ -19,6 +19,6 @@
         "UV_PROJECT_ENVIRONMENT": "/home/vscode/.venv"
     },
     "postCreateCommand": "uv sync --frozen",
-    "postStartCommand": "uv run pre-commit install",
+    "postStartCommand": "uv run pre-commit install && uv tool install tox --with tox-uv",
 	"remoteUser": "vscode"
 }
