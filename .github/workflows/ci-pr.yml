@@ -5,17 +5,6 @@ on:
       types: [opened, synchronize]
 
 jobs:
-  tox:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-      - name: Install tox with tox-uv
-        run: uv tool install tox --with tox-uv
-      - name: Run tox
-        run: tox
   mypy:
     runs-on: ubuntu-latest
     steps:
@@ -25,3 +14,20 @@ jobs:
         uses: astral-sh/setup-uv@v5
       - name: Run mypy
         run: uv run mypy --check-untyped-defs --exclude '^.vulture_whitelist.py'
+
+  python-versions:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+        - '3.9'
+        - '3.10'
+        - '3.11'
+        - '3.12'
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Run pytest
+        run: uv run --python ${{ matrix.python-version }} pytest
