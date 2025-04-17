@@ -76,6 +76,7 @@ filterwarnings = [
     "error",
     "ignore::FutureWarning",
     "ignore::DeprecationWarning", # datetime.datetime.utcnow() is deprecated in Python 3.12
+    "ignore:unclosed database in <sqlite3.Connection:ResourceWarning",  # ignore for Python 3.13
 ]
 
 [tool.vulture]
